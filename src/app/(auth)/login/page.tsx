@@ -2,13 +2,18 @@ import Link from "next/link";
 import { LockKeyhole, Mail } from "lucide-react";
 import { ActionButton } from "@/components/ui/ActionControl";
 import { signInAction } from "@/features/auth/actions";
+import { getViewerContext } from "@/lib/supabase/auth";
+import { redirect } from "next/navigation";
 
 type Props = {
   searchParams: Promise<{ error?: string; message?: string }>;
 };
 
 export default async function LoginPage({ searchParams }: Props) {
-  const params = await searchParams;
+  const [params, viewer] = await Promise.all([searchParams, getViewerContext()]);
+
+  if (viewer?.staffRole) redirect("/admin");
+  if (viewer && viewer.organizationMemberships.length > 0) redirect("/portal");
 
   return (
     <div className="glass-panel rounded-[2rem] p-6 sm:p-8">

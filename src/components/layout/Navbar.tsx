@@ -2,18 +2,29 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, LayoutDashboard, Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { Logo } from "@/components/layout/Logo";
 import { marketingNavigation } from "@/config/navigation";
 
-export function Navbar() {
+export type MarketingViewer = {
+  fullName: string | null;
+  email: string | null;
+  href: string;
+  label: string;
+  initials: string;
+};
+
+export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   function closeMenu() {
     setMenuOpen(false);
   }
+
+  const accountHref = viewer?.href ?? "/login";
+  const accountLabel = viewer?.label ?? "Client login";
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.07] bg-[#07080c]/80 backdrop-blur-2xl">
@@ -34,10 +45,17 @@ export function Navbar() {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/login"
-            className="hidden rounded-full px-4 py-2 text-sm text-white/58 transition-colors hover:text-white sm:inline-flex"
+            href={accountHref}
+            className="hidden min-h-11 items-center gap-2.5 rounded-full px-3 text-sm text-white/62 transition-colors hover:bg-white/[0.045] hover:text-white sm:inline-flex"
+            aria-label={viewer ? `Open ${accountLabel}` : "Client login"}
           >
-            Client login
+            {viewer ? (
+              <span className="grid h-8 w-8 place-items-center rounded-full border border-[#7c5cff]/45 bg-gradient-to-br from-[#7c5cff]/28 to-[#29d6ff]/18 text-[0.65rem] font-semibold text-white">
+                {viewer.initials}
+              </span>
+            ) : null}
+            <span>{accountLabel}</span>
+            {viewer ? <LayoutDashboard className="h-4 w-4 text-[#8be9ff]" /> : null}
           </Link>
           <ActionLink href="/start-project" className="hidden min-h-11 px-5 sm:inline-flex">
             Start a project
@@ -69,11 +87,16 @@ export function Navbar() {
               </Link>
             ))}
             <Link
-              href="/login"
+              href={accountHref}
               onClick={closeMenu}
-              className="rounded-2xl px-4 py-3 text-base text-white/62 transition-colors hover:bg-white/[0.045] hover:text-white"
+              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base text-white/62 transition-colors hover:bg-white/[0.045] hover:text-white"
             >
-              Client login
+              {viewer ? (
+                <span className="grid h-8 w-8 place-items-center rounded-full border border-[#7c5cff]/45 bg-gradient-to-br from-[#7c5cff]/28 to-[#29d6ff]/18 text-[0.65rem] font-semibold text-white">
+                  {viewer.initials}
+                </span>
+              ) : null}
+              <span>{accountLabel}</span>
             </Link>
             <ActionLink
               href="/start-project"

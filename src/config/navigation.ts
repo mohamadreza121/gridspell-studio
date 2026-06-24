@@ -7,13 +7,24 @@ export const marketingNavigation = [
   { label: "Insights", href: "/insights" }
 ] as const;
 export const clientNavigation = [
-  { label: "Overview", href: "/portal" }, { label: "Projects", href: "/portal/projects" },
-  { label: "Files", href: "/portal/files" }, { label: "Messages", href: "/portal/messages" },
-  { label: "Billing", href: "/portal/billing" }, { label: "Support", href: "/portal/support" }
+  { label: "Overview", href: "/portal" },
+  { label: "Projects", href: "/portal/projects" },
+  { label: "Tasks", href: "/portal/tasks" },
+  { label: "Approvals", href: "/portal/approvals" },
+  { label: "Files", href: "/portal/files" },
+  { label: "Messages", href: "/portal/messages" },
+  { label: "Billing", href: "/portal/billing" },
+  { label: "Support", href: "/portal/support" }
 ] as const;
 export const adminNavigation = [
-  { label: "Dashboard", href: "/admin" }, { label: "Leads", href: "/admin/leads" },
-  { label: "Clients", href: "/admin/clients" }, { label: "Projects", href: "/admin/projects" },
-  { label: "Proposals", href: "/admin/proposals" }, { label: "Invoices", href: "/admin/invoices" },
-  { label: "Content", href: "/admin/content" }, { label: "Settings", href: "/admin/settings" }
+  { label: "Dashboard", href: "/admin" },
+  { label: "Leads", href: "/admin/leads" },
+  { label: "Clients", href: "/admin/clients" },
+  { label: "Projects", href: "/admin/projects" },
+  { label: "Files", href: "/admin/files" },
+  { label: "Proposals", href: "/admin/proposals" },
+  { label: "Invoices", href: "/admin/invoices" },
+  { label: "Content", href: "/admin/content" },
+  { label: "Activity", href: "/admin/activity" },
+  { label: "Settings", href: "/admin/settings" }
 ] as const;

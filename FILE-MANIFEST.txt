@@ -1,0 +1,36 @@
+GridSpell Phase 4 patch contents
+
+Environment and dependencies
+- .env.example
+- package.json
+- package-lock.json
+
+Supabase local development
+- supabase/config.toml
+- supabase/migrations/202606240001_auth_membership_rls.sql
+- supabase/tests/database/001_auth_membership_rls.test.sql
+
+Auth/application code
+- src/proxy.ts
+- src/lib/env.ts
+- src/lib/supabase/{client,server,admin,auth}.ts
+- src/types/auth.ts
+- src/features/auth/actions.ts
+- src/features/admin/client-invitations/actions.ts
+- src/app/auth/callback/route.ts
+- src/app/(auth)/forgot-password/page.tsx
+- src/app/(auth)/sign-up/page.tsx
+- src/app/(auth)/accept-invite/page.tsx
+- src/app/(auth)/update-password/page.tsx
+- src/app/(client)/portal/layout.tsx
+- src/app/admin/clients/page.tsx
+- src/app/admin/layout.tsx
+- src/components/layout/DashboardShell.tsx
+
+Local testing/bootstrap scripts
+- scripts/seed-auth-users.mjs
+- scripts/bootstrap-owner.mjs
+
+Documentation
+- PHASE-4-PATCH-INSTRUCTIONS.md
+- docs/setup/PHASE-4-SUPABASE-AUTH.md

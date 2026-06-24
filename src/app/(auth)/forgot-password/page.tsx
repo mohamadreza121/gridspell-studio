@@ -1,7 +1,15 @@
+import Link from "next/link";
 import { Mail, ShieldCheck } from "lucide-react";
-import { ActionLink } from "@/components/ui/ActionControl";
+import { ActionButton } from "@/components/ui/ActionControl";
+import { forgotPasswordAction } from "@/features/auth/actions";
 
-export default function ForgotPasswordPage() {
+type Props = {
+  searchParams: Promise<{ error?: string; message?: string }>;
+};
+
+export default async function ForgotPasswordPage({ searchParams }: Props) {
+  const params = await searchParams;
+
   return (
     <div className="glass-panel rounded-[2rem] p-6 sm:p-8">
       <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white/[0.09] bg-white/[0.04]">
@@ -14,30 +22,47 @@ export default function ForgotPasswordPage() {
         Reset your password.
       </h2>
       <p className="mt-4 text-sm leading-7 text-white/42">
-        The final reset email action will be connected during the Supabase
-        authentication setup. The page design is ready now.
+        Enter the email address connected to your GridSpell workspace.
       </p>
 
-      <label className="mt-8 grid gap-2 text-sm text-white/58">
-        Account email
-        <span className="relative block">
-          <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/26" />
-          <input
-            type="email"
-            disabled
-            className="form-field cursor-not-allowed pl-11 opacity-55"
-            placeholder="you@company.com"
-          />
-        </span>
-      </label>
+      {params.error ? (
+        <p className="mt-6 rounded-2xl border border-[#ff5f6d]/25 bg-[#ff5f6d]/8 px-4 py-3 text-sm text-[#ff9aa3]">
+          {params.error}
+        </p>
+      ) : null}
 
-      <ActionLink href="/login" className="mt-6 w-full">
+      {params.message ? (
+        <p className="mt-6 rounded-2xl border border-[#35d07f]/25 bg-[#35d07f]/8 px-4 py-3 text-sm text-[#7ce3aa]">
+          {params.message}
+        </p>
+      ) : null}
+
+      <form action={forgotPasswordAction} className="mt-8 grid gap-5">
+        <label className="grid gap-2 text-sm text-white/58">
+          Account email
+          <span className="relative block">
+            <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/26" />
+            <input
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="form-field pl-11"
+              placeholder="you@company.com"
+            />
+          </span>
+        </label>
+        <ActionButton type="submit" className="w-full">
+          Send password reset link
+        </ActionButton>
+      </form>
+
+      <Link
+        href="/login"
+        className="mt-7 inline-flex text-sm text-white/38 transition-colors hover:text-white"
+      >
         Return to login
-      </ActionLink>
-
-      <p className="mt-6 text-center text-xs leading-6 text-white/28">
-        Need direct help? Contact GridSpell from the public contact page.
-      </p>
+      </Link>
     </div>
   );
 }

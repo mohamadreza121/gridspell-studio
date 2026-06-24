@@ -8,7 +8,16 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "check": "npm run type-check && npm run lint && npm run build"
+    "check": "npm run type-check && npm run lint && npm run build",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status",
+    "supabase:reset": "supabase db reset",
+    "supabase:test": "supabase test db",
+    "supabase:types": "supabase gen types typescript --local > src/types/database.generated.ts",
+    "auth:seed": "node --env-file=.env.local scripts/seed-auth-users.mjs",
+    "auth:bootstrap-owner": "node --env-file=.env.local scripts/bootstrap-owner.mjs",
+    "portal:seed": "node --env-file=.env.local scripts/seed-portal-demo.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.0",
@@ -32,6 +41,7 @@
     "eslint-config-next": "16.2.9",
     "prettier": "3.8.4",
     "tailwindcss": "4.3.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "supabase": "2.107.0"
   }
 }
