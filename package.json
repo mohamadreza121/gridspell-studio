@@ -17,7 +17,9 @@
     "supabase:types": "supabase gen types typescript --local > src/types/database.generated.ts",
     "auth:seed": "node --env-file=.env.local scripts/seed-auth-users.mjs",
     "auth:bootstrap-owner": "node --env-file=.env.local scripts/bootstrap-owner.mjs",
-    "portal:seed": "node --env-file=.env.local scripts/seed-portal-demo.mjs"
+    "portal:seed": "node --env-file=.env.local scripts/seed-portal-demo.mjs",
+    "email:test": "node --env-file=.env.local scripts/send-test-email.mjs",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe/webhook"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.0",
@@ -29,6 +31,8 @@
     "next": "16.2.9",
     "react": "19.2.7",
     "react-dom": "19.2.7",
+    "resend": "^6.14.0",
+    "stripe": "^22.2.3",
     "tailwind-merge": "3.6.0",
     "zod": "4.4.3"
   },
@@ -40,8 +44,8 @@
     "eslint": "9.39.2",
     "eslint-config-next": "16.2.9",
     "prettier": "3.8.4",
+    "supabase": "2.107.0",
     "tailwindcss": "4.3.1",
-    "typescript": "5.9.3",
-    "supabase": "2.107.0"
+    "typescript": "5.9.3"
   }
 }

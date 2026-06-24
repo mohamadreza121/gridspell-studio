@@ -4,6 +4,8 @@ import { randomUUID } from "node:crypto";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getSiteUrl } from "@/lib/env";
+import { sendTransactionalEmail } from "@/lib/email/send";
+import { clientInvitationTemplate } from "@/lib/email/templates";
 import { requireStaff } from "@/lib/supabase/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -83,26 +85,56 @@ export async function inviteClientAction(formData: FormData) {
     redirectWith("error", invitationError?.message ?? "Could not create the invitation.");
   }
 
-  const { data: invitedUser, error: authError } = await admin.auth.admin.inviteUserByEmail(
+  const redirectTo = `${getSiteUrl()}/auth/callback?next=/accept-invite`;
+  const { data: inviteLink, error: authError } = await admin.auth.admin.generateLink({
+    type: "invite",
     email,
-    {
-      redirectTo: `${getSiteUrl()}/auth/callback?next=/accept-invite`,
+    options: {
+      redirectTo,
       data: {
         full_name: parsed.data.fullName,
         invitation_id: invitation.id
       }
     }
-  );
+  });
 
-  if (authError || !invitedUser.user) {
+  const invitedUser = inviteLink.user;
+  const actionLink = inviteLink.properties?.action_link;
+
+  if (authError || !invitedUser || !actionLink) {
     await admin.from("client_invitations").delete().eq("id", invitation.id);
     await admin.from("organizations").delete().eq("id", organization.id);
-    redirectWith("error", authError?.message ?? "Supabase could not send the invitation.");
+    redirectWith("error", authError?.message ?? "Supabase could not create the invitation link.");
+  }
+
+  try {
+    await sendTransactionalEmail({
+      to: email,
+      template: clientInvitationTemplate({
+        fullName: parsed.data.fullName,
+        organizationName: parsed.data.organizationName,
+        invitedByName: viewer.fullName,
+        inviteUrl: actionLink
+      }),
+      metadata: {
+        invitationId: invitation.id,
+        organizationId: organization.id,
+        authUserId: invitedUser.id
+      }
+    });
+  } catch (emailError) {
+    await admin.auth.admin.deleteUser(invitedUser.id).catch(() => undefined);
+    await admin.from("client_invitations").delete().eq("id", invitation.id);
+    await admin.from("organizations").delete().eq("id", organization.id);
+    redirectWith(
+      "error",
+      emailError instanceof Error ? emailError.message : "Could not send the invitation email."
+    );
   }
 
   await admin
     .from("client_invitations")
-    .update({ auth_user_id: invitedUser.user.id })
+    .update({ auth_user_id: invitedUser.id })
     .eq("id", invitation.id);
 
   await admin.from("activity_logs").insert({

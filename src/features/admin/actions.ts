@@ -4,7 +4,16 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireStaff } from "@/lib/supabase/auth";
+import { getSiteUrl } from "@/lib/env";
+import { getOrganizationRecipients } from "@/lib/email/recipients";
+import { sendTransactionalEmail } from "@/lib/email/send";
+import {
+  approvalRequestTemplate,
+  launchCompleteTemplate,
+  milestoneReadyTemplate
+} from "@/lib/email/templates";
 
 const uuidSchema = z.string().uuid();
 const slugSchema = z
@@ -248,6 +257,15 @@ export async function updateProjectAction(formData: FormData) {
   }
 
   const supabase = await createClient();
+  const { data: existingProject, error: existingError } = await supabase
+    .from("projects")
+    .select("id, organization_id, name, status, organizations(website)")
+    .eq("id", projectId.data)
+    .maybeSingle();
+  if (existingError || !existingProject) {
+    redirect(withMessage(returnTo, "error", existingError?.message ?? "Project not found."));
+  }
+
   const { error } = await supabase
     .from("projects")
     .update({
@@ -268,11 +286,58 @@ export async function updateProjectAction(formData: FormData) {
     entityType: "project",
     entityId: projectId.data,
     projectId: projectId.data,
+    organizationId: existingProject.organization_id,
     metadata: { status: status.data, progress: progress.data }
   });
 
+  if (
+    status.data === "launched" &&
+    existingProject.status !== "launched" &&
+    existingProject.organization_id
+  ) {
+    const admin = createAdminClient();
+    const recipients = await getOrganizationRecipients(
+      admin,
+      existingProject.organization_id
+    );
+    const organization = Array.isArray(existingProject.organizations)
+      ? existingProject.organizations[0]
+      : existingProject.organizations;
+    const portalUrl = `${getSiteUrl()}/portal/projects/${slug}`;
+
+    await Promise.allSettled(
+      recipients.map((recipient) =>
+        sendTransactionalEmail({
+          to: recipient.email,
+          template: launchCompleteTemplate({
+            clientName: recipient.fullName,
+            projectName: existingProject.name,
+            websiteUrl: organization?.website ?? null,
+            portalUrl
+          }),
+          metadata: {
+            organizationId: existingProject.organization_id,
+            projectId: projectId.data
+          }
+        })
+      )
+    );
+
+    if (recipients.length) {
+      await admin.from("notifications").insert(
+        recipients.map((recipient) => ({
+          user_id: recipient.userId,
+          title: `${existingProject.name} is live`,
+          body: "Your GridSpell project has officially launched.",
+          href: `/portal/projects/${slug}`
+        }))
+      );
+    }
+  }
+
   revalidatePath(returnTo);
   revalidatePath("/admin/projects");
+  revalidatePath("/portal");
   redirect(withMessage(returnTo, "message", "Project updated."));
 }
 
@@ -358,6 +423,195 @@ export async function addMilestoneAction(formData: FormData) {
   });
   revalidatePath(returnTo);
   redirect(withMessage(returnTo, "message", "Milestone added."));
+}
+
+export async function markMilestoneReadyAction(formData: FormData) {
+  const viewer = await requireStaff();
+  const projectId = uuidSchema.safeParse(formString(formData, "projectId"));
+  const milestoneId = uuidSchema.safeParse(formString(formData, "milestoneId"));
+  const slug = formString(formData, "slug");
+  const returnTo = `/admin/projects/${slug}`;
+
+  if (!projectId.success || !milestoneId.success) {
+    redirect(withMessage(returnTo, "error", "The milestone update was invalid."));
+  }
+
+  const supabase = await createClient();
+  const { data: milestone, error: milestoneError } = await supabase
+    .from("milestones")
+    .select("id, title, due_date, project_id, projects(name, organization_id)")
+    .eq("id", milestoneId.data)
+    .eq("project_id", projectId.data)
+    .maybeSingle();
+
+  if (milestoneError || !milestone) {
+    redirect(withMessage(returnTo, "error", milestoneError?.message ?? "Milestone not found."));
+  }
+
+  const project = Array.isArray(milestone.projects)
+    ? milestone.projects[0]
+    : milestone.projects;
+  if (!project?.organization_id) {
+    redirect(withMessage(returnTo, "error", "This project does not have a client organization."));
+  }
+
+  const { error } = await supabase
+    .from("milestones")
+    .update({ status: "in_review" })
+    .eq("id", milestone.id);
+  if (error) redirect(withMessage(returnTo, "error", error.message));
+
+  const admin = createAdminClient();
+  const recipients = await getOrganizationRecipients(admin, project.organization_id);
+  const portalUrl = `${getSiteUrl()}/portal/projects/${slug}`;
+  await Promise.allSettled(
+    recipients.map((recipient) =>
+      sendTransactionalEmail({
+        to: recipient.email,
+        template: milestoneReadyTemplate({
+          clientName: recipient.fullName,
+          projectName: project.name,
+          milestoneTitle: milestone.title,
+          dueDate: milestone.due_date,
+          portalUrl
+        }),
+        metadata: {
+          organizationId: project.organization_id,
+          projectId: projectId.data,
+          milestoneId: milestone.id
+        }
+      })
+    )
+  );
+
+  if (recipients.length) {
+    await admin.from("notifications").insert(
+      recipients.map((recipient) => ({
+        user_id: recipient.userId,
+        title: `${milestone.title} is ready`,
+        body: `${project.name} has a milestone ready for review.`,
+        href: `/portal/projects/${slug}`
+      }))
+    );
+  }
+
+  await logActivity({
+    actorId: viewer.userId,
+    action: "milestone_ready",
+    entityType: "milestone",
+    entityId: milestone.id,
+    projectId: projectId.data,
+    organizationId: project.organization_id
+  });
+
+  revalidatePath(returnTo);
+  revalidatePath(`/portal/projects/${slug}`);
+  redirect(withMessage(returnTo, "message", "Milestone marked ready and clients notified."));
+}
+
+export async function requestApprovalAction(formData: FormData) {
+  const viewer = await requireStaff();
+  const projectId = uuidSchema.safeParse(formString(formData, "projectId"));
+  const milestoneId = uuidSchema.safeParse(formString(formData, "milestoneId"));
+  const slug = formString(formData, "slug");
+  const returnTo = `/admin/projects/${slug}`;
+
+  if (!projectId.success || !milestoneId.success) {
+    redirect(withMessage(returnTo, "error", "The approval request was invalid."));
+  }
+
+  const supabase = await createClient();
+  const { data: milestone, error: milestoneError } = await supabase
+    .from("milestones")
+    .select("id, title, description, project_id, projects(name, organization_id)")
+    .eq("id", milestoneId.data)
+    .eq("project_id", projectId.data)
+    .maybeSingle();
+  if (milestoneError || !milestone) {
+    redirect(withMessage(returnTo, "error", milestoneError?.message ?? "Milestone not found."));
+  }
+
+  const project = Array.isArray(milestone.projects)
+    ? milestone.projects[0]
+    : milestone.projects;
+  if (!project?.organization_id) {
+    redirect(withMessage(returnTo, "error", "This project does not have a client organization."));
+  }
+
+  const { data: existing } = await supabase
+    .from("approvals")
+    .select("id")
+    .eq("milestone_id", milestone.id)
+    .eq("status", "in_review")
+    .maybeSingle();
+  if (existing) {
+    redirect(withMessage(returnTo, "error", "A pending approval already exists for this milestone."));
+  }
+
+  const { data: approval, error } = await supabase
+    .from("approvals")
+    .insert({
+      project_id: projectId.data,
+      milestone_id: milestone.id,
+      title: milestone.title,
+      description: milestone.description,
+      status: "in_review",
+      requested_by: viewer.userId
+    })
+    .select("id")
+    .single();
+  if (error || !approval) {
+    redirect(withMessage(returnTo, "error", error?.message ?? "Could not create approval request."));
+  }
+
+  const admin = createAdminClient();
+  const recipients = await getOrganizationRecipients(admin, project.organization_id);
+  const portalUrl = `${getSiteUrl()}/portal/approvals`;
+  await Promise.allSettled(
+    recipients.map((recipient) =>
+      sendTransactionalEmail({
+        to: recipient.email,
+        template: approvalRequestTemplate({
+          clientName: recipient.fullName,
+          projectName: project.name,
+          approvalTitle: milestone.title,
+          description: milestone.description,
+          portalUrl
+        }),
+        metadata: {
+          organizationId: project.organization_id,
+          projectId: projectId.data,
+          milestoneId: milestone.id,
+          approvalId: approval.id
+        }
+      })
+    )
+  );
+
+  if (recipients.length) {
+    await admin.from("notifications").insert(
+      recipients.map((recipient) => ({
+        user_id: recipient.userId,
+        title: "Approval requested",
+        body: `${project.name}: ${milestone.title}`,
+        href: "/portal/approvals"
+      }))
+    );
+  }
+
+  await logActivity({
+    actorId: viewer.userId,
+    action: "approval_requested",
+    entityType: "approval",
+    entityId: approval.id,
+    projectId: projectId.data,
+    organizationId: project.organization_id,
+    metadata: { milestoneId: milestone.id }
+  });
+
+  revalidatePath(returnTo);
+  revalidatePath("/portal/approvals");
+  redirect(withMessage(returnTo, "message", "Approval request sent."));
 }
 
 export async function addTaskAction(formData: FormData) {
@@ -703,7 +957,8 @@ export async function createInvoiceAction(formData: FormData) {
       currency: formString(formData, "currency") || "CAD",
       issued_at: optionalString(formData, "issuedAt"),
       due_at: optionalString(formData, "dueAt"),
-      notes: optionalString(formData, "notes")
+      notes: optionalString(formData, "notes"),
+      payment_description: optionalString(formData, "paymentDescription")
     })
     .select("id")
     .single();

@@ -366,6 +366,45 @@ export type Database = {
           },
         ]
       }
+      email_deliveries: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          metadata: Json
+          provider_message_id: string | null
+          recipient: string
+          sent_at: string | null
+          status: string
+          subject: string
+          template: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json
+          provider_message_id?: string | null
+          recipient: string
+          sent_at?: string | null
+          status?: string
+          subject: string
+          template: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json
+          provider_message_id?: string | null
+          recipient?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          template?: string
+        }
+        Relationships: []
+      }
       files: {
         Row: {
           bucket: string
@@ -437,55 +476,73 @@ export type Database = {
         Row: {
           amount_due: number
           amount_paid: number
+          checkout_expires_at: string | null
+          checkout_url: string | null
           created_at: string
           currency: string
           due_at: string | null
           id: string
           invoice_number: string
           issued_at: string | null
+          last_payment_error: string | null
           notes: string | null
           organization_id: string | null
           paid_at: string | null
+          payment_description: string | null
           project_id: string | null
           proposal_id: string | null
           status: Database["public"]["Enums"]["invoice_status"]
+          stripe_checkout_session_id: string | null
           stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
           updated_at: string
         }
         Insert: {
           amount_due?: number
           amount_paid?: number
+          checkout_expires_at?: string | null
+          checkout_url?: string | null
           created_at?: string
           currency?: string
           due_at?: string | null
           id?: string
           invoice_number: string
           issued_at?: string | null
+          last_payment_error?: string | null
           notes?: string | null
           organization_id?: string | null
           paid_at?: string | null
+          payment_description?: string | null
           project_id?: string | null
           proposal_id?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
+          stripe_checkout_session_id?: string | null
           stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
           updated_at?: string
         }
         Update: {
           amount_due?: number
           amount_paid?: number
+          checkout_expires_at?: string | null
+          checkout_url?: string | null
           created_at?: string
           currency?: string
           due_at?: string | null
           id?: string
           invoice_number?: string
           issued_at?: string | null
+          last_payment_error?: string | null
           notes?: string | null
           organization_id?: string | null
           paid_at?: string | null
+          payment_description?: string | null
           project_id?: string | null
           proposal_id?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
+          stripe_checkout_session_id?: string | null
           stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -817,29 +874,35 @@ export type Database = {
       }
       organizations: {
         Row: {
+          billing_email: string | null
           created_at: string
           id: string
           name: string
           primary_contact_id: string | null
           slug: string
+          stripe_customer_id: string | null
           updated_at: string
           website: string | null
         }
         Insert: {
+          billing_email?: string | null
           created_at?: string
           id?: string
           name: string
           primary_contact_id?: string | null
           slug: string
+          stripe_customer_id?: string | null
           updated_at?: string
           website?: string | null
         }
         Update: {
+          billing_email?: string | null
           created_at?: string
           id?: string
           name?: string
           primary_contact_id?: string | null
           slug?: string
+          stripe_customer_id?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -856,8 +919,10 @@ export type Database = {
       payments: {
         Row: {
           amount: number
+          amount_refunded: number
           created_at: string
           currency: string
+          failure_message: string | null
           id: string
           invoice_id: string | null
           paid_at: string | null
@@ -865,11 +930,17 @@ export type Database = {
           provider: string
           provider_payment_id: string | null
           status: string
+          stripe_charge_id: string | null
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
         }
         Insert: {
           amount: number
+          amount_refunded?: number
           created_at?: string
           currency?: string
+          failure_message?: string | null
           id?: string
           invoice_id?: string | null
           paid_at?: string | null
@@ -877,11 +948,17 @@ export type Database = {
           provider?: string
           provider_payment_id?: string | null
           status: string
+          stripe_charge_id?: string | null
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
         }
         Update: {
           amount?: number
+          amount_refunded?: number
           created_at?: string
           currency?: string
+          failure_message?: string | null
           id?: string
           invoice_id?: string | null
           paid_at?: string | null
@@ -889,6 +966,10 @@ export type Database = {
           provider?: string
           provider_payment_id?: string | null
           status?: string
+          stripe_charge_id?: string | null
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1427,6 +1508,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webhook_events: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          provider: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          provider: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          provider?: string
+          status?: string
+        }
+        Relationships: []
       }
     }
     Views: {

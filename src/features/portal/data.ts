@@ -330,7 +330,7 @@ export async function getPortalBilling() {
   const { data: invoices, error } = await supabase
     .from("invoices")
     .select(
-      "id, project_id, proposal_id, invoice_number, status, amount_due, amount_paid, currency, issued_at, due_at, paid_at, created_at"
+      "id, organization_id, project_id, proposal_id, invoice_number, status, amount_due, amount_paid, currency, issued_at, due_at, paid_at, payment_description, last_payment_error, created_at"
     )
     .order("created_at", { ascending: false });
 
