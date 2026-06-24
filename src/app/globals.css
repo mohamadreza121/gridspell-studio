@@ -1,0 +1,340 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Inter, "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Segoe UI Variable Display", Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-background: #07080c;
+  --color-surface: #10131b;
+  --color-primary: #7c5cff;
+  --color-accent: #29d6ff;
+}
+
+:root {
+  color-scheme: dark;
+  --background: #07080c;
+  --background-soft: #0b0d13;
+  --surface: #10131b;
+  --surface-raised: #161a24;
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #f6f7fb;
+  --muted: #a8adbd;
+  --primary: #7c5cff;
+  --accent: #29d6ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(124, 92, 255, 0.08), transparent 36rem),
+    linear-gradient(180deg, #07080c 0%, #090b10 45%, #07080c 100%);
+  color: var(--text);
+  font-family: Inter, "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(124, 92, 255, 0.42);
+  color: #ffffff;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+select {
+  color-scheme: dark;
+}
+
+.page-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(to bottom, #000000, transparent 92%);
+}
+
+.font-display {
+  font-family: "Segoe UI Variable Display", Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    rgba(11, 13, 19, 0.88);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(22px);
+}
+
+.form-field {
+  min-height: 3.35rem;
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 0.85rem 1rem;
+  color: #f6f7fb;
+  font-size: 0.875rem;
+  outline: none;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.form-field::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.form-field:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.form-field:focus {
+  border-color: rgba(139, 233, 255, 0.68);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.12);
+}
+
+.form-field:-webkit-autofill,
+.form-field:-webkit-autofill:hover,
+.form-field:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f6f7fb;
+  -webkit-box-shadow: 0 0 0 1000px #10131b inset;
+  transition: background-color 9999s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+.home-experience {
+  position: relative;
+  width: 100%;
+  background: #07080c;
+}
+
+.home-presentation-only {
+  display: none;
+}
+
+.home-static-only {
+  display: block;
+}
+
+.home-shared-g,
+.home-shared-g-outline {
+  backface-visibility: hidden;
+  will-change: transform;
+  filter: drop-shadow(0 42px 120px rgba(0, 0, 0, 0.28));
+}
+
+.home-shared-g svg,
+.home-shared-g-outline svg {
+  overflow: visible;
+}
+
+.home-shared-g {
+  opacity: 0.96;
+}
+
+.home-shared-g-outline {
+  mix-blend-mode: screen;
+}
+
+.home-static-scene {
+  position: relative;
+  min-height: auto;
+  padding-block: 5.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.075);
+  background:
+    radial-gradient(circle at 76% 10%, rgba(124, 92, 255, 0.07), transparent 28rem),
+    rgba(7, 8, 12, 0.96);
+}
+
+.home-static-scene > div {
+  min-height: auto;
+}
+
+/*
+ * The desktop homepage is always the pinned single-scene presentation.
+ * Do not gate it behind viewport height or the operating-system motion setting:
+ * those checks caused desktop visitors to receive the ordinary stacked fallback.
+ */
+@media (min-width: 900px) {
+  .home-presentation-only {
+    display: block;
+  }
+
+  .home-static-only {
+    display: none;
+  }
+
+  .home-presentation-track {
+    position: relative;
+    width: 100%;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
+  }
+
+  .home-presentation-track > .sticky {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    isolation: isolate;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
+  }
+}
+
+@media (max-width: 899px) {
+  .home-static-scene {
+    padding-block: 4.75rem;
+  }
+
+  .home-static-scene > div {
+    min-height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-shared-g,
+  .home-shared-g-outline {
+    transform: none !important;
+  }
+}
+
+/* Trionn-inspired selected-work horizontal scroll scene */
+.work-carousel-viewport {
+  position: relative;
+  isolation: isolate;
+}
+
+.work-carousel-strip {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.work-carousel-panel {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.work-carousel-intro-panel {
+  width: 44vw;
+  min-width: 620px;
+  padding: 2rem clamp(2.5rem, 5vw, 6rem);
+}
+
+.work-carousel-project-panel {
+  width: 56vw;
+  min-width: 760px;
+  padding: 2rem clamp(2.5rem, 4vw, 5rem);
+}
+
+.work-carousel-outro-panel {
+  width: 48vw;
+  min-width: 660px;
+  justify-content: center;
+  padding: 2rem clamp(3rem, 5vw, 6rem);
+}
+
+.work-carousel-divider {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.1) 14%,
+    rgba(255, 255, 255, 0.1) 86%,
+    transparent
+  );
+}
+
+.work-carousel-card {
+  width: 100%;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 1600px) {
+  .work-carousel-intro-panel {
+    width: 42vw;
+  }
+
+  .work-carousel-project-panel {
+    width: 52vw;
+  }
+
+  .work-carousel-outro-panel {
+    width: 44vw;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+  .work-carousel-intro-panel {
+    width: 48vw;
+    min-width: 520px;
+    padding-inline: 2.5rem;
+  }
+
+  .work-carousel-project-panel {
+    width: 68vw;
+    min-width: 660px;
+    padding-inline: 2.25rem;
+  }
+
+  .work-carousel-outro-panel {
+    width: 56vw;
+    min-width: 560px;
+  }
+}

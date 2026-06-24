@@ -1,0 +1,21 @@
+{
+  "name": "GridSpell Studio",
+  "short_name": "GridSpell",
+  "description": "Premium web design, development, dashboards, and digital systems.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07080C",
+  "theme_color": "#7C5CFF",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

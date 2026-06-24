@@ -1,0 +1,1 @@
+export default function Page(){return <section><p className="text-xs uppercase tracking-[.34em] text-[#8be9ff]">Admin</p><h1 className="mt-4 font-display text-4xl font-semibold">Leads</h1><div className="mt-10 min-h-[400px] rounded-[1.5rem] border border-dashed border-white/[.12] bg-white/[.02] p-8 text-white/36">Leads management placeholder.</div></section>}

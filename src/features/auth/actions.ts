@@ -1,0 +1,5 @@
+"use server";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+export async function signInAction(fd:FormData){const email=String(fd.get("email")??"").trim();const password=String(fd.get("password")??"");if(!email||!password)redirect("/login?error=Email%20and%20password%20are%20required");const s=await createClient();const {error}=await s.auth.signInWithPassword({email,password});if(error)redirect(`/login?error=${encodeURIComponent(error.message)}`);redirect("/portal");}
+export async function signUpAction(fd:FormData){if(process.env.ALLOW_PUBLIC_SIGNUPS!=="true")redirect("/sign-up?error=Registration%20is%20currently%20invitation-only");const email=String(fd.get("email")??"").trim();const password=String(fd.get("password")??"");const fullName=String(fd.get("fullName")??"").trim();const s=await createClient();const {error}=await s.auth.signUp({email,password,options:{data:{full_name:fullName}}});if(error)redirect(`/sign-up?error=${encodeURIComponent(error.message)}`);redirect("/login?message=Check%20your%20email");}

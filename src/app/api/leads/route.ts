@@ -1,0 +1,4 @@
+import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { leadSchema } from "@/validations/lead";
+export async function POST(request:Request){try{const parsed=leadSchema.safeParse(await request.json());if(!parsed.success)return NextResponse.json({error:"Please complete every required field."},{status:400});const s=createAdminClient();const d=parsed.data;const {error}=await s.from("leads").insert({name:d.name,email:d.email,company:d.company||null,phone:d.phone||null,project_type:d.projectType,budget_range:d.budget,timeline:d.timeline||null,message:d.message,source:"website"});if(error){console.error(error);return NextResponse.json({error:"The inquiry could not be saved. Check Supabase setup."},{status:500});}return NextResponse.json({ok:true},{status:201});}catch(error){console.error(error);return NextResponse.json({error:"The form is unavailable until environment variables are configured."},{status:503});}}

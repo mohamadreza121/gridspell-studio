@@ -1,0 +1,2 @@
+import { z } from "zod";
+export const leadSchema=z.object({name:z.string().trim().min(2).max(100),email:z.email().max(180),company:z.string().trim().max(140).optional().default(""),phone:z.string().trim().max(40).optional().default(""),projectType:z.string().trim().min(2).max(100),budget:z.string().trim().min(2).max(100),timeline:z.string().trim().max(100).optional().default(""),message:z.string().trim().min(20).max(4000)});
