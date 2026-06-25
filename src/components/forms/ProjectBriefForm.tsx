@@ -129,7 +129,7 @@ export function ProjectBriefForm() {
                   name="name"
                   required
                   autoComplete="name"
-                  className="form-field pl-11"
+                  className="form-field form-field-with-icon"
                   placeholder="Full name"
                 />
               </span>
@@ -146,7 +146,7 @@ export function ProjectBriefForm() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="form-field pl-11"
+                  className="form-field form-field-with-icon"
                   placeholder="you@company.com"
                 />
               </span>
@@ -161,7 +161,7 @@ export function ProjectBriefForm() {
                 <input
                   name="company"
                   autoComplete="organization"
-                  className="form-field pl-11"
+                  className="form-field form-field-with-icon"
                   placeholder="Company name"
                 />
               </span>
@@ -176,7 +176,7 @@ export function ProjectBriefForm() {
                 <input
                   name="phone"
                   autoComplete="tel"
-                  className="form-field pl-11"
+                  className="form-field form-field-with-icon"
                   placeholder="Optional"
                 />
               </span>
@@ -195,7 +195,7 @@ export function ProjectBriefForm() {
                 <FieldIcon>
                   <WandSparkles className="h-4 w-4" />
                 </FieldIcon>
-                <select name="projectType" required defaultValue="" className="form-field pl-11">
+                <select name="projectType" required defaultValue="" className="form-field form-field-with-icon">
                   <option value="" disabled>
                     Select project type
                   </option>
@@ -212,7 +212,7 @@ export function ProjectBriefForm() {
                 <FieldIcon>
                   <CircleDollarSign className="h-4 w-4" />
                 </FieldIcon>
-                <select name="budget" required defaultValue="" className="form-field pl-11">
+                <select name="budget" required defaultValue="" className="form-field form-field-with-icon">
                   <option value="" disabled>
                     Select budget range
                   </option>
@@ -232,7 +232,7 @@ export function ProjectBriefForm() {
               </FieldIcon>
               <input
                 name="timeline"
-                className="form-field pl-11"
+                className="form-field form-field-with-icon"
                 placeholder="Example: launch within 8–10 weeks"
               />
             </span>
@@ -252,7 +252,7 @@ export function ProjectBriefForm() {
                 required
                 minLength={20}
                 rows={8}
-                className="form-field min-h-48 resize-y py-4 pl-11"
+                className="form-field form-field-with-icon min-h-48 resize-y py-4"
                 placeholder="What is not working now? What should the new website or platform accomplish? Mention important features, integrations, or deadlines."
               />
             </span>

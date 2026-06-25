@@ -201,10 +201,26 @@ function SceneFrame({
   const opacity = useTransform(progress, timeline.input, timeline.opacity);
   const x = useTransform(progress, timeline.input, values.map((value) => value.x));
   const y = useTransform(progress, timeline.input, values.map((value) => value.y));
-  const scale = useTransform(progress, timeline.input, values.map((value) => value.scale));
-  const rotateX = useTransform(progress, timeline.input, values.map((value) => value.rotateX));
-  const rotateY = useTransform(progress, timeline.input, values.map((value) => value.rotateY));
-  const rotateZ = useTransform(progress, timeline.input, values.map((value) => value.rotateZ));
+  const scale = useTransform(
+    progress,
+    timeline.input,
+    values.map((value) => value.scale)
+  );
+  const rotateX = useTransform(
+    progress,
+    timeline.input,
+    values.map((value) => value.rotateX)
+  );
+  const rotateY = useTransform(
+    progress,
+    timeline.input,
+    values.map((value) => value.rotateY)
+  );
+  const rotateZ = useTransform(
+    progress,
+    timeline.input,
+    values.map((value) => value.rotateZ)
+  );
   const filter = useTransform(
     progress,
     timeline.input,
@@ -214,7 +230,7 @@ function SceneFrame({
   return (
     <motion.section
       className={cn(
-        "absolute inset-0 flex items-center overflow-clip",
+        "absolute inset-0 flex items-center overflow-clip pt-24",
         active ? "pointer-events-auto" : "pointer-events-none",
         className
       )}
@@ -369,31 +385,50 @@ function SceneHeading({
   );
 }
 
-function HeroScene() {
+function HeroScene({
+  staticMode = false
+}: {
+  staticMode?: boolean;
+}) {
   return (
-    <Container className="flex h-full flex-col justify-center pb-7 pt-5">
-      <h1 className="max-w-[11.5ch] text-balance font-display text-[clamp(4.2rem,8.4vw,10rem)] font-semibold leading-[0.78] tracking-[-0.078em] text-white">
+    <Container
+      className={cn(
+        "flex flex-col justify-center pb-8 pt-24 sm:pt-28",
+        staticMode ? "min-h-svh" : "h-full"
+      )}
+    >
+      <h1 className="max-w-[11.5ch] text-balance font-display text-[clamp(3.35rem,8.4vw,10rem)] font-semibold leading-[0.78] tracking-[-0.078em] text-white">
         Built on structure.
         <span className="block bg-gradient-to-r from-[#a99aff] via-[#7eb3ff] to-[#8be9ff] bg-clip-text text-transparent">
           Designed to captivate.
         </span>
       </h1>
+
       <div className="mt-8 grid w-full max-w-[1500px] gap-7 xl:grid-cols-[minmax(0,760px)_auto] xl:items-end">
         <p className="max-w-3xl text-lg leading-8 text-white/48 sm:text-xl sm:leading-9">
           GridSpell creates premium websites, dashboards, and digital systems that
           make ambitious businesses feel established, valuable, and ready to grow.
         </p>
+
         <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
           <ActionLink href="/start-project" className="min-h-14 px-7">
-            Start a project <ArrowUpRight className="h-4 w-4" />
+            Start a project
+            <ArrowUpRight className="h-4 w-4" />
           </ActionLink>
-          <ActionLink href="/work" className="min-h-14 px-7">
-            Explore selected work <ArrowUpRight className="h-4 w-4" />
+
+          <ActionLink
+            href="/work"
+            className="min-h-14 border-white/[0.12] bg-none bg-white/[0.035] px-7 shadow-none hover:bg-white/[0.07]"
+          >
+            Explore selected work
+            <ArrowUpRight className="h-4 w-4" />
           </ActionLink>
         </div>
       </div>
+
       <div className="mt-auto flex items-center gap-3 pt-8 text-[0.64rem] uppercase tracking-[0.34em] text-white/24">
-        <ArrowDown className="h-4 w-4" /> Scroll to change scene
+        <ArrowDown className="h-4 w-4" />
+        Scroll to change scene
       </div>
     </Container>
   );
@@ -656,7 +691,7 @@ function DesktopPresentation() {
       className="home-presentation-track relative"
       style={{ height: `${TOTAL_SCROLL_UNITS * 100}dvh` }}
     >
-      <div className="sticky top-20 h-[calc(100dvh-5rem)] overflow-clip bg-[#07080c]">
+      <div className="sticky top-0 h-dvh overflow-clip bg-[#07080c]">
         <SharedBackground progress={progress} />
         <SceneRail active={activeScene} onSelect={scrollToScene} />
 
@@ -690,8 +725,8 @@ function StaticHomepage() {
   return (
     <div className="home-static-layout relative overflow-hidden bg-[#07080c]">
       <div className="page-grid pointer-events-none absolute inset-0 opacity-40" />
-      <section className="relative min-h-[calc(100svh-5rem)] pt-20">
-        <HeroScene />
+      <section className="relative">
+        <HeroScene staticMode />
       </section>
       <section className="home-static-scene">
         <StaticWorkGallery />

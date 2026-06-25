@@ -5,8 +5,11 @@ export type FeaturedProject = {
   description: string;
   result: string;
   accent: "violet" | "cyan" | "blue";
+
+  previewVideo?: string;
   previewImage?: string;
   previewAlt?: string;
+
   liveUrl?: string;
 };
 
@@ -17,11 +20,15 @@ export const featuredProjects: FeaturedProject[] = [
     category: "Business website · Lead generation",
     description:
       "A complete digital rebuild for a Toronto-area contractor, designed to clarify services, showcase work, and generate qualified estimate requests.",
-    result: "Modern service architecture and production-ready lead workflow",
+    result:
+      "Modern service architecture and a production-ready lead workflow",
     accent: "violet",
+
+    previewVideo: "/videos/work/desa-foam-insulation-hero.mp4",
     previewImage: "/images/work/desa-foam-insulation-home.webp",
     previewAlt: "DESA Foam Insulation homepage preview",
-    liveUrl: "https://www.desafoaminsulation.com/"
+
+    liveUrl: "https://desafoaminsulation.com/"
   },
   {
     slug: "pure-timepieces",
@@ -29,18 +36,28 @@ export const featuredProjects: FeaturedProject[] = [
     category: "Luxury commerce · Editorial experience",
     description:
       "A dark, cinematic experience for a private watch business with curated inventory, authentication storytelling, and high-trust inquiry flows.",
-    result: "Luxury positioning with a product-led browsing experience",
-    accent: "cyan"
+    result:
+      "Luxury positioning with a product-led browsing experience",
+    accent: "cyan",
+
+    previewVideo: "/videos/work/pure-timepieces-hero.mp4",
+    previewAlt: "Pure Timepieces homepage preview",
+
+    liveUrl: "https://pure-timepieces-redesign.vercel.app/"
   },
   {
-    slug: "gridspell-client-os",
-    title: "GridSpell Client OS",
-    category: "Portal · Dashboard · Operations",
+    slug: "network-engineering-portfolio",
+    title: "Network Engineering Portfolio",
+    category: "Personal portfolio · Interactive experience",
     description:
-      "A secure client platform for projects, milestones, approvals, files, communication, proposals, and billing.",
-    result: "One workspace replacing fragmented client communication",
+      "An interactive technical portfolio presenting network engineering experience, projects, certifications, services, and practical lab work.",
+    result:
+      "A cinematic personal brand experience built around technical credibility",
     accent: "blue",
-    previewImage: "/images/work/gridspell-home.webp",
-    previewAlt: "GridSpell homepage preview"
+
+    previewVideo: "/videos/work/network-portfolio-hero.mp4",
+    previewAlt: "Network engineering portfolio homepage preview",
+
+    liveUrl: "https://portfolio-demo1-psi.vercel.app/"
   }
 ];

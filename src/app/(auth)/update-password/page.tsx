@@ -44,7 +44,7 @@ export default async function UpdatePasswordPage({ searchParams }: Props) {
                 autoComplete={autoComplete}
                 minLength={12}
                 required
-                className="form-field pl-11"
+                className="form-field form-field-with-icon"
               />
             </span>
           </label>

@@ -47,7 +47,7 @@ export default async function ForgotPasswordPage({ searchParams }: Props) {
               type="email"
               autoComplete="email"
               required
-              className="form-field pl-11"
+              className="form-field form-field-with-icon"
               placeholder="you@company.com"
             />
           </span>

@@ -69,6 +69,29 @@ select {
   color-scheme: dark;
 }
 
+select.form-field {
+  color-scheme: dark;
+  background-color: rgba(255, 255, 255, 0.035);
+  color: #f6f7fb;
+}
+
+select.form-field:invalid {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+select.form-field:valid {
+  color: #f6f7fb;
+}
+
+select.form-field option {
+  background-color: #10131b;
+  color: #f6f7fb;
+}
+
+select.form-field option:disabled {
+  color: #747b8e;
+}
+
 .page-grid {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
@@ -110,6 +133,10 @@ select {
     border-color 180ms ease,
     background-color 180ms ease,
     box-shadow 180ms ease;
+}
+
+.form-field-with-icon {
+  padding-left: 3rem;
 }
 
 .form-field::placeholder {
@@ -191,7 +218,7 @@ body {
   position: relative;
   min-height: auto;
   padding-block: 5.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.075);
+  border-top: 1px solid rgba(255, 255, 255, 0.035);
   background:
     radial-gradient(circle at 76% 10%, rgba(124, 92, 255, 0.07), transparent 28rem),
     rgba(7, 8, 12, 0.96);
@@ -206,7 +233,7 @@ body {
  * Do not gate it behind viewport height or the operating-system motion setting:
  * those checks caused desktop visitors to receive the ordinary stacked fallback.
  */
-@media (min-width: 900px) {
+@media (min-width: 1280px) {
   .home-presentation-only {
     display: block;
   }
@@ -231,7 +258,7 @@ body {
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 1279px) {
   .home-static-scene {
     padding-block: 4.75rem;
   }
@@ -242,9 +269,20 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-presentation-only {
+    display: none !important;
+  }
+
+  .home-static-only {
+    display: block !important;
+  }
+
   .home-shared-g,
-  .home-shared-g-outline {
+  .home-shared-g-outline,
+  .work-carousel-strip,
+  .work-carousel-card {
     transform: none !important;
+    filter: none !important;
   }
 }
 

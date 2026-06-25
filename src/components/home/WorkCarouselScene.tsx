@@ -14,29 +14,60 @@ import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { featuredProjects, type FeaturedProject } from "@/config/work";
 
-function BrowserPreview({ project }: { project: FeaturedProject }) {
+function BrowserPreview({
+  project
+}: {
+  project: FeaturedProject;
+}) {
   const hostname = project.liveUrl
     ? new URL(project.liveUrl).hostname.replace(/^www\./, "")
     : `${project.slug}.gridspell.preview`;
 
   return (
-    <div className="relative h-full min-h-[360px] overflow-hidden rounded-[1.45rem] border border-white/[0.1] bg-[#080a0f] shadow-[0_35px_110px_rgba(0,0,0,.42)]">
-      <div className="flex h-11 items-center gap-3 border-b border-white/[0.08] bg-[#090b10]/95 px-4">
+    <div className="relative h-full min-h-[360px] overflow-hidden rounded-[1.45rem] border border-white/[0.13] bg-[#05060a] shadow-[0_38px_120px_rgba(0,0,0,0.5)]">
+      {/* Browser chrome */}
+      <div className="relative z-20 flex h-11 items-center gap-3 border-b border-white/[0.09] bg-[#080a0f]/95 px-4">
         <div className="flex gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
           <span className="h-2.5 w-2.5 rounded-full bg-white/13" />
           <span className="h-2.5 w-2.5 rounded-full bg-white/8" />
         </div>
-        <div className="mx-auto max-w-[72%] truncate rounded-full border border-white/[0.07] bg-white/[0.035] px-5 py-1.5 text-[0.58rem] tracking-[0.08em] text-white/32">
+
+        <div className="mx-auto max-w-[72%] truncate rounded-full border border-white/[0.08] bg-white/[0.045] px-5 py-1.5 text-[0.58rem] tracking-[0.08em] text-white/38">
           {hostname}
         </div>
       </div>
 
-      <div className="relative h-[calc(100%-2.75rem)] min-h-[316px] overflow-hidden">
-        {project.previewImage ? (
+      {/* Website preview */}
+      <div className="relative h-[calc(100%-2.75rem)] min-h-[316px] overflow-hidden bg-[#05060a]">
+        {project.previewVideo ? (
+          <video
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-top"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={project.previewImage}
+            disablePictureInPicture
+            controlsList="nodownload noplaybackrate nofullscreen"
+            aria-label={
+              project.previewAlt ??
+              `${project.title} homepage video preview`
+            }
+          >
+            <source
+              src={project.previewVideo}
+              type="video/mp4"
+            />
+          </video>
+        ) : project.previewImage ? (
           <Image
             src={project.previewImage}
-            alt={project.previewAlt ?? `${project.title} homepage preview`}
+            alt={
+              project.previewAlt ??
+              `${project.title} homepage preview`
+            }
             fill
             sizes="(min-width: 1440px) 48vw, (min-width: 900px) 54vw, 92vw"
             className="object-cover object-top"
@@ -45,11 +76,14 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
         ) : (
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(41,214,255,.16),transparent_28rem),linear-gradient(145deg,#0b0d13,#11182a)] p-8">
             <div className="h-3 w-24 rounded-full bg-white/14" />
+
             <div className="mt-12 max-w-[72%] font-display text-5xl font-semibold leading-[0.92] tracking-[-0.055em] text-white">
               {project.title}
             </div>
+
             <div className="mt-8 h-2 w-3/5 rounded-full bg-white/10" />
             <div className="mt-3 h-2 w-2/5 rounded-full bg-white/7" />
+
             <div className="absolute bottom-8 left-8 right-8 grid grid-cols-3 gap-3">
               <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
               <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
@@ -57,7 +91,15 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
             </div>
           </div>
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#06070a]/28 via-transparent to-transparent" />
+
+        {/* Much lighter overlay than before */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#05060a]/10 via-transparent to-transparent" />
+
+        {/* Subtle glass reflection */}
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.035),transparent_28%,transparent_72%,rgba(41,214,255,0.025))]" />
+
+        {/* Inner browser edge */}
+        <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]" />
       </div>
     </div>
   );
@@ -79,8 +121,8 @@ function ProjectPanel({
 
   const y = useTransform(progress, [start, center, end], [110, 0, -42]);
   const opacity = useTransform(progress, [start, center, end], [0.42, 1, 0.72]);
-  const scale = useTransform(progress, [start, center, end], [0.955, 1, 0.985]);
-  const rotateZ = useTransform(progress, [start, center, end], [1.1, 0, -0.55]);
+  const scale = useTransform(progress, [start, center, end], [0.975, 1, 0.992]);
+  const rotateZ = useTransform(progress, [start, center, end], [0.55, 0, -0.3]);
 
   return (
     <section className="work-carousel-panel work-carousel-project-panel">

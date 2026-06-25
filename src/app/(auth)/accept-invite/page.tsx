@@ -74,7 +74,7 @@ export default async function AcceptInvitePage({ searchParams }: Props) {
               autoComplete="name"
               required
               defaultValue={invitation.full_name ?? ""}
-              className="form-field pl-11"
+              className="form-field form-field-with-icon"
             />
           </span>
         </label>
@@ -93,7 +93,7 @@ export default async function AcceptInvitePage({ searchParams }: Props) {
                 autoComplete="new-password"
                 minLength={12}
                 required
-                className="form-field pl-11"
+                className="form-field form-field-with-icon"
               />
             </span>
           </label>
