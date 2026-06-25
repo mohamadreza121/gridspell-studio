@@ -1,2 +1,5 @@
-import Link from "next/link"; import { ArrowUpRight } from "lucide-react"; import { PageIntro } from "@/components/ui/PageIntro"; import { Container } from "@/components/ui/Container"; import { services } from "@/config/services";
-export default function Page(){return <><PageIntro eyebrow="Services" title="A complete digital partner." description="Strategy, interface design, production development, secure data, and ongoing improvement—organized around the business result."/><section className="py-20 lg:py-28"><Container className="grid gap-6 md:grid-cols-2">{services.map(s=><Link key={s.slug} href={`/services/${s.slug}`} className="group rounded-[2rem] border border-white/[.09] bg-white/[.025] p-8 hover:bg-white/[.045] lg:p-10"><div className="flex justify-between"><span className="font-mono text-xs text-[#8be9ff]">{s.number}</span><ArrowUpRight className="h-5 w-5 text-white/22"/></div><h2 className="mt-12 font-display text-4xl font-semibold tracking-[-.055em]">{s.title}</h2><p className="mt-6 leading-8 text-white/44">{s.summary}</p><p className="mt-8 border-t border-white/[.08] pt-6 text-sm text-white/30">Ideal for: {s.idealFor}</p></Link>)}</Container></section></>}
+import { ServicesShowcaseScene } from "@/components/services/ServicesShowcaseScene";
+
+export default function Page() {
+  return <ServicesShowcaseScene />;
+}
