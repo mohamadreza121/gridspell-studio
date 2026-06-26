@@ -296,11 +296,14 @@ function ProjectCopy({
   active: boolean;
 }) {
   const center = count <= 1 ? 0.5 : index / (count - 1);
+
   const input = [
     center - 0.31,
     center,
     center + 0.31
   ];
+
+  const compactTitle = project.title.length > 24;
 
   const opacity = useTransform(
     progress,
@@ -333,7 +336,7 @@ function ProjectCopy({
   return (
     <motion.div
       className={cn(
-        "absolute inset-0 flex flex-col justify-center",
+        "absolute inset-0 flex flex-col justify-center pb-10 pt-4",
         active
           ? "pointer-events-auto"
           : "pointer-events-none"
@@ -359,15 +362,32 @@ function ProjectCopy({
         </span>
       </div>
 
-      <h2 className="mt-7 text-balance font-display text-[clamp(3.7rem,5.7vw,7.4rem)] font-semibold leading-[0.82] tracking-[-0.075em] text-white">
+      <h2
+        className={cn(
+          "text-balance font-display font-semibold tracking-[-0.075em] text-white",
+          compactTitle
+            ? "mt-5 text-[clamp(2.8rem,4.35vw,5.6rem)] leading-[0.86]"
+            : "mt-6 text-[clamp(3.4rem,5.15vw,6.8rem)] leading-[0.82]"
+        )}
+      >
         {project.title}
       </h2>
 
-      <p className="mt-7 max-w-xl text-base leading-8 text-white/46 sm:text-lg">
+      <p
+        className={cn(
+          "max-w-xl text-base leading-8 text-white/46 sm:text-lg",
+          compactTitle ? "mt-5" : "mt-6"
+        )}
+      >
         {project.description}
       </p>
 
-      <div className="mt-8 border-l border-[#8be9ff]/30 pl-5">
+      <div
+        className={cn(
+          "border-l border-[#8be9ff]/30 pl-5",
+          compactTitle ? "mt-5" : "mt-7"
+        )}
+      >
         <p className="text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-white/26">
           Project outcome
         </p>
@@ -377,7 +397,12 @@ function ProjectCopy({
         </p>
       </div>
 
-      <div className="mt-9 flex flex-wrap gap-4">
+      <div
+        className={cn(
+          "flex flex-wrap gap-4",
+          compactTitle ? "mt-6" : "mt-8"
+        )}
+      >
         <Link
           href={`/work/${project.slug}`}
           className="group inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/[0.15] bg-white px-6 text-sm font-semibold text-[#08090d] transition duration-300 hover:-translate-y-0.5"
@@ -536,7 +561,7 @@ function DesktopRollScene() {
               </p>
             </div>
 
-            <div className="grid min-h-0 flex-1 items-center gap-12 lg:grid-cols-[1.12fr_0.88fr] xl:gap-20">
+            <div className="grid min-h-0 flex-1 items-stretch gap-12 lg:grid-cols-[1.12fr_0.88fr] xl:gap-20">
               {/* 3D project roll */}
               <div className="relative h-[min(64dvh,700px)] [perspective:1800px]">
                 <div
@@ -584,7 +609,7 @@ function DesktopRollScene() {
               </div>
 
               {/* Synchronized project copy */}
-              <div className="relative h-[min(60dvh,650px)]">
+              <div className="relative h-full min-h-0 py-4">
                 {projects.map((project, index) => (
                   <ProjectCopy
                     key={project.slug}
