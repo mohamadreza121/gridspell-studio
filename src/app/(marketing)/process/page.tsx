@@ -1,23 +1,8 @@
-import type { Metadata } from "next";
 import { ArrowUpRight, Check, Handshake, Route } from "lucide-react";
 import { PageIntro } from "@/components/ui/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { processSteps } from "@/config/process";
-
-export const metadata: Metadata = {
-  title: "Process",
-  description:
-    "A clear web design and development process from strategy and structure through production, testing, launch, and ongoing support.",
-  alternates: { canonical: "/process" },
-  openGraph: {
-    type: "website",
-    title: "Process",
-    description:
-      "A clear web design and development process from strategy and structure through production, testing, launch, and ongoing support.",
-    url: "/process"
-  }
-};
 
 const clientResponsibilities = [
   "Provide one clear decision maker",

@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import {
+  motion,
+  useInView,
+  useReducedMotion
+} from "motion/react";
 
 import { Container } from "@/components/ui/Container";
 import type { CaseStudyDevice } from "@/config/work-case-studies";
@@ -14,9 +18,13 @@ type DeviceVideoProps = {
   className?: string;
 };
 
-function DeviceVideo({ src, poster, label, className }: DeviceVideoProps) {
+function DeviceVideo({
+  src,
+  poster,
+  label,
+  className
+}: DeviceVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const reduceMotion = useReducedMotion();
 
   const isInView = useInView(videoRef, {
     amount: 0.22
@@ -29,14 +37,14 @@ function DeviceVideo({ src, poster, label, className }: DeviceVideoProps) {
       return;
     }
 
-    if (isInView && !reduceMotion) {
+    if (isInView) {
       void video.play().catch(() => {
         // Browser may temporarily block playback.
       });
     } else {
       video.pause();
     }
-  }, [isInView, reduceMotion]);
+  }, [isInView]);
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#020306]">
@@ -46,7 +54,7 @@ function DeviceVideo({ src, poster, label, className }: DeviceVideoProps) {
           "absolute inset-0 h-full w-full object-cover object-center",
           className
         )}
-        autoPlay={!reduceMotion}
+        autoPlay
         muted
         loop
         playsInline
@@ -116,7 +124,11 @@ function LaptopFrame({
                   aspectRatio: `${videoWidth} / ${videoHeight}`
                 }}
               >
-                <DeviceVideo src={videoSrc} poster={posterSrc} label={label} />
+                <DeviceVideo
+                  src={videoSrc}
+                  poster={posterSrc}
+                  label={label}
+                />
               </div>
             </div>
 
@@ -210,7 +222,11 @@ function TabletFrame({
                 aspectRatio: `${videoWidth} / ${videoHeight}`
               }}
             >
-              <DeviceVideo src={videoSrc} poster={posterSrc} label={label} />
+              <DeviceVideo
+                src={videoSrc}
+                poster={posterSrc}
+                label={label}
+              />
             </div>
           </div>
         </div>
@@ -282,7 +298,11 @@ function PhoneFrame({
                 aspectRatio: `${videoWidth} / ${videoHeight}`
               }}
             >
-              <DeviceVideo src={videoSrc} poster={posterSrc} label={label} />
+              <DeviceVideo
+                src={videoSrc}
+                poster={posterSrc}
+                label={label}
+              />
             </div>
           </div>
 
@@ -299,7 +319,11 @@ function PhoneFrame({
   );
 }
 
-function DeviceFrame({ item }: { item: CaseStudyDevice }) {
+function DeviceFrame({
+  item
+}: {
+  item: CaseStudyDevice;
+}) {
   const label = `${item.title} — ${item.eyebrow}`;
 
   if (item.device === "laptop") {
@@ -362,7 +386,11 @@ const deviceDetails: Record<
   }
 };
 
-export function DeviceShowcase({ devices }: { devices: CaseStudyDevice[] }) {
+export function DeviceShowcase({
+  devices
+}: {
+  devices: CaseStudyDevice[];
+}) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -396,7 +424,9 @@ export function DeviceShowcase({ devices }: { devices: CaseStudyDevice[] }) {
                 aria-hidden="true"
                 className={cn(
                   "pointer-events-none absolute top-[16%] h-[34rem] w-[34rem] rounded-full blur-[150px]",
-                  reversed ? "left-[8%] bg-[#29d6ff]/8" : "right-[8%] bg-[#7c5cff]/12"
+                  reversed
+                    ? "left-[8%] bg-[#29d6ff]/8"
+                    : "right-[8%] bg-[#7c5cff]/12"
                 )}
               />
 
@@ -404,7 +434,9 @@ export function DeviceShowcase({ devices }: { devices: CaseStudyDevice[] }) {
                 aria-hidden="true"
                 className={cn(
                   "pointer-events-none absolute bottom-[5%] h-[28rem] w-[28rem] rounded-full blur-[140px]",
-                  reversed ? "right-[4%] bg-[#7c5cff]/10" : "left-[4%] bg-[#29d6ff]/7"
+                  reversed
+                    ? "right-[4%] bg-[#7c5cff]/10"
+                    : "left-[4%] bg-[#29d6ff]/7"
                 )}
               />
 
@@ -440,7 +472,10 @@ export function DeviceShowcase({ devices }: { devices: CaseStudyDevice[] }) {
                     duration: 0.75,
                     ease: [0.22, 1, 0.36, 1]
                   }}
-                  className={cn("max-w-xl", reversed && "xl:order-2")}
+                  className={cn(
+                    "max-w-xl",
+                    reversed && "xl:order-2"
+                  )}
                 >
                   <div className="flex items-center gap-4">
                     <span className="font-mono text-[0.62rem] tracking-[0.22em] text-white/30">

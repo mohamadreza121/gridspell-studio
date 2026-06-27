@@ -2,9 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowDownRight, ArrowUpRight, LayoutDashboard, Mail, X } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  LayoutDashboard,
+  Mail,
+  X
+} from "lucide-react";
 
 import { Logo } from "@/components/layout/Logo";
 import { marketingNavigation } from "@/config/navigation";
@@ -22,73 +28,43 @@ const revealTransition = {
   ease: [0.76, 0, 0.24, 1] as const
 };
 
-export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
+export function Navbar({
+  viewer
+}: {
+  viewer: MarketingViewer | null;
+}) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const menuDialogRef = useRef<HTMLDivElement>(null);
 
   const accountHref = viewer?.href ?? "/login";
   const accountLabel = viewer?.label ?? "Client login";
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen) {
+      return;
+    }
 
     const previousOverflow = document.body.style.overflow;
-    const menuButton = menuButtonRef.current;
-    const previouslyFocused = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
 
-    const frame = window.requestAnimationFrame(() => {
-      const firstFocusable = menuDialogRef.current?.querySelector<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
-      firstFocusable?.focus();
-    });
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
 
+  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        event.preventDefault();
         setMenuOpen(false);
-        return;
-      }
-
-      if (event.key !== "Tab" || !menuDialogRef.current) return;
-
-      const focusable = Array.from(
-        menuDialogRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-      ).filter((element) => !element.hasAttribute("disabled"));
-
-      if (!focusable.length) return;
-
-      const first = focusable[0];
-      const last = focusable.at(-1) ?? first;
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
       }
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.cancelAnimationFrame(frame);
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-
-      const focusTarget =
-        previouslyFocused?.isConnected && previouslyFocused !== document.body
-          ? previouslyFocused
-          : menuButton;
-      focusTarget?.focus();
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [menuOpen]);
+  }, []);
 
   function closeMenu() {
     setMenuOpen(false);
@@ -121,7 +97,6 @@ export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
 
           {/* Menu trigger */}
           <button
-            ref={menuButtonRef}
             type="button"
             aria-label={menuOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={menuOpen}
@@ -130,7 +105,7 @@ export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
               setMenuOpen((current) => !current);
             }}
             className={[
-              "pointer-events-auto group relative z-10 flex h-14 -translate-y-[2px] items-center overflow-hidden rounded-full border transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be9ff]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07080c]",
+              "pointer-events-auto group relative z-10 flex h-14 -translate-y-[2px] items-center overflow-hidden rounded-full border transition-all duration-500",
               menuOpen
                 ? "border-[#8be9ff]/30 bg-[#090c12]/88 text-white shadow-[0_18px_70px_rgba(0,0,0,0.42)] backdrop-blur-2xl hover:border-[#8be9ff]/50 hover:bg-[#10141d]"
                 : "border-white/[0.13] bg-black/10 text-white shadow-[0_16px_50px_rgba(0,0,0,0.12)] backdrop-blur-md hover:border-white/25 hover:bg-black/25"
@@ -177,7 +152,6 @@ export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
       <AnimatePresence>
         {menuOpen ? (
           <motion.div
-            ref={menuDialogRef}
             id="gridspell-menu"
             role="dialog"
             aria-modal="true"
@@ -268,7 +242,7 @@ export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
                             href={item.href}
                             onClick={closeMenu}
                             aria-current={active ? "page" : undefined}
-                            className="group relative flex items-center justify-between overflow-hidden border-b border-white/[0.1] py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#8be9ff]/70 sm:py-5 lg:py-6"
+                            className="group relative flex items-center justify-between overflow-hidden border-b border-white/[0.1] py-4 sm:py-5 lg:py-6"
                           >
                             <span
                               aria-hidden="true"
@@ -343,6 +317,7 @@ export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#29d6ff] opacity-60" />
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#29d6ff]" />
                           </span>
+
                           Available for select projects
                         </span>
                       </div>
@@ -352,8 +327,8 @@ export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
                       </p>
 
                       <p className="mt-5 max-w-sm text-sm leading-7 text-white/43">
-                        Let&apos;s turn the strategy, interface, and technology into one
-                        clear digital experience.
+                        Let&apos;s turn the strategy, interface, and technology
+                        into one clear digital experience.
                       </p>
 
                       <Link

@@ -1,91 +1,47 @@
 import type { Metadata, Viewport } from "next";
-import { Suspense } from "react";
 import "@/app/globals.css";
 
-import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
+
   title: {
     default: "GridSpell — Premium Web Design & Development",
-    template: "%s | GridSpell"
+    template: "%s | GridSpell",
   },
+
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  authors: [{ name: siteConfig.founder, url: siteConfig.url }],
-  creator: siteConfig.founder,
-  publisher: siteConfig.legalName,
-  category: "Web design and software development",
-  keywords: [
-    "web design Toronto",
-    "Next.js development",
-    "React development",
-    "business websites",
-    "client portals",
-    "web applications",
-    "SEO setup",
-    "Google Ads setup"
-  ],
   manifest: "/site.webmanifest",
+
   openGraph: {
     type: "website",
-    url: "/",
     title: "GridSpell — Premium Web Design & Development",
     description: siteConfig.description,
     siteName: siteConfig.name,
-    locale: "en_CA",
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "GridSpell — Built on structure. Designed to captivate."
-      }
-    ]
   },
+
   twitter: {
     card: "summary_large_image",
     title: "GridSpell — Premium Web Design & Development",
     description: siteConfig.description,
-    images: ["/opengraph-image"]
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1
-    }
-  },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
-  }
 };
 
 export const viewport: Viewport = {
   themeColor: "#07080C",
   colorScheme: "dark",
-  width: "device-width",
-  initialScale: 1
 };
 
-export default function RootLayout({
-  children
-}: Readonly<{
+type RootLayoutProps = Readonly<{
   children: React.ReactNode;
-}>) {
+}>;
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body>
-        {children}
-        <Suspense fallback={null}>
-          <GoogleAnalytics />
-        </Suspense>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

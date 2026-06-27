@@ -13,10 +13,17 @@ import {
   useSpring,
   useTransform
 } from "motion/react";
-import { ArrowDown, ArrowUpRight, ExternalLink } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  ExternalLink
+} from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
-import { featuredProjects, type FeaturedProject } from "@/config/work";
+import {
+  featuredProjects,
+  type FeaturedProject
+} from "@/config/work";
 import { cn } from "@/lib/utils";
 
 type RollProject = FeaturedProject & {
@@ -25,9 +32,14 @@ type RollProject = FeaturedProject & {
 
 const projects = featuredProjects as RollProject[];
 
-function ProjectMedia({ project, active }: { project: RollProject; active: boolean }) {
+function ProjectMedia({
+  project,
+  active
+}: {
+  project: RollProject;
+  active: boolean;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const reduceMotion = useReducedMotion();
   const mediaRef = useRef<HTMLDivElement>(null);
 
   const inView = useInView(mediaRef, {
@@ -41,17 +53,20 @@ function ProjectMedia({ project, active }: { project: RollProject; active: boole
       return;
     }
 
-    if (active && inView && !reduceMotion) {
+    if (active && inView) {
       void video.play().catch(() => {
         // Muted autoplay can still be delayed briefly by the browser.
       });
     } else {
       video.pause();
     }
-  }, [active, inView, reduceMotion]);
+  }, [active, inView]);
 
   return (
-    <div ref={mediaRef} className="relative h-full w-full overflow-hidden bg-[#05060a]">
+    <div
+      ref={mediaRef}
+      className="relative h-full w-full overflow-hidden bg-[#05060a]"
+    >
       {project.previewVideo ? (
         <video
           ref={videoRef}
@@ -63,14 +78,23 @@ function ProjectMedia({ project, active }: { project: RollProject; active: boole
           poster={project.previewImage}
           disablePictureInPicture
           controlsList="nodownload noplaybackrate nofullscreen"
-          aria-label={project.previewAlt ?? `${project.title} website preview`}
+          aria-label={
+            project.previewAlt ??
+            `${project.title} website preview`
+          }
         >
-          <source src={project.previewVideo} type="video/mp4" />
+          <source
+            src={project.previewVideo}
+            type="video/mp4"
+          />
         </video>
       ) : project.previewImage ? (
         <Image
           src={project.previewImage}
-          alt={project.previewAlt ?? `${project.title} website preview`}
+          alt={
+            project.previewAlt ??
+            `${project.title} website preview`
+          }
           fill
           sizes="(min-width: 1400px) 50vw, 60vw"
           className="object-cover object-top"
@@ -124,25 +148,69 @@ function BrowserProjectCard({
   active: boolean;
 }) {
   const center = count <= 1 ? 0.5 : index / (count - 1);
-  const input = [center - 0.34, center, center + 0.34];
+  const input = [
+    center - 0.34,
+    center,
+    center + 0.34
+  ];
 
-  const opacity = useTransform(progress, input, [0, 1, 0]);
+  const opacity = useTransform(
+    progress,
+    input,
+    [0, 1, 0]
+  );
 
-  const y = useTransform(progress, input, [420, 0, -420]);
+  const y = useTransform(
+    progress,
+    input,
+    [420, 0, -420]
+  );
 
-  const z = useTransform(progress, input, [-420, 0, -420]);
+  const z = useTransform(
+    progress,
+    input,
+    [-420, 0, -420]
+  );
 
-  const scale = useTransform(progress, input, [0.66, 1, 0.66]);
+  const scale = useTransform(
+    progress,
+    input,
+    [0.66, 1, 0.66]
+  );
 
-  const rotateX = useTransform(progress, input, [68, 0, -68]);
+  const rotateX = useTransform(
+    progress,
+    input,
+    [68, 0, -68]
+  );
 
-  const rotateY = useTransform(progress, input, [-9, 0, 9]);
+  const rotateY = useTransform(
+    progress,
+    input,
+    [-9, 0, 9]
+  );
 
-  const rotateZ = useTransform(progress, input, [-5, 0, 5]);
+  const rotateZ = useTransform(
+    progress,
+    input,
+    [-5, 0, 5]
+  );
 
-  const filter = useTransform(progress, input, ["blur(12px)", "blur(0px)", "blur(12px)"]);
+  const filter = useTransform(
+    progress,
+    input,
+    [
+      "blur(12px)",
+      "blur(0px)",
+      "blur(12px)"
+    ]
+  );
 
-  const zIndex = useTransform(progress, input, [1, 30, 1]);
+  const zIndex = useTransform(
+    progress,
+    input,
+    [1, 30, 1]
+  );
 
   const hostname = project.liveUrl
     ? project.liveUrl
@@ -155,7 +223,9 @@ function BrowserProjectCard({
     <motion.article
       className={cn(
         "absolute inset-0 flex items-center justify-center [transform-style:preserve-3d]",
-        active ? "pointer-events-auto" : "pointer-events-none"
+        active
+          ? "pointer-events-auto"
+          : "pointer-events-none"
       )}
       style={{
         opacity,
@@ -200,7 +270,10 @@ function BrowserProjectCard({
             </div>
 
             <div className="aspect-video">
-              <ProjectMedia project={project} active={active} />
+              <ProjectMedia
+                project={project}
+                active={active}
+              />
             </div>
           </div>
         </div>
@@ -224,23 +297,49 @@ function ProjectCopy({
 }) {
   const center = count <= 1 ? 0.5 : index / (count - 1);
 
-  const input = [center - 0.31, center, center + 0.31];
+  const input = [
+    center - 0.31,
+    center,
+    center + 0.31
+  ];
 
   const compactTitle = project.title.length > 24;
 
-  const opacity = useTransform(progress, input, [0, 1, 0]);
+  const opacity = useTransform(
+    progress,
+    input,
+    [0, 1, 0]
+  );
 
-  const x = useTransform(progress, input, [150, 0, -90]);
+  const x = useTransform(
+    progress,
+    input,
+    [150, 0, -90]
+  );
 
-  const y = useTransform(progress, input, [35, 0, -24]);
+  const y = useTransform(
+    progress,
+    input,
+    [35, 0, -24]
+  );
 
-  const filter = useTransform(progress, input, ["blur(12px)", "blur(0px)", "blur(9px)"]);
+  const filter = useTransform(
+    progress,
+    input,
+    [
+      "blur(12px)",
+      "blur(0px)",
+      "blur(9px)"
+    ]
+  );
 
   return (
     <motion.div
       className={cn(
         "absolute inset-0 flex flex-col justify-center pb-10 pt-4",
-        active ? "pointer-events-auto" : "pointer-events-none"
+        active
+          ? "pointer-events-auto"
+          : "pointer-events-none"
       )}
       style={{
         opacity,
@@ -298,12 +397,18 @@ function ProjectCopy({
         </p>
       </div>
 
-      <div className={cn("flex flex-wrap gap-4", compactTitle ? "mt-6" : "mt-8")}>
+      <div
+        className={cn(
+          "flex flex-wrap gap-4",
+          compactTitle ? "mt-6" : "mt-8"
+        )}
+      >
         <Link
           href={`/work/${project.slug}`}
           className="group inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/[0.15] bg-white px-6 text-sm font-semibold text-[#08090d] transition duration-300 hover:-translate-y-0.5"
         >
           View case study
+
           <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </Link>
 
@@ -315,6 +420,7 @@ function ProjectCopy({
             className="group inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.035] px-6 text-sm font-semibold text-white/62 transition duration-300 hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
           >
             Live website
+
             <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </a>
         ) : null}
@@ -329,7 +435,10 @@ function DesktopRollScene() {
 
   const { scrollYProgress: rawProgress } = useScroll({
     target: trackRef,
-    offset: ["start start", "end end"]
+    offset: [
+      "start start",
+      "end end"
+    ]
   });
 
   const progress = useSpring(rawProgress, {
@@ -342,19 +451,42 @@ function DesktopRollScene() {
   useMotionValueEvent(rawProgress, "change", (value) => {
     const nextIndex = Math.min(
       projects.length - 1,
-      Math.max(0, Math.round(value * (projects.length - 1)))
+      Math.max(
+        0,
+        Math.round(value * (projects.length - 1))
+      )
     );
 
-    setActiveProject((current) => (current === nextIndex ? current : nextIndex));
+    setActiveProject((current) =>
+      current === nextIndex
+        ? current
+        : nextIndex
+    );
   });
 
-  const orbitRotate = useTransform(progress, [0, 1], [-18, 198]);
+  const orbitRotate = useTransform(
+    progress,
+    [0, 1],
+    [-18, 198]
+  );
 
-  const orbitScale = useTransform(progress, [0, 0.5, 1], [0.95, 1.05, 0.95]);
+  const orbitScale = useTransform(
+    progress,
+    [0, 0.5, 1],
+    [0.95, 1.05, 0.95]
+  );
 
-  const backgroundX = useTransform(progress, [0, 1], ["8%", "-8%"]);
+  const backgroundX = useTransform(
+    progress,
+    [0, 1],
+    ["8%", "-8%"]
+  );
 
-  const progressScale = useTransform(progress, [0, 1], [0.02, 1]);
+  const progressScale = useTransform(
+    progress,
+    [0, 1],
+    [0.02, 1]
+  );
 
   function scrollToProject(index: number) {
     const track = trackRef.current;
@@ -363,11 +495,19 @@ function DesktopRollScene() {
       return;
     }
 
-    const trackTop = window.scrollY + track.getBoundingClientRect().top;
+    const trackTop =
+      window.scrollY +
+      track.getBoundingClientRect().top;
 
-    const scrollableDistance = Math.max(0, track.offsetHeight - window.innerHeight);
+    const scrollableDistance = Math.max(
+      0,
+      track.offsetHeight - window.innerHeight
+    );
 
-    const ratio = projects.length <= 1 ? 0 : index / (projects.length - 1);
+    const ratio =
+      projects.length <= 1
+        ? 0
+        : index / (projects.length - 1);
 
     window.scrollTo({
       top: trackTop + scrollableDistance * ratio,
@@ -428,7 +568,8 @@ function DesktopRollScene() {
                   aria-hidden="true"
                   className="pointer-events-none absolute left-1/2 top-1/2 h-[74%] w-[118%]"
                   style={{
-                    transform: "translate(-50%, -50%) rotateX(68deg)"
+                    transform:
+                      "translate(-50%, -50%) rotateX(68deg)"
                   }}
                 >
                   <motion.div
@@ -450,7 +591,8 @@ function DesktopRollScene() {
                   aria-hidden="true"
                   className="pointer-events-none absolute left-1/2 top-1/2 h-[58%] w-[92%] rounded-[50%] border border-white/[0.035]"
                   style={{
-                    transform: "translate(-50%, -50%) rotateX(68deg)"
+                    transform:
+                      "translate(-50%, -50%) rotateX(68deg)"
                   }}
                 />
 
@@ -506,7 +648,11 @@ function DesktopRollScene() {
                     type="button"
                     onClick={() => scrollToProject(index)}
                     aria-label={`Show ${project.title}`}
-                    aria-current={activeProject === index ? "step" : undefined}
+                    aria-current={
+                      activeProject === index
+                        ? "step"
+                        : undefined
+                    }
                     className={cn(
                       "h-2 rounded-full transition-all duration-300",
                       activeProject === index
@@ -543,26 +689,33 @@ function StaticWorkList() {
           </h1>
 
           <p className="mt-7 max-w-2xl text-base leading-8 text-white/45 sm:text-lg">
-            Each case study explains the business problem, the strategic choices, the
-            digital system, and the outcome.
+            Each case study explains the business problem, the strategic choices,
+            the digital system, and the outcome.
           </p>
         </div>
 
         <div className="mt-16 grid gap-16">
           {projects.map((project, index) => (
-            <article key={project.slug} className="border-t border-white/[0.08] pt-8">
+            <article
+              key={project.slug}
+              className="border-t border-white/[0.08] pt-8"
+            >
               <Link
                 href={`/work/${project.slug}`}
                 className="block overflow-hidden rounded-[1.6rem] border border-white/[0.1] bg-[#080a0f]"
               >
                 <div className="aspect-video">
-                  <ProjectMedia project={project} active />
+                  <ProjectMedia
+                    project={project}
+                    active
+                  />
                 </div>
               </Link>
 
               <div className="mt-7">
                 <p className="font-mono text-[0.62rem] tracking-[0.2em] text-[#8be9ff]">
-                  {String(index + 1).padStart(2, "0")} · {project.category}
+                  {String(index + 1).padStart(2, "0")} ·{" "}
+                  {project.category}
                 </p>
 
                 <h2 className="mt-4 font-display text-4xl font-semibold tracking-[-0.055em] text-white sm:text-5xl">

@@ -12,6 +12,3 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 .supabase/
-
-/playwright-report/
-/test-results/

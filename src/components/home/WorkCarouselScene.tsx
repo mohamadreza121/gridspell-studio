@@ -7,7 +7,6 @@ import {
   motion,
   type MotionValue,
   useMotionValueEvent,
-  useReducedMotion,
   useSpring,
   useTransform
 } from "motion/react";
@@ -15,8 +14,11 @@ import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { featuredProjects, type FeaturedProject } from "@/config/work";
 
-function BrowserPreview({ project }: { project: FeaturedProject }) {
-  const reduceMotion = useReducedMotion();
+function BrowserPreview({
+  project
+}: {
+  project: FeaturedProject;
+}) {
   const hostname = project.liveUrl
     ? new URL(project.liveUrl).hostname.replace(/^www\./, "")
     : `${project.slug}.gridspell.preview`;
@@ -38,7 +40,7 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
 
       {/* Website preview */}
       <div className="relative h-[calc(100%-2.75rem)] min-h-[316px] overflow-hidden bg-[#05060a]">
-        {project.previewVideo && !reduceMotion ? (
+        {project.previewVideo ? (
           <video
             className="pointer-events-none absolute inset-0 h-full w-full object-cover object-top"
             autoPlay
@@ -49,14 +51,23 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
             poster={project.previewImage}
             disablePictureInPicture
             controlsList="nodownload noplaybackrate nofullscreen"
-            aria-label={project.previewAlt ?? `${project.title} homepage video preview`}
+            aria-label={
+              project.previewAlt ??
+              `${project.title} homepage video preview`
+            }
           >
-            <source src={project.previewVideo} type="video/mp4" />
+            <source
+              src={project.previewVideo}
+              type="video/mp4"
+            />
           </video>
         ) : project.previewImage ? (
           <Image
             src={project.previewImage}
-            alt={project.previewAlt ?? `${project.title} homepage preview`}
+            alt={
+              project.previewAlt ??
+              `${project.title} homepage preview`
+            }
             fill
             sizes="(min-width: 1440px) 48vw, (min-width: 900px) 54vw, 92vw"
             className="object-cover object-top"
@@ -318,10 +329,7 @@ export function StaticWorkGallery() {
             key={project.slug}
             className="rounded-[1.7rem] border border-white/[0.09] bg-white/[0.025] p-4 sm:p-6"
           >
-            <Link
-              href={`/work/${project.slug}`}
-              className="block min-h-[340px] sm:h-[500px]"
-            >
+            <Link href={`/work/${project.slug}`} className="block min-h-[340px] sm:h-[500px]">
               <BrowserPreview project={project} />
             </Link>
             <div className="mt-6">

@@ -42,8 +42,8 @@ export const workCaseStudies: WorkCaseStudy[] = [
           "The desktop version emphasizes authority, service clarity, and a strong visual entrance for residential and commercial customers.",
         videoSrc: "/videos/case-studies/desa-foam-insulation/laptop.mp4",
         posterSrc: "/images/work/desa-foam-insulation-home.webp",
-        videoWidth: 1890,
-        videoHeight: 810
+        videoWidth: 1888,
+        videoHeight: 870
       },
       {
         id: "tablet",
@@ -54,7 +54,7 @@ export const workCaseStudies: WorkCaseStudy[] = [
           "On tablet, the layout keeps the same visual identity while tightening spacing, simplifying flow, and preserving readability.",
         videoSrc: "/videos/case-studies/desa-foam-insulation/tablet.mp4",
         posterSrc: "/images/work/desa-foam-insulation-home.webp",
-        videoWidth: 1430,
+        videoWidth: 1438,
         videoHeight: 870
       },
       {
@@ -66,8 +66,8 @@ export const workCaseStudies: WorkCaseStudy[] = [
           "The phone layout prioritizes clear messaging, fast scanning, and frictionless access to calls, services, and quote requests.",
         videoSrc: "/videos/case-studies/desa-foam-insulation/phone.mp4",
         posterSrc: "/images/work/desa-foam-insulation-home.webp",
-        videoWidth: 494,
-        videoHeight: 764
+        videoWidth: 495,
+        videoHeight: 765
       }
     ]
   },
@@ -101,7 +101,7 @@ export const workCaseStudies: WorkCaseStudy[] = [
         description:
           "The tablet adaptation keeps the premium layout language while simplifying the visual density for touch interaction.",
         videoSrc: "/videos/case-studies/pure-timepieces/tablet.mp4",
-        videoWidth: 1432,
+        videoWidth: 1438,
         videoHeight: 870
       },
       {
@@ -112,8 +112,8 @@ export const workCaseStudies: WorkCaseStudy[] = [
         description:
           "The mobile version centers on product clarity, elegant spacing, and a more direct shopping-style browsing path.",
         videoSrc: "/videos/case-studies/pure-timepieces/phone.mp4",
-        videoWidth: 500,
-        videoHeight: 764
+        videoWidth: 495,
+        videoHeight: 765
       }
     ]
   },
@@ -147,7 +147,7 @@ export const workCaseStudies: WorkCaseStudy[] = [
         description:
           "Tablet keeps the immersive feeling while making the structure more compact and touch-friendly.",
         videoSrc: "/videos/case-studies/network-portfolio/tablet.mp4",
-        videoWidth: 1430,
+        videoWidth: 1438,
         videoHeight: 870
       },
       {
@@ -158,8 +158,8 @@ export const workCaseStudies: WorkCaseStudy[] = [
         description:
           "The phone experience simplifies the composition while preserving the visual identity and strong first impression.",
         videoSrc: "/videos/case-studies/network-portfolio/phone.mp4",
-        videoWidth: 496,
-        videoHeight: 764
+        videoWidth: 495,
+        videoHeight: 765
       }
     ]
   }
