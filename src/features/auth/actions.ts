@@ -4,6 +4,45 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getSiteUrl } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+
+const INVITE_COOKIE = "gridspell_invite_token";
+
+export async function confirmInvitationLinkAction() {
+  const cookieStore = await cookies();
+  const tokenHash = cookieStore.get(INVITE_COOKIE)?.value;
+
+  if (!tokenHash) {
+    redirect(
+      withMessage(
+        "/login",
+        "error",
+        "The invitation link is invalid or has expired."
+      )
+    );
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.verifyOtp({
+    type: "invite",
+    token_hash: tokenHash
+  });
+
+  cookieStore.delete(INVITE_COOKIE);
+
+  if (error) {
+    redirect(
+      withMessage(
+        "/login",
+        "error",
+        "The invitation link is invalid or has expired."
+      )
+    );
+  }
+
+  redirect("/accept-invite");
+}
 
 const emailSchema = z.string().trim().email("Enter a valid email address.");
 const passwordSchema = z
