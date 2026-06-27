@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, ExternalLink } from "lucide-react";
@@ -12,6 +13,26 @@ type Props = {
     slug: string;
   }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const project = featuredProjects.find((item) => item.slug === slug);
+  const caseStudy = workCaseStudies.find((item) => item.slug === slug);
+
+  if (!project || !caseStudy) return {};
+
+  return {
+    title: `${project.title} Case Study`,
+    description: caseStudy.summary,
+    alternates: { canonical: `/work/${project.slug}` },
+    openGraph: {
+      type: "article",
+      title: `${project.title} Case Study`,
+      description: caseStudy.summary,
+      url: `/work/${project.slug}`
+    }
+  };
+}
 
 export function generateStaticParams() {
   return featuredProjects.map((project) => ({
@@ -73,9 +94,7 @@ export default async function Page({ params }: Props) {
             </div>
 
             <div className="xl:pb-2">
-              <p className="text-base leading-8 text-white/42">
-                {caseStudy.overview}
-              </p>
+              <p className="text-base leading-8 text-white/42">{caseStudy.overview}</p>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 {project.liveUrl ? (
@@ -106,27 +125,21 @@ export default async function Page({ params }: Props) {
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-white/26">
                 Project
               </p>
-              <p className="mt-2 text-sm text-white/65">
-                {project.title}
-              </p>
+              <p className="mt-2 text-sm text-white/65">{project.title}</p>
             </div>
 
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-white/26">
                 Focus
               </p>
-              <p className="mt-2 text-sm text-white/65">
-                Responsive digital experience
-              </p>
+              <p className="mt-2 text-sm text-white/65">Responsive digital experience</p>
             </div>
 
             <div>
               <p className="text-[0.58rem] uppercase tracking-[0.24em] text-white/26">
                 Outcome
               </p>
-              <p className="mt-2 text-sm text-white/65">
-                {project.result}
-              </p>
+              <p className="mt-2 text-sm text-white/65">{project.result}</p>
             </div>
           </div>
         </Container>
@@ -154,9 +167,7 @@ export default async function Page({ params }: Props) {
           </div>
 
           <div className="max-w-3xl">
-            <p className="text-lg leading-9 text-white/48">
-              {caseStudy.summary}
-            </p>
+            <p className="text-lg leading-9 text-white/48">{caseStudy.summary}</p>
 
             <div className="mt-10 rounded-[2rem] border border-white/[0.09] bg-white/[0.025] p-7 sm:p-9">
               <p className="text-[0.6rem] uppercase tracking-[0.28em] text-white/28">

@@ -1,8 +1,23 @@
+import type { Metadata } from "next";
 import { ArrowUpRight, Check, CircleHelp } from "lucide-react";
 import { PageIntro } from "@/components/ui/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { packages } from "@/config/packages";
+
+export const metadata: Metadata = {
+  title: "Pricing",
+  description:
+    "Starting ranges for premium business websites, custom web applications, and ongoing website care from GridSpell Studio.",
+  alternates: { canonical: "/pricing" },
+  openGraph: {
+    type: "website",
+    title: "Pricing",
+    description:
+      "Starting ranges for premium business websites, custom web applications, and ongoing website care from GridSpell Studio.",
+    url: "/pricing"
+  }
+};
 
 const carePlans = [
   {
@@ -86,7 +101,10 @@ export default function PricingPage() {
                   <p className="mt-5 max-w-xl leading-8 text-white/42">{item.summary}</p>
                   <ul className="mt-8 grid gap-4 border-t border-white/[0.08] pt-8 sm:grid-cols-2">
                     {item.features.map((feature) => (
-                      <li key={feature} className="flex gap-3 text-sm leading-6 text-white/52">
+                      <li
+                        key={feature}
+                        className="flex gap-3 text-sm leading-6 text-white/52"
+                      >
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#8be9ff]" />
                         {feature}
                       </li>

@@ -1,7 +1,22 @@
+import type { Metadata } from "next";
 import { ArrowRight, CircleCheck, Clock3, SearchCheck } from "lucide-react";
 import { PageIntro } from "@/components/ui/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { ProjectBriefForm } from "@/components/forms/ProjectBriefForm";
+
+export const metadata: Metadata = {
+  title: "Start a Project",
+  description:
+    "Tell GridSpell about your business, website or web application goals, budget, timeline, and required integrations.",
+  alternates: { canonical: "/start-project" },
+  openGraph: {
+    type: "website",
+    title: "Start a Project",
+    description:
+      "Tell GridSpell about your business, website or web application goals, budget, timeline, and required integrations.",
+    url: "/start-project"
+  }
+};
 
 const nextSteps = [
   {

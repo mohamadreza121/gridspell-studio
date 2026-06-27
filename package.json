@@ -19,9 +19,19 @@
     "auth:bootstrap-owner": "node --env-file=.env.local scripts/bootstrap-owner.mjs",
     "portal:seed": "node --env-file=.env.local scripts/seed-portal-demo.mjs",
     "email:test": "node --env-file=.env.local scripts/send-test-email.mjs",
-    "stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe/webhook"
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe/webhook",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium",
+    "test:accessibility": "playwright test tests/e2e/accessibility.spec.ts --project=desktop-chromium",
+    "test:responsive": "playwright test tests/e2e/responsive.spec.ts",
+    "test:reduced-motion": "playwright test tests/e2e/reduced-motion.spec.ts --project=desktop-chromium",
+    "test:performance": "playwright test tests/e2e/performance.spec.ts --project=desktop-chromium",
+    "stripe:test-webhook": "node --env-file=.env.local scripts/test-stripe-webhook.mjs",
+    "quality:phase8": "npm run check && npm run performance:assets && npm run test:accessibility && npm run test:responsive && npm run test:reduced-motion && npm run test:performance",
+    "performance:assets": "node scripts/check-asset-budget.mjs"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.62.0",
     "@supabase/ssr": "0.12.0",
     "@supabase/supabase-js": "2.108.2",
     "class-variance-authority": "0.7.1",
@@ -37,6 +47,8 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "4.3.1",
     "@types/node": "26.0.0",
     "@types/react": "19.2.17",

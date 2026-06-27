@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  Check,
-  Clock3
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Check, Clock3 } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
-import {
-  getInsightBySlug,
-  insightArticles
-} from "@/config/insights";
+import { getInsightBySlug, insightArticles } from "@/config/insights";
 
 type Props = {
   params: Promise<{
@@ -26,9 +18,7 @@ export function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({
-  params
-}: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const article = getInsightBySlug(slug);
 
@@ -38,13 +28,25 @@ export async function generateMetadata({
 
   return {
     title: `${article.title} | GridSpell Insights`,
-    description: article.excerpt
+    description: article.excerpt,
+    alternates: { canonical: `/insights/${article.slug}` },
+    openGraph: {
+      type: "article",
+      title: article.title,
+      description: article.excerpt,
+      url: `/insights/${article.slug}`,
+      images: [`/insights/${article.slug}/opengraph-image`]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt,
+      images: [`/insights/${article.slug}/opengraph-image`]
+    }
   };
 }
 
-export default async function InsightArticlePage({
-  params
-}: Props) {
+export default async function InsightArticlePage({ params }: Props) {
   const { slug } = await params;
   const article = getInsightBySlug(slug);
 
@@ -147,9 +149,7 @@ export default async function InsightArticlePage({
 
                   <div className="mt-7 space-y-6 text-base leading-8 text-white/48 sm:text-lg sm:leading-9">
                     {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>
-                        {paragraph}
-                      </p>
+                      <p key={paragraph}>{paragraph}</p>
                     ))}
                   </div>
 
@@ -183,8 +183,8 @@ export default async function InsightArticlePage({
 
                 <p className="mt-5 max-w-2xl text-base leading-8 text-white/44">
                   GridSpell can help define the strategy, interface, technical
-                  requirements, integrations, launch setup, and ongoing
-                  ownership for your website or application.
+                  requirements, integrations, launch setup, and ongoing ownership for your
+                  website or application.
                 </p>
 
                 <Link
@@ -192,7 +192,6 @@ export default async function InsightArticlePage({
                   className="group mt-7 inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-[#08090d] transition hover:-translate-y-0.5"
                 >
                   Start a project
-
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
               </section>

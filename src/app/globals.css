@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: Inter, "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Segoe UI Variable Display", Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    Inter, "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    "Segoe UI Variable Display", Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --color-background: #07080c;
@@ -41,7 +43,8 @@ body {
     radial-gradient(circle at 50% -10%, rgba(124, 92, 255, 0.08), transparent 36rem),
     linear-gradient(180deg, #07080c 0%, #090b10 45%, #07080c 100%);
   color: var(--text);
-  font-family: Inter, "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-family:
+    Inter, "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
 }
 
@@ -101,7 +104,8 @@ select.form-field option:disabled {
 }
 
 .font-display {
-  font-family: "Segoe UI Variable Display", Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-family:
+    "Segoe UI Variable Display", Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
 }
 
 .text-balance {
@@ -178,7 +182,6 @@ body {
   width: 100%;
   max-width: 100%;
 }
-
 
 .home-experience {
   position: relative;
@@ -375,4 +378,35 @@ body {
     width: 56vw;
     min-width: 560px;
   }
+}
+
+/* Phase 8 accessibility and focus baseline */
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 200;
+  transform: translateY(-180%);
+  border-radius: 999px;
+  border: 1px solid rgba(139, 233, 255, 0.5);
+  background: #f6f7fb;
+  color: #07080c;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid rgba(139, 233, 255, 0.9);
+  outline-offset: 3px;
+}
+
+.form-field[aria-invalid="true"] {
+  border-color: rgba(255, 95, 109, 0.68);
+  box-shadow: 0 0 0 4px rgba(255, 95, 109, 0.1);
 }

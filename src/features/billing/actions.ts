@@ -24,9 +24,9 @@ function canAccessOrganization(
 ) {
   return Boolean(
     viewer.staffRole ||
-      viewer.organizationMemberships.some(
-        (membership) => membership.organizationId === organizationId
-      )
+    viewer.organizationMemberships.some(
+      (membership) => membership.organizationId === organizationId
+    )
   );
 }
 
@@ -39,7 +39,7 @@ export async function createStripeCheckoutAction(formData: FormData) {
   const { data: invoice, error } = await admin
     .from("invoices")
     .select(
-      "id, organization_id, project_id, invoice_number, status, amount_due, amount_paid, currency, payment_description, organizations(id, name, stripe_customer_id), projects(name)"
+      "id, organization_id, project_id, invoice_number, status, amount_due, amount_paid, currency, payment_description, checkout_url, checkout_expires_at, organizations(id, name, stripe_customer_id), projects(name)"
     )
     .eq("id", invoiceId.data)
     .maybeSingle();
@@ -52,6 +52,14 @@ export async function createStripeCheckoutAction(formData: FormData) {
   }
   if (!["open", "overdue"].includes(invoice.status)) {
     billingError("This invoice is not currently payable.");
+  }
+
+  const reusableCheckoutExpiresAt = invoice.checkout_expires_at
+    ? new Date(invoice.checkout_expires_at).getTime()
+    : 0;
+
+  if (invoice.checkout_url && reusableCheckoutExpiresAt > Date.now() + 30_000) {
+    redirect(invoice.checkout_url);
   }
 
   const outstanding = Math.max(
@@ -149,9 +157,7 @@ export async function createStripeCheckoutAction(formData: FormData) {
 }
 
 export async function createStripeBillingPortalAction(formData: FormData) {
-  const organizationId = uuidSchema.safeParse(
-    formString(formData, "organizationId")
-  );
+  const organizationId = uuidSchema.safeParse(formString(formData, "organizationId"));
   if (!organizationId.success) billingError("The organization is invalid.");
 
   const viewer = await requirePortalUser();

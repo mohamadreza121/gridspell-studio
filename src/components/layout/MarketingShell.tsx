@@ -22,15 +22,24 @@ export async function MarketingShell({ children }: { children: ReactNode }) {
       fullName: context.fullName,
       email: context.email,
       href: staff ? "/admin" : hasWorkspace ? "/portal" : "/accept-invite",
-      label: staff ? "Admin dashboard" : hasWorkspace ? "Client portal" : "Complete setup",
+      label: staff
+        ? "Admin dashboard"
+        : hasWorkspace
+          ? "Client portal"
+          : "Complete setup",
       initials: initials(context.fullName, context.email)
     };
   }
 
   return (
     <>
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <Navbar viewer={viewer} />
-      <main>{children}</main>
+      <div id="main-content" tabIndex={-1} className="focus:outline-none">
+        {children}
+      </div>
       <Footer />
     </>
   );

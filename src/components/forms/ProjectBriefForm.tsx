@@ -13,7 +13,10 @@ import {
   UserRound,
   WandSparkles
 } from "lucide-react";
+import { trackAnalyticsEvent } from "@/components/analytics/GoogleAnalytics";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { ActionButton } from "@/components/ui/ActionControl";
+import { leadSchema, type LeadField } from "@/validations/lead";
 
 const projectOptions = [
   "Business website",
@@ -32,10 +35,22 @@ const budgetOptions = [
   "Need guidance"
 ];
 
+type FieldErrors = Partial<Record<LeadField, string>>;
+
 function FieldIcon({ children }: { children: React.ReactNode }) {
   return (
     <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/26">
       {children}
+    </span>
+  );
+}
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+
+  return (
+    <span id={id} className="text-xs leading-5 text-[#ff9aa3]" role="alert">
+      {message}
     </span>
   );
 }
@@ -45,14 +60,46 @@ export function ProjectBriefForm() {
     "idle"
   );
   const [message, setMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [formStartedAt] = useState(() => Date.now());
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+
+  function clearFieldError(field: LeadField) {
+    setFieldErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
     setMessage("");
+    setFieldErrors({});
 
     const form = event.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
+    const validation = leadSchema.safeParse(data);
+
+    if (!validation.success) {
+      const nextErrors: FieldErrors = {};
+      for (const issue of validation.error.issues) {
+        const field = issue.path[0] as LeadField | undefined;
+        if (field && !nextErrors[field]) nextErrors[field] = issue.message;
+      }
+
+      setFieldErrors(nextErrors);
+      setStatus("error");
+      setMessage("Review the highlighted fields and submit the form again.");
+
+      requestAnimationFrame(() => {
+        const firstInvalid = form.querySelector<HTMLElement>("[aria-invalid='true']");
+        firstInvalid?.focus();
+      });
+      return;
+    }
 
     try {
       const response = await fetch("/api/leads", {
@@ -60,15 +107,21 @@ export function ProjectBriefForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
-      const payload = await response.json();
+      const payload = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(payload.error ?? "Your project brief could not be submitted.");
       }
 
       form.reset();
+      window.turnstile?.reset();
+      trackAnalyticsEvent("generate_lead", {
+        form_name: "project_brief",
+        project_type: validation.data.projectType
+      });
       setStatus("success");
     } catch (error) {
+      setTurnstileResetKey((current) => current + 1);
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "Something went wrong.");
     }
@@ -76,7 +129,11 @@ export function ProjectBriefForm() {
 
   if (status === "success") {
     return (
-      <div className="glass-panel rounded-[2rem] p-8 sm:p-10">
+      <div
+        className="glass-panel rounded-[2rem] p-8 sm:p-10"
+        role="status"
+        aria-live="polite"
+      >
         <div className="grid h-14 w-14 place-items-center rounded-2xl border border-[#35d07f]/30 bg-[#35d07f]/8">
           <CheckCircle2 className="h-7 w-7 text-[#35d07f]" />
         </div>
@@ -94,8 +151,28 @@ export function ProjectBriefForm() {
     );
   }
 
+  const commonInputProps = (field: LeadField) => ({
+    "aria-invalid": Boolean(fieldErrors[field]),
+    "aria-describedby": fieldErrors[field] ? `${field}-error` : undefined,
+    onChange: () => clearFieldError(field)
+  });
+
   return (
-    <form onSubmit={submit} className="glass-panel overflow-hidden rounded-[2rem]">
+    <form
+      onSubmit={submit}
+      noValidate
+      className="glass-panel overflow-hidden rounded-[2rem]"
+    >
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute -left-[9999px] h-px w-px opacity-0"
+      />
+      <input type="hidden" name="formStartedAt" value={formStartedAt} />
+
       <div className="border-b border-white/[0.08] p-6 sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -128,11 +205,14 @@ export function ProjectBriefForm() {
                 <input
                   name="name"
                   required
+                  maxLength={100}
                   autoComplete="name"
                   className="form-field form-field-with-icon"
                   placeholder="Full name"
+                  {...commonInputProps("name")}
                 />
               </span>
+              <FieldError id="name-error" message={fieldErrors.name} />
             </label>
 
             <label className="grid gap-2 text-sm text-white/58">
@@ -145,11 +225,14 @@ export function ProjectBriefForm() {
                   name="email"
                   type="email"
                   required
+                  maxLength={180}
                   autoComplete="email"
                   className="form-field form-field-with-icon"
                   placeholder="you@company.com"
+                  {...commonInputProps("email")}
                 />
               </span>
+              <FieldError id="email-error" message={fieldErrors.email} />
             </label>
 
             <label className="grid gap-2 text-sm text-white/58">
@@ -160,11 +243,14 @@ export function ProjectBriefForm() {
                 </FieldIcon>
                 <input
                   name="company"
+                  maxLength={140}
                   autoComplete="organization"
                   className="form-field form-field-with-icon"
                   placeholder="Company name"
+                  {...commonInputProps("company")}
                 />
               </span>
+              <FieldError id="company-error" message={fieldErrors.company} />
             </label>
 
             <label className="grid gap-2 text-sm text-white/58">
@@ -175,11 +261,14 @@ export function ProjectBriefForm() {
                 </FieldIcon>
                 <input
                   name="phone"
+                  maxLength={40}
                   autoComplete="tel"
                   className="form-field form-field-with-icon"
                   placeholder="Optional"
+                  {...commonInputProps("phone")}
                 />
               </span>
+              <FieldError id="phone-error" message={fieldErrors.phone} />
             </label>
           </div>
         </fieldset>
@@ -195,15 +284,24 @@ export function ProjectBriefForm() {
                 <FieldIcon>
                   <WandSparkles className="h-4 w-4" />
                 </FieldIcon>
-                <select name="projectType" required defaultValue="" className="form-field form-field-with-icon">
+                <select
+                  name="projectType"
+                  required
+                  defaultValue=""
+                  className="form-field form-field-with-icon"
+                  {...commonInputProps("projectType")}
+                >
                   <option value="" disabled>
                     Select project type
                   </option>
                   {projectOptions.map((option) => (
-                    <option key={option}>{option}</option>
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
                   ))}
                 </select>
               </span>
+              <FieldError id="projectType-error" message={fieldErrors.projectType} />
             </label>
 
             <label className="grid gap-2 text-sm text-white/58">
@@ -212,15 +310,24 @@ export function ProjectBriefForm() {
                 <FieldIcon>
                   <CircleDollarSign className="h-4 w-4" />
                 </FieldIcon>
-                <select name="budget" required defaultValue="" className="form-field form-field-with-icon">
+                <select
+                  name="budget"
+                  required
+                  defaultValue=""
+                  className="form-field form-field-with-icon"
+                  {...commonInputProps("budget")}
+                >
                   <option value="" disabled>
                     Select budget range
                   </option>
                   {budgetOptions.map((option) => (
-                    <option key={option}>{option}</option>
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
                   ))}
                 </select>
               </span>
+              <FieldError id="budget-error" message={fieldErrors.budget} />
             </label>
           </div>
 
@@ -232,10 +339,13 @@ export function ProjectBriefForm() {
               </FieldIcon>
               <input
                 name="timeline"
+                maxLength={100}
                 className="form-field form-field-with-icon"
                 placeholder="Example: launch within 8–10 weeks"
+                {...commonInputProps("timeline")}
               />
             </span>
+            <FieldError id="timeline-error" message={fieldErrors.timeline} />
           </label>
         </fieldset>
 
@@ -251,16 +361,27 @@ export function ProjectBriefForm() {
                 name="message"
                 required
                 minLength={20}
+                maxLength={4000}
                 rows={8}
                 className="form-field form-field-with-icon min-h-48 resize-y py-4"
                 placeholder="What is not working now? What should the new website or platform accomplish? Mention important features, integrations, or deadlines."
+                {...commonInputProps("message")}
               />
             </span>
+            <FieldError id="message-error" message={fieldErrors.message} />
           </label>
         </fieldset>
 
+        <div className="border-t border-white/[0.08] pt-8">
+          <TurnstileWidget key={turnstileResetKey} />
+        </div>
+
         {status === "error" ? (
-          <p className="rounded-2xl border border-[#ff5f6d]/25 bg-[#ff5f6d]/8 px-4 py-3 text-sm leading-6 text-[#ff9aa3]">
+          <p
+            className="rounded-2xl border border-[#ff5f6d]/25 bg-[#ff5f6d]/8 px-4 py-3 text-sm leading-6 text-[#ff9aa3]"
+            role="alert"
+            aria-live="assertive"
+          >
             {message}
           </p>
         ) : null}

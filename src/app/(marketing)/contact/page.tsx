@@ -1,8 +1,23 @@
+import type { Metadata } from "next";
 import { ArrowUpRight, Clock3, Mail, MapPin, MessagesSquare } from "lucide-react";
 import { PageIntro } from "@/components/ui/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { siteConfig } from "@/config/site";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description:
+    "Contact GridSpell Studio in Toronto to discuss a website, redesign, landing page, portal, dashboard, or custom web application.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    type: "website",
+    title: "Contact",
+    description:
+      "Contact GridSpell Studio in Toronto to discuss a website, redesign, landing page, portal, dashboard, or custom web application.",
+    url: "/contact"
+  }
+};
 
 export default function ContactPage() {
   return (
@@ -43,7 +58,9 @@ export default function ContactPage() {
                 </span>
                 <ArrowUpRight className="h-5 w-5 text-white/20 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
               </div>
-              <p className="mt-8 text-xs uppercase tracking-[0.3em] text-white/28">Email</p>
+              <p className="mt-8 text-xs uppercase tracking-[0.3em] text-white/28">
+                Email
+              </p>
               <p className="mt-3 break-all font-display text-2xl font-semibold tracking-[-0.035em]">
                 {siteConfig.email}
               </p>
@@ -55,7 +72,9 @@ export default function ContactPage() {
                 <p className="mt-7 text-xs uppercase tracking-[0.28em] text-white/28">
                   Location
                 </p>
-                <p className="mt-3 text-sm leading-7 text-white/52">{siteConfig.location}</p>
+                <p className="mt-3 text-sm leading-7 text-white/52">
+                  {siteConfig.location}
+                </p>
               </div>
               <div className="rounded-[1.6rem] border border-white/[0.09] bg-white/[0.025] p-6">
                 <Clock3 className="h-5 w-5 text-[#8be9ff]" />
