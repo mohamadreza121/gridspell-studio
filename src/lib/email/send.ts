@@ -14,7 +14,34 @@ function getResend() {
 }
 
 function getFromAddress() {
-  return process.env.RESEND_FROM_EMAIL || "GridSpell <onboarding@resend.dev>";
+  const fallback =
+    "GridSpell Studio <notifications@send.gridspellstudio.com>";
+
+  const rawValue = process.env.RESEND_FROM_EMAIL?.trim();
+
+  if (!rawValue) {
+    return fallback;
+  }
+
+  // Protect against quotes accidentally being stored literally,
+  // especially when copying values into Vercel.
+  const value = rawValue.replace(/^["']|["']$/g, "").trim();
+
+  const plainEmailPattern = /^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/;
+  const namedEmailPattern =
+    /^[^<>]+<\s*[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+\s*>$/;
+
+  if (
+    !plainEmailPattern.test(value) &&
+    !namedEmailPattern.test(value)
+  ) {
+    throw new Error(
+      `Invalid RESEND_FROM_EMAIL format: ${JSON.stringify(value)}. ` +
+        'Use "GridSpell Studio <notifications@send.gridspellstudio.com>".'
+    );
+  }
+
+  return value;
 }
 
 export async function sendTransactionalEmail(input: {
