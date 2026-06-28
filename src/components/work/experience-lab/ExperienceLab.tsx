@@ -1076,7 +1076,7 @@ export function ExperienceLab() {
               <button
                 type="button"
                 onClick={() => sectionRef.current?.querySelector<HTMLElement>("[data-lab-workspace]")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-[#08090d] transition hover:-translate-y-0.5"
+                className="inline-flex min-h-12 items-center gap-2 rounded-full bg-gradient-to-r from-[#7c5cff] to-[#29d6ff] px-5 text-sm font-semibold !text-[#05070b] shadow-[0_14px_40px_rgba(41,214,255,0.18)] transition hover:-translate-y-0.5 hover:brightness-110"
               >
                 Start designing
                 <ArrowRight className="h-4 w-4" />
