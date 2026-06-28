@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 import {
+  backgroundOptions,
+  buttonEffects,
+  experiencePalettes,
+  experienceScenes,
+  motionOptions
+} from "@/config/experience-lab";
+import {
   adminLeadNotificationTemplate,
   leadConfirmationTemplate
 } from "@/lib/email/templates";
@@ -22,6 +29,38 @@ function jsonError(message: string, status: number, retryAfter?: number) {
       headers: retryAfter ? { "Retry-After": String(Math.max(1, retryAfter)) } : undefined
     }
   );
+}
+
+function getExperienceSelection(request: Request) {
+  const referer = request.headers.get("referer");
+  if (!referer) return null;
+
+  try {
+    const url = new URL(referer);
+    const scene = experienceScenes.find((item) => item.id === url.searchParams.get("scene"));
+    const palette = experiencePalettes.find(
+      (item) => item.id === url.searchParams.get("palette")
+    );
+    const button = buttonEffects.find((item) => item.id === url.searchParams.get("button"));
+    const background = backgroundOptions.find(
+      (item) => item.id === url.searchParams.get("background")
+    );
+    const motion = motionOptions.find((item) => item.id === url.searchParams.get("motion"));
+
+    if (!scene || !palette || !button || !background || !motion) {
+      return null;
+    }
+
+    return [
+      `Direction: ${scene.label}`,
+      `Palette: ${palette.label}`,
+      `Button: ${button.label}`,
+      `Background: ${background.label}`,
+      `Motion: ${motion.label}`
+    ].join("\n");
+  } catch {
+    return null;
+  }
 }
 
 export async function POST(request: Request) {
@@ -106,6 +145,11 @@ export async function POST(request: Request) {
       );
     }
 
+    const experienceSelection = getExperienceSelection(request);
+    const messageForStorage = experienceSelection
+      ? `${lead.message}\n\nExperience Lab selection:\n${experienceSelection}`
+      : lead.message;
+
     const admin = createAdminClient();
     const { data, error } = await admin
       .from("leads")
@@ -117,7 +161,7 @@ export async function POST(request: Request) {
         project_type: lead.projectType,
         budget_range: lead.budget,
         timeline: lead.timeline || null,
-        message: lead.message,
+        message: messageForStorage,
         source: "website"
       })
       .select("id")
@@ -157,7 +201,7 @@ export async function POST(request: Request) {
             projectType: lead.projectType,
             budget: lead.budget,
             timeline: lead.timeline,
-            message: lead.message,
+            message: messageForStorage,
             adminUrl: `${siteUrl}/admin/leads`
           }),
           replyTo: lead.email,
