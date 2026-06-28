@@ -1,10 +1,12 @@
 export type DashboardTourStepId =
   | "overview"
+  | "projects"
   | "tasks"
-  | "files"
   | "approvals"
+  | "files"
   | "messages"
-  | "launch";
+  | "billing"
+  | "support";
 
 export type DashboardTourStep = {
   id: DashboardTourStepId;
@@ -14,22 +16,7 @@ export type DashboardTourStep = {
   title: string;
   description: string;
   benefit: string;
-  action: string;
-  transform: {
-    scale: number;
-    x: string;
-    y: string;
-  };
-  focus: {
-    left: string;
-    top: string;
-    width: string;
-    height: string;
-  };
-  cursor: {
-    left: string;
-    top: string;
-  };
+  actions: string[];
 };
 
 export const dashboardTourSteps: DashboardTourStep[] = [
@@ -37,90 +24,128 @@ export const dashboardTourSteps: DashboardTourStep[] = [
     id: "overview",
     number: "01",
     label: "Overview",
-    eyebrow: "Know where the project stands",
-    title: "The whole project at a glance.",
+    eyebrow: "Start with the full picture",
+    title: "Your project status in one clear view.",
     description:
-      "See the current phase, overall progress, upcoming milestone, and anything that needs your attention as soon as you sign in.",
+      "The overview combines current phase, percent complete, next milestone, client actions, recent activity, and the latest project update.",
     benefit:
-      "You get a clear answer without searching through emails or asking for a status update.",
-    action: "Review progress and the next milestone",
-    transform: { scale: 1.08, x: "0%", y: "3%" },
-    focus: { left: "19%", top: "13%", width: "77%", height: "24%" },
-    cursor: { left: "77%", top: "24%" }
+      "You can understand what changed, what is coming next, and whether anything needs your attention in less than a minute.",
+    actions: [
+      "Check project health and completion percentage",
+      "Open the next milestone or client action",
+      "Review the latest update from GridSpell"
+    ]
+  },
+  {
+    id: "projects",
+    number: "02",
+    label: "Projects",
+    eyebrow: "Keep scope and delivery visible",
+    title: "The engagement details stay attached to the work.",
+    description:
+      "Each project shows its scope, current phase, delivery dates, included deliverables, project owner, team, and agreed investment.",
+    benefit:
+      "The client always has a reliable source of truth for what is included, who is responsible, and where the engagement currently stands.",
+    actions: [
+      "Review the approved scope and deliverables",
+      "See start date, target launch, and project owner",
+      "Open the project workspace and activity history"
+    ]
   },
   {
     id: "tasks",
-    number: "02",
-    label: "Tasks",
-    eyebrow: "Keep responsibilities obvious",
-    title: "See what needs your attention.",
-    description:
-      "Client tasks and GridSpell tasks stay separated, prioritized, and connected to real deadlines.",
-    benefit:
-      "You always know what GridSpell is handling and which action is waiting on you.",
-    action: "Complete, review, or open a task",
-    transform: { scale: 1.36, x: "-11%", y: "-9%" },
-    focus: { left: "21%", top: "39%", width: "47%", height: "34%" },
-    cursor: { left: "57%", top: "57%" }
-  },
-  {
-    id: "files",
     number: "03",
-    label: "Files",
-    eyebrow: "Keep every asset together",
-    title: "No more lost links or attachments.",
+    label: "Tasks",
+    eyebrow: "Make responsibilities unmistakable",
+    title: "Every next action has an owner and a deadline.",
     description:
-      "Logos, copy, images, documents, and approved deliverables stay organized inside the project workspace.",
+      "Tasks are separated by client responsibility and GridSpell responsibility, with status, priority, due date, and related project information.",
     benefit:
-      "Everyone works from the same version, and important assets do not disappear inside email threads.",
-    action: "Upload, preview, and download files",
-    transform: { scale: 1.5, x: "-16%", y: "-28%" },
-    focus: { left: "21%", top: "75%", width: "47%", height: "20%" },
-    cursor: { left: "58%", top: "84%" }
+      "There is no confusion about what GridSpell is handling, what the client must provide, or which item is blocking progress.",
+    actions: [
+      "Filter by owner, status, or priority",
+      "Open task details and related files",
+      "Mark client actions complete"
+    ]
   },
   {
     id: "approvals",
     number: "04",
     label: "Approvals",
-    eyebrow: "Turn feedback into decisions",
-    title: "Review clearly. Approve confidently.",
+    eyebrow: "Turn review into a documented decision",
+    title: "Feedback and approval happen beside the deliverable.",
     description:
-      "Design reviews, comments, revision notes, and approval decisions stay attached to the work they belong to.",
+      "Design versions, review deadlines, comments, requested revisions, and approval history stay connected to the exact item being reviewed.",
     benefit:
-      "Feedback is easier to understand, decisions are documented, and the project keeps moving.",
-    action: "Comment, request a revision, or approve",
-    transform: { scale: 1.42, x: "16%", y: "-10%" },
-    focus: { left: "70%", top: "39%", width: "26%", height: "34%" },
-    cursor: { left: "88%", top: "62%" }
+      "Feedback remains specific, decisions are recorded, and GridSpell knows exactly when the project can move into the next phase.",
+    actions: [
+      "Preview the submitted design version",
+      "Leave a clear revision request",
+      "Approve the deliverable and record the decision"
+    ]
+  },
+  {
+    id: "files",
+    number: "05",
+    label: "Files",
+    eyebrow: "Keep every project asset organized",
+    title: "One file library, with versions and ownership.",
+    description:
+      "Brand assets, content, references, contracts, design exports, and launch files include upload date, owner, category, and current version.",
+    benefit:
+      "The team works from the correct files without searching email attachments, outdated links, or disconnected storage folders.",
+    actions: [
+      "Upload client content and brand assets",
+      "Preview or download the current version",
+      "Filter files by category or project"
+    ]
   },
   {
     id: "messages",
-    number: "05",
-    label: "Updates",
-    eyebrow: "Keep communication connected",
-    title: "Project updates stay with the project.",
+    number: "06",
+    label: "Messages",
+    eyebrow: "Keep communication in context",
+    title: "Project conversations stay connected to the project.",
     description:
-      "Important messages, meeting notes, reminders, and recent activity remain visible in one reliable place.",
+      "Updates, questions, meeting notes, decisions, and attachments are organized in a searchable project conversation rather than scattered across inboxes.",
     benefit:
-      "You can return days later and understand what changed without reconstructing the conversation.",
-    action: "Read updates and continue the conversation",
-    transform: { scale: 1.43, x: "17%", y: "24%" },
-    focus: { left: "70%", top: "75%", width: "26%", height: "20%" },
-    cursor: { left: "87%", top: "85%" }
+      "A client can return after several days and understand the conversation, the decision, and the next step without reconstructing an email chain.",
+    actions: [
+      "Read the latest GridSpell update",
+      "Reply with a question or attachment",
+      "Search previous decisions and meeting notes"
+    ]
   },
   {
-    id: "launch",
-    number: "06",
-    label: "Launch",
-    eyebrow: "See what comes next",
-    title: "A visible path all the way to launch.",
+    id: "billing",
+    number: "07",
+    label: "Billing",
+    eyebrow: "Make the financial status transparent",
+    title: "Invoices, payments, and balances are visible together.",
     description:
-      "Milestones, completed work, launch checks, and upcoming dates show exactly how the project moves forward.",
+      "The billing area shows the agreed project value, amount paid, remaining balance, invoice status, due dates, and downloadable receipts.",
     benefit:
-      "There are no surprise deadlines and no mystery about what must happen before launch.",
-    action: "Review milestones and launch readiness",
-    transform: { scale: 1.3, x: "-8%", y: "19%" },
-    focus: { left: "21%", top: "39%", width: "47%", height: "34%" },
-    cursor: { left: "39%", top: "48%" }
+      "Clients can confirm what has been paid and what is due without requesting a separate account statement.",
+    actions: [
+      "Review paid and outstanding invoices",
+      "Download invoices and receipts",
+      "Open the secure payment action when available"
+    ]
+  },
+  {
+    id: "support",
+    number: "08",
+    label: "Support",
+    eyebrow: "Give every request a trackable path",
+    title: "Questions and production issues become managed requests.",
+    description:
+      "Clients can select the related project, choose a priority, explain the request, and follow its status through a protected support workflow.",
+    benefit:
+      "Nothing depends on an untracked message. Each request has context, ownership, priority, and a visible response history.",
+    actions: [
+      "Create a project or account support request",
+      "Set normal, high, or urgent priority",
+      "Track open, in-progress, and resolved requests"
+    ]
   }
 ];
