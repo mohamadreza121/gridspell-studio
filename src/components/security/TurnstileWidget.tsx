@@ -30,7 +30,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
   const widgetIdRef = useRef<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [token, setToken] = useState("");
-  const reactId = useId().replaceAll(":", "");
+  const reactId = useId().split(":").join("");
 
   useEffect(() => {
     const container = containerRef.current;

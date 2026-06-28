@@ -64,7 +64,7 @@ export function Navbar({ viewer }: { viewer: MarketingViewer | null }) {
       if (!focusable.length) return;
 
       const first = focusable[0];
-      const last = focusable.at(-1) ?? first;
+      const last = focusable[focusable.length - 1] || first;
 
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();

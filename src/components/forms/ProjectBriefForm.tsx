@@ -80,7 +80,45 @@ export function ProjectBriefForm() {
     setFieldErrors({});
 
     const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
+    function readField(name: string) {
+      const field = form.elements.namedItem(name);
+
+      if (
+        field instanceof HTMLInputElement ||
+        field instanceof HTMLTextAreaElement ||
+        field instanceof HTMLSelectElement
+      ) {
+        return field.value;
+      }
+
+      return "";
+    }
+
+    const data = {
+      name: readField("name"),
+      email: readField("email"),
+      company: readField("company"),
+      phone: readField("phone"),
+      projectType: readField("projectType"),
+      budget: readField("budget"),
+      timeline: readField("timeline"),
+      message: readField("message"),
+      website: readField("website"),
+      formStartedAt: readField("formStartedAt"),
+      turnstileToken: readField("turnstileToken")
+    };
+
+    const turnstileRequired = Boolean(
+      process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+    );
+
+    if (turnstileRequired && !data.turnstileToken) {
+      setStatus("error");
+      setMessage(
+        "The security check could not load in this browser. Please refresh, use a newer browser, or email hello@gridspellstudio.com."
+      );
+      return;
+    }
     const validation = leadSchema.safeParse(data);
 
     if (!validation.success) {
