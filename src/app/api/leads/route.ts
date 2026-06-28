@@ -12,8 +12,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { leadSubmissionSchema } from "@/validations/lead";
 
 const MAX_BODY_BYTES = 24_000;
-const MIN_COMPLETION_MS = 2_000;
-const MAX_FORM_AGE_MS = 2 * 60 * 60 * 1000;
+const MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
 
 function jsonError(message: string, status: number, retryAfter?: number) {
   return NextResponse.json(
@@ -49,19 +48,32 @@ export async function POST(request: Request) {
   }
 
   try {
-    const parsed = leadSubmissionSchema.safeParse(await request.json());
+    const requestBody = await request.json();
+    const parsed = leadSubmissionSchema.safeParse(requestBody);
+
     if (!parsed.success) {
-      return jsonError("Please review the required fields and try again.", 400);
+      console.warn(
+        "Lead validation failed:",
+        parsed.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          code: issue.code
+        }))
+      );
+
+      return jsonError(
+        "Please review the required fields and try again.",
+        400
+      );
     }
 
     const lead = parsed.data;
-    const now = Date.now();
-    const formAge = now - lead.formStartedAt;
+    const formAge = Date.now() - lead.formStartedAt;
 
-    // Hidden honeypot and timing checks reject common automated submissions
-    // before any database or email work occurs.
-    if (lead.website || formAge < MIN_COMPLETION_MS || formAge > MAX_FORM_AGE_MS) {
-      return NextResponse.json({ ok: true }, { status: 201 });
+    if (formAge > MAX_FORM_AGE_MS) {
+      return jsonError(
+        "This form session expired. Refresh the page and submit it again.",
+        400
+      );
     }
 
     const emailLimit = await consumeRateLimit({

@@ -72,6 +72,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         strategy="afterInteractive"
         onLoad={() => setScriptReady(true)}
+        onReady={() => setScriptReady(true)}
       />
 
       <input type="hidden" name="turnstileToken" value={token} readOnly />

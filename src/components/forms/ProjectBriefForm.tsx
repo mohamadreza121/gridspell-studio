@@ -62,7 +62,6 @@ export function ProjectBriefForm() {
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formStartedAt] = useState(() => Date.now());
-  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
 
   function clearFieldError(field: LeadField) {
     setFieldErrors((current) => {
@@ -103,7 +102,6 @@ export function ProjectBriefForm() {
       budget: readField("budget"),
       timeline: readField("timeline"),
       message: readField("message"),
-      website: readField("website"),
       formStartedAt: readField("formStartedAt"),
       turnstileToken: readField("turnstileToken")
     };
@@ -158,10 +156,15 @@ export function ProjectBriefForm() {
         project_type: validation.data.projectType
       });
       setStatus("success");
-    } catch (error) {
-      setTurnstileResetKey((current) => current + 1);
+        } catch (error) {
+      window.turnstile?.reset();
+
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Something went wrong.");
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
     }
   }
 
@@ -201,14 +204,6 @@ export function ProjectBriefForm() {
       noValidate
       className="glass-panel overflow-hidden rounded-[2rem]"
     >
-      <input
-        type="text"
-        name="website"
-        tabIndex={-1}
-        autoComplete="off"
-        aria-hidden="true"
-        className="absolute -left-[9999px] h-px w-px opacity-0"
-      />
       <input type="hidden" name="formStartedAt" value={formStartedAt} />
 
       <div className="border-b border-white/[0.08] p-6 sm:p-8">
@@ -411,7 +406,7 @@ export function ProjectBriefForm() {
         </fieldset>
 
         <div className="border-t border-white/[0.08] pt-8">
-          <TurnstileWidget key={turnstileResetKey} />
+          <TurnstileWidget />
         </div>
 
         {status === "error" ? (

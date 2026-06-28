@@ -19,7 +19,6 @@ export const leadSchema = z.object({
 });
 
 export const leadSubmissionSchema = leadSchema.extend({
-  website: z.string().max(0).optional().default(""),
   formStartedAt: z.coerce.number().int().positive(),
   turnstileToken: z.string().trim().max(4096).optional().default("")
 });
