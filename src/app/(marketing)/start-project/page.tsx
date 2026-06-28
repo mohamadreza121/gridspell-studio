@@ -1,7 +1,8 @@
 import { ArrowRight, CircleCheck, Clock3, SearchCheck } from "lucide-react";
-import { PageIntro } from "@/components/ui/PageIntro";
-import { Container } from "@/components/ui/Container";
+import { ExperienceSelectionSummary } from "@/components/forms/ExperienceSelectionSummary";
 import { ProjectBriefForm } from "@/components/forms/ProjectBriefForm";
+import { Container } from "@/components/ui/Container";
+import { PageIntro } from "@/components/ui/PageIntro";
 
 const nextSteps = [
   {
@@ -72,7 +73,10 @@ export default function StartProjectPage() {
             </div>
           </aside>
 
-          <ProjectBriefForm />
+          <div className="grid gap-5">
+            <ExperienceSelectionSummary />
+            <ProjectBriefForm />
+          </div>
         </Container>
       </section>
     </>
