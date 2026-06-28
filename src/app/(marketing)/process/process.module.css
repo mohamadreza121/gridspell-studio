@@ -1,0 +1,4 @@
+.dashboardTourWrapper :global(#client-workspace) {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+}
