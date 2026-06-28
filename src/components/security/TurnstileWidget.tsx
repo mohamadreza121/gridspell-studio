@@ -15,7 +15,7 @@ declare global {
           action?: string;
           callback?: (token: string) => void;
           "expired-callback"?: () => void;
-          "error-callback"?: () => void;
+          "error-callback"?: (errorCode: string) => boolean | void;
         }
       ) => string;
       reset: (widgetId?: string) => void;
@@ -30,6 +30,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
   const widgetIdRef = useRef<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [token, setToken] = useState("");
+  const [widgetError, setWidgetError] = useState("");
   const reactId = useId().split(":").join("");
 
   useEffect(() => {
@@ -49,11 +50,31 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
       theme: "dark",
       size: "flexible",
       action,
-      callback: setToken,
-      "expired-callback": () => setToken(""),
-      "error-callback": () => setToken("")
-    });
 
+      callback: (newToken) => {
+        setToken(newToken);
+        setWidgetError("");
+      },
+
+      "expired-callback": () => {
+        setToken("");
+        setWidgetError(
+          "The security check expired. Please complete it again."
+        );
+      },
+
+      "error-callback": (errorCode) => {
+        setToken("");
+        setWidgetError(
+          "The security check could not connect. Disable any VPN or content blocker, refresh the page, and try again."
+        );
+
+        console.warn("Turnstile client error:", errorCode);
+
+        return true;
+      }
+    });
+  
     return () => {
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
@@ -83,6 +104,15 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
         className="min-h-[65px] w-full"
         aria-label="Bot protection verification"
       />
+
+      {widgetError ? (
+        <p
+          role="alert"
+          className="rounded-xl border border-[#ff5f6d]/25 bg-[#ff5f6d]/8 px-4 py-3 text-xs leading-5 text-[#ff9aa3]"
+        >
+          {widgetError}
+        </p>
+      ) : null}
 
       <p className="text-xs leading-5 text-white/28">
         This form uses a privacy-preserving security check to reduce automated
