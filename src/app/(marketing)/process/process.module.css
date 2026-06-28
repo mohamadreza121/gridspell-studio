@@ -24,21 +24,6 @@
   }
 
   .dashboardTourWrapper
-    :global(#client-workspace section[class*="lg:block"] > div.sticky)::after {
-    content: "↓";
-    position: absolute;
-    left: clamp(0.75rem, 2vw, 2rem);
-    top: calc(50% + 8.55rem);
-    z-index: 20;
-    width: 0.75rem;
-    text-align: center;
-    font-size: 0.95rem;
-    line-height: 1;
-    color: rgb(139 233 255 / 62%);
-    pointer-events: none;
-  }
-
-  .dashboardTourWrapper
     :global(
       #client-workspace section[class*="lg:block"] > div.sticky > div[class*="h-full"][class*="py-16"] > div[class*="bottom-6"][class*="left-6"]
     ) {
@@ -51,6 +36,14 @@
     ) {
     grid-template-columns: minmax(0, 1.38fr) minmax(320px, 0.62fr) !important;
     gap: 2rem !important;
+  }
+
+  .dashboardTourWrapper
+    :global(
+      #client-workspace section[class*="lg:block"] > div.sticky > div[class*="h-full"][class*="py-16"] > div[class*="grid"][class*="h-full"] > div:first-child
+    ) {
+    width: 97% !important;
+    margin-inline: auto !important;
   }
 
   .dashboardTourWrapper
