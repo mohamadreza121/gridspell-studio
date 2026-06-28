@@ -1,8 +1,10 @@
 import { ArrowUpRight, Check, Handshake, Route } from "lucide-react";
-import { PageIntro } from "@/components/ui/PageIntro";
-import { Container } from "@/components/ui/Container";
+import { ClientDashboardTour } from "@/components/process/dashboard-tour/ClientDashboardTour";
 import { ActionLink } from "@/components/ui/ActionControl";
+import { Container } from "@/components/ui/Container";
+import { PageIntro } from "@/components/ui/PageIntro";
 import { processSteps } from "@/config/process";
+import styles from "./process.module.css";
 
 const clientResponsibilities = [
   "Provide one clear decision maker",
@@ -21,7 +23,11 @@ export default function ProcessPage() {
         description="A premium experience should feel organized behind the scenes. Every phase has an objective, a deliverable, and a decision."
       />
 
-      <section className="py-20 lg:py-28">
+      <div className={styles.dashboardTourWrapper}>
+        <ClientDashboardTour />
+      </div>
+
+      <section id="process-steps" className="scroll-mt-24 py-20 lg:py-28">
         <Container>
           <div className="grid gap-6">
             {processSteps.map((step, index) => (
