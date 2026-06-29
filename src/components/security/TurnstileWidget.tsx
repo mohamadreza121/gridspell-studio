@@ -3,6 +3,8 @@
 import Script from "next/script";
 import { useEffect, useId, useRef, useState } from "react";
 
+const TURNSTILE_PREVIEW_SITE_KEY = "1x00000000000000000000AA";
+
 declare global {
   interface Window {
     turnstile?: {
@@ -24,14 +26,46 @@ declare global {
   }
 }
 
+function isVercelPreviewHostname(hostname: string) {
+  return hostname.endsWith(".vercel.app");
+}
+
+function getTurnstileErrorMessage(errorCode: string) {
+  if (errorCode.startsWith("110200")) {
+    return "This domain is not authorized for the security check. Open the production website or refresh after the preview deployment updates.";
+  }
+
+  if (
+    errorCode.startsWith("110100") ||
+    errorCode.startsWith("110110") ||
+    errorCode.startsWith("400020") ||
+    errorCode.startsWith("400070")
+  ) {
+    return "The security check is not configured correctly for this environment. Please try the production website or contact GridSpell.";
+  }
+
+  return "The security check could not connect. Disable any VPN or content blocker, refresh the page, and try again.";
+}
+
 export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const configuredSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const [siteKey, setSiteKey] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [token, setToken] = useState("");
   const [widgetError, setWidgetError] = useState("");
   const reactId = useId().split(":").join("");
+
+  useEffect(() => {
+    const hostname = window.location.hostname;
+
+    setSiteKey(
+      isVercelPreviewHostname(hostname)
+        ? TURNSTILE_PREVIEW_SITE_KEY
+        : configuredSiteKey || null
+    );
+  }, [configuredSiteKey]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -65,16 +99,16 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
 
       "error-callback": (errorCode) => {
         setToken("");
-        setWidgetError(
-          "The security check could not connect. Disable any VPN or content blocker, refresh the page, and try again."
-        );
+        setWidgetError(getTurnstileErrorMessage(errorCode));
 
-        console.warn("Turnstile client error:", errorCode);
+        console.warn("Turnstile client error:", errorCode, {
+          hostname: window.location.hostname
+        });
 
-        return true;
+        return !errorCode.startsWith("110") && !errorCode.startsWith("4000");
       }
     });
-  
+
     return () => {
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
