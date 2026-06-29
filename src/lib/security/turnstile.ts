@@ -1,5 +1,7 @@
 import "server-only";
 
+const TURNSTILE_PREVIEW_SECRET_KEY = "1x0000000000000000000000000000000AA";
+
 type TurnstileResponse = {
   success: boolean;
   challenge_ts?: string;
@@ -20,7 +22,10 @@ export async function verifyTurnstile(input: {
   remoteIp?: string | null;
   expectedAction?: string;
 }): Promise<TurnstileVerification> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
+  const isVercelPreview = process.env.VERCEL_ENV === "preview";
+  const secret = isVercelPreview
+    ? TURNSTILE_PREVIEW_SECRET_KEY
+    : process.env.TURNSTILE_SECRET_KEY;
 
   if (!secret) {
     return {
@@ -65,7 +70,9 @@ export async function verifyTurnstile(input: {
   }
 
   const result = (await response.json()) as TurnstileResponse;
-  const expectedHostname = process.env.TURNSTILE_EXPECTED_HOSTNAME?.trim();
+  const expectedHostname = isVercelPreview
+    ? undefined
+    : process.env.TURNSTILE_EXPECTED_HOSTNAME?.trim();
   const hostnameMatches = !expectedHostname || result.hostname === expectedHostname;
   const actionMatches = !input.expectedAction || result.action === input.expectedAction;
 
