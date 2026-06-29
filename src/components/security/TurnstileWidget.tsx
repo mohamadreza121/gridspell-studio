@@ -30,7 +30,7 @@ function isPreviewHostname(hostname: string) {
 
 function getTurnstileErrorMessage(errorCode: string) {
   if (errorCode.startsWith("110200")) {
-    return "This domain is not authorized for the security check. Please use the production website or contact GridSpell.";
+    return "This preview hostname is not authorized in Cloudflare Turnstile yet. Add the exact Vercel preview hostname to the widget's Hostname Management settings, then refresh.";
   }
 
   if (
@@ -39,36 +39,32 @@ function getTurnstileErrorMessage(errorCode: string) {
     errorCode.startsWith("400020") ||
     errorCode.startsWith("400070")
   ) {
-    return "The security check is not configured correctly for this environment. Please contact GridSpell.";
+    return "The Turnstile site key is not configured correctly for this environment. Check the Preview environment variables in Vercel.";
   }
 
   return "The security check could not connect. Disable any VPN or content blocker, refresh the page, and try again.";
 }
 
 export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const productionSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const previewSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_PREVIEW_SITE_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const [isPreview, setIsPreview] = useState<boolean | null>(null);
+  const [siteKey, setSiteKey] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [token, setToken] = useState("");
   const [widgetError, setWidgetError] = useState("");
   const reactId = useId().split(":").join("");
 
   useEffect(() => {
-    setIsPreview(isPreviewHostname(window.location.hostname));
-  }, []);
+    const preview = isPreviewHostname(window.location.hostname);
+    setSiteKey(preview ? previewSiteKey || productionSiteKey || null : productionSiteKey || null);
+  }, [previewSiteKey, productionSiteKey]);
 
   useEffect(() => {
     const container = containerRef.current;
 
-    if (
-      isPreview !== false ||
-      !siteKey ||
-      !scriptReady ||
-      !container ||
-      !window.turnstile
-    ) {
+    if (!siteKey || !scriptReady || !container || !window.turnstile) {
       return;
     }
 
@@ -98,7 +94,10 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
         setWidgetError(getTurnstileErrorMessage(errorCode));
 
         console.warn("Turnstile client error:", errorCode, {
-          hostname: window.location.hostname
+          hostname: window.location.hostname,
+          usingPreviewKey: Boolean(
+            isPreviewHostname(window.location.hostname) && previewSiteKey
+          )
         });
 
         return !errorCode.startsWith("110") && !errorCode.startsWith("4000");
@@ -111,25 +110,14 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
         widgetIdRef.current = null;
       }
     };
-  }, [action, isPreview, scriptReady, siteKey]);
-
-  if (isPreview === null) {
-    return <div className="min-h-[65px] w-full" aria-hidden="true" />;
-  }
-
-  if (isPreview) {
-    return (
-      <div className="grid gap-2">
-        <input type="hidden" name="turnstileToken" value="preview-bypass" readOnly />
-        <p className="rounded-xl border border-[#8be9ff]/15 bg-[#8be9ff]/5 px-4 py-3 text-xs leading-5 text-white/38">
-          Security verification is disabled on this Vercel preview. It remains active on the production website.
-        </p>
-      </div>
-    );
-  }
+  }, [action, previewSiteKey, scriptReady, siteKey]);
 
   if (!siteKey) {
-    return null;
+    return (
+      <p className="rounded-xl border border-[#ff5f6d]/25 bg-[#ff5f6d]/8 px-4 py-3 text-xs leading-5 text-[#ff9aa3]">
+        Turnstile is not configured for this environment. Add the appropriate site key in Vercel.
+      </p>
+    );
   }
 
   return (
@@ -160,7 +148,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
       ) : null}
 
       <p className="text-xs leading-5 text-white/28">
-        This form uses a privacy-preserving security check to reduce automated submissions.
+        This form uses Cloudflare Turnstile to reduce automated submissions.
       </p>
     </div>
   );
