@@ -15,11 +15,18 @@ function initials(fullName: string | null, email: string | null) {
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const viewer = await requireStaff(["owner", "admin", "team_member"]);
 
-  const navigation = viewer.staffRole === "team_member"
-    ? adminNavigation.filter((item) =>
-        ["/admin", "/admin/projects", "/admin/files", "/admin/activity"].includes(item.href)
-      )
-    : adminNavigation;
+  const teamRoutes = [
+    "/admin",
+    "/admin/projects",
+    "/admin/communications",
+    "/admin/files",
+    "/admin/activity",
+    "/admin/settings"
+  ];
+  const navigation =
+    viewer.staffRole === "team_member"
+      ? adminNavigation.filter((item) => teamRoutes.includes(item.href))
+      : adminNavigation;
 
   return (
     <DashboardShell
