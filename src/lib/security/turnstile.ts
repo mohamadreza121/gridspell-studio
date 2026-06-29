@@ -73,8 +73,9 @@ export async function verifyTurnstile(input: {
   const expectedHostname = isVercelPreview
     ? undefined
     : process.env.TURNSTILE_EXPECTED_HOSTNAME?.trim();
+  const expectedAction = isVercelPreview ? undefined : input.expectedAction;
   const hostnameMatches = !expectedHostname || result.hostname === expectedHostname;
-  const actionMatches = !input.expectedAction || result.action === input.expectedAction;
+  const actionMatches = !expectedAction || result.action === expectedAction;
 
   return {
     success: Boolean(result.success && hostnameMatches && actionMatches),
