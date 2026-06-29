@@ -21,6 +21,7 @@ export const adminNavigation = [
   { label: "Leads", href: "/admin/leads" },
   { label: "Clients", href: "/admin/clients" },
   { label: "Projects", href: "/admin/projects" },
+  { label: "Communications", href: "/admin/communications" },
   { label: "Files", href: "/admin/files" },
   { label: "Proposals", href: "/admin/proposals" },
   { label: "Invoices", href: "/admin/invoices" },
