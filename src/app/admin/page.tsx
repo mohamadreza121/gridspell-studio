@@ -1,42 +1,252 @@
 import Link from "next/link";
-import { ActionButton } from "@/components/ui/ActionControl";
-import { AdminHeader, AdminNotice, AdminPanel, EmptyState, StatusBadge } from "@/components/admin/AdminUi";
-import { upsertBlogPostAction, upsertCaseStudyAction, upsertServiceContentAction, upsertTestimonialAction } from "@/features/admin/actions";
-import { getAdminContent } from "@/features/admin/data";
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  CircleDollarSign,
+  FolderKanban,
+  Inbox,
+  MessageSquareText,
+  Settings2,
+  UsersRound
+} from "lucide-react";
 
-type Props = { searchParams: Promise<{ tab?: string; error?: string; message?: string }> };
-const tabs = ["services", "cases", "testimonials", "posts"] as const;
+import {
+  AdminHeader,
+  AdminPanel,
+  EmptyState,
+  MetricCard,
+  StatusBadge,
+  formatDate,
+  formatMoney
+} from "@/components/admin/AdminUi";
+import { ActionLink } from "@/components/ui/ActionControl";
+import { getAdminDashboard } from "@/features/admin/data";
 
-export default async function ContentPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const tab = tabs.includes((params.tab ?? "services") as (typeof tabs)[number]) ? (params.tab ?? "services") : "services";
-  const data = await getAdminContent();
+export default async function AdminDashboardPage() {
+  const data = await getAdminDashboard();
+
   return (
     <section>
-      <AdminHeader title="Content management." text="Manage services, case studies, testimonials, and insights without editing source files." />
-      <AdminNotice error={params.error} message={params.message} />
-      <div className="mt-7 flex flex-wrap gap-2">{tabs.map((item) => <Link key={item} href={`/admin/content?tab=${item}`} className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[.16em] transition ${tab === item ? "border-[#8be9ff]/50 bg-[#8be9ff]/10 text-[#8be9ff]" : "border-white/10 text-white/36 hover:border-white/25 hover:text-white"}`}>{item}</Link>)}</div>
+      <AdminHeader
+        eyebrow="Operations"
+        title="Studio dashboard."
+        text="See the sales pipeline, active delivery work, outstanding revenue, and the latest client activity from one operational view."
+        action={
+          <ActionLink href="/admin/projects">
+            Open projects <ArrowRight className="h-4 w-4" />
+          </ActionLink>
+        }
+      />
 
-      {tab === "services" ? <div className="mt-7 grid gap-6 xl:grid-cols-[.7fr_1.3fr]"><AdminPanel eyebrow="New service" title="Add service"><ServiceForm /></AdminPanel><AdminPanel eyebrow="Website" title="Services"><div className="mt-6 grid gap-4">{data.services.length ? data.services.map((item) => <ServiceForm key={item.id} item={item} />) : <EmptyState>No services yet.</EmptyState>}</div></AdminPanel></div> : null}
-      {tab === "cases" ? <div className="mt-7 grid gap-6 xl:grid-cols-[.7fr_1.3fr]"><AdminPanel eyebrow="New case study" title="Add project story"><CaseForm /></AdminPanel><AdminPanel eyebrow="Portfolio" title="Case studies"><div className="mt-6 grid gap-4">{data.cases.length ? data.cases.map((item) => <CaseForm key={item.id} item={item} compact />) : <EmptyState>No case studies yet.</EmptyState>}</div></AdminPanel></div> : null}
-      {tab === "testimonials" ? <div className="mt-7 grid gap-6 xl:grid-cols-[.7fr_1.3fr]"><AdminPanel eyebrow="New testimonial" title="Add client quote"><TestimonialForm projects={data.projects} /></AdminPanel><AdminPanel eyebrow="Social proof" title="Testimonials"><div className="mt-6 grid gap-4">{data.testimonials.length ? data.testimonials.map((item) => <TestimonialForm key={item.id} item={item} projects={data.projects} />) : <EmptyState>No testimonials yet.</EmptyState>}</div></AdminPanel></div> : null}
-      {tab === "posts" ? <div className="mt-7 grid gap-6 xl:grid-cols-[.7fr_1.3fr]"><AdminPanel eyebrow="New article" title="Add insight"><PostForm /></AdminPanel><AdminPanel eyebrow="Insights" title="Articles"><div className="mt-6 grid gap-4">{data.posts.length ? data.posts.map((item) => <PostForm key={item.id} item={item} />) : <EmptyState>No articles yet.</EmptyState>}</div></AdminPanel></div> : null}
+      <div className="mt-9 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <MetricCard
+          label="Pipeline"
+          value={formatMoney(data.metrics.pipelineValue)}
+          detail="Qualified opportunities not yet closed"
+        />
+        <MetricCard
+          label="New leads"
+          value={String(data.metrics.newLeads)}
+          detail="Unreviewed project inquiries"
+        />
+        <MetricCard
+          label="Active projects"
+          value={String(data.metrics.activeProjects)}
+          detail="Planning, active, or in review"
+        />
+        <MetricCard
+          label="Open proposals"
+          value={String(data.metrics.proposalsOpen)}
+          detail="Draft or sent proposals"
+        />
+        <MetricCard
+          label="Outstanding"
+          value={formatMoney(data.metrics.outstanding)}
+          detail="Unpaid invoice balance"
+        />
+      </div>
+
+      <div className="mt-6 grid gap-6 2xl:grid-cols-[1.15fr_.85fr]">
+        <AdminPanel eyebrow="Delivery" title="Active projects">
+          <div className="mt-6 grid gap-3">
+            {data.projects.length ? (
+              data.projects.map((project) => {
+                const organization = Array.isArray(project.organizations)
+                  ? project.organizations[0]
+                  : project.organizations;
+
+                return (
+                  <Link
+                    key={project.id}
+                    href={`/admin/projects/${project.slug}`}
+                    className="rounded-2xl border border-white/[.07] bg-black/10 p-4 transition hover:border-[#7c5cff]/35 hover:bg-white/[.035]"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <p className="font-medium text-white">{project.name}</p>
+                        <p className="mt-1 text-sm text-white/34">
+                          {organization?.name ?? "No organization"} · Updated {formatDate(project.updated_at)}
+                        </p>
+                      </div>
+                      <StatusBadge value={project.status} />
+                    </div>
+                    <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/[.06]">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-[#7c5cff] to-[#29d6ff]"
+                        style={{ width: `${project.progress}%` }}
+                      />
+                    </div>
+                    <p className="mt-2 text-xs text-white/28">
+                      {project.progress}% complete · {formatMoney(project.budget)}
+                    </p>
+                  </Link>
+                );
+              })
+            ) : (
+              <EmptyState>No projects have been created yet.</EmptyState>
+            )}
+          </div>
+          <Link
+            href="/admin/projects"
+            className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#8be9ff] transition hover:text-white"
+          >
+            Manage all projects <ArrowRight className="h-4 w-4" />
+          </Link>
+        </AdminPanel>
+
+        <AdminPanel eyebrow="Sales" title="Recent leads">
+          <div className="mt-6 grid gap-3">
+            {data.leads.length ? (
+              data.leads.slice(0, 6).map((lead) => (
+                <Link
+                  key={lead.id}
+                  href="/admin/leads"
+                  className="flex items-start justify-between gap-4 rounded-2xl border border-white/[.07] bg-black/10 p-4 transition hover:border-white/[.15]"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-white/72">{lead.name}</p>
+                    <p className="mt-1 text-xs text-white/30">
+                      {lead.company || "Independent client"} · {formatDate(lead.created_at)}
+                    </p>
+                  </div>
+                  <StatusBadge value={lead.status} />
+                </Link>
+              ))
+            ) : (
+              <EmptyState>No leads have arrived yet.</EmptyState>
+            )}
+          </div>
+          <Link
+            href="/admin/leads"
+            className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#8be9ff] transition hover:text-white"
+          >
+            Open lead pipeline <ArrowRight className="h-4 w-4" />
+          </Link>
+        </AdminPanel>
+      </div>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+        <AdminPanel eyebrow="Quick actions" title="Operate the workspace">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {[
+              {
+                label: "Client invitations",
+                detail: "Create organizations and invite client accounts.",
+                href: "/admin/clients",
+                icon: UsersRound
+              },
+              {
+                label: "Project delivery",
+                detail: "Manage phases, tasks, approvals, and files.",
+                href: "/admin/projects",
+                icon: FolderKanban
+              },
+              {
+                label: "Communications",
+                detail: "Reply to project messages and support requests.",
+                href: "/admin/communications",
+                icon: MessageSquareText
+              },
+              {
+                label: "Portal testing",
+                detail: "Create demo data and preview the client experience.",
+                href: "/admin/settings",
+                icon: Settings2
+              }
+            ].map(({ label, detail, href, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group rounded-2xl border border-white/[.07] bg-black/10 p-5 transition hover:-translate-y-0.5 hover:border-[#8be9ff]/25 hover:bg-white/[.035]"
+              >
+                <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/[.08] bg-white/[.035] text-[#8be9ff]">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <p className="mt-5 text-sm font-medium text-white/70">{label}</p>
+                <p className="mt-2 text-xs leading-6 text-white/30">{detail}</p>
+                <ArrowRight className="mt-4 h-4 w-4 text-white/25 transition group-hover:translate-x-1 group-hover:text-[#8be9ff]" />
+              </Link>
+            ))}
+          </div>
+        </AdminPanel>
+
+        <AdminPanel eyebrow="Activity" title="Latest workspace changes">
+          <div className="mt-6 grid gap-3">
+            {data.activities.length ? (
+              data.activities.slice(0, 8).map((activity) => {
+                const actor = Array.isArray(activity.profiles)
+                  ? activity.profiles[0]
+                  : activity.profiles;
+                const project = Array.isArray(activity.projects)
+                  ? activity.projects[0]
+                  : activity.projects;
+                const organization = Array.isArray(activity.organizations)
+                  ? activity.organizations[0]
+                  : activity.organizations;
+
+                return (
+                  <div
+                    key={activity.id}
+                    className="grid grid-cols-[40px_1fr] gap-4 rounded-2xl border border-white/[.07] bg-black/10 p-4"
+                  >
+                    <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/[.08] bg-white/[.035] text-[#8be9ff]">
+                      <BriefcaseBusiness className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm text-white/58">
+                        {activity.action.replaceAll("_", " ")}
+                      </p>
+                      <p className="mt-1 text-xs text-white/25">
+                        {actor?.full_name || "System"}
+                        {project?.name ? ` · ${project.name}` : ""}
+                        {!project?.name && organization?.name ? ` · ${organization.name}` : ""}
+                        {` · ${formatDate(activity.created_at)}`}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <EmptyState>No activity has been recorded yet.</EmptyState>
+            )}
+          </div>
+        </AdminPanel>
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <Link href="/admin/invoices" className="rounded-2xl border border-white/[.08] bg-white/[.025] p-5 transition hover:border-white/[.16]">
+          <CircleDollarSign className="h-5 w-5 text-[#8be9ff]" />
+          <p className="mt-4 text-sm font-medium text-white/68">Invoices and payments</p>
+        </Link>
+        <Link href="/admin/proposals" className="rounded-2xl border border-white/[.08] bg-white/[.025] p-5 transition hover:border-white/[.16]">
+          <BriefcaseBusiness className="h-5 w-5 text-[#8be9ff]" />
+          <p className="mt-4 text-sm font-medium text-white/68">Proposals and scope</p>
+        </Link>
+        <Link href="/portal" className="rounded-2xl border border-white/[.08] bg-white/[.025] p-5 transition hover:border-white/[.16]">
+          <Inbox className="h-5 w-5 text-[#8be9ff]" />
+          <p className="mt-4 text-sm font-medium text-white/68">Preview the client portal</p>
+        </Link>
+      </div>
     </section>
   );
-}
-
-function ServiceForm({ item }: { item?: { id: string; slug: string; title: string; summary: string; position: number; published: boolean } }) {
-  return <form action={upsertServiceContentAction} className="grid gap-3 rounded-2xl border border-white/[.07] bg-black/10 p-4">{item ? <input type="hidden" name="id" value={item.id} /> : null}<div className="flex items-center justify-between gap-3">{item ? <StatusBadge value={item.published ? "published" : "draft"} /> : <span className="text-xs text-white/25">Draft</span>}<label className="flex items-center gap-2 text-xs text-white/45"><input name="published" type="checkbox" defaultChecked={item?.published} /> Published</label></div><input name="title" required defaultValue={item?.title ?? ""} placeholder="Service title" className="form-field" /><input name="slug" required defaultValue={item?.slug ?? ""} placeholder="service-slug" className="form-field" /><textarea name="summary" required rows={4} defaultValue={item?.summary ?? ""} placeholder="Service summary" className="form-field resize-y" /><input name="position" type="number" defaultValue={item?.position ?? 0} className="form-field" /><ActionButton type="submit">{item ? "Save service" : "Create service"}</ActionButton></form>;
-}
-
-function CaseForm({ item, compact = false }: { item?: { id: string; slug: string; title: string; category: string | null; summary: string; challenge: string | null; approach: string | null; outcome: string | null; cover_image: string | null; featured: boolean; published: boolean }; compact?: boolean }) {
-  return <form action={upsertCaseStudyAction} className="grid gap-3 rounded-2xl border border-white/[.07] bg-black/10 p-4">{item ? <input type="hidden" name="id" value={item.id} /> : null}<div className="flex flex-wrap items-center justify-between gap-3">{item ? <StatusBadge value={item.published ? "published" : "draft"} /> : <span className="text-xs text-white/25">Draft</span>}<div className="flex gap-4"><label className="flex items-center gap-2 text-xs text-white/45"><input name="featured" type="checkbox" defaultChecked={item?.featured} /> Featured</label><label className="flex items-center gap-2 text-xs text-white/45"><input name="published" type="checkbox" defaultChecked={item?.published} /> Published</label></div></div><input name="title" required defaultValue={item?.title ?? ""} placeholder="Case study title" className="form-field" /><div className="grid gap-3 sm:grid-cols-2"><input name="slug" required defaultValue={item?.slug ?? ""} placeholder="case-study-slug" className="form-field" /><input name="category" defaultValue={item?.category ?? ""} placeholder="Category" className="form-field" /></div><textarea name="summary" required rows={3} defaultValue={item?.summary ?? ""} placeholder="Summary" className="form-field resize-y" />{!compact ? <><textarea name="challenge" rows={3} defaultValue={item?.challenge ?? ""} placeholder="Challenge" className="form-field resize-y" /><textarea name="approach" rows={3} defaultValue={item?.approach ?? ""} placeholder="Approach" className="form-field resize-y" /><textarea name="outcome" rows={3} defaultValue={item?.outcome ?? ""} placeholder="Outcome" className="form-field resize-y" /></> : <><input type="hidden" name="challenge" value={item?.challenge ?? ""} /><input type="hidden" name="approach" value={item?.approach ?? ""} /><input type="hidden" name="outcome" value={item?.outcome ?? ""} /></>}<input name="coverImage" defaultValue={item?.cover_image ?? ""} placeholder="Cover image URL" className="form-field" /><ActionButton type="submit">{item ? "Save case study" : "Create case study"}</ActionButton></form>;
-}
-
-function TestimonialForm({ item, projects }: { item?: { id: string; client_name: string; company: string | null; quote: string; project_id: string | null; published: boolean; position: number }; projects: Array<{ id: string; name: string }> }) {
-  return <form action={upsertTestimonialAction} className="grid gap-3 rounded-2xl border border-white/[.07] bg-black/10 p-4">{item ? <input type="hidden" name="id" value={item.id} /> : null}<div className="flex items-center justify-between gap-3">{item ? <StatusBadge value={item.published ? "published" : "draft"} /> : <span className="text-xs text-white/25">Draft</span>}<label className="flex items-center gap-2 text-xs text-white/45"><input name="published" type="checkbox" defaultChecked={item?.published} /> Published</label></div><input name="clientName" required defaultValue={item?.client_name ?? ""} placeholder="Client name" className="form-field" /><input name="company" defaultValue={item?.company ?? ""} placeholder="Company" className="form-field" /><textarea name="quote" required rows={4} defaultValue={item?.quote ?? ""} placeholder="Client quote" className="form-field resize-y" /><select name="projectId" defaultValue={item?.project_id ?? ""} className="form-field"><option value="">No linked project</option>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select><input name="position" type="number" defaultValue={item?.position ?? 0} className="form-field" /><ActionButton type="submit">{item ? "Save testimonial" : "Create testimonial"}</ActionButton></form>;
-}
-
-function PostForm({ item }: { item?: { id: string; slug: string; title: string; excerpt: string | null; cover_image: string | null; published: boolean } }) {
-  return <form action={upsertBlogPostAction} className="grid gap-3 rounded-2xl border border-white/[.07] bg-black/10 p-4">{item ? <input type="hidden" name="id" value={item.id} /> : null}<div className="flex items-center justify-between gap-3">{item ? <StatusBadge value={item.published ? "published" : "draft"} /> : <span className="text-xs text-white/25">Draft</span>}<label className="flex items-center gap-2 text-xs text-white/45"><input name="published" type="checkbox" defaultChecked={item?.published} /> Published</label></div><input name="title" required defaultValue={item?.title ?? ""} placeholder="Article title" className="form-field" /><input name="slug" required defaultValue={item?.slug ?? ""} placeholder="article-slug" className="form-field" /><textarea name="excerpt" rows={4} defaultValue={item?.excerpt ?? ""} placeholder="Excerpt" className="form-field resize-y" /><input name="coverImage" defaultValue={item?.cover_image ?? ""} placeholder="Cover image URL" className="form-field" /><ActionButton type="submit">{item ? "Save article" : "Create article"}</ActionButton></form>;
 }
