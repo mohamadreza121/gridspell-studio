@@ -15,20 +15,25 @@ export type TurnstileVerification = {
   errors: string[];
 };
 
+function getConfiguredHostnames() {
+  return [
+    process.env.TURNSTILE_EXPECTED_HOSTNAME,
+    process.env.TURNSTILE_PREVIEW_EXPECTED_HOSTNAME
+  ]
+    .flatMap((value) => value?.split(",") ?? [])
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 export async function verifyTurnstile(input: {
   token?: string | null;
   remoteIp?: string | null;
   expectedAction?: string;
 }): Promise<TurnstileVerification> {
-  if (process.env.VERCEL_ENV === "preview") {
-    return {
-      success: true,
-      skipped: true,
-      errors: []
-    };
-  }
-
-  const secret = process.env.TURNSTILE_SECRET_KEY;
+  const isPreview = process.env.VERCEL_ENV === "preview";
+  const secret = isPreview
+    ? process.env.TURNSTILE_PREVIEW_SECRET_KEY || process.env.TURNSTILE_SECRET_KEY
+    : process.env.TURNSTILE_SECRET_KEY;
 
   if (!secret) {
     return {
@@ -73,8 +78,18 @@ export async function verifyTurnstile(input: {
   }
 
   const result = (await response.json()) as TurnstileResponse;
-  const expectedHostname = process.env.TURNSTILE_EXPECTED_HOSTNAME?.trim();
-  const hostnameMatches = !expectedHostname || result.hostname === expectedHostname;
+  const allowedHostnames = getConfiguredHostnames();
+  const resultHostname = result.hostname?.toLowerCase();
+  const previewHostnameMatches = Boolean(
+    isPreview && resultHostname?.endsWith(".vercel.app")
+  );
+  const configuredHostnameMatches = Boolean(
+    resultHostname && allowedHostnames.includes(resultHostname)
+  );
+  const hostnameMatches =
+    allowedHostnames.length === 0 ||
+    configuredHostnameMatches ||
+    previewHostnameMatches;
   const actionMatches = !input.expectedAction || result.action === input.expectedAction;
 
   return {
