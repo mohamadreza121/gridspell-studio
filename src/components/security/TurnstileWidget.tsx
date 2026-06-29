@@ -24,14 +24,42 @@ declare global {
   }
 }
 
+function isPreviewHostname(hostname: string) {
+  return hostname.endsWith(".vercel.app");
+}
+
+function getTurnstileErrorMessage(errorCode: string) {
+  if (errorCode.startsWith("110200")) {
+    return "This preview hostname is not authorized in Cloudflare Turnstile yet. Add the exact Vercel preview hostname to the widget's Hostname Management settings, then refresh.";
+  }
+
+  if (
+    errorCode.startsWith("110100") ||
+    errorCode.startsWith("110110") ||
+    errorCode.startsWith("400020") ||
+    errorCode.startsWith("400070")
+  ) {
+    return "The Turnstile site key is not configured correctly for this environment. Check the Preview environment variables in Vercel.";
+  }
+
+  return "The security check could not connect. Disable any VPN or content blocker, refresh the page, and try again.";
+}
+
 export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const productionSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const previewSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_PREVIEW_SITE_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const [siteKey, setSiteKey] = useState<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [token, setToken] = useState("");
   const [widgetError, setWidgetError] = useState("");
   const reactId = useId().split(":").join("");
+
+  useEffect(() => {
+    const preview = isPreviewHostname(window.location.hostname);
+    setSiteKey(preview ? previewSiteKey || productionSiteKey || null : productionSiteKey || null);
+  }, [previewSiteKey, productionSiteKey]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -58,33 +86,38 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
 
       "expired-callback": () => {
         setToken("");
-        setWidgetError(
-          "The security check expired. Please complete it again."
-        );
+        setWidgetError("The security check expired. Please complete it again.");
       },
 
       "error-callback": (errorCode) => {
         setToken("");
-        setWidgetError(
-          "The security check could not connect. Disable any VPN or content blocker, refresh the page, and try again."
-        );
+        setWidgetError(getTurnstileErrorMessage(errorCode));
 
-        console.warn("Turnstile client error:", errorCode);
+        console.warn("Turnstile client error:", errorCode, {
+          hostname: window.location.hostname,
+          usingPreviewKey: Boolean(
+            isPreviewHostname(window.location.hostname) && previewSiteKey
+          )
+        });
 
-        return true;
+        return !errorCode.startsWith("110") && !errorCode.startsWith("4000");
       }
     });
-  
+
     return () => {
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
         widgetIdRef.current = null;
       }
     };
-  }, [action, scriptReady, siteKey]);
+  }, [action, previewSiteKey, scriptReady, siteKey]);
 
   if (!siteKey) {
-    return null;
+    return (
+      <p className="rounded-xl border border-[#ff5f6d]/25 bg-[#ff5f6d]/8 px-4 py-3 text-xs leading-5 text-[#ff9aa3]">
+        Turnstile is not configured for this environment. Add the appropriate site key in Vercel.
+      </p>
+    );
   }
 
   return (
@@ -115,8 +148,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
       ) : null}
 
       <p className="text-xs leading-5 text-white/28">
-        This form uses a privacy-preserving security check to reduce automated
-        submissions.
+        This form uses Cloudflare Turnstile to reduce automated submissions.
       </p>
     </div>
   );

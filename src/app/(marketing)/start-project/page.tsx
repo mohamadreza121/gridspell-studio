@@ -1,5 +1,6 @@
 import { ArrowRight, CircleCheck, Clock3, SearchCheck } from "lucide-react";
 import { ExperienceSelectionSummary } from "@/components/forms/ExperienceSelectionSummary";
+import { PricingSelectionSummary } from "@/components/forms/PricingSelectionSummary";
 import { ProjectBriefForm } from "@/components/forms/ProjectBriefForm";
 import { Container } from "@/components/ui/Container";
 import { PageIntro } from "@/components/ui/PageIntro";
@@ -74,6 +75,7 @@ export default function StartProjectPage() {
           </aside>
 
           <div className="grid gap-5">
+            <PricingSelectionSummary />
             <ExperienceSelectionSummary />
             <ProjectBriefForm />
           </div>
