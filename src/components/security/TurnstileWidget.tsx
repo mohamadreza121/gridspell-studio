@@ -3,8 +3,6 @@
 import Script from "next/script";
 import { useEffect, useId, useRef, useState } from "react";
 
-const TURNSTILE_PREVIEW_SITE_KEY = "1x00000000000000000000AA";
-
 declare global {
   interface Window {
     turnstile?: {
@@ -26,13 +24,13 @@ declare global {
   }
 }
 
-function isVercelPreviewHostname(hostname: string) {
+function isPreviewHostname(hostname: string) {
   return hostname.endsWith(".vercel.app");
 }
 
 function getTurnstileErrorMessage(errorCode: string) {
   if (errorCode.startsWith("110200")) {
-    return "This domain is not authorized for the security check. Open the production website or refresh after the preview deployment updates.";
+    return "This domain is not authorized for the security check. Please use the production website or contact GridSpell.";
   }
 
   if (
@@ -41,36 +39,36 @@ function getTurnstileErrorMessage(errorCode: string) {
     errorCode.startsWith("400020") ||
     errorCode.startsWith("400070")
   ) {
-    return "The security check is not configured correctly for this environment. Please try the production website or contact GridSpell.";
+    return "The security check is not configured correctly for this environment. Please contact GridSpell.";
   }
 
   return "The security check could not connect. Disable any VPN or content blocker, refresh the page, and try again.";
 }
 
 export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
-  const configuredSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const [siteKey, setSiteKey] = useState<string | null>(null);
+  const [isPreview, setIsPreview] = useState<boolean | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
   const [token, setToken] = useState("");
   const [widgetError, setWidgetError] = useState("");
   const reactId = useId().split(":").join("");
 
   useEffect(() => {
-    const hostname = window.location.hostname;
-
-    setSiteKey(
-      isVercelPreviewHostname(hostname)
-        ? TURNSTILE_PREVIEW_SITE_KEY
-        : configuredSiteKey || null
-    );
-  }, [configuredSiteKey]);
+    setIsPreview(isPreviewHostname(window.location.hostname));
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
 
-    if (!siteKey || !scriptReady || !container || !window.turnstile) {
+    if (
+      isPreview !== false ||
+      !siteKey ||
+      !scriptReady ||
+      !container ||
+      !window.turnstile
+    ) {
       return;
     }
 
@@ -92,9 +90,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
 
       "expired-callback": () => {
         setToken("");
-        setWidgetError(
-          "The security check expired. Please complete it again."
-        );
+        setWidgetError("The security check expired. Please complete it again.");
       },
 
       "error-callback": (errorCode) => {
@@ -115,7 +111,22 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
         widgetIdRef.current = null;
       }
     };
-  }, [action, scriptReady, siteKey]);
+  }, [action, isPreview, scriptReady, siteKey]);
+
+  if (isPreview === null) {
+    return <div className="min-h-[65px] w-full" aria-hidden="true" />;
+  }
+
+  if (isPreview) {
+    return (
+      <div className="grid gap-2">
+        <input type="hidden" name="turnstileToken" value="preview-bypass" readOnly />
+        <p className="rounded-xl border border-[#8be9ff]/15 bg-[#8be9ff]/5 px-4 py-3 text-xs leading-5 text-white/38">
+          Security verification is disabled on this Vercel preview. It remains active on the production website.
+        </p>
+      </div>
+    );
+  }
 
   if (!siteKey) {
     return null;
@@ -149,8 +160,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
       ) : null}
 
       <p className="text-xs leading-5 text-white/28">
-        This form uses a privacy-preserving security check to reduce automated
-        submissions.
+        This form uses a privacy-preserving security check to reduce automated submissions.
       </p>
     </div>
   );
