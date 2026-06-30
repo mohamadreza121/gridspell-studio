@@ -21,45 +21,43 @@ const TRANSITION_MS = 1900;
 const COOLDOWN_MS = 720;
 const WHEEL_THRESHOLD = 78;
 
-function getSceneElements() {
+function getScenes() {
   return scenes
     .map((scene) => document.getElementById(scene.id))
     .filter((element): element is HTMLElement => Boolean(element));
 }
 
-function sceneIndexAtViewport(elements: HTMLElement[]) {
+function activeSceneIndex(elements: HTMLElement[]) {
   const probe = window.scrollY + Math.min(window.innerHeight * 0.28, 220);
   let index = 0;
 
-  elements.forEach((element, candidateIndex) => {
-    if (element.offsetTop <= probe) index = candidateIndex;
+  elements.forEach((element, candidate) => {
+    if (element.offsetTop <= probe) index = candidate;
   });
 
   return index;
 }
 
-function normalizeWheelDelta(event: WheelEvent) {
+function normalizeWheel(event: WheelEvent) {
   if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) return event.deltaY * 18;
   if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) return event.deltaY * window.innerHeight;
   return event.deltaY;
 }
 
-function canMoveToNextScene(
+function isAtSceneEdge(
   element: HTMLElement,
   direction: Direction,
   delta: number
 ) {
   const rect = element.getBoundingClientRect();
-  const allowance = Math.min(180, Math.max(22, Math.abs(delta) + 18));
+  const allowance = Math.min(180, Math.max(24, Math.abs(delta) + 18));
 
-  if (direction > 0) {
-    return rect.bottom - window.innerHeight <= allowance;
-  }
-
-  return -rect.top <= allowance;
+  return direction > 0
+    ? rect.bottom - window.innerHeight <= allowance
+    : -rect.top <= allowance;
 }
 
-function removeDuplicateIds(root: HTMLElement) {
+function stripIds(root: HTMLElement) {
   root.removeAttribute("id");
   root.querySelectorAll<HTMLElement>("[id]").forEach((element) => {
     element.removeAttribute("id");
@@ -68,67 +66,152 @@ function removeDuplicateIds(root: HTMLElement) {
 
 function createSceneLayer(
   source: HTMLElement,
-  viewportOffset: number,
+  viewportTop: number,
   zIndex: number
 ) {
   const layer = document.createElement("div");
   const clone = source.cloneNode(true) as HTMLElement;
 
-  removeDuplicateIds(clone);
+  stripIds(clone);
 
-  layer.setAttribute("aria-hidden", "true");
-  layer.style.cssText = [
-    "position:fixed",
-    "inset:0",
-    `z-index:${zIndex}`,
-    "overflow:hidden",
-    "pointer-events:none",
-    "background:#07080c",
-    "contain:strict",
-    "backface-visibility:hidden",
-    "transform-style:preserve-3d"
-  ].join(";");
+  Object.assign(layer.style, {
+    position: "fixed",
+    inset: "0",
+    zIndex: String(zIndex),
+    overflow: "hidden",
+    pointerEvents: "none",
+    background: "#07080c",
+    backfaceVisibility: "hidden",
+    transformStyle: "preserve-3d"
+  });
 
-  clone.style.position = "absolute";
-  clone.style.left = "0";
-  clone.style.top = `${viewportOffset}px`;
-  clone.style.width = "100%";
-  clone.style.margin = "0";
-  clone.style.transform = "translateZ(0)";
+  Object.assign(clone.style, {
+    position: "absolute",
+    left: "0",
+    top: `${viewportTop}px`,
+    width: "100%",
+    margin: "0",
+    transform: "translateZ(0)"
+  });
 
   clone.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
     video.muted = true;
     video.removeAttribute("autoplay");
   });
 
+  layer.setAttribute("aria-hidden", "true");
   layer.appendChild(clone);
   document.body.appendChild(layer);
+
   return layer;
+}
+
+function createEffectLabel(
+  effect: PeelEffect,
+  fromLabel: string,
+  toLabel: string
+) {
+  const label = document.createElement("div");
+  const effectName = effect === "peelX" ? "Peel X" : "Peel Y";
+
+  Object.assign(label.style, {
+    position: "fixed",
+    right: "2rem",
+    bottom: "2rem",
+    zIndex: "10003",
+    display: "flex",
+    alignItems: "center",
+    gap: ".7rem",
+    padding: ".72rem 1rem",
+    border: "1px solid rgba(139,233,255,.18)",
+    borderRadius: "999px",
+    background: "rgba(7,8,12,.84)",
+    boxShadow: "0 18px 60px rgba(0,0,0,.34)",
+    backdropFilter: "blur(18px)",
+    color: "rgba(255,255,255,.46)",
+    font: "600 .64rem/1 ui-monospace,SFMono-Regular,Menlo,monospace",
+    letterSpacing: ".18em",
+    textTransform: "uppercase",
+    pointerEvents: "none"
+  });
+
+  const effectText = document.createElement("span");
+  effectText.textContent = effectName;
+  effectText.style.color = "#8be9ff";
+
+  const divider = document.createElement("span");
+  Object.assign(divider.style, {
+    display: "block",
+    width: "1.5rem",
+    height: "1px",
+    background: "rgba(255,255,255,.16)"
+  });
+
+  const routeText = document.createElement("span");
+  routeText.textContent = `${fromLabel} → ${toLabel}`;
+
+  label.append(effectText, divider, routeText);
+  label.setAttribute("aria-hidden", "true");
+  document.body.appendChild(label);
+
+  const animation = label.animate(
+    [
+      { offset: 0, opacity: 0, transform: "translateY(10px)" },
+      { offset: 0.15, opacity: 1, transform: "translateY(0)" },
+      { offset: 0.75, opacity: 1, transform: "translateY(0)" },
+      { offset: 1, opacity: 0, transform: "translateY(-8px)" }
+    ],
+    {
+      duration: TRANSITION_MS,
+      easing: "ease-out",
+      fill: "forwards"
+    }
+  );
+
+  return { element: label, animation };
 }
 
 function createPeelEdge(effect: PeelEffect, direction: Direction) {
   const edge = document.createElement("div");
   const isX = effect === "peelX";
 
-  edge.setAttribute("aria-hidden", "true");
-  edge.style.cssText = [
-    "position:fixed",
-    "z-index:10002",
-    "pointer-events:none",
-    isX ? "top:0;bottom:0;width:2px" : "left:0;right:0;height:2px",
-    "background:#8be9ff",
-    "box-shadow:0 0 18px 5px rgba(139,233,255,.54),0 0 70px 24px rgba(41,214,255,.18)"
-  ].join(";");
+  Object.assign(edge.style, {
+    position: "fixed",
+    zIndex: "10002",
+    pointerEvents: "none",
+    background: "#8be9ff",
+    boxShadow:
+      "0 0 18px 5px rgba(139,233,255,.54), 0 0 70px 24px rgba(41,214,255,.18)"
+  });
 
+  if (isX) {
+    Object.assign(edge.style, { top: "0", bottom: "0", width: "2px" });
+  } else {
+    Object.assign(edge.style, { left: "0", right: "0", height: "2px" });
+  }
+
+  edge.setAttribute("aria-hidden", "true");
   document.body.appendChild(edge);
 
-  const frames = isX
+  const frames: Keyframe[] = isX
     ? direction > 0
-      ? [{ transform: "translateX(-5vw)" }, { transform: "translateX(105vw)" }]
-      : [{ transform: "translateX(105vw)" }, { transform: "translateX(-5vw)" }]
+      ? [
+          { transform: "translateX(-5vw)" },
+          { transform: "translateX(105vw)" }
+        ]
+      : [
+          { transform: "translateX(105vw)" },
+          { transform: "translateX(-5vw)" }
+        ]
     : direction > 0
-      ? [{ transform: "translateY(-5vh)" }, { transform: "translateY(105vh)" }]
-      : [{ transform: "translateY(105vh)" }, { transform: "translateY(-5vh)" }];
+      ? [
+          { transform: "translateY(-5vh)" },
+          { transform: "translateY(105vh)" }
+        ]
+      : [
+          { transform: "translateY(105vh)" },
+          { transform: "translateY(-5vh)" }
+        ];
 
   const animation = edge.animate(frames, {
     duration: TRANSITION_MS,
@@ -136,56 +219,112 @@ function createPeelEdge(effect: PeelEffect, direction: Direction) {
     fill: "forwards"
   });
 
-  return { edge, animation };
+  return { element: edge, animation };
 }
 
-function createTransitionLabel(
+function outgoingFrames(
   effect: PeelEffect,
-  fromLabel: string,
-  toLabel: string
-) {
-  const label = document.createElement("div");
-  label.setAttribute("aria-hidden", "true");
-  label.style.cssText = [
-    "position:fixed",
-    "right:2rem",
-    "bottom:2rem",
-    "z-index:10003",
-    "pointer-events:none",
-    "display:flex",
-    "align-items:center",
-    "gap:.7rem",
-    "border:1px solid rgba(139,233,255,.18)",
-    "border-radius:999px",
-    "background:rgba(7,8,12,.82)",
-    "padding:.72rem 1rem",
-    "box-shadow:0 18px 60px rgba(0,0,0,.34)",
-    "backdrop-filter:blur(18px)",
-    "font:600 .64rem/1 ui-monospace,SFMono-Regular,Menlo,monospace",
-    "letter-spacing:.18em",
-    "text-transform:uppercase",
-    "color:rgba(255,255,255,.46)"
-  ].join(";");
+  direction: Direction
+): Keyframe[] {
+  const forward = direction > 0;
 
-  label.innerHTML = `<span style="color:#8be9ff">${effect === "peelX" ? "Peel X" : "Peel Y"}</span><span style="width:1.5rem;height:1px;background:rgba(255,255,255,.16)"></span><span>${fromLabel} → ${toLabel}</span>`;
-  document.body.appendChild(label);
+  if (effect === "peelX") {
+    return forward
+      ? [
+          {
+            offset: 0,
+            clipPath: "inset(0 0 0 0)",
+            transform:
+              "perspective(1600px) rotateY(0deg) translateX(0) scale(1)",
+            filter: "brightness(1)"
+          },
+          {
+            offset: 0.52,
+            clipPath: "inset(0 0 0 40%)",
+            transform:
+              "perspective(1600px) rotateY(5deg) translateX(1%) scale(.995)",
+            filter: "brightness(.9)"
+          },
+          {
+            offset: 1,
+            clipPath: "inset(0 0 0 100%)",
+            transform:
+              "perspective(1600px) rotateY(14deg) translateX(7%) scale(.98)",
+            filter: "brightness(.62)"
+          }
+        ]
+      : [
+          {
+            offset: 0,
+            clipPath: "inset(0 0 0 0)",
+            transform:
+              "perspective(1600px) rotateY(0deg) translateX(0) scale(1)",
+            filter: "brightness(1)"
+          },
+          {
+            offset: 0.52,
+            clipPath: "inset(0 40% 0 0)",
+            transform:
+              "perspective(1600px) rotateY(-5deg) translateX(-1%) scale(.995)",
+            filter: "brightness(.9)"
+          },
+          {
+            offset: 1,
+            clipPath: "inset(0 100% 0 0)",
+            transform:
+              "perspective(1600px) rotateY(-14deg) translateX(-7%) scale(.98)",
+            filter: "brightness(.62)"
+          }
+        ];
+  }
 
-  const animation = label.animate(
-    [
-      { opacity: 0, transform: "translateY(10px)" },
-      { opacity: 1, transform: "translateY(0)" },
-      { opacity: 1, transform: "translateY(0)" },
-      { opacity: 0, transform: "translateY(-8px)" }
-    ],
-    {
-      duration: TRANSITION_MS,
-      times: [0, 0.16, 0.72, 1],
-      easing: "ease-out",
-      fill: "forwards"
-    }
-  );
-
-  return { label, animation };
+  return forward
+    ? [
+        {
+          offset: 0,
+          clipPath: "inset(0 0 0 0)",
+          transform:
+            "perspective(1600px) rotateX(0deg) translateY(0) scale(1)",
+          filter: "brightness(1)"
+        },
+        {
+          offset: 0.52,
+          clipPath: "inset(40% 0 0 0)",
+          transform:
+            "perspective(1600px) rotateX(-4deg) translateY(1%) scale(.995)",
+          filter: "brightness(.9)"
+        },
+        {
+          offset: 1,
+          clipPath: "inset(100% 0 0 0)",
+          transform:
+            "perspective(1600px) rotateX(-12deg) translateY(7%) scale(.98)",
+          filter: "brightness(.62)"
+        }
+      ]
+    : [
+        {
+          offset: 0,
+          clipPath: "inset(0 0 0 0)",
+          transform:
+            "perspective(1600px) rotateX(0deg) translateY(0) scale(1)",
+          filter: "brightness(1)"
+        },
+        {
+          offset: 0.52,
+          clipPath: "inset(0 0 40% 0)",
+          transform:
+            "perspective(1600px) rotateX(4deg) translateY(-1%) scale(.995)",
+          filter: "brightness(.9)"
+        },
+        {
+          offset: 1,
+          clipPath: "inset(0 0 100% 0)",
+          transform:
+            "perspective(1600px) rotateX(12deg) translateY(-7%) scale(.98)",
+          filter: "brightness(.62)"
+        }
+      ];
 }
 
 async function runPeel(options: {
@@ -207,20 +346,17 @@ async function runPeel(options: {
     toLabel
   } = options;
 
-  const outgoingRect = outgoing.getBoundingClientRect();
-  const incomingLayer = createSceneLayer(incoming, 0, 9998);
-  const outgoingLayer = createSceneLayer(outgoing, outgoingRect.top, 9999);
-  const { edge, animation: edgeAnimation } = createPeelEdge(effect, direction);
-  const { label, animation: labelAnimation } = createTransitionLabel(
-    effect,
-    fromLabel,
-    toLabel
+  const outgoingLayer = createSceneLayer(
+    outgoing,
+    outgoing.getBoundingClientRect().top,
+    9999
   );
-
+  const incomingLayer = createSceneLayer(incoming, 0, 9998);
+  const edge = createPeelEdge(effect, direction);
+  const label = createEffectLabel(effect, fromLabel, toLabel);
   const isX = effect === "peelX";
   const forward = direction > 0;
 
-  incomingLayer.style.transformOrigin = "center center";
   outgoingLayer.style.transformOrigin = isX
     ? forward
       ? "right center"
@@ -229,107 +365,41 @@ async function runPeel(options: {
       ? "center bottom"
       : "center top";
 
+  incomingLayer.style.transformOrigin = "center center";
+
   const incomingAnimation = incomingLayer.animate(
     [
       {
+        offset: 0,
         transform: "perspective(1600px) translateZ(-90px) scale(1.055)",
         filter: "brightness(.46) saturate(.72) blur(9px)"
       },
       {
+        offset: 0.48,
         transform: "perspective(1600px) translateZ(-35px) scale(1.025)",
         filter: "brightness(.66) saturate(.84) blur(4px)"
       },
       {
+        offset: 1,
         transform: "perspective(1600px) translateZ(0) scale(1)",
         filter: "brightness(1) saturate(1) blur(0)"
       }
     ],
     {
       duration: TRANSITION_MS,
-      times: [0, 0.52, 1],
       easing: "cubic-bezier(.22,1,.36,1)",
       fill: "forwards"
     }
   );
 
-  const outgoingFrames: Keyframe[] = isX
-    ? forward
-      ? [
-          {
-            clipPath: "inset(0 0 0 0)",
-            transform: "perspective(1600px) rotateY(0deg) translateX(0) scale(1)",
-            filter: "brightness(1)"
-          },
-          {
-            clipPath: "inset(0 0 0 40%)",
-            transform: "perspective(1600px) rotateY(5deg) translateX(1%) scale(.995)",
-            filter: "brightness(.9)"
-          },
-          {
-            clipPath: "inset(0 0 0 100%)",
-            transform: "perspective(1600px) rotateY(14deg) translateX(7%) scale(.98)",
-            filter: "brightness(.62)"
-          }
-        ]
-      : [
-          {
-            clipPath: "inset(0 0 0 0)",
-            transform: "perspective(1600px) rotateY(0deg) translateX(0) scale(1)",
-            filter: "brightness(1)"
-          },
-          {
-            clipPath: "inset(0 40% 0 0)",
-            transform: "perspective(1600px) rotateY(-5deg) translateX(-1%) scale(.995)",
-            filter: "brightness(.9)"
-          },
-          {
-            clipPath: "inset(0 100% 0 0)",
-            transform: "perspective(1600px) rotateY(-14deg) translateX(-7%) scale(.98)",
-            filter: "brightness(.62)"
-          }
-        ]
-    : forward
-      ? [
-          {
-            clipPath: "inset(0 0 0 0)",
-            transform: "perspective(1600px) rotateX(0deg) translateY(0) scale(1)",
-            filter: "brightness(1)"
-          },
-          {
-            clipPath: "inset(40% 0 0 0)",
-            transform: "perspective(1600px) rotateX(-4deg) translateY(1%) scale(.995)",
-            filter: "brightness(.9)"
-          },
-          {
-            clipPath: "inset(100% 0 0 0)",
-            transform: "perspective(1600px) rotateX(-12deg) translateY(7%) scale(.98)",
-            filter: "brightness(.62)"
-          }
-        ]
-      : [
-          {
-            clipPath: "inset(0 0 0 0)",
-            transform: "perspective(1600px) rotateX(0deg) translateY(0) scale(1)",
-            filter: "brightness(1)"
-          },
-          {
-            clipPath: "inset(0 0 40% 0)",
-            transform: "perspective(1600px) rotateX(4deg) translateY(-1%) scale(.995)",
-            filter: "brightness(.9)"
-          },
-          {
-            clipPath: "inset(0 0 100% 0)",
-            transform: "perspective(1600px) rotateX(12deg) translateY(-7%) scale(.98)",
-            filter: "brightness(.62)"
-          }
-        ];
-
-  const outgoingAnimation = outgoingLayer.animate(outgoingFrames, {
-    duration: TRANSITION_MS,
-    times: [0, 0.52, 1],
-    easing: "cubic-bezier(.74,0,.24,1)",
-    fill: "forwards"
-  });
+  const outgoingAnimation = outgoingLayer.animate(
+    outgoingFrames(effect, direction),
+    {
+      duration: TRANSITION_MS,
+      easing: "cubic-bezier(.74,0,.24,1)",
+      fill: "forwards"
+    }
+  );
 
   const previousScrollBehavior = document.documentElement.style.scrollBehavior;
   const scrollTimer = window.setTimeout(() => {
@@ -346,8 +416,8 @@ async function runPeel(options: {
       Promise.allSettled([
         outgoingAnimation.finished,
         incomingAnimation.finished,
-        edgeAnimation.finished,
-        labelAnimation.finished
+        edge.animation.finished,
+        label.animation.finished
       ]).then(() => undefined),
       safetyTimer
     ]);
@@ -358,10 +428,11 @@ async function runPeel(options: {
     window.requestAnimationFrame(() => {
       document.documentElement.style.scrollBehavior = previousScrollBehavior;
     });
+
     outgoingLayer.remove();
     incomingLayer.remove();
-    edge.remove();
-    label.remove();
+    edge.element.remove();
+    label.element.remove();
   }
 }
 
@@ -391,18 +462,18 @@ export function HomeSceneTransitions() {
   }, [reduceMotion]);
 
   useEffect(() => {
-    const elements = getSceneElements();
+    const elements = getScenes();
     if (elements.length !== scenes.length) return;
 
     const syncActiveScene = () => {
       if (transitionLockRef.current) return;
-      const nextIndex = sceneIndexAtViewport(elements);
+      const nextIndex = activeSceneIndex(elements);
       if (nextIndex === activeIndexRef.current) return;
       activeIndexRef.current = nextIndex;
       setActiveIndex(nextIndex);
     };
 
-    const initialIndex = sceneIndexAtViewport(elements);
+    const initialIndex = activeSceneIndex(elements);
     activeIndexRef.current = initialIndex;
     setActiveIndex(initialIndex);
 
@@ -413,7 +484,7 @@ export function HomeSceneTransitions() {
   useEffect(() => {
     if (!enabled) return;
 
-    const elements = getSceneElements();
+    const elements = getScenes();
     if (elements.length !== scenes.length) return;
 
     const resetWheel = () => {
@@ -437,8 +508,8 @@ export function HomeSceneTransitions() {
       if (fromIndex === targetIndex) return;
 
       const direction: Direction = targetIndex > fromIndex ? 1 : -1;
-      const boundaryIndex = Math.max(fromIndex, targetIndex);
-      const effect: PeelEffect = boundaryIndex % 2 === 1 ? "peelX" : "peelY";
+      const boundary = Math.max(fromIndex, targetIndex);
+      const effect: PeelEffect = boundary % 2 === 1 ? "peelX" : "peelY";
 
       transitionLockRef.current = true;
       resetWheel();
@@ -480,7 +551,7 @@ export function HomeSceneTransitions() {
         return;
       }
 
-      const delta = normalizeWheelDelta(event);
+      const delta = normalizeWheel(event);
       if (!delta) return;
 
       const direction: Direction = delta > 0 ? 1 : -1;
@@ -493,7 +564,7 @@ export function HomeSceneTransitions() {
         return;
       }
 
-      if (!canMoveToNextScene(currentScene, direction, delta)) {
+      if (!isAtSceneEdge(currentScene, direction, delta)) {
         resetWheel();
         return;
       }
@@ -551,7 +622,7 @@ export function HomeSceneTransitions() {
         !currentScene ||
         targetIndex < 0 ||
         targetIndex >= elements.length ||
-        !canMoveToNextScene(currentScene, direction, window.innerHeight * 0.5)
+        !isAtSceneEdge(currentScene, direction, window.innerHeight * 0.5)
       ) {
         return;
       }
