@@ -8,7 +8,7 @@ import { siteConfig } from "@/config/site";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/[0.08] bg-[#050609]">
+    <footer className="relative z-20 isolate overflow-hidden border-t border-white/[0.08] bg-[#050609] shadow-[0_-30px_80px_rgba(5,6,9,0.95)]">
       <Container className="py-16 lg:py-24">
         <div className="grid gap-14 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
