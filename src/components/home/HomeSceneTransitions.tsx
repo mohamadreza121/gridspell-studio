@@ -142,6 +142,15 @@ export function HomeSceneTransitions() {
   const clearTimerRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [transition, setTransition] = useState<SceneTransition | null>(null);
+  const [isCompact, setIsCompact] = useState(false);
+
+  useEffect(() => {
+    const compactQuery = window.matchMedia("(max-width: 767px)");
+    const updateCompactMode = () => setIsCompact(compactQuery.matches);
+    updateCompactMode();
+    compactQuery.addEventListener("change", updateCompactMode);
+    return () => compactQuery.removeEventListener("change", updateCompactMode);
+  }, []);
 
   useEffect(() => {
     const elements = scenes
@@ -153,8 +162,6 @@ export function HomeSceneTransitions() {
     const initialIndex = closestSceneIndex(elements);
     activeIndexRef.current = initialIndex;
     setActiveIndex(initialIndex);
-
-    const compactQuery = window.matchMedia("(max-width: 767px)");
 
     const updateActiveScene = () => {
       frameRef.current = null;
@@ -187,13 +194,13 @@ export function HomeSceneTransitions() {
         elements[nextIndex],
         effect,
         direction,
-        compactQuery.matches
+        isCompact
       );
 
       if (clearTimerRef.current) window.clearTimeout(clearTimerRef.current);
       clearTimerRef.current = window.setTimeout(
         () => setTransition((current) => (current?.serial === nextTransition.serial ? null : current)),
-        compactQuery.matches ? 680 : 980
+        isCompact ? 680 : 980
       );
     };
 
@@ -211,12 +218,11 @@ export function HomeSceneTransitions() {
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
       if (clearTimerRef.current) window.clearTimeout(clearTimerRef.current);
     };
-  }, [reduceMotion]);
+  }, [isCompact, reduceMotion]);
 
   const destination = transition ? scenes[transition.to] : scenes[activeIndex];
   const palette = scenePalettes[transition?.to ?? activeIndex] ?? scenePalettes[0];
-  const compactDuration = 0.64;
-  const desktopDuration = 0.9;
+  const transitionDuration = isCompact ? 0.64 : 0.9;
 
   return (
     <>
@@ -258,10 +264,7 @@ export function HomeSceneTransitions() {
               }}
               exit={{ opacity: 0 }}
               transition={{
-                duration:
-                  typeof window !== "undefined" && window.innerWidth < 768
-                    ? compactDuration
-                    : desktopDuration,
+                duration: transitionDuration,
                 times: [0, 0.48, 1],
                 ease: [0.76, 0, 0.24, 1]
               }}
@@ -274,10 +277,7 @@ export function HomeSceneTransitions() {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: [0, 0, 1, 1, 0], y: [18, 18, 0, 0, -12] }}
                 transition={{
-                  duration:
-                    typeof window !== "undefined" && window.innerWidth < 768
-                      ? compactDuration
-                      : desktopDuration,
+                  duration: transitionDuration,
                   times: [0, 0.28, 0.43, 0.68, 1],
                   ease: "easeOut"
                 }}
@@ -297,10 +297,7 @@ export function HomeSceneTransitions() {
                 initial={{ x: transition.direction > 0 ? "-4vw" : "104vw" }}
                 animate={{ x: transition.direction > 0 ? "104vw" : "-4vw" }}
                 transition={{
-                  duration:
-                    typeof window !== "undefined" && window.innerWidth < 768
-                      ? compactDuration
-                      : desktopDuration,
+                  duration: transitionDuration,
                   ease: [0.76, 0, 0.24, 1]
                 }}
               />
@@ -310,10 +307,7 @@ export function HomeSceneTransitions() {
                 initial={{ y: transition.direction > 0 ? "-4vh" : "104vh" }}
                 animate={{ y: transition.direction > 0 ? "104vh" : "-4vh" }}
                 transition={{
-                  duration:
-                    typeof window !== "undefined" && window.innerWidth < 768
-                      ? compactDuration
-                      : desktopDuration,
+                  duration: transitionDuration,
                   ease: [0.76, 0, 0.24, 1]
                 }}
               />
