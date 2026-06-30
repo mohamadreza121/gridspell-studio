@@ -1,4 +1,5 @@
 import { ArrowUpRight, Check, Handshake, Route } from "lucide-react";
+import { ProcessPhoneMockup } from "@/components/process/ProcessPhoneMockup";
 import { ClientDashboardTour } from "@/components/process/dashboard-tour/ClientDashboardTour";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { Container } from "@/components/ui/Container";
@@ -24,7 +25,15 @@ export default function ProcessPage() {
       />
 
       <div className={styles.dashboardTourWrapper}>
-        <ClientDashboardTour />
+        {/* Phone screens */}
+        <div className="sm:hidden">
+          <ProcessPhoneMockup />
+        </div>
+
+        {/* Tablet and desktop screens */}
+        <div className="hidden sm:block">
+          <ClientDashboardTour />
+        </div>
       </div>
 
       <section id="process-steps" className="scroll-mt-24 py-20 lg:py-28">
