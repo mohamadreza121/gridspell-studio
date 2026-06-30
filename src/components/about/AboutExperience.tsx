@@ -1169,15 +1169,234 @@ function DesktopAboutExperience() {
   );
 }
 
-function StaticAboutExperience() {
+function MobileAboutBackground() {
+  const reduceMotion = useReducedMotion();
+
+  const { scrollYProgress } = useScroll();
+
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 45,
+    damping: 30,
+    mass: 0.9,
+    restDelta: 0.001
+  });
+
+  const systemY = useTransform(
+    progress,
+    [0, 0.5, 1],
+    ["0px", "34px", "-10px"]
+  );
+
+  const systemX = useTransform(
+    progress,
+    [0, 0.5, 1],
+    ["0px", "-14px", "8px"]
+  );
+
+  const systemRotate = useTransform(
+    progress,
+    [0, 0.5, 1],
+    [-8, -2, 6]
+  );
+
+  const systemScale = useTransform(
+    progress,
+    [0, 0.5, 1],
+    [1, 1.04, 1.015]
+  );
+
+  const secondaryY = useTransform(
+    progress,
+    [0, 1],
+    ["0px", "48px"]
+  );
+
+  const gridY = useTransform(
+    progress,
+    [0, 1],
+    ["0px", "-70px"]
+  );
+
   return (
-    <main className="relative overflow-hidden bg-[#07080c] pb-24 pt-32">
-      <div
-        aria-hidden="true"
-        className="page-grid pointer-events-none absolute inset-0 opacity-32"
+    <div
+      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden xl:hidden"
+      aria-hidden="true"
+    >
+      {/* Slowly moving technical grid */}
+      <motion.div
+        className="page-grid absolute inset-0 opacity-[0.24]"
+        style={
+          reduceMotion
+            ? undefined
+            : {
+                y: gridY
+              }
+        }
       />
 
-      <Container className="relative">
+      {/* Purple ambient light */}
+      <motion.div
+        className="absolute right-[-7rem] top-[2rem] h-[25rem] w-[25rem] rounded-full bg-[#7c5cff]/12 blur-[120px] sm:right-[4%] sm:h-[34rem] sm:w-[34rem]"
+        style={
+          reduceMotion
+            ? undefined
+            : {
+                y: secondaryY
+              }
+        }
+      />
+
+      {/* Cyan ambient light */}
+      <motion.div
+        className="absolute bottom-[8%] left-[-6rem] h-[20rem] w-[20rem] rounded-full bg-[#29d6ff]/7 blur-[110px] sm:left-[6%] sm:h-[26rem] sm:w-[26rem]"
+        style={
+          reduceMotion
+            ? undefined
+            : {
+                y: systemY
+              }
+        }
+      />
+
+      {/* Simplified abstract system */}
+      <motion.svg
+        viewBox="0 0 700 700"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="absolute right-[-30vw] top-[7vh] h-[112vw] w-[112vw] max-h-[760px] max-w-[760px] opacity-[0.32] sm:right-[-14vw] sm:h-[92vw] sm:w-[92vw] md:right-[1vw] md:h-[74vw] md:w-[74vw]"
+        style={
+          reduceMotion
+            ? {
+                rotate: -5,
+                scale: 1
+              }
+            : {
+                x: systemX,
+                y: systemY,
+                rotate: systemRotate,
+                scale: systemScale
+              }
+        }
+      >
+        <defs>
+          <linearGradient
+            id="mobile-about-gradient"
+            x1="90"
+            y1="80"
+            x2="610"
+            y2="620"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#A895FF" />
+            <stop offset="0.5" stopColor="#7C5CFF" />
+            <stop offset="1" stopColor="#29D6FF" />
+          </linearGradient>
+
+          <filter
+            id="mobile-about-glow"
+            x="-40%"
+            y="-40%"
+            width="180%"
+            height="180%"
+          >
+            <feGaussianBlur
+              stdDeviation="10"
+              result="blur"
+            />
+
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Outer orbit */}
+        <circle
+          cx="350"
+          cy="350"
+          r="280"
+          stroke="rgba(255,255,255,0.08)"
+          strokeWidth="2"
+          strokeDasharray="7 15"
+        />
+
+        {/* Colored orbit segment */}
+        <path
+          d="M350 70 A280 280 0 0 1 605 235"
+          stroke="url(#mobile-about-gradient)"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
+
+        {/* Inner orbit */}
+        <ellipse
+          cx="350"
+          cy="350"
+          rx="170"
+          ry="240"
+          stroke="rgba(139,233,255,0.12)"
+          strokeWidth="2"
+        />
+
+        {/* System structure */}
+        <path
+          d="M205 260 L350 175 L500 270 L500 440 L350 525 L195 430 Z"
+          fill="rgba(124,92,255,0.035)"
+          stroke="url(#mobile-about-gradient)"
+          strokeOpacity="0.4"
+          strokeWidth="3"
+        />
+
+        <path
+          d="M205 260 L350 350 L500 270 M350 350 L350 525 M350 350 L195 430"
+          stroke="rgba(255,255,255,0.11)"
+          strokeWidth="2"
+        />
+
+        {/* Centre */}
+        <circle
+          cx="350"
+          cy="350"
+          r="38"
+          fill="rgba(41,214,255,0.08)"
+          stroke="#8BE9FF"
+          strokeOpacity="0.7"
+          strokeWidth="4"
+          filter="url(#mobile-about-glow)"
+        />
+
+        {/* Orbit nodes */}
+        <circle
+          cx="350"
+          cy="70"
+          r="8"
+          fill="#8BE9FF"
+          filter="url(#mobile-about-glow)"
+        />
+
+        <circle
+          cx="350"
+          cy="110"
+          r="7"
+          fill="#7C5CFF"
+        />
+      </motion.svg>
+
+      {/* Readability overlays */}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,12,.06),rgba(7,8,12,.54)_38%,rgba(7,8,12,.72)_100%)]" />
+
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_16%,transparent_0,rgba(7,8,12,.1)_34%,rgba(7,8,12,.48)_78%)]" />
+    </div>
+  );
+}
+
+function StaticAboutExperience() {
+  return (
+    <main className="relative isolate overflow-hidden bg-[#07080c] pb-24 pt-32">
+      <MobileAboutBackground />
+
+      <Container className="relative z-10">
         <div className="max-w-4xl">
           <p className="text-[0.64rem] font-semibold uppercase tracking-[0.36em] text-[#8be9ff]">
             About GridSpell
@@ -1204,7 +1423,7 @@ function StaticAboutExperience() {
               >
                 {chapter.image ? (
                   <div
-                    className="absolute inset-x-0 top-9 -z-10 h-80 bg-cover bg-center opacity-[0.11]"
+                    className="absolute inset-x-0 top-9 -z-10 h-80 bg-cover bg-center opacity-[0.08]"
                     style={{
                       backgroundImage: `linear-gradient(to bottom, transparent, #07080c), url("${chapter.image}")`,
                       backgroundPosition:
