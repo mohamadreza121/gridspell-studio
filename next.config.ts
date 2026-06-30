@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   headers: async () => [
     {
+      source: "/videos/work/:path*",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=0, must-revalidate"
+        },
+        { key: "Accept-Ranges", value: "bytes" }
+      ]
+    },
+    {
       source: "/(.*)",
       headers: [
         { key: "X-Content-Type-Options", value: "nosniff" },
