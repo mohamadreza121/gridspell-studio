@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { HomeExperience } from "@/components/home/HomeExperience";
+import { MobileHomeGBackground } from "@/components/home/MobileHomeGBackground";
 
 export const metadata: Metadata = {
   title: "GridSpell Studio — Websites, Portals & Digital Systems",
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomeExperience />;
+  return (
+    <>
+      <MobileHomeGBackground />
+      <HomeExperience />
+    </>
+  );
 }
