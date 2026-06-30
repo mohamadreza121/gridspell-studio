@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { HomeExperienceV2 } from "@/components/home/HomeExperienceV2";
+import { HomeSceneTransitions } from "@/components/home/HomeSceneTransitions";
 
 export const metadata: Metadata = {
   title: "GridSpell Studio — Websites, Portals & Digital Systems",
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomeExperienceV2 />;
+  return (
+    <>
+      <HomeSceneTransitions />
+      <HomeExperienceV2 />
+    </>
+  );
 }
