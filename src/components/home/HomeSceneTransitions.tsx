@@ -15,25 +15,11 @@ const scenes = [
 ] as const;
 
 type PeelEffect = "peelX" | "peelY";
-type PeelDirection = "forward" | "reverse";
+type Direction = 1 | -1;
 
-type ViewTransitionLike = {
-  finished: Promise<void>;
-  ready: Promise<void>;
-  updateCallbackDone: Promise<void>;
-  skipTransition: () => void;
-};
-
-type ViewTransitionDocument = Document & {
-  startViewTransition?: (
-    updateCallback: () => void | Promise<void>
-  ) => ViewTransitionLike;
-};
-
-const DESKTOP_TRANSITION_MS = 1650;
-const WHEEL_THRESHOLD = 72;
-const EDGE_TOLERANCE = 12;
-const SETTLE_DELAY_MS = 820;
+const TRANSITION_MS = 1900;
+const COOLDOWN_MS = 720;
+const WHEEL_THRESHOLD = 78;
 
 function getSceneElements() {
   return scenes
@@ -41,8 +27,8 @@ function getSceneElements() {
     .filter((element): element is HTMLElement => Boolean(element));
 }
 
-function sceneIndexAtTop(elements: HTMLElement[]) {
-  const probe = window.scrollY + 24;
+function sceneIndexAtViewport(elements: HTMLElement[]) {
+  const probe = window.scrollY + Math.min(window.innerHeight * 0.28, 220);
   let index = 0;
 
   elements.forEach((element, candidateIndex) => {
@@ -58,123 +44,325 @@ function normalizeWheelDelta(event: WheelEvent) {
   return event.deltaY;
 }
 
-function isSceneBoundary(
+function canMoveToNextScene(
   element: HTMLElement,
-  direction: 1 | -1
+  direction: Direction,
+  delta: number
 ) {
   const rect = element.getBoundingClientRect();
+  const allowance = Math.min(180, Math.max(22, Math.abs(delta) + 18));
 
   if (direction > 0) {
-    return rect.bottom <= window.innerHeight + EDGE_TOLERANCE;
+    return rect.bottom - window.innerHeight <= allowance;
   }
 
-  return rect.top >= -EDGE_TOLERANCE;
+  return -rect.top <= allowance;
 }
 
-function nextAnimationFrame() {
-  return new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
+function removeDuplicateIds(root: HTMLElement) {
+  root.removeAttribute("id");
+  root.querySelectorAll<HTMLElement>("[id]").forEach((element) => {
+    element.removeAttribute("id");
+  });
 }
 
-async function settleNewScene() {
-  await nextAnimationFrame();
-  await nextAnimationFrame();
-  await new Promise<void>((resolve) => window.setTimeout(resolve, 90));
-}
+function createSceneLayer(
+  source: HTMLElement,
+  viewportOffset: number,
+  zIndex: number
+) {
+  const layer = document.createElement("div");
+  const clone = source.cloneNode(true) as HTMLElement;
 
-async function runFallbackPeel(options: {
-  targetTop: number;
-  effect: PeelEffect;
-  direction: PeelDirection;
-}) {
-  const { targetTop, effect, direction } = options;
-  const overlay = document.createElement("div");
-  const edge = document.createElement("div");
-  const forward = direction === "forward";
-  const isX = effect === "peelX";
+  removeDuplicateIds(clone);
 
-  overlay.setAttribute("aria-hidden", "true");
-  overlay.style.cssText = [
+  layer.setAttribute("aria-hidden", "true");
+  layer.style.cssText = [
     "position:fixed",
     "inset:0",
-    "z-index:9998",
-    "pointer-events:none",
+    `z-index:${zIndex}`,
     "overflow:hidden",
-    "background:radial-gradient(circle at 78% 18%,rgba(41,214,255,.2),transparent 32%),radial-gradient(circle at 20% 82%,rgba(124,92,255,.3),transparent 36%),#080a10",
-    "box-shadow:0 0 140px rgba(0,0,0,.82)",
-    "transform-style:preserve-3d",
-    "backface-visibility:hidden"
+    "pointer-events:none",
+    "background:#07080c",
+    "contain:strict",
+    "backface-visibility:hidden",
+    "transform-style:preserve-3d"
   ].join(";");
 
+  clone.style.position = "absolute";
+  clone.style.left = "0";
+  clone.style.top = `${viewportOffset}px`;
+  clone.style.width = "100%";
+  clone.style.margin = "0";
+  clone.style.transform = "translateZ(0)";
+
+  clone.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
+    video.muted = true;
+    video.removeAttribute("autoplay");
+  });
+
+  layer.appendChild(clone);
+  document.body.appendChild(layer);
+  return layer;
+}
+
+function createPeelEdge(effect: PeelEffect, direction: Direction) {
+  const edge = document.createElement("div");
+  const isX = effect === "peelX";
+
+  edge.setAttribute("aria-hidden", "true");
   edge.style.cssText = [
-    "position:absolute",
-    isX ? "top:0;bottom:0;width:1px" : "left:0;right:0;height:1px",
+    "position:fixed",
+    "z-index:10002",
+    "pointer-events:none",
+    isX ? "top:0;bottom:0;width:2px" : "left:0;right:0;height:2px",
     "background:#8be9ff",
-    "box-shadow:0 0 34px 10px rgba(139,233,255,.36)"
+    "box-shadow:0 0 18px 5px rgba(139,233,255,.54),0 0 70px 24px rgba(41,214,255,.18)"
   ].join(";");
 
-  overlay.appendChild(edge);
-  document.body.appendChild(overlay);
+  document.body.appendChild(edge);
 
-  const clipFrames = isX
+  const frames = isX
+    ? direction > 0
+      ? [{ transform: "translateX(-5vw)" }, { transform: "translateX(105vw)" }]
+      : [{ transform: "translateX(105vw)" }, { transform: "translateX(-5vw)" }]
+    : direction > 0
+      ? [{ transform: "translateY(-5vh)" }, { transform: "translateY(105vh)" }]
+      : [{ transform: "translateY(105vh)" }, { transform: "translateY(-5vh)" }];
+
+  const animation = edge.animate(frames, {
+    duration: TRANSITION_MS,
+    easing: "cubic-bezier(.74,0,.24,1)",
+    fill: "forwards"
+  });
+
+  return { edge, animation };
+}
+
+function createTransitionLabel(
+  effect: PeelEffect,
+  fromLabel: string,
+  toLabel: string
+) {
+  const label = document.createElement("div");
+  label.setAttribute("aria-hidden", "true");
+  label.style.cssText = [
+    "position:fixed",
+    "right:2rem",
+    "bottom:2rem",
+    "z-index:10003",
+    "pointer-events:none",
+    "display:flex",
+    "align-items:center",
+    "gap:.7rem",
+    "border:1px solid rgba(139,233,255,.18)",
+    "border-radius:999px",
+    "background:rgba(7,8,12,.82)",
+    "padding:.72rem 1rem",
+    "box-shadow:0 18px 60px rgba(0,0,0,.34)",
+    "backdrop-filter:blur(18px)",
+    "font:600 .64rem/1 ui-monospace,SFMono-Regular,Menlo,monospace",
+    "letter-spacing:.18em",
+    "text-transform:uppercase",
+    "color:rgba(255,255,255,.46)"
+  ].join(";");
+
+  label.innerHTML = `<span style="color:#8be9ff">${effect === "peelX" ? "Peel X" : "Peel Y"}</span><span style="width:1.5rem;height:1px;background:rgba(255,255,255,.16)"></span><span>${fromLabel} → ${toLabel}</span>`;
+  document.body.appendChild(label);
+
+  const animation = label.animate(
+    [
+      { opacity: 0, transform: "translateY(10px)" },
+      { opacity: 1, transform: "translateY(0)" },
+      { opacity: 1, transform: "translateY(0)" },
+      { opacity: 0, transform: "translateY(-8px)" }
+    ],
+    {
+      duration: TRANSITION_MS,
+      times: [0, 0.16, 0.72, 1],
+      easing: "ease-out",
+      fill: "forwards"
+    }
+  );
+
+  return { label, animation };
+}
+
+async function runPeel(options: {
+  outgoing: HTMLElement;
+  incoming: HTMLElement;
+  targetTop: number;
+  effect: PeelEffect;
+  direction: Direction;
+  fromLabel: string;
+  toLabel: string;
+}) {
+  const {
+    outgoing,
+    incoming,
+    targetTop,
+    effect,
+    direction,
+    fromLabel,
+    toLabel
+  } = options;
+
+  const outgoingRect = outgoing.getBoundingClientRect();
+  const incomingLayer = createSceneLayer(incoming, 0, 9998);
+  const outgoingLayer = createSceneLayer(outgoing, outgoingRect.top, 9999);
+  const { edge, animation: edgeAnimation } = createPeelEdge(effect, direction);
+  const { label, animation: labelAnimation } = createTransitionLabel(
+    effect,
+    fromLabel,
+    toLabel
+  );
+
+  const isX = effect === "peelX";
+  const forward = direction > 0;
+
+  incomingLayer.style.transformOrigin = "center center";
+  outgoingLayer.style.transformOrigin = isX
     ? forward
-      ? ["inset(0 100% 0 0)", "inset(0 0 0 0)", "inset(0 0 0 100%)"]
-      : ["inset(0 0 0 100%)", "inset(0 0 0 0)", "inset(0 100% 0 0)"]
+      ? "right center"
+      : "left center"
     : forward
-      ? ["inset(100% 0 0 0)", "inset(0 0 0 0)", "inset(0 0 100% 0)"]
-      : ["inset(0 0 100% 0)", "inset(0 0 0 0)", "inset(100% 0 0 0)"];
+      ? "center bottom"
+      : "center top";
 
-  const overlayAnimation = overlay.animate(
+  const incomingAnimation = incomingLayer.animate(
     [
       {
-        clipPath: clipFrames[0],
-        transform: isX
-          ? `perspective(1400px) rotateY(${forward ? -8 : 8}deg) scale(1.03)`
-          : `perspective(1400px) rotateX(${forward ? 8 : -8}deg) scale(1.03)`,
-        filter: "brightness(.78)"
+        transform: "perspective(1600px) translateZ(-90px) scale(1.055)",
+        filter: "brightness(.46) saturate(.72) blur(9px)"
       },
       {
-        clipPath: clipFrames[1],
-        transform: "perspective(1400px) rotateX(0deg) rotateY(0deg) scale(1)",
-        filter: "brightness(1)"
+        transform: "perspective(1600px) translateZ(-35px) scale(1.025)",
+        filter: "brightness(.66) saturate(.84) blur(4px)"
       },
       {
-        clipPath: clipFrames[2],
-        transform: isX
-          ? `perspective(1400px) rotateY(${forward ? 8 : -8}deg) scale(1.03)`
-          : `perspective(1400px) rotateX(${forward ? -8 : 8}deg) scale(1.03)`,
-        filter: "brightness(.82)"
+        transform: "perspective(1600px) translateZ(0) scale(1)",
+        filter: "brightness(1) saturate(1) blur(0)"
       }
     ],
     {
-      duration: DESKTOP_TRANSITION_MS,
-      easing: "cubic-bezier(.76,0,.24,1)",
+      duration: TRANSITION_MS,
+      times: [0, 0.52, 1],
+      easing: "cubic-bezier(.22,1,.36,1)",
       fill: "forwards"
     }
   );
 
-  edge.animate(
-    isX
+  const outgoingFrames: Keyframe[] = isX
+    ? forward
       ? [
-          { transform: `translateX(${forward ? "-4vw" : "104vw"})` },
-          { transform: `translateX(${forward ? "104vw" : "-4vw"})` }
+          {
+            clipPath: "inset(0 0 0 0)",
+            transform: "perspective(1600px) rotateY(0deg) translateX(0) scale(1)",
+            filter: "brightness(1)"
+          },
+          {
+            clipPath: "inset(0 0 0 40%)",
+            transform: "perspective(1600px) rotateY(5deg) translateX(1%) scale(.995)",
+            filter: "brightness(.9)"
+          },
+          {
+            clipPath: "inset(0 0 0 100%)",
+            transform: "perspective(1600px) rotateY(14deg) translateX(7%) scale(.98)",
+            filter: "brightness(.62)"
+          }
         ]
       : [
-          { transform: `translateY(${forward ? "-4vh" : "104vh"})` },
-          { transform: `translateY(${forward ? "104vh" : "-4vh"})` }
-        ],
-    {
-      duration: DESKTOP_TRANSITION_MS,
-      easing: "cubic-bezier(.76,0,.24,1)",
-      fill: "forwards"
-    }
-  );
+          {
+            clipPath: "inset(0 0 0 0)",
+            transform: "perspective(1600px) rotateY(0deg) translateX(0) scale(1)",
+            filter: "brightness(1)"
+          },
+          {
+            clipPath: "inset(0 40% 0 0)",
+            transform: "perspective(1600px) rotateY(-5deg) translateX(-1%) scale(.995)",
+            filter: "brightness(.9)"
+          },
+          {
+            clipPath: "inset(0 100% 0 0)",
+            transform: "perspective(1600px) rotateY(-14deg) translateX(-7%) scale(.98)",
+            filter: "brightness(.62)"
+          }
+        ]
+    : forward
+      ? [
+          {
+            clipPath: "inset(0 0 0 0)",
+            transform: "perspective(1600px) rotateX(0deg) translateY(0) scale(1)",
+            filter: "brightness(1)"
+          },
+          {
+            clipPath: "inset(40% 0 0 0)",
+            transform: "perspective(1600px) rotateX(-4deg) translateY(1%) scale(.995)",
+            filter: "brightness(.9)"
+          },
+          {
+            clipPath: "inset(100% 0 0 0)",
+            transform: "perspective(1600px) rotateX(-12deg) translateY(7%) scale(.98)",
+            filter: "brightness(.62)"
+          }
+        ]
+      : [
+          {
+            clipPath: "inset(0 0 0 0)",
+            transform: "perspective(1600px) rotateX(0deg) translateY(0) scale(1)",
+            filter: "brightness(1)"
+          },
+          {
+            clipPath: "inset(0 0 40% 0)",
+            transform: "perspective(1600px) rotateX(4deg) translateY(-1%) scale(.995)",
+            filter: "brightness(.9)"
+          },
+          {
+            clipPath: "inset(0 0 100% 0)",
+            transform: "perspective(1600px) rotateX(12deg) translateY(-7%) scale(.98)",
+            filter: "brightness(.62)"
+          }
+        ];
 
-  window.setTimeout(() => {
-    window.scrollTo({ top: targetTop, behavior: "instant" });
-  }, Math.round(DESKTOP_TRANSITION_MS * 0.47));
+  const outgoingAnimation = outgoingLayer.animate(outgoingFrames, {
+    duration: TRANSITION_MS,
+    times: [0, 0.52, 1],
+    easing: "cubic-bezier(.74,0,.24,1)",
+    fill: "forwards"
+  });
 
-  await overlayAnimation.finished.catch(() => undefined);
-  overlay.remove();
+  const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+  const scrollTimer = window.setTimeout(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, targetTop);
+  }, Math.round(TRANSITION_MS * 0.42));
+
+  const safetyTimer = new Promise<void>((resolve) => {
+    window.setTimeout(resolve, TRANSITION_MS + 450);
+  });
+
+  try {
+    await Promise.race([
+      Promise.allSettled([
+        outgoingAnimation.finished,
+        incomingAnimation.finished,
+        edgeAnimation.finished,
+        labelAnimation.finished
+      ]).then(() => undefined),
+      safetyTimer
+    ]);
+  } finally {
+    window.clearTimeout(scrollTimer);
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, targetTop);
+    window.requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+    });
+    outgoingLayer.remove();
+    incomingLayer.remove();
+    edge.remove();
+    label.remove();
+  }
 }
 
 export function HomeSceneTransitions() {
@@ -182,7 +370,7 @@ export function HomeSceneTransitions() {
   const activeIndexRef = useRef(0);
   const transitionLockRef = useRef(false);
   const wheelAmountRef = useRef(0);
-  const wheelDirectionRef = useRef<1 | -1>(1);
+  const wheelDirectionRef = useRef<Direction>(1);
   const wheelResetRef = useRef<number | null>(null);
   const cooldownUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -199,7 +387,6 @@ export function HomeSceneTransitions() {
 
     updateEnabled();
     desktopQuery.addEventListener("change", updateEnabled);
-
     return () => desktopQuery.removeEventListener("change", updateEnabled);
   }, [reduceMotion]);
 
@@ -207,32 +394,20 @@ export function HomeSceneTransitions() {
     const elements = getSceneElements();
     if (elements.length !== scenes.length) return;
 
-    elements.forEach((element, index) => {
-      element.classList.add("home-cinematic-scene");
-      element.dataset.homeScene = String(index + 1).padStart(2, "0");
-    });
-
-    const initialIndex = sceneIndexAtTop(elements);
-    activeIndexRef.current = initialIndex;
-    setActiveIndex(initialIndex);
-
     const syncActiveScene = () => {
       if (transitionLockRef.current) return;
-      const nextIndex = sceneIndexAtTop(elements);
+      const nextIndex = sceneIndexAtViewport(elements);
       if (nextIndex === activeIndexRef.current) return;
       activeIndexRef.current = nextIndex;
       setActiveIndex(nextIndex);
     };
 
-    window.addEventListener("scroll", syncActiveScene, { passive: true });
+    const initialIndex = sceneIndexAtViewport(elements);
+    activeIndexRef.current = initialIndex;
+    setActiveIndex(initialIndex);
 
-    return () => {
-      window.removeEventListener("scroll", syncActiveScene);
-      elements.forEach((element) => {
-        element.classList.remove("home-cinematic-scene");
-        delete element.dataset.homeScene;
-      });
-    };
+    window.addEventListener("scroll", syncActiveScene, { passive: true });
+    return () => window.removeEventListener("scroll", syncActiveScene);
   }, []);
 
   useEffect(() => {
@@ -241,10 +416,7 @@ export function HomeSceneTransitions() {
     const elements = getSceneElements();
     if (elements.length !== scenes.length) return;
 
-    const html = document.documentElement;
-    const transitionDocument = document as ViewTransitionDocument;
-
-    const resetWheelAmount = () => {
+    const resetWheel = () => {
       wheelAmountRef.current = 0;
       if (wheelResetRef.current !== null) {
         window.clearTimeout(wheelResetRef.current);
@@ -262,56 +434,41 @@ export function HomeSceneTransitions() {
       }
 
       const fromIndex = activeIndexRef.current;
-      if (targetIndex === fromIndex) return;
+      if (fromIndex === targetIndex) return;
 
-      const direction: 1 | -1 = targetIndex > fromIndex ? 1 : -1;
-      const peelDirection: PeelDirection = direction > 0 ? "forward" : "reverse";
+      const direction: Direction = targetIndex > fromIndex ? 1 : -1;
       const boundaryIndex = Math.max(fromIndex, targetIndex);
       const effect: PeelEffect = boundaryIndex % 2 === 1 ? "peelX" : "peelY";
-      const targetTop = elements[targetIndex].offsetTop;
-      const scrollbarWidth = Math.max(0, window.innerWidth - html.clientWidth);
 
       transitionLockRef.current = true;
-      resetWheelAmount();
-      html.dataset.homePeel = `${effect}-${peelDirection}`;
-      html.style.setProperty("--home-scrollbar-compensation", `${scrollbarWidth}px`);
-      html.classList.add("home-scene-transitioning");
-
-      const updateScene = async () => {
-        window.scrollTo({ top: targetTop, behavior: "instant" });
-        activeIndexRef.current = targetIndex;
-        setActiveIndex(targetIndex);
-        await settleNewScene();
-      };
+      resetWheel();
 
       try {
-        if (transitionDocument.startViewTransition) {
-          const viewTransition = transitionDocument.startViewTransition(updateScene);
-          await viewTransition.finished;
-        } else {
-          await runFallbackPeel({
-            targetTop,
-            effect,
-            direction: peelDirection
-          });
-          activeIndexRef.current = targetIndex;
-          setActiveIndex(targetIndex);
-        }
+        await runPeel({
+          outgoing: elements[fromIndex],
+          incoming: elements[targetIndex],
+          targetTop: elements[targetIndex].offsetTop,
+          effect,
+          direction,
+          fromLabel: scenes[fromIndex].label,
+          toLabel: scenes[targetIndex].label
+        });
+
+        activeIndexRef.current = targetIndex;
+        setActiveIndex(targetIndex);
+      } catch (error) {
+        console.error("Homepage peel transition failed:", error);
+        window.scrollTo(0, elements[targetIndex].offsetTop);
+        activeIndexRef.current = targetIndex;
+        setActiveIndex(targetIndex);
       } finally {
-        window.scrollTo({ top: elements[targetIndex].offsetTop, behavior: "instant" });
-        delete html.dataset.homePeel;
-        html.classList.remove("home-scene-transitioning");
-        html.style.removeProperty("--home-scrollbar-compensation");
         transitionLockRef.current = false;
-        cooldownUntilRef.current = performance.now() + SETTLE_DELAY_MS;
+        cooldownUntilRef.current = performance.now() + COOLDOWN_MS;
       }
     };
 
     const handleWheel = (event: WheelEvent) => {
       if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-
-      const delta = normalizeWheelDelta(event);
-      if (delta === 0) return;
 
       if (transitionLockRef.current) {
         event.preventDefault();
@@ -323,18 +480,21 @@ export function HomeSceneTransitions() {
         return;
       }
 
-      const direction: 1 | -1 = delta > 0 ? 1 : -1;
+      const delta = normalizeWheelDelta(event);
+      if (!delta) return;
+
+      const direction: Direction = delta > 0 ? 1 : -1;
       const currentIndex = activeIndexRef.current;
       const currentScene = elements[currentIndex];
       const targetIndex = currentIndex + direction;
 
       if (!currentScene || targetIndex < 0 || targetIndex >= elements.length) {
-        resetWheelAmount();
+        resetWheel();
         return;
       }
 
-      if (!isSceneBoundary(currentScene, direction)) {
-        resetWheelAmount();
+      if (!canMoveToNextScene(currentScene, direction, delta)) {
+        resetWheel();
         return;
       }
 
@@ -346,15 +506,22 @@ export function HomeSceneTransitions() {
       }
 
       wheelAmountRef.current += Math.abs(delta);
-
       if (wheelResetRef.current !== null) window.clearTimeout(wheelResetRef.current);
-      wheelResetRef.current = window.setTimeout(resetWheelAmount, 220);
+      wheelResetRef.current = window.setTimeout(resetWheel, 240);
 
-      if (wheelAmountRef.current < WHEEL_THRESHOLD) return;
-      void beginTransition(targetIndex);
+      if (wheelAmountRef.current >= WHEEL_THRESHOLD) {
+        void beginTransition(targetIndex);
+      }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (transitionLockRef.current) {
+        if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", " "].includes(event.key)) {
+          event.preventDefault();
+        }
+        return;
+      }
+
       const target = event.target as HTMLElement | null;
       if (
         target?.closest(
@@ -375,7 +542,7 @@ export function HomeSceneTransitions() {
 
       if (!down && !up) return;
 
-      const direction: 1 | -1 = down ? 1 : -1;
+      const direction: Direction = down ? 1 : -1;
       const currentIndex = activeIndexRef.current;
       const currentScene = elements[currentIndex];
       const targetIndex = currentIndex + direction;
@@ -384,7 +551,7 @@ export function HomeSceneTransitions() {
         !currentScene ||
         targetIndex < 0 ||
         targetIndex >= elements.length ||
-        !isSceneBoundary(currentScene, direction)
+        !canMoveToNextScene(currentScene, direction, window.innerHeight * 0.5)
       ) {
         return;
       }
@@ -414,193 +581,28 @@ export function HomeSceneTransitions() {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("click", handleSceneLink);
-      resetWheelAmount();
-      delete html.dataset.homePeel;
-      html.classList.remove("home-scene-transitioning");
-      html.style.removeProperty("--home-scrollbar-compensation");
+      resetWheel();
+      transitionLockRef.current = false;
     };
   }, [enabled]);
 
   return (
-    <>
-      <style jsx global>{`
-        .home-cinematic-scene {
-          position: relative;
-          min-height: 100svh;
-          scroll-margin-top: 0;
-          view-transition-name: none;
-        }
-
-        html.home-scene-transitioning {
-          scroll-behavior: auto !important;
-          overscroll-behavior: none;
-        }
-
-        html.home-scene-transitioning body {
-          overflow: hidden !important;
-          padding-right: var(--home-scrollbar-compensation, 0px);
-        }
-
-        ::view-transition-group(root) {
-          animation-duration: ${DESKTOP_TRANSITION_MS}ms;
-          animation-timing-function: cubic-bezier(.76, 0, .24, 1);
-        }
-
-        ::view-transition-image-pair(root) {
-          isolation: isolate;
-          perspective: 1600px;
-          background: #07080c;
-        }
-
-        ::view-transition-old(root),
-        ::view-transition-new(root) {
-          width: 100%;
-          height: 100%;
-          mix-blend-mode: normal;
-          backface-visibility: hidden;
-          transform-style: preserve-3d;
-        }
-
-        ::view-transition-new(root) {
-          z-index: 1;
-          animation: gridspell-scene-arrive ${DESKTOP_TRANSITION_MS}ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        ::view-transition-old(root) {
-          z-index: 2;
-          filter: drop-shadow(0 0 34px rgba(139, 233, 255, .24));
-        }
-
-        html[data-home-peel="peelX-forward"]::view-transition-old(root) {
-          transform-origin: left center;
-          animation: gridspell-peel-x-forward ${DESKTOP_TRANSITION_MS}ms cubic-bezier(.76, 0, .24, 1) both;
-        }
-
-        html[data-home-peel="peelX-reverse"]::view-transition-old(root) {
-          transform-origin: right center;
-          animation: gridspell-peel-x-reverse ${DESKTOP_TRANSITION_MS}ms cubic-bezier(.76, 0, .24, 1) both;
-        }
-
-        html[data-home-peel="peelY-forward"]::view-transition-old(root) {
-          transform-origin: center top;
-          animation: gridspell-peel-y-forward ${DESKTOP_TRANSITION_MS}ms cubic-bezier(.76, 0, .24, 1) both;
-        }
-
-        html[data-home-peel="peelY-reverse"]::view-transition-old(root) {
-          transform-origin: center bottom;
-          animation: gridspell-peel-y-reverse ${DESKTOP_TRANSITION_MS}ms cubic-bezier(.76, 0, .24, 1) both;
-        }
-
-        @keyframes gridspell-scene-arrive {
-          0% {
-            transform: scale(1.045) translateZ(-55px);
-            filter: brightness(.52) saturate(.72) blur(7px);
-          }
-          30% {
-            filter: brightness(.62) saturate(.8) blur(4px);
-          }
-          100% {
-            transform: scale(1) translateZ(0);
-            filter: brightness(1) saturate(1) blur(0);
-          }
-        }
-
-        @keyframes gridspell-peel-x-forward {
-          0%, 13% {
-            clip-path: inset(0 0 0 0);
-            transform: perspective(1600px) rotateY(0deg) translateX(0) scale(1);
-            filter: brightness(1);
-          }
-          55% {
-            filter: brightness(.9);
-          }
-          100% {
-            clip-path: inset(0 100% 0 0);
-            transform: perspective(1600px) rotateY(-12deg) translateX(-5%) scale(.985);
-            filter: brightness(.7);
-          }
-        }
-
-        @keyframes gridspell-peel-x-reverse {
-          0%, 13% {
-            clip-path: inset(0 0 0 0);
-            transform: perspective(1600px) rotateY(0deg) translateX(0) scale(1);
-            filter: brightness(1);
-          }
-          55% {
-            filter: brightness(.9);
-          }
-          100% {
-            clip-path: inset(0 0 0 100%);
-            transform: perspective(1600px) rotateY(12deg) translateX(5%) scale(.985);
-            filter: brightness(.7);
-          }
-        }
-
-        @keyframes gridspell-peel-y-forward {
-          0%, 13% {
-            clip-path: inset(0 0 0 0);
-            transform: perspective(1600px) rotateX(0deg) translateY(0) scale(1);
-            filter: brightness(1);
-          }
-          55% {
-            filter: brightness(.9);
-          }
-          100% {
-            clip-path: inset(0 0 100% 0);
-            transform: perspective(1600px) rotateX(11deg) translateY(-5%) scale(.985);
-            filter: brightness(.7);
-          }
-        }
-
-        @keyframes gridspell-peel-y-reverse {
-          0%, 13% {
-            clip-path: inset(0 0 0 0);
-            transform: perspective(1600px) rotateX(0deg) translateY(0) scale(1);
-            filter: brightness(1);
-          }
-          55% {
-            filter: brightness(.9);
-          }
-          100% {
-            clip-path: inset(100% 0 0 0);
-            transform: perspective(1600px) rotateX(-11deg) translateY(5%) scale(.985);
-            filter: brightness(.7);
-          }
-        }
-
-        @media (max-width: 1023px), (hover: none), (pointer: coarse) {
-          .home-cinematic-scene {
-            min-height: auto;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          ::view-transition-group(root),
-          ::view-transition-old(root),
-          ::view-transition-new(root) {
-            animation-duration: 1ms !important;
-          }
-        }
-      `}</style>
-
-      <div
-        className="pointer-events-none fixed bottom-5 left-1/2 z-40 hidden -translate-x-1/2 items-center gap-3 rounded-full border border-white/[0.09] bg-[#090b11]/82 px-4 py-2 text-[0.54rem] uppercase tracking-[0.2em] text-white/28 shadow-2xl backdrop-blur-xl lg:flex"
-        aria-hidden="true"
-      >
-        <span className="font-mono text-[#8be9ff]">
-          {String(activeIndex + 1).padStart(2, "0")}
-        </span>
-        <span className="h-1 w-1 rounded-full bg-white/18" />
-        <span>{scenes[activeIndex]?.label}</span>
-        <span className="ml-2 h-px w-12 overflow-hidden bg-white/10">
-          <motion.span
-            className="block h-full origin-left bg-gradient-to-r from-[#7c5cff] to-[#29d6ff]"
-            animate={{ scaleX: (activeIndex + 1) / scenes.length }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </span>
-      </div>
-    </>
+    <div
+      className="pointer-events-none fixed bottom-5 left-1/2 z-40 hidden -translate-x-1/2 items-center gap-3 rounded-full border border-white/[0.09] bg-[#090b11]/82 px-4 py-2 text-[0.54rem] uppercase tracking-[0.2em] text-white/28 shadow-2xl backdrop-blur-xl lg:flex"
+      aria-hidden="true"
+    >
+      <span className="font-mono text-[#8be9ff]">
+        {String(activeIndex + 1).padStart(2, "0")}
+      </span>
+      <span className="h-1 w-1 rounded-full bg-white/18" />
+      <span>{scenes[activeIndex]?.label}</span>
+      <span className="ml-2 h-px w-12 overflow-hidden bg-white/10">
+        <motion.span
+          className="block h-full origin-left bg-gradient-to-r from-[#7c5cff] to-[#29d6ff]"
+          animate={{ scaleX: (activeIndex + 1) / scenes.length }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </span>
+    </div>
   );
 }
