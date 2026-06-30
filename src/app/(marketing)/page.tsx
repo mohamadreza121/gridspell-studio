@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { HomeExperience } from "@/components/home/HomeExperience";
+import { HomeHeroModeShowcase } from "@/components/home/HomeHeroModeShowcase";
 import { MobileHomeGBackground } from "@/components/home/MobileHomeGBackground";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function HomePage() {
     <>
       <MobileHomeGBackground />
       <HomeExperience />
+      <HomeHeroModeShowcase />
     </>
   );
 }
