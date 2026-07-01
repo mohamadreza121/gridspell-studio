@@ -1,11 +1,21 @@
+import type { Metadata } from "next";
 import { ArrowUpRight, Check, Handshake, Route } from "lucide-react";
+
 import { ProcessPhoneMockup } from "@/components/process/ProcessPhoneMockup";
 import { ClientDashboardTour } from "@/components/process/dashboard-tour/ClientDashboardTour";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { Container } from "@/components/ui/Container";
 import { PageIntro } from "@/components/ui/PageIntro";
 import { processSteps } from "@/config/process";
+import { createPageMetadata } from "@/lib/metadata";
 import styles from "./process.module.css";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Web Design & Development Process",
+  description:
+    "See GridSpell's structured process for strategy, design, development, testing, launch, communication, approvals, and project delivery.",
+  path: "/process"
+});
 
 const clientResponsibilities = [
   "Provide one clear decision maker",
