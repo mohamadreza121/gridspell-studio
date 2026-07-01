@@ -276,13 +276,20 @@ function PhoneFrame({
             <span className="h-1.5 w-1.5 rounded-full bg-[#102033] shadow-[0_0_0_1px_rgba(255,255,255,0.03)]" />
           </div>
 
-          <div className="overflow-hidden rounded-[2.65rem]">
+          <div className="overflow-hidden rounded-[2.65rem] bg-black">
             <div
+              className="px-[3px] pb-[3px] pt-[36px]"
               style={{
                 aspectRatio: `${videoWidth} / ${videoHeight}`
               }}
             >
-              <DeviceVideo src={videoSrc} poster={posterSrc} label={label} />
+              <div className="h-full overflow-hidden rounded-[2.4rem]">
+                <DeviceVideo
+                  src={videoSrc}
+                  poster={posterSrc}
+                  label={label}
+                />
+              </div>
             </div>
           </div>
 
