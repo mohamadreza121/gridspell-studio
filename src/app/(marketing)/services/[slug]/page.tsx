@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: service.title,
     description: service.summary,
     path: `/services/${service.slug}`,
+    image: `/services/${service.slug}/opengraph-image`,
     imageAlt: `${service.title} by GridSpell Studio`
   });
 }

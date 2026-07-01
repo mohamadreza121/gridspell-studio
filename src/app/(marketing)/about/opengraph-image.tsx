@@ -6,17 +6,16 @@ import {
 
 export const size = ogSize;
 export const contentType = ogContentType;
-
 export const alt =
-  "GridSpell — Full-stack. Full impact.";
+  "About GridSpell Studio — One studio. Every layer.";
 
 export default function Image() {
   return createOgImage({
-    eyebrow: "Full-stack web studio",
-    title: "Full-stack. Full impact.",
+    eyebrow: "About GridSpell",
+    title: "One studio. Every layer.",
     description:
-      "Premium websites • portals • digital systems",
+      "Strategy • design • development • systems",
     footer:
-      "Built on structure. Designed to captivate."
+      "Toronto-based • Working with businesses across Canada"
   });
 }
