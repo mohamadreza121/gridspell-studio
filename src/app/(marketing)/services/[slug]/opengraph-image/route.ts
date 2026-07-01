@@ -1,22 +1,19 @@
 import { getServiceBySlug } from "@/config/services";
-import { createOgImage, ogContentType, ogSize } from "@/lib/og";
+import { createOgImage } from "@/lib/og";
 
-export const size = ogSize;
-export const contentType = ogContentType;
-
-type Props = {
+type RouteContext = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function Image({ params }: Props) {
+export async function GET(_request: Request, { params }: RouteContext) {
   const { slug } = await params;
   const service = getServiceBySlug(slug);
 
   if (!service) {
     return createOgImage({
-      eyebrow: "Service",
+      eyebrow: "Services",
       title: "GridSpell Services",
-      description: "Premium websites • dashboards • digital systems"
+      description: "Premium websites • portals • digital systems"
     });
   }
 
@@ -24,6 +21,6 @@ export default async function Image({ params }: Props) {
     eyebrow: `Service ${service.number}`,
     title: service.shortTitle,
     description: service.summary,
-    footer: "GridSpell Service Page"
+    footer: "GridSpell Service"
   });
 }
