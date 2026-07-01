@@ -8,7 +8,6 @@ type PageMetadataOptions = {
   path: "/" | `/${string}`;
   image?: string;
   imageAlt?: string;
-  type?: "website" | "article";
 };
 
 export function createPageMetadata({
@@ -16,8 +15,7 @@ export function createPageMetadata({
   description,
   path,
   image = "/opengraph-image",
-  imageAlt = `${title} — ${siteConfig.name}`,
-  type = "website"
+  imageAlt = `${title} — ${siteConfig.name}`
 }: PageMetadataOptions): Metadata {
   const socialTitle = `${title} | ${siteConfig.name}`;
 
@@ -28,7 +26,7 @@ export function createPageMetadata({
       canonical: path
     },
     openGraph: {
-      type,
+      type: "website",
       url: path,
       title: socialTitle,
       description,
