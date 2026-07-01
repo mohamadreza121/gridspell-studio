@@ -6,9 +6,10 @@ import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Selected Web Design Work",
-  description:
-    "Explore GridSpell case studies across business websites, luxury digital experiences, lead-generation systems, and interactive technical portfolios.",
-  path: "/work"
+  description: "Explore GridSpell website and digital experience case studies.",
+  path: "/work",
+  image: "/work/opengraph-image",
+  imageAlt: "GridSpell selected work"
 });
 
 export default function Page() {
