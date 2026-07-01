@@ -7,6 +7,7 @@ export type FeaturedProject = {
   accent: "violet" | "cyan" | "blue";
 
   previewVideo?: string;
+  mobilePreviewVideo?: string;
   previewImage?: string;
   previewAlt?: string;
 
@@ -24,7 +25,9 @@ export const featuredProjects: FeaturedProject[] = [
       "Modern service architecture and a production-ready lead workflow",
     accent: "violet",
 
-    previewVideo: "/videos/work/desa-foam-insulation-hero.mp4?v=20260630",
+    previewVideo: "/videos/work/desa-foam-insulation-hero.mp4?v=20260701",
+    mobilePreviewVideo:
+      "/videos/work/desa-foam-insulation-mobile.mp4?v=20260701",
     previewImage: "/images/work/desa-foam-insulation-home.webp",
     previewAlt: "DESA Foam Insulation homepage preview",
 
@@ -40,7 +43,9 @@ export const featuredProjects: FeaturedProject[] = [
       "Luxury positioning with a product-led browsing experience",
     accent: "cyan",
 
-    previewVideo: "/videos/work/pure-timepieces-hero.mp4?v=20260630",
+    previewVideo: "/videos/work/pure-timepieces-hero.mp4?v=20260701",
+    mobilePreviewVideo:
+      "/videos/work/pure-timepieces-mobile.mp4?v=20260701",
     previewAlt: "Pure Timepieces homepage preview",
 
     liveUrl: "https://pure-timepieces-redesign.vercel.app/"
@@ -55,7 +60,9 @@ export const featuredProjects: FeaturedProject[] = [
       "A cinematic personal brand experience built around technical credibility",
     accent: "blue",
 
-    previewVideo: "/videos/work/network-portfolio-hero.mp4?v=20260630",
+    previewVideo: "/videos/work/network-portfolio-hero.mp4?v=20260701",
+    mobilePreviewVideo:
+      "/videos/work/network-portfolio-mobile.mp4?v=20260701",
     previewAlt: "Network engineering portfolio homepage preview",
 
     liveUrl: "https://portfolio-demo1-psi.vercel.app/"

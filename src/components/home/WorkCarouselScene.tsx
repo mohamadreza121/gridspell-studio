@@ -51,7 +51,18 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
             controlsList="nodownload noplaybackrate nofullscreen"
             aria-label={project.previewAlt ?? `${project.title} homepage video preview`}
           >
-            <source src={project.previewVideo} type="video/mp4" />
+            {project.mobilePreviewVideo ? (
+              <source
+                src={project.mobilePreviewVideo}
+                type="video/mp4"
+                media="(max-width: 639px)"
+              />
+            ) : null}
+
+            <source
+              src={project.previewVideo}
+              type="video/mp4"
+            />
           </video>
         ) : project.previewImage ? (
           <Image
