@@ -1,8 +1,18 @@
+import type { Metadata } from "next";
 import { ArrowUpRight, Clock3, Mail, MapPin, MessagesSquare } from "lucide-react";
+
 import { PageIntro } from "@/components/ui/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { siteConfig } from "@/config/site";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Contact GridSpell Studio",
+  description:
+    "Contact GridSpell Studio in Toronto to discuss a premium website, redesign, client portal, dashboard, or custom digital system.",
+  path: "/contact"
+});
 
 export default function ContactPage() {
   return (
