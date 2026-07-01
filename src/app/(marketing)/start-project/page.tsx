@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { ArrowRight, CircleCheck, Clock3, SearchCheck } from "lucide-react";
+
 import { ExperienceSelectionSummary } from "@/components/forms/ExperienceSelectionSummary";
 import { PricingSelectionSummary } from "@/components/forms/PricingSelectionSummary";
 import { ProjectBriefForm } from "@/components/forms/ProjectBriefForm";
 import { Container } from "@/components/ui/Container";
 import { PageIntro } from "@/components/ui/PageIntro";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Start a Web Design Project",
+  description:
+    "Submit a structured project brief for a website, redesign, landing page, client portal, dashboard, or full-stack application with GridSpell Studio.",
+  path: "/start-project"
+});
 
 const nextSteps = [
   {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, ExternalLink } from "lucide-react";
@@ -6,6 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { DeviceShowcase } from "@/components/work/DeviceShowcase";
 import { featuredProjects } from "@/config/work";
 import { workCaseStudies } from "@/config/work-case-studies";
+import { createPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{
@@ -17,6 +19,21 @@ export function generateStaticParams() {
   return featuredProjects.map((project) => ({
     slug: project.slug
   }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const project = featuredProjects.find((item) => item.slug === slug);
+  const caseStudy = workCaseStudies.find((item) => item.slug === slug);
+
+  if (!project || !caseStudy) return {};
+
+  return createPageMetadata({
+    title: `${project.title} Website Case Study`,
+    description: project.description,
+    path: `/work/${project.slug}`,
+    imageAlt: `${project.title} website case study by GridSpell Studio`
+  });
 }
 
 export default async function Page({ params }: Props) {
