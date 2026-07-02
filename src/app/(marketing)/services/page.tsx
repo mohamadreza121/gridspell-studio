@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
-import { ServicesShowcaseScene } from "@/components/services/ServicesShowcaseScene";
-import { ServicesStaticFallback } from "@/components/services/ServicesStaticFallback";
-import { HydrationBoundary } from "@/components/ui/HydrationBoundary";
+import { ServicesExperienceBoundary } from "@/components/services/ServicesExperienceBoundary";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -15,9 +13,5 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function Page() {
-  return (
-    <HydrationBoundary fallback={<ServicesStaticFallback />}>
-      <ServicesShowcaseScene />
-    </HydrationBoundary>
-  );
+  return <ServicesExperienceBoundary />;
 }
