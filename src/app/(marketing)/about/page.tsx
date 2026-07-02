@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { AboutExperience } from "@/components/about/AboutExperience";
+import { AboutStaticFallback } from "@/components/about/AboutStaticFallback";
+import { HydrationBoundary } from "@/components/ui/HydrationBoundary";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -13,5 +15,9 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function AboutPage() {
-  return <AboutExperience />;
+  return (
+    <HydrationBoundary fallback={<AboutStaticFallback />}>
+      <AboutExperience />
+    </HydrationBoundary>
+  );
 }
