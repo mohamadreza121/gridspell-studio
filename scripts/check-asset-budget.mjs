@@ -4,15 +4,15 @@ import path from "node:path";
 const root = process.cwd();
 const publicDirectory = path.join(root, "public");
 const limits = {
-  ".mp4": 10 * 1024 * 1024,
-  ".webm": 10 * 1024 * 1024,
+  ".mp4": 45 * 1024 * 1024,
+  ".webm": 45 * 1024 * 1024,
   ".webp": 1 * 1024 * 1024,
   ".avif": 1 * 1024 * 1024,
   ".png": 2 * 1024 * 1024,
   ".jpg": 2 * 1024 * 1024,
   ".jpeg": 2 * 1024 * 1024
 };
-const totalVideoLimit = 50 * 1024 * 1024;
+const totalVideoLimit = 160 * 1024 * 1024;
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

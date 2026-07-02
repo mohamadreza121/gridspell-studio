@@ -35,7 +35,6 @@ export function createOgImage({
             "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
         }}
       >
-        {/* Grid background */}
         <div
           style={{
             position: "absolute",
@@ -48,8 +47,6 @@ export function createOgImage({
             opacity: 0.22
           }}
         />
-
-        {/* Purple glow */}
         <div
           style={{
             position: "absolute",
@@ -62,8 +59,6 @@ export function createOgImage({
               "radial-gradient(circle, rgba(124,92,255,0.28) 0%, rgba(124,92,255,0.12) 42%, rgba(124,92,255,0.00) 72%)"
           }}
         />
-
-        {/* Cyan glow */}
         <div
           style={{
             position: "absolute",
@@ -76,8 +71,6 @@ export function createOgImage({
               "radial-gradient(circle, rgba(41,214,255,0.16) 0%, rgba(41,214,255,0.08) 36%, rgba(41,214,255,0.00) 72%)"
           }}
         />
-
-        {/* Big G background */}
         <div
           style={{
             position: "absolute",
@@ -101,12 +94,9 @@ export function createOgImage({
         >
           G
         </div>
-
-        {/* Content */}
         <div
           style={{
             position: "relative",
-            zIndex: 2,
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -122,7 +112,6 @@ export function createOgImage({
               maxWidth: "680px"
             }}
           >
-            {/* Brand */}
             <div
               style={{
                 display: "flex",
@@ -145,8 +134,6 @@ export function createOgImage({
                 Spell
               </span>
             </div>
-
-            {/* Eyebrow */}
             <div
               style={{
                 display: "flex",
@@ -159,8 +146,6 @@ export function createOgImage({
             >
               {eyebrow}
             </div>
-
-            {/* Headline */}
             <div
               style={{
                 display: "flex",
@@ -175,8 +160,6 @@ export function createOgImage({
             >
               {title}
             </div>
-
-            {/* Description */}
             <div
               style={{
                 display: "flex",
@@ -189,8 +172,6 @@ export function createOgImage({
               {description}
             </div>
           </div>
-
-          {/* Footer */}
           <div
             style={{
               display: "flex",

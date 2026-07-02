@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar, type MarketingViewer } from "@/components/layout/Navbar";
 import { NavigationAccessibilityController } from "@/components/layout/NavigationAccessibilityController";
+import { NavigationFocusRestore } from "@/components/layout/NavigationFocusRestore";
 import { getViewerContext } from "@/lib/supabase/auth";
 
 function initials(fullName: string | null, email: string | null) {
@@ -38,6 +39,7 @@ export async function MarketingShell({ children }: { children: ReactNode }) {
         Skip to main content
       </a>
       <NavigationAccessibilityController />
+      <NavigationFocusRestore />
       <Navbar viewer={viewer} />
       <div id="main-content" tabIndex={-1} className="focus:outline-none">
         {children}
