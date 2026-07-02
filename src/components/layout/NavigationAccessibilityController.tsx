@@ -14,46 +14,53 @@ const focusableSelector = [
 
 function getNavigationDialog() {
   const dialog = document.getElementById("gridspell-menu");
-
   return dialog instanceof HTMLElement && dialog.getAttribute("role") === "dialog"
     ? dialog
     : null;
 }
 
+function getMenuButton() {
+  const button = document.querySelector<HTMLElement>(
+    'button[aria-controls="gridspell-menu"]'
+  );
+  return button instanceof HTMLElement ? button : null;
+}
+
 function getFocusableElements(dialog: HTMLElement) {
   return Array.from(
     dialog.querySelectorAll<HTMLElement>(focusableSelector)
-  ).filter((element) => {
-    return (
-      !element.hasAttribute("disabled") &&
-      element.getAttribute("aria-hidden") !== "true" &&
-      element.tabIndex >= 0 &&
-      element.getClientRects().length > 0
-    );
-  });
+  ).filter((element) =>
+    !element.hasAttribute("disabled") &&
+    element.getAttribute("aria-hidden") !== "true" &&
+    element.tabIndex >= 0 &&
+    element.getClientRects().length > 0
+  );
 }
 
-function focusWithoutScrolling(element: HTMLElement, dialog: HTMLElement) {
-  const previousScrollTop = dialog.scrollTop;
-  const previousScrollLeft = dialog.scrollLeft;
+function focusWithoutScrolling(element: HTMLElement, dialog?: HTMLElement) {
+  const scrollTop = dialog?.scrollTop ?? 0;
+  const scrollLeft = dialog?.scrollLeft ?? 0;
 
   element.focus({ preventScroll: true });
 
-  dialog.scrollTop = previousScrollTop;
-  dialog.scrollLeft = previousScrollLeft;
+  if (dialog) {
+    dialog.scrollTop = scrollTop;
+    dialog.scrollLeft = scrollLeft;
+  }
 }
 
 export function NavigationAccessibilityController() {
   useEffect(() => {
     let firstFrame: number | null = null;
     let secondFrame: number | null = null;
+    let activeDialog: HTMLElement | null = null;
+    let restoreTriggerFocus = false;
 
     function cancelScheduledFocus() {
       if (firstFrame !== null) {
         window.cancelAnimationFrame(firstFrame);
         firstFrame = null;
       }
-
       if (secondFrame !== null) {
         window.cancelAnimationFrame(secondFrame);
         secondFrame = null;
@@ -62,61 +69,53 @@ export function NavigationAccessibilityController() {
 
     function scheduleInitialFocus(dialog: HTMLElement) {
       cancelScheduledFocus();
-
-      /*
-       * Navbar.tsx first focuses the dialog container to avoid a scroll jump.
-       * Run one frame later and move focus to the first actionable item while
-       * preserving the dialog's scroll position. This gives keyboard users an
-       * immediately useful focus target and matches the modal-navigation test.
-       */
       firstFrame = window.requestAnimationFrame(() => {
         secondFrame = window.requestAnimationFrame(() => {
-          if (!dialog.isConnected) {
-            return;
-          }
-
+          if (!dialog.isConnected) return;
           const firstElement = getFocusableElements(dialog)[0] ?? dialog;
           focusWithoutScrolling(firstElement, dialog);
         });
       });
     }
 
-    const existingDialog = getNavigationDialog();
+    function synchronizeDialogState() {
+      const dialog = getNavigationDialog();
 
-    if (existingDialog) {
-      existingDialog.dataset.keyboardFocusReady = "true";
-      scheduleInitialFocus(existingDialog);
+      if (dialog) {
+        activeDialog = dialog;
+        if (dialog.dataset.keyboardFocusReady !== "true") {
+          dialog.dataset.keyboardFocusReady = "true";
+          scheduleInitialFocus(dialog);
+        }
+        return;
+      }
+
+      if (activeDialog && !activeDialog.isConnected) {
+        activeDialog = null;
+        if (restoreTriggerFocus) {
+          restoreTriggerFocus = false;
+          const trigger = getMenuButton();
+          if (trigger) focusWithoutScrolling(trigger);
+        }
+      }
     }
 
-    const observer = new MutationObserver(() => {
-      const dialog = getNavigationDialog();
+    synchronizeDialogState();
 
-      if (!dialog || dialog.dataset.keyboardFocusReady === "true") {
-        return;
-      }
-
-      dialog.dataset.keyboardFocusReady = "true";
-      scheduleInitialFocus(dialog);
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
+    const observer = new MutationObserver(synchronizeDialogState);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Tab") {
-        return;
-      }
-
       const dialog = getNavigationDialog();
 
-      if (!dialog) {
+      if (event.key === "Escape") {
+        if (dialog) restoreTriggerFocus = true;
         return;
       }
 
-      const focusableElements = getFocusableElements(dialog);
+      if (event.key !== "Tab" || !dialog) return;
 
+      const focusableElements = getFocusableElements(dialog);
       if (focusableElements.length === 0) {
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -125,8 +124,7 @@ export function NavigationAccessibilityController() {
       }
 
       const firstElement = focusableElements[0];
-      const lastElement =
-        focusableElements[focusableElements.length - 1] ?? firstElement;
+      const lastElement = focusableElements.at(-1) ?? firstElement;
       const activeElement = document.activeElement;
       const focusIsInsideDialog =
         activeElement instanceof Node && dialog.contains(activeElement);
@@ -134,10 +132,7 @@ export function NavigationAccessibilityController() {
       if (activeElement === dialog || !focusIsInsideDialog) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        focusWithoutScrolling(
-          event.shiftKey ? lastElement : firstElement,
-          dialog
-        );
+        focusWithoutScrolling(event.shiftKey ? lastElement : firstElement, dialog);
         return;
       }
 
