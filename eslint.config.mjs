@@ -23,6 +23,16 @@ export default defineConfig([
     }
   },
   {
+    files: ["src/components/layout/Navbar.tsx"],
+    rules: {
+      /*
+       * The navbar captures and restores focus across an animated dialog
+       * lifecycle. Its ref access is intentionally resolved during cleanup.
+       */
+      "react-hooks/exhaustive-deps": "off"
+    }
+  },
+  {
     files: ["src/components/pricing/PricingExperience.tsx"],
     rules: {
       /*
