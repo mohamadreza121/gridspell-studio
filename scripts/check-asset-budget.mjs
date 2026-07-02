@@ -3,16 +3,20 @@ import path from "node:path";
 
 const root = process.cwd();
 const publicDirectory = path.join(root, "public");
-const limits = {
-  ".mp4": 10 * 1024 * 1024,
-  ".webm": 10 * 1024 * 1024,
-  ".webp": 1 * 1024 * 1024,
-  ".avif": 1 * 1024 * 1024,
-  ".png": 2 * 1024 * 1024,
-  ".jpg": 2 * 1024 * 1024,
-  ".jpeg": 2 * 1024 * 1024
+const MB = 1024 * 1024;
+
+const imageLimits = {
+  ".webp": 1 * MB,
+  ".avif": 1 * MB,
+  ".png": 2 * MB,
+  ".jpg": 2 * MB,
+  ".jpeg": 2 * MB
 };
-const totalVideoLimit = 50 * 1024 * 1024;
+
+const workVideoLimit = 20 * MB;
+const caseStudyVideoLimit = 45 * MB;
+const homepageVideoLimit = 90 * MB;
+const caseStudyGroupLimit = 80 * MB;
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -27,33 +31,64 @@ async function walk(directory) {
   return files;
 }
 
+function toMb(bytes) {
+  return `${(bytes / MB).toFixed(2)} MB`;
+}
+
 const files = await walk(publicDirectory);
 const violations = [];
+const caseStudyTotals = new Map();
+let homepageVideoBytes = 0;
 let totalVideoBytes = 0;
 
 for (const file of files) {
   const extension = path.extname(file).toLowerCase();
   const fileStat = await stat(file);
-  const relative = path.relative(root, file);
+  const relative = path.relative(root, file).split(path.sep).join("/");
 
   if (extension === ".mp4" || extension === ".webm") {
     totalVideoBytes += fileStat.size;
+
+    const isCaseStudy = relative.startsWith("public/videos/case-studies/");
+    const limit = isCaseStudy ? caseStudyVideoLimit : workVideoLimit;
+
+    if (fileStat.size > limit) {
+      violations.push(`${relative} is ${toMb(fileStat.size)}; budget is ${toMb(limit)}.`);
+    }
+
+    if (relative.startsWith("public/videos/work/")) {
+      homepageVideoBytes += fileStat.size;
+    }
+
+    if (isCaseStudy) {
+      const parts = relative.split("/");
+      const project = parts[3] ?? "unknown";
+      caseStudyTotals.set(project, (caseStudyTotals.get(project) ?? 0) + fileStat.size);
+    }
+
+    continue;
   }
 
-  const limit = limits[extension];
-  if (limit && fileStat.size > limit) {
+  const imageLimit = imageLimits[extension];
+  if (imageLimit && fileStat.size > imageLimit) {
     violations.push(
-      `${relative} is ${(fileStat.size / 1024 / 1024).toFixed(2)} MB; ` +
-        `budget is ${(limit / 1024 / 1024).toFixed(0)} MB.`
+      `${relative} is ${toMb(fileStat.size)}; budget is ${toMb(imageLimit)}.`
     );
   }
 }
 
-if (totalVideoBytes > totalVideoLimit) {
+if (homepageVideoBytes > homepageVideoLimit) {
   violations.push(
-    `Total public video size is ${(totalVideoBytes / 1024 / 1024).toFixed(2)} MB; ` +
-      `budget is ${(totalVideoLimit / 1024 / 1024).toFixed(0)} MB.`
+    `Homepage work videos total ${toMb(homepageVideoBytes)}; budget is ${toMb(homepageVideoLimit)}.`
   );
+}
+
+for (const [project, bytes] of caseStudyTotals) {
+  if (bytes > caseStudyGroupLimit) {
+    violations.push(
+      `Case study ${project} videos total ${toMb(bytes)}; budget is ${toMb(caseStudyGroupLimit)}.`
+    );
+  }
 }
 
 if (violations.length) {
@@ -63,5 +98,7 @@ if (violations.length) {
 }
 
 console.log(
-  `Asset budget passed. Public videos total ${(totalVideoBytes / 1024 / 1024).toFixed(2)} MB.`
+  `Asset budget passed. Homepage videos ${toMb(homepageVideoBytes)}. ` +
+    `Total video library ${toMb(totalVideoBytes)}. ` +
+    `Case-study groups checked ${caseStudyTotals.size}.`
 );
