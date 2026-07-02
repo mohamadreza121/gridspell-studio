@@ -26,16 +26,34 @@ test("navigation dialog traps focus and closes with Escape", async ({ page }) =>
 });
 
 test("project form exposes validation errors accessibly", async ({ page }) => {
-  await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
+  await page.route(
+    "https://challenges.cloudflare.com/turnstile/v0/api.js**",
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/javascript",
+        body: `
+          window.turnstile = {
+            render: function (_container, options) {
+              Promise.resolve().then(function () {
+                if (options && options.callback) {
+                  options.callback("playwright-accessibility-token");
+                }
+              });
+              return "playwright-widget";
+            },
+            reset: function () {},
+            remove: function () {}
+          };
+        `
+      });
+    }
+  );
+
   await page.goto("/start-project");
 
   const turnstileToken = page.locator('input[name="turnstileToken"]');
-
-  if ((await turnstileToken.count()) > 0) {
-    await turnstileToken.evaluate((element) => {
-      (element as HTMLInputElement).value = "test-token";
-    });
-  }
+  await expect(turnstileToken).toHaveValue("playwright-accessibility-token");
 
   await page.getByRole("button", { name: "Submit project brief" }).click();
 
