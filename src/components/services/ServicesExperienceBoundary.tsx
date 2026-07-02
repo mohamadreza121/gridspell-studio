@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   usePrefersReducedMotion
 } from "@/hooks/useMediaQuery";
+import styles from "./ServicesExperienceBoundary.module.css";
 
 export function ServicesExperienceBoundary() {
   const reduceMotion = usePrefersReducedMotion();
@@ -15,5 +16,9 @@ export function ServicesExperienceBoundary() {
     return <ServicesStaticFallback />;
   }
 
-  return <ServicesShowcaseScene />;
+  return (
+    <div className={styles.motionRoot}>
+      <ServicesShowcaseScene />
+    </div>
+  );
 }
