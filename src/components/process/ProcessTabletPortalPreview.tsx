@@ -4,7 +4,8 @@ import {
   FileText,
   LayoutDashboard,
   MessageSquareText,
-  ShieldCheck
+  ShieldCheck,
+  type LucideIcon
 } from "lucide-react";
 
 const phases = [
@@ -14,6 +15,16 @@ const phases = [
   ["Build", "Next"],
   ["Launch", "Planned"]
 ] as const;
+
+const statistics: Array<{
+  label: string;
+  value: string;
+  icon: LucideIcon;
+}> = [
+  { label: "Progress", value: "64%", icon: CheckCircle2 },
+  { label: "Next review", value: "Jul 08", icon: Clock3 },
+  { label: "Open actions", value: "2", icon: ShieldCheck }
+];
 
 export function ProcessTabletPortalPreview() {
   return (
@@ -50,27 +61,20 @@ export function ProcessTabletPortalPreview() {
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {[
-                  ["Progress", "64%", CheckCircle2],
-                  ["Next review", "Jul 08", Clock3],
-                  ["Open actions", "2", ShieldCheck]
-                ].map(([label, value, Icon]) => {
-                  const StatIcon = Icon;
-                  return (
-                    <div
-                      key={String(label)}
-                      className="rounded-xl border border-white/[0.06] bg-[#090c12] p-4"
-                    >
-                      <StatIcon className="h-4 w-4 text-[#8be9ff]" />
-                      <p className="mt-4 text-[0.56rem] uppercase tracking-[0.16em] text-white/24">
-                        {String(label)}
-                      </p>
-                      <p className="mt-2 text-lg font-semibold text-white/76">
-                        {String(value)}
-                      </p>
-                    </div>
-                  );
-                })}
+                {statistics.map(({ label, value, icon: StatIcon }) => (
+                  <div
+                    key={label}
+                    className="rounded-xl border border-white/[0.06] bg-[#090c12] p-4"
+                  >
+                    <StatIcon className="h-4 w-4 text-[#8be9ff]" />
+                    <p className="mt-4 text-[0.56rem] uppercase tracking-[0.16em] text-white/24">
+                      {label}
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-white/76">
+                      {value}
+                    </p>
+                  </div>
+                ))}
               </div>
             </section>
 
