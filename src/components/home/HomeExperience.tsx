@@ -31,6 +31,11 @@ import {
   Workflow
 } from "lucide-react";
 
+import {
+  useMediaQuery,
+  usePrefersReducedMotion
+} from "@/hooks/useMediaQuery";
+
 import { StaticWorkGallery, WorkCarouselScene } from "@/components/home/WorkCarouselScene";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { Container } from "@/components/ui/Container";
@@ -712,10 +717,16 @@ function StaticHomepage() {
 }
 
 export function HomeExperience() {
+  const reduceMotion = usePrefersReducedMotion();
+  const useDesktopExperience = useMediaQuery("(min-width: 1280px)");
+
   return (
     <div className="home-experience">
-      <div className="home-presentation-only"><DesktopPresentation /></div>
-      <div className="home-static-only"><StaticHomepage /></div>
+      {reduceMotion || !useDesktopExperience ? (
+        <StaticHomepage />
+      ) : (
+        <DesktopPresentation />
+      )}
     </div>
   );
 }
