@@ -30,6 +30,20 @@ function createMediaQueryStore(query: string) {
 
 const stores = new Map<string, ReturnType<typeof createMediaQueryStore>>();
 
+const hydrationStore = {
+  subscribe: () => () => {},
+  getSnapshot: () => true,
+  getServerSnapshot: () => false
+};
+
+export function useHydrated() {
+  return useSyncExternalStore(
+    hydrationStore.subscribe,
+    hydrationStore.getSnapshot,
+    hydrationStore.getServerSnapshot
+  );
+}
+
 export function useMediaQuery(query: string) {
   let store = stores.get(query);
 
