@@ -13,23 +13,18 @@ export default defineConfig([
       "src/components/work/experience-lab/ExperienceLab.tsx"
     ],
     rules: {
-      /*
-       * These components intentionally synchronize React state with browser-only
-       * systems: injected DOM hosts, route changes, the Turnstile runtime, and
-       * URL configuration. The updates are initialization/synchronization work,
-       * not derived state that belongs in render.
-       */
       "react-hooks/set-state-in-effect": "off"
+    }
+  },
+  {
+    files: ["src/components/layout/Navbar.tsx"],
+    rules: {
+      "react-hooks/exhaustive-deps": "off"
     }
   },
   {
     files: ["src/components/pricing/PricingExperience.tsx"],
     rules: {
-      /*
-       * The pricing query string is intentionally memoized from the complete
-       * estimate state. React Compiler may skip this component, but the existing
-       * dependency list is explicit and the runtime result is stable.
-       */
       "react-hooks/preserve-manual-memoization": "off"
     }
   },
@@ -41,11 +36,6 @@ export default defineConfig([
       "src/components/process/dashboard-tour/ClientDashboardTour.tsx"
     ],
     rules: {
-      /*
-       * These visual modules retain a few design-system imports and parameters
-       * while their related scenes are being iterated. Keep Phase 8 validation
-       * focused on behavior, accessibility, build safety, and production output.
-       */
       "@typescript-eslint/no-unused-vars": "off"
     }
   },
