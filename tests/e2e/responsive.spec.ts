@@ -14,6 +14,9 @@ const publicRoutes = [
   "/terms"
 ];
 
+const runtimeProblemPattern =
+  /hydration failed|server rendered html didn't match|not an animatable value/i;
+
 const turnstileStub = `
   window.turnstile = {
     render: function (_container, options) {
@@ -44,8 +47,23 @@ test.describe("responsive marketing pages", () => {
 
   for (const route of publicRoutes) {
     test(`${route} has no viewport overflow`, async ({ page }) => {
+      const runtimeProblems: string[] = [];
+
+      page.on("console", (message) => {
+        if (runtimeProblemPattern.test(message.text())) {
+          runtimeProblems.push(message.text());
+        }
+      });
+
+      page.on("pageerror", (error) => {
+        if (runtimeProblemPattern.test(error.message)) {
+          runtimeProblems.push(error.message);
+        }
+      });
+
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await expect(page.locator("body")).toBeVisible();
+      await page.waitForTimeout(250);
 
       const dimensions = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
@@ -53,6 +71,7 @@ test.describe("responsive marketing pages", () => {
       }));
 
       expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 2);
+      expect(runtimeProblems).toEqual([]);
     });
   }
 });
