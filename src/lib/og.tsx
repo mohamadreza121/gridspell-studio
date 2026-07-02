@@ -35,7 +35,6 @@ export function createOgImage({
             "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
         }}
       >
-        {/* Grid background */}
         <div
           style={{
             position: "absolute",
@@ -49,7 +48,6 @@ export function createOgImage({
           }}
         />
 
-        {/* Purple glow */}
         <div
           style={{
             position: "absolute",
@@ -63,7 +61,6 @@ export function createOgImage({
           }}
         />
 
-        {/* Cyan glow */}
         <div
           style={{
             position: "absolute",
@@ -77,7 +74,6 @@ export function createOgImage({
           }}
         />
 
-        {/* Big G background */}
         <div
           style={{
             position: "absolute",
@@ -102,11 +98,9 @@ export function createOgImage({
           G
         </div>
 
-        {/* Content */}
         <div
           style={{
             position: "relative",
-            zIndex: 2,
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -122,7 +116,6 @@ export function createOgImage({
               maxWidth: "680px"
             }}
           >
-            {/* Brand */}
             <div
               style={{
                 display: "flex",
@@ -146,7 +139,6 @@ export function createOgImage({
               </span>
             </div>
 
-            {/* Eyebrow */}
             <div
               style={{
                 display: "flex",
@@ -160,7 +152,6 @@ export function createOgImage({
               {eyebrow}
             </div>
 
-            {/* Headline */}
             <div
               style={{
                 display: "flex",
@@ -176,7 +167,6 @@ export function createOgImage({
               {title}
             </div>
 
-            {/* Description */}
             <div
               style={{
                 display: "flex",
@@ -190,7 +180,6 @@ export function createOgImage({
             </div>
           </div>
 
-          {/* Footer */}
           <div
             style={{
               display: "flex",
