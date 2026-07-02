@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { InsightsExperience } from "@/components/insights/InsightsExperience";
+import { InsightsExperienceBoundary } from "@/components/insights/InsightsExperienceBoundary";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -11,5 +11,5 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function InsightsPage() {
-  return <InsightsExperience />;
+  return <InsightsExperienceBoundary />;
 }
