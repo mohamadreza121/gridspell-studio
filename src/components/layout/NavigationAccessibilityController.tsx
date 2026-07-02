@@ -1,0 +1,180 @@
+"use client";
+
+import { useEffect } from "react";
+
+const focusableSelector = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[contenteditable="true"]',
+  '[tabindex]:not([tabindex="-1"])'
+].join(",");
+
+function getNavigationDialog() {
+  const dialog = document.getElementById("gridspell-menu");
+
+  return dialog instanceof HTMLElement && dialog.getAttribute("role") === "dialog"
+    ? dialog
+    : null;
+}
+
+function getFocusableElements(dialog: HTMLElement) {
+  return Array.from(
+    dialog.querySelectorAll<HTMLElement>(focusableSelector)
+  ).filter((element) => {
+    return (
+      !element.hasAttribute("disabled") &&
+      element.getAttribute("aria-hidden") !== "true" &&
+      element.tabIndex >= 0 &&
+      element.getClientRects().length > 0
+    );
+  });
+}
+
+function focusWithoutScrolling(element: HTMLElement, dialog: HTMLElement) {
+  const previousScrollTop = dialog.scrollTop;
+  const previousScrollLeft = dialog.scrollLeft;
+
+  element.focus({ preventScroll: true });
+
+  dialog.scrollTop = previousScrollTop;
+  dialog.scrollLeft = previousScrollLeft;
+}
+
+export function NavigationAccessibilityController() {
+  useEffect(() => {
+    let firstFrame: number | null = null;
+    let secondFrame: number | null = null;
+
+    function cancelScheduledFocus() {
+      if (firstFrame !== null) {
+        window.cancelAnimationFrame(firstFrame);
+        firstFrame = null;
+      }
+
+      if (secondFrame !== null) {
+        window.cancelAnimationFrame(secondFrame);
+        secondFrame = null;
+      }
+    }
+
+    function scheduleInitialFocus(dialog: HTMLElement) {
+      cancelScheduledFocus();
+
+      /*
+       * Navbar.tsx first focuses the dialog container to avoid a scroll jump.
+       * Run one frame later and move focus to the first actionable item while
+       * preserving the dialog's scroll position. This gives keyboard users an
+       * immediately useful focus target and matches the modal-navigation test.
+       */
+      firstFrame = window.requestAnimationFrame(() => {
+        secondFrame = window.requestAnimationFrame(() => {
+          if (!dialog.isConnected) {
+            return;
+          }
+
+          const firstElement = getFocusableElements(dialog)[0] ?? dialog;
+          focusWithoutScrolling(firstElement, dialog);
+        });
+      });
+    }
+
+    const existingDialog = getNavigationDialog();
+
+    if (existingDialog) {
+      existingDialog.dataset.keyboardFocusReady = "true";
+      scheduleInitialFocus(existingDialog);
+    }
+
+    const observer = new MutationObserver(() => {
+      const dialog = getNavigationDialog();
+
+      if (!dialog || dialog.dataset.keyboardFocusReady === "true") {
+        return;
+      }
+
+      dialog.dataset.keyboardFocusReady = "true";
+      scheduleInitialFocus(dialog);
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const dialog = getNavigationDialog();
+
+      if (!dialog) {
+        return;
+      }
+
+      const focusableElements = getFocusableElements(dialog);
+
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        focusWithoutScrolling(dialog, dialog);
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement =
+        focusableElements[focusableElements.length - 1] ?? firstElement;
+      const activeElement = document.activeElement;
+      const focusIsInsideDialog =
+        activeElement instanceof Node && dialog.contains(activeElement);
+
+      if (activeElement === dialog || !focusIsInsideDialog) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        focusWithoutScrolling(
+          event.shiftKey ? lastElement : firstElement,
+          dialog
+        );
+        return;
+      }
+
+      if (event.shiftKey && activeElement === firstElement) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        focusWithoutScrolling(lastElement, dialog);
+        return;
+      }
+
+      if (!event.shiftKey && activeElement === lastElement) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        focusWithoutScrolling(firstElement, dialog);
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown, true);
+
+    return () => {
+      cancelScheduledFocus();
+      observer.disconnect();
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, []);
+
+  return (
+    <style>{`
+      #gridspell-menu :is(
+        a[href],
+        button:not([disabled]),
+        [tabindex]:not([tabindex="-1"])
+      ):focus-visible {
+        outline: 2px solid rgba(139, 233, 255, 0.95);
+        outline-offset: 4px;
+        box-shadow: 0 0 0 5px rgba(41, 214, 255, 0.12);
+      }
+    `}</style>
+  );
+}
