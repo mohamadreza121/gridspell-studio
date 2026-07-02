@@ -34,19 +34,22 @@ export default defineConfig({
       name: "desktop-chromium",
       use: {
         ...devices["Desktop Chrome"],
+        browserName: "chromium",
         viewport: { width: 1440, height: 900 }
       }
     },
     {
       name: "tablet-chromium",
       use: {
-        ...devices["iPad Pro 11"]
+        ...devices["iPad Pro 11"],
+        browserName: "chromium"
       }
     },
     {
       name: "mobile-chromium",
       use: {
-        ...devices["iPhone 13"]
+        ...devices["iPhone 13"],
+        browserName: "chromium"
       }
     }
   ]
