@@ -26,7 +26,17 @@ test("navigation dialog traps focus and closes with Escape", async ({ page }) =>
 });
 
 test("project form exposes validation errors accessibly", async ({ page }) => {
+  await page.route("https://challenges.cloudflare.com/**", (route) => route.abort());
   await page.goto("/start-project");
+
+  const turnstileToken = page.locator('input[name="turnstileToken"]');
+
+  if ((await turnstileToken.count()) > 0) {
+    await turnstileToken.evaluate((element) => {
+      (element as HTMLInputElement).value = "test-token";
+    });
+  }
+
   await page.getByRole("button", { name: "Submit project brief" }).click();
 
   await expect(page.getByRole("alert").first()).toBeVisible();
