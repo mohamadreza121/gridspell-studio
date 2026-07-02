@@ -31,10 +31,6 @@ import {
   Workflow
 } from "lucide-react";
 
-import {
-  useMediaQuery,
-  usePrefersReducedMotion
-} from "@/hooks/useMediaQuery";
 
 import { StaticWorkGallery, WorkCarouselScene } from "@/components/home/WorkCarouselScene";
 import { ActionLink } from "@/components/ui/ActionControl";
@@ -427,27 +423,77 @@ function SceneHeading({ eyebrow, title, text, align = "left" }: { eyebrow: strin
   );
 }
 
-function HeroScene({ staticMode = false }: { staticMode?: boolean }) {
+function HeroScene({
+  staticMode = false,
+  headingAs = "h1"
+}: {
+  staticMode?: boolean;
+  headingAs?: "h1" | "div";
+}) {
+  const Heading = headingAs;
+
   return (
-    <Container className={cn("flex flex-col justify-center pb-8 pt-24 sm:pt-28", staticMode ? "min-h-svh" : "h-full")}>
-      <p className="text-[0.66rem] font-semibold uppercase tracking-[0.38em] text-[#8be9ff]">Premium websites · portals · digital systems</p>
-      <h1 className="mt-6 max-w-[11.5ch] text-balance font-display text-[clamp(3.35rem,8.4vw,10rem)] font-semibold leading-[0.78] tracking-[-0.078em] text-white">
+    <Container
+      className={cn(
+        "flex flex-col justify-center pb-8 pt-24 sm:pt-28",
+        staticMode ? "min-h-svh" : "h-full"
+      )}
+    >
+      <p className="text-[0.66rem] font-semibold uppercase tracking-[0.38em] text-[#8be9ff]">
+        Premium websites · portals · digital systems
+      </p>
+
+      <Heading
+        role={headingAs === "div" ? "heading" : undefined}
+        aria-level={headingAs === "div" ? 1 : undefined}
+        className="mt-6 max-w-[11.5ch] text-balance font-display text-[clamp(3.35rem,8.4vw,10rem)] font-semibold leading-[0.78] tracking-[-0.078em] text-white"
+      >
         Built on structure.
-        <span className="block bg-gradient-to-r from-[#a99aff] via-[#7eb3ff] to-[#8be9ff] bg-clip-text text-transparent">Designed to captivate.</span>
-      </h1>
+        <span className="block bg-gradient-to-r from-[#a99aff] via-[#7eb3ff] to-[#8be9ff] bg-clip-text text-transparent">
+          Designed to captivate.
+        </span>
+      </Heading>
+
       <div className="mt-8 grid w-full max-w-[1500px] gap-7 xl:grid-cols-[minmax(0,760px)_auto] xl:items-end">
-        <p className="max-w-3xl text-lg leading-8 text-white/48 sm:text-xl sm:leading-9">GridSpell creates premium websites, client portals, dashboards, and connected digital systems that make ambitious businesses feel established, valuable, and ready to grow.</p>
+        <p className="max-w-3xl text-lg leading-8 text-white/48 sm:text-xl sm:leading-9">
+          GridSpell creates premium websites, client portals, dashboards, and
+          connected digital systems that make ambitious businesses feel
+          established, valuable, and ready to grow.
+        </p>
+
         <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
-          <ActionLink href="/start-project" className="min-h-14 px-7">Start a project <ArrowUpRight className="h-4 w-4" /></ActionLink>
-          <ActionLink href="/work" className="min-h-14 border-white/[0.12] bg-none bg-white/[0.035] px-7 shadow-none hover:bg-white/[0.07]">Explore selected work <ArrowUpRight className="h-4 w-4" /></ActionLink>
+          <ActionLink href="/start-project" className="min-h-14 px-7">
+            Start a project
+            <ArrowUpRight className="h-4 w-4" />
+          </ActionLink>
+
+          <ActionLink
+            href="/work"
+            className="min-h-14 border-white/[0.12] bg-none bg-white/[0.035] px-7 shadow-none hover:bg-white/[0.07]"
+          >
+            Explore selected work
+            <ArrowUpRight className="h-4 w-4" />
+          </ActionLink>
         </div>
       </div>
+
       <div className="mt-9 flex flex-wrap gap-2">
-        {["Websites", "Portals", "Automation", "Digital systems"].map((item) => (
-          <span key={item} className="rounded-full border border-white/[0.1] bg-white/[0.025] px-4 py-2 text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-white/38">{item}</span>
-        ))}
+        {["Websites", "Portals", "Automation", "Digital systems"].map(
+          (item) => (
+            <span
+              key={item}
+              className="rounded-full border border-white/[0.1] bg-white/[0.025] px-4 py-2 text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-white/38"
+            >
+              {item}
+            </span>
+          )
+        )}
       </div>
-      <div className="mt-auto flex items-center gap-3 pt-8 text-[0.64rem] uppercase tracking-[0.34em] text-white/24"><ArrowDown className="h-4 w-4" />Scroll to change scene</div>
+
+      <div className="mt-auto flex items-center gap-3 pt-8 text-[0.64rem] uppercase tracking-[0.34em] text-white/24">
+        <ArrowDown className="h-4 w-4" />
+        Scroll to change scene
+      </div>
     </Container>
   );
 }
@@ -687,7 +733,7 @@ function DesktopPresentation() {
       <div className="sticky top-0 h-dvh overflow-clip bg-[#07080c]">
         <SharedBackground progress={progress} />
         <SceneRail active={activeScene} onSelect={scrollToScene} />
-        <SceneFrame index={0} active={activeScene === 0} progress={progress} variant="hero"><HeroScene /></SceneFrame>
+        <SceneFrame index={0} active={activeScene === 0} progress={progress} variant="hero"><HeroScene headingAs="div" /></SceneFrame>
         <SceneFrame index={1} active={activeScene === 1} progress={progress} variant="rise"><WorkCarouselScene progress={workProgress} /></SceneFrame>
         <SceneFrame index={2} active={activeScene === 2} progress={progress} variant="slide-left"><CapabilitiesScene /></SceneFrame>
         <SceneFrame index={3} active={activeScene === 3} progress={progress} variant="slide-right"><ProcessScene /></SceneFrame>
@@ -717,16 +763,15 @@ function StaticHomepage() {
 }
 
 export function HomeExperience() {
-  const reduceMotion = usePrefersReducedMotion();
-  const useDesktopExperience = useMediaQuery("(min-width: 1280px)");
-
   return (
     <div className="home-experience">
-      {reduceMotion || !useDesktopExperience ? (
-        <StaticHomepage />
-      ) : (
+      <div className="home-presentation-only">
         <DesktopPresentation />
-      )}
+      </div>
+
+      <div className="home-static-only">
+        <StaticHomepage />
+      </div>
     </div>
   );
 }
