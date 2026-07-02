@@ -1,21 +1,21 @@
 import { expect, test } from "@playwright/test";
 
+const runtimeProblemPattern =
+  /hydration failed|server rendered html didn't match|not an animatable value|reduced motion enabled/i;
+
 for (const route of ["/", "/work", "/services", "/about", "/insights"]) {
   test(`${route} remains usable with reduced motion`, async ({ page }) => {
-    const hydrationErrors: string[] = [];
+    const runtimeProblems: string[] = [];
 
     page.on("console", (message) => {
-      if (
-        message.type() === "error" &&
-        /hydration failed|server rendered html didn't match/i.test(message.text())
-      ) {
-        hydrationErrors.push(message.text());
+      if (runtimeProblemPattern.test(message.text())) {
+        runtimeProblems.push(message.text());
       }
     });
 
     page.on("pageerror", (error) => {
-      if (/hydration failed|server rendered html didn't match/i.test(error.message)) {
-        hydrationErrors.push(error.message);
+      if (runtimeProblemPattern.test(error.message)) {
+        runtimeProblems.push(error.message);
       }
     });
 
@@ -28,6 +28,6 @@ for (const route of ["/", "/work", "/services", "/about", "/insights"]) {
     );
 
     expect(reduced).toBe(true);
-    expect(hydrationErrors).toEqual([]);
+    expect(runtimeProblems).toEqual([]);
   });
 }

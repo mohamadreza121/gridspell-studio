@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { ExperienceLab } from "@/components/work/experience-lab/ExperienceLab";
-import { WorkRollScene } from "@/components/work/WorkRollScene";
+import { WorkExperienceBoundary } from "@/components/work/WorkExperienceBoundary";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -13,10 +12,5 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function Page() {
-  return (
-    <>
-      <ExperienceLab />
-      <WorkRollScene />
-    </>
-  );
+  return <WorkExperienceBoundary />;
 }

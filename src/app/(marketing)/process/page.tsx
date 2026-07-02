@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowUpRight, Check, Handshake, Route } from "lucide-react";
 
-import { ProcessPhoneMockup } from "@/components/process/ProcessPhoneMockup";
-import { ClientDashboardTour } from "@/components/process/dashboard-tour/ClientDashboardTour";
+import { ProcessShowcaseBoundary } from "@/components/process/ProcessShowcaseBoundary";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { Container } from "@/components/ui/Container";
 import { PageIntro } from "@/components/ui/PageIntro";
@@ -35,15 +34,7 @@ export default function ProcessPage() {
       />
 
       <div className={styles.dashboardTourWrapper}>
-        {/* Phone screens */}
-        <div className="sm:hidden">
-          <ProcessPhoneMockup />
-        </div>
-
-        {/* Tablet and desktop screens */}
-        <div className="hidden sm:block">
-          <ClientDashboardTour />
-        </div>
+        <ProcessShowcaseBoundary />
       </div>
 
       <section id="process-steps" className="scroll-mt-24 py-20 lg:py-28">
