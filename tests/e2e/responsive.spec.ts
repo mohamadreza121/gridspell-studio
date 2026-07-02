@@ -46,7 +46,9 @@ test.describe("responsive marketing pages", () => {
   });
 
   for (const route of publicRoutes) {
-    test(`${route} has no viewport overflow`, async ({ page }) => {
+    test(`${route} fits the viewport without runtime rendering errors`, async ({
+      page
+    }) => {
       const runtimeProblems: string[] = [];
 
       page.on("console", (message) => {
@@ -70,8 +72,15 @@ test.describe("responsive marketing pages", () => {
         clientWidth: document.documentElement.clientWidth
       }));
 
-      expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 2);
-      expect(runtimeProblems).toEqual([]);
+      expect(
+        dimensions.scrollWidth,
+        `${route} is wider than the browser viewport`
+      ).toBeLessThanOrEqual(dimensions.clientWidth + 2);
+
+      expect(
+        runtimeProblems,
+        `${route} logged a hydration or Motion rendering error`
+      ).toEqual([]);
     });
   }
 });
