@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Request } from "@playwright/test";
 
 test.describe.configure({ mode: "serial" });
 
@@ -7,17 +7,41 @@ function isFirstParty(url: URL) {
 }
 
 function isExpectedMediaCancellation(resourceType: string, errorText: string) {
-  return (
-    resourceType === "media" &&
-    /abort|cancel/i.test(errorText)
-  );
+  return resourceType === "media" && /abort|cancel/i.test(errorText);
+}
+
+function shouldTrackForReadiness(request: Request) {
+  if (!isFirstParty(new URL(request.url()))) {
+    return false;
+  }
+
+  return !["media", "websocket"].includes(request.resourceType());
 }
 
 for (const route of ["/", "/work", "/services", "/insights", "/start-project"]) {
   test(`${route} loads without failed first-party requests`, async ({ page }) => {
     const failures = new Set<string>();
+    const pendingFirstPartyRequests = new Set<Request>();
+    let lastFirstPartyActivity = Date.now();
+
+    page.on("request", (request) => {
+      if (shouldTrackForReadiness(request)) {
+        pendingFirstPartyRequests.add(request);
+        lastFirstPartyActivity = Date.now();
+      }
+    });
+
+    page.on("requestfinished", (request) => {
+      if (pendingFirstPartyRequests.delete(request)) {
+        lastFirstPartyActivity = Date.now();
+      }
+    });
 
     page.on("requestfailed", (request) => {
+      if (pendingFirstPartyRequests.delete(request)) {
+        lastFirstPartyActivity = Date.now();
+      }
+
       const url = new URL(request.url());
 
       if (!isFirstParty(url)) {
@@ -43,7 +67,20 @@ for (const route of ["/", "/work", "/services", "/insights", "/start-project"]) 
       }
     });
 
-    await page.goto(route, { waitUntil: "networkidle" });
+    await page.goto(route, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("body")).toBeVisible();
+
+    await expect
+      .poll(
+        () =>
+          pendingFirstPartyRequests.size === 0 &&
+          Date.now() - lastFirstPartyActivity >= 350,
+        {
+          message: `First-party requests did not settle for ${route}`,
+          timeout: 12_000
+        }
+      )
+      .toBe(true);
 
     const timing = await page.evaluate(() => {
       const navigation = performance.getEntriesByType("navigation")[0] as
@@ -52,7 +89,8 @@ for (const route of ["/", "/work", "/services", "/insights", "/start-project"]) 
 
       return navigation
         ? {
-            domContentLoaded: navigation.domContentLoadedEventEnd - navigation.startTime,
+            domContentLoaded:
+              navigation.domContentLoadedEventEnd - navigation.startTime,
             load: navigation.loadEventEnd - navigation.startTime
           }
         : null;
