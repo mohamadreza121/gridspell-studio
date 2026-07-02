@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const focusableSelector = [
   'a[href]',
@@ -9,6 +9,10 @@ const focusableSelector = [
   '[contenteditable="true"]',
   '[tabindex]:not([tabindex="-1"])'
 ].join(",");
+
+function getMenuButton(page: Page) {
+  return page.locator('button[aria-controls="gridspell-menu"]');
+}
 
 test.describe("keyboard navigation", () => {
   test("skip link moves focus to the main content", async ({ page }) => {
@@ -30,9 +34,7 @@ test.describe("keyboard navigation", () => {
   test("navigation opens with focus on the first action", async ({ page }) => {
     await page.goto("/");
 
-    const menuButton = page.getByRole("button", {
-      name: "Open navigation"
-    });
+    const menuButton = getMenuButton(page);
 
     await menuButton.focus();
     await page.keyboard.press("Enter");
@@ -45,14 +47,13 @@ test.describe("keyboard navigation", () => {
     await expect(dialog).toBeVisible();
     await expect(firstElement).toBeFocused();
     await expect(menuButton).toHaveAttribute("aria-expanded", "true");
+    await expect(menuButton).toHaveAttribute("aria-label", "Close navigation");
   });
 
   test("navigation traps focus in both directions", async ({ page }) => {
     await page.goto("/");
 
-    const menuButton = page.getByRole("button", {
-      name: "Open navigation"
-    });
+    const menuButton = getMenuButton(page);
 
     await menuButton.focus();
     await page.keyboard.press("Enter");
@@ -83,9 +84,7 @@ test.describe("keyboard navigation", () => {
   test("Escape closes navigation and restores trigger focus", async ({ page }) => {
     await page.goto("/");
 
-    const menuButton = page.getByRole("button", {
-      name: "Open navigation"
-    });
+    const menuButton = getMenuButton(page);
 
     await menuButton.focus();
     await page.keyboard.press("Enter");
@@ -100,14 +99,13 @@ test.describe("keyboard navigation", () => {
     await expect(dialog).toBeHidden();
     await expect(menuButton).toBeFocused();
     await expect(menuButton).toHaveAttribute("aria-expanded", "false");
+    await expect(menuButton).toHaveAttribute("aria-label", "Open navigation");
   });
 
   test("a navigation link can be activated without a mouse", async ({ page }) => {
     await page.goto("/");
 
-    const menuButton = page.getByRole("button", {
-      name: "Open navigation"
-    });
+    const menuButton = getMenuButton(page);
 
     await menuButton.focus();
     await page.keyboard.press("Enter");
