@@ -23,6 +23,10 @@ for (const route of ["/", "/work", "/services", "/about", "/insights"]) {
     await page.goto(route, { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).toBeVisible();
 
+    if (route === "/") {
+      await expect(page.locator(".work-carousel-card video")).toHaveCount(0);
+    }
+
     const reduced = await page.evaluate(
       () => window.matchMedia("(prefers-reduced-motion: reduce)").matches
     );
