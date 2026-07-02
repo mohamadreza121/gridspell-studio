@@ -1,5 +1,0 @@
-.motionRoot :global(circle[stroke="#8be9ff"][r="100"][stroke-opacity="0.22"]),
-.motionRoot :global(circle[stroke="#8be9ff"][r="58"][stroke-opacity="0.3"]),
-.motionRoot :global(circle[stroke="#8be9ff"][r="155"][stroke-opacity="0.28"]) {
-  opacity: 0;
-}
