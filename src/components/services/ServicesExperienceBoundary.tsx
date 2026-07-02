@@ -1,12 +1,13 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
+
 import { ServicesShowcaseScene } from "@/components/services/ServicesShowcaseScene";
 import { ServicesStaticFallback } from "@/components/services/ServicesStaticFallback";
 import {
   useMediaQuery,
   usePrefersReducedMotion
 } from "@/hooks/useMediaQuery";
-import styles from "./ServicesExperienceBoundary.module.css";
 
 export function ServicesExperienceBoundary() {
   const reduceMotion = usePrefersReducedMotion();
@@ -17,8 +18,8 @@ export function ServicesExperienceBoundary() {
   }
 
   return (
-    <div className={styles.motionRoot}>
+    <AnimatePresence initial={false}>
       <ServicesShowcaseScene />
-    </div>
+    </AnimatePresence>
   );
 }
