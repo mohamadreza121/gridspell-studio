@@ -7,16 +7,21 @@ import {
   motion,
   type MotionValue,
   useMotionValueEvent,
-  useReducedMotion,
   useSpring,
   useTransform
 } from "motion/react";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { featuredProjects, type FeaturedProject } from "@/config/work";
+import {
+  useHydrated,
+  usePrefersReducedMotion
+} from "@/hooks/useMediaQuery";
 
 function BrowserPreview({ project }: { project: FeaturedProject }) {
-  const reduceMotion = useReducedMotion();
+  const hydrated = useHydrated();
+  const reduceMotion = usePrefersReducedMotion();
+  const previewVideo = hydrated && !reduceMotion ? project.previewVideo : undefined;
   const hostname = project.liveUrl
     ? new URL(project.liveUrl).hostname.replace(/^www\./, "")
     : `${project.slug}.gridspell.preview`;
@@ -38,7 +43,7 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
 
       {/* Website preview */}
       <div className="relative h-[calc(100%-2.75rem)] min-h-[316px] overflow-hidden bg-[#05060a]">
-        {project.previewVideo && !reduceMotion ? (
+        {previewVideo ? (
           <video
             className="pointer-events-none absolute inset-0 h-full w-full object-cover object-top"
             autoPlay
@@ -60,7 +65,7 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
             ) : null}
 
             <source
-              src={project.previewVideo}
+              src={previewVideo}
               type="video/mp4"
             />
           </video>
