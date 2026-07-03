@@ -51,7 +51,8 @@ export function SmallPhoneDeviceShowcase({
 
               <div className="mt-5 overflow-hidden rounded-[1.15rem] border border-white/[0.1] bg-black">
                 <video
-                  className="aspect-video w-full bg-black object-cover"
+                  className="w-full bg-black object-contain"
+                  style={{ aspectRatio: `${item.videoWidth} / ${item.videoHeight}` }}
                   controls
                   muted
                   playsInline
