@@ -2,15 +2,25 @@
 
 import { useSyncExternalStore } from "react";
 
-function createMediaQueryStore(query: string) {
-  function subscribe(onStoreChange: () => void) {
-    const mediaQuery = window.matchMedia(query);
-
+function subscribeToMediaQuery(mediaQuery: MediaQueryList, onStoreChange: () => void) {
+  if (typeof mediaQuery.addEventListener === "function") {
     mediaQuery.addEventListener("change", onStoreChange);
 
     return () => {
       mediaQuery.removeEventListener("change", onStoreChange);
     };
+  }
+
+  mediaQuery.addListener(onStoreChange);
+
+  return () => {
+    mediaQuery.removeListener(onStoreChange);
+  };
+}
+
+function createMediaQueryStore(query: string) {
+  function subscribe(onStoreChange: () => void) {
+    return subscribeToMediaQuery(window.matchMedia(query), onStoreChange);
   }
 
   function getSnapshot() {

@@ -418,3 +418,46 @@ body {
     transform: none !important;
   }
 }
+
+@media (max-width: 379px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  main {
+    overflow-x: clip;
+  }
+
+  .page-grid {
+    background-size: 42px 42px;
+  }
+
+  .glass-panel {
+    border-radius: 1.25rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  a,
+  button,
+  span {
+    overflow-wrap: anywhere;
+  }
+
+  .home-static-scene {
+    padding-block: 4rem;
+  }
+
+  .pricing-above-fold,
+  .pricing-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

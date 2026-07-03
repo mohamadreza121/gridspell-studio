@@ -63,11 +63,17 @@ test.describe("responsive marketing pages", () => {
         }
       });
 
-      await page.goto(route, { waitUntil: "domcontentloaded" });
+      await page.goto(route, {
+        waitUntil: "domcontentloaded"
+      });
+
       await expect(page.locator("body")).toBeVisible();
       await page.waitForTimeout(250);
 
-      if (testInfo.project.name === "small-phone-chromium" && route === "/") {
+      if (
+        testInfo.project.name === "small-phone-chromium" &&
+        route === "/"
+      ) {
         const menuButton = page.locator(
           'button[aria-controls="gridspell-menu"]'
         );
@@ -75,13 +81,14 @@ test.describe("responsive marketing pages", () => {
         await expect(menuButton).toBeVisible();
         await menuButton.click();
 
-        await expect(
-          page.getByRole("dialog", {
-            name: "Main navigation"
-          })
-        ).toBeVisible();
+        const menuDialog = page.getByRole("dialog", {
+          name: "Main navigation"
+        });
+
+        await expect(menuDialog).toBeVisible();
 
         await menuButton.click();
+        await expect(menuDialog).toBeHidden();
       }
 
       if (

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useId } from "react";
 
 type LogoProps = {
   compact?: boolean;
@@ -13,6 +14,10 @@ function GridSpellMark({
   compact?: boolean;
   responsiveCompact?: boolean;
 }) {
+  const rawId = useId().replace(/:/g, "");
+  const gradientId = `gridspell-mark-gradient-${rawId}`;
+  const glowId = `gridspell-mark-glow-${rawId}`;
+
   return (
     <span
       aria-hidden="true"
@@ -21,19 +26,16 @@ function GridSpellMark({
         compact
           ? "h-10 w-10"
           : responsiveCompact
-            ? "h-10 w-10 min-[380px]:h-11 min-[380px]:w-11 sm:h-12 sm:w-12"
+            ? "h-10 w-10 sm:h-12 sm:w-12"
             : "h-11 w-11 sm:h-12 sm:w-12"
       ].join(" ")}
     >
-      {/* Ambient glow */}
       <span className="absolute inset-[10%] rounded-full bg-[#7c5cff]/35 blur-xl transition duration-500 group-hover/mark:bg-[#29d6ff]/30" />
 
-      {/* Dark glass tile */}
       <span className="absolute inset-0 overflow-hidden rounded-[27%] border border-white/[0.11] bg-[#0a0c12]/95 shadow-[0_14px_45px_rgba(0,0,0,.34)]">
         <span className="absolute inset-0 bg-[radial-gradient(circle_at_24%_17%,rgba(168,149,255,.18),transparent_42%),radial-gradient(circle_at_82%_84%,rgba(41,214,255,.14),transparent_46%)]" />
       </span>
 
-      {/* SVG geometric G */}
       <svg
         viewBox="0 0 64 64"
         className="absolute inset-[15%] h-[70%] w-[70%] overflow-visible transition-transform duration-500 ease-out group-hover/mark:rotate-[2deg] group-hover/mark:scale-[1.045]"
@@ -42,7 +44,7 @@ function GridSpellMark({
       >
         <defs>
           <linearGradient
-            id="gridspell-mark-gradient"
+            id={gradientId}
             x1="13"
             y1="11"
             x2="53"
@@ -56,16 +58,13 @@ function GridSpellMark({
           </linearGradient>
 
           <filter
-            id="gridspell-mark-glow"
+            id={glowId}
             x="-40%"
             y="-40%"
             width="180%"
             height="180%"
           >
-            <feGaussianBlur
-              stdDeviation="2.2"
-              result="blur"
-            />
+            <feGaussianBlur stdDeviation="2.2" result="blur" />
 
             <feColorMatrix
               in="blur"
@@ -86,7 +85,6 @@ function GridSpellMark({
           </filter>
         </defs>
 
-        {/* Main rounded geometric G */}
         <path
           d="
             M48 17
@@ -100,14 +98,13 @@ function GridSpellMark({
             V33
             H34
           "
-          stroke="url(#gridspell-mark-gradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="9"
           strokeLinecap="round"
           strokeLinejoin="round"
-          filter="url(#gridspell-mark-glow)"
+          filter={`url(#${glowId})`}
         />
 
-        {/* Interior terminal */}
         <path
           d="M52 33 V40"
           stroke="#29D6FF"
@@ -115,7 +112,6 @@ function GridSpellMark({
           strokeLinecap="round"
         />
 
-        {/* Precision seams */}
         <path
           d="M21.5 15.5 L27 21"
           stroke="rgba(255,255,255,.62)"
@@ -145,7 +141,6 @@ function GridSpellMark({
         />
       </svg>
 
-      {/* Glass edge */}
       <span className="absolute inset-[6%] rounded-[23%] border border-white/[0.045]" />
     </span>
   );

@@ -61,10 +61,19 @@ export function Navbar({
     }
 
     updateCompactMenu();
-    mediaQuery.addEventListener("change", updateCompactMenu);
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", updateCompactMenu);
+
+      return () => {
+        mediaQuery.removeEventListener("change", updateCompactMenu);
+      };
+    }
+
+    mediaQuery.addListener(updateCompactMenu);
 
     return () => {
-      mediaQuery.removeEventListener("change", updateCompactMenu);
+      mediaQuery.removeListener(updateCompactMenu);
     };
   }, []);
 
@@ -432,7 +441,7 @@ export function Navbar({
                 : desktopRevealTransition
             }
             className={[
-              "fixed inset-0 z-[90] h-[100dvh] overflow-y-auto overscroll-contain bg-[#07080c] text-white",
+              "fixed inset-0 z-[90] h-screen h-[100dvh] overflow-y-auto overscroll-contain bg-[#07080c] text-white",
               "touch-pan-y transform-gpu focus:outline-none",
               "[-webkit-overflow-scrolling:touch]",
               compactMenu
@@ -511,7 +520,7 @@ export function Navbar({
               ].join(" ")}
             />
 
-            <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1920px] flex-col px-4 pb-6 pt-24 min-[380px]:px-5 min-[380px]:pb-7 min-[380px]:pt-28 sm:px-8 sm:pb-8 sm:pt-32 lg:px-12 lg:pb-12">
+            <div className="relative mx-auto flex min-h-screen min-h-[100dvh] w-full max-w-[1920px] flex-col px-4 pb-6 pt-24 min-[380px]:px-5 min-[380px]:pb-7 min-[380px]:pt-28 sm:px-8 sm:pb-8 sm:pt-32 lg:px-12 lg:pb-12">
               <div className="grid flex-1 gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(20rem,0.6fr)] lg:gap-20">
                 {/* Main navigation */}
                 <nav
