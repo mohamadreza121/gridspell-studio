@@ -26,7 +26,7 @@ function GridSpellMark({
         compact
           ? "h-10 w-10"
           : responsiveCompact
-            ? "h-10 w-10 sm:h-12 sm:w-12"
+            ? "h-10 w-10 min-[380px]:h-11 min-[380px]:w-11 sm:h-12 sm:w-12"
             : "h-11 w-11 sm:h-12 sm:w-12"
       ].join(" ")}
     >
@@ -156,7 +156,8 @@ export function Logo({
       href="/"
       aria-label="GridSpell home"
       className={[
-        "group/logo inline-flex items-center gap-3",
+        "group/logo inline-flex items-center",
+        responsiveCompact ? "gap-2 min-[380px]:gap-3" : "gap-3",
         "focus-visible:outline-none",
         "focus-visible:ring-2",
         "focus-visible:ring-[#8be9ff]/70",
@@ -171,19 +172,12 @@ export function Logo({
       />
 
       {!compact ? (
-        <span
-          className={[
-            "relative items-baseline font-display",
-            responsiveCompact
-              ? "hidden min-[380px]:flex"
-              : "flex"
-          ].join(" ")}
-        >
-          <span className="text-[1.15rem] font-semibold tracking-[-0.055em] text-white sm:text-[1.3rem]">
+        <span className="relative flex items-baseline font-display">
+          <span className="text-[1rem] font-semibold tracking-[-0.055em] text-white min-[380px]:text-[1.15rem] sm:text-[1.3rem]">
             Grid
           </span>
 
-          <span className="bg-gradient-to-r from-[#a895ff] via-[#78a7ff] to-[#8be9ff] bg-clip-text text-[1.15rem] font-semibold tracking-[-0.055em] text-transparent sm:text-[1.3rem]">
+          <span className="bg-gradient-to-r from-[#a895ff] via-[#78a7ff] to-[#8be9ff] bg-clip-text text-[1rem] font-semibold tracking-[-0.055em] text-[#8be9ff] min-[380px]:text-[1.15rem] supports-[(-webkit-background-clip:text)]:text-transparent sm:text-[1.3rem]">
             Spell
           </span>
 
