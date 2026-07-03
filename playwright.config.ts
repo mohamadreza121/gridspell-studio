@@ -51,6 +51,17 @@ export default defineConfig({
         ...devices["iPhone 13"],
         browserName: "chromium"
       }
+    },
+    {
+      name: "small-phone-chromium",
+      use: {
+        ...devices["iPhone 13"],
+        browserName: "chromium",
+        viewport: {
+          width: 320,
+          height: 568
+        }
+      }
     }
   ]
 });

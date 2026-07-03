@@ -280,7 +280,7 @@ function Reveal({
 
   return (
     <motion.div
-      className={className}
+      className={cn("pricing-reveal", className)}
       initial={reduceMotion ? false : { opacity: 0, y: 18 }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.18 }}
@@ -328,7 +328,7 @@ function EstimateNumber({ low, high }: { low: number; high: number }) {
           animate={{ opacity: 1, y: 0 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: -18 }}
           transition={{ duration: 0.24, ease: "easeOut" }}
-          className="absolute inset-x-0 top-0 font-display text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-none tracking-[-0.065em] text-white"
+          className="pricing-above-fold absolute inset-x-0 top-0 font-display text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-none tracking-[-0.065em] text-white"
         >
           {formatCurrency(low)}–{formatCurrency(high)}
         </motion.p>
@@ -466,7 +466,7 @@ function PackageDrawer({
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 48, y: 10 }}
             transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-x-0 bottom-0 max-h-[92dvh] overflow-y-auto rounded-t-[2rem] border border-white/[0.11] bg-[#0a0c12] shadow-2xl lg:inset-y-0 lg:left-auto lg:right-0 lg:max-h-none lg:w-[min(44rem,48vw)] lg:rounded-none lg:rounded-l-[2rem]"
+            className="pricing-above-fold absolute inset-x-0 bottom-0 max-h-[92dvh] overflow-y-auto rounded-t-[2rem] border border-white/[0.11] bg-[#0a0c12] shadow-2xl lg:inset-y-0 lg:left-auto lg:right-0 lg:max-h-none lg:w-[min(44rem,48vw)] lg:rounded-none lg:rounded-l-[2rem]"
           >
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/[0.08] bg-[#0a0c12]/92 px-6 py-5 backdrop-blur-xl sm:px-8">
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-[#8be9ff]">
@@ -742,29 +742,29 @@ export function PricingExperience() {
 
   return (
     <main className="overflow-x-clip bg-[#07080c]">
-      <section className="relative min-h-[82vh] overflow-hidden border-b border-white/[0.07] pb-24 pt-36 lg:pb-32 lg:pt-44">
+      <section className="relative min-h-[82vh] overflow-hidden border-b border-white/[0.07] pb-20 pt-28 min-[380px]:pb-24 min-[380px]:pt-36 lg:pb-32 lg:pt-44">
         <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-35" />
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute -left-40 top-20 h-[36rem] w-[36rem] rounded-full bg-[#7c5cff]/13 blur-[170px]"
+          className="pricing-above-fold pointer-events-none absolute -left-40 top-20 h-[36rem] w-[36rem] rounded-full bg-[#7c5cff]/13 blur-[170px]"
           animate={reduceMotion ? undefined : { x: [0, 18, 0], y: [0, -10, 0] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute right-[-10rem] top-[-4rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/10 blur-[160px]"
+          className="pricing-above-fold pointer-events-none absolute right-[-10rem] top-[-4rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/10 blur-[160px]"
           animate={reduceMotion ? undefined : { x: [0, -14, 0], y: [0, 12, 0] }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
         />
 
         <Container className="relative">
-          <div className="grid gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+          <div className="grid gap-10 min-[380px]:gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
             <div>
               <motion.p
                 initial={reduceMotion ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-xs font-semibold uppercase tracking-[0.36em] text-[#8be9ff]"
+                className="pricing-above-fold text-xs font-semibold uppercase tracking-[0.36em] text-[#8be9ff]"
               >
                 Clear scope. Honest pricing.
               </motion.p>
@@ -772,7 +772,7 @@ export function PricingExperience() {
                 initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-7 max-w-[11ch] text-balance font-display text-[clamp(4.2rem,9vw,9rem)] font-semibold leading-[0.82] tracking-[-0.085em] text-white"
+                className="pricing-above-fold mt-7 max-w-[11ch] text-balance font-display text-[clamp(4.2rem,9vw,9rem)] font-semibold leading-[0.82] tracking-[-0.085em] text-white"
               >
                 Choose a starting point. Build the right website.
               </motion.h1>
@@ -780,7 +780,7 @@ export function PricingExperience() {
                 initial={reduceMotion ? false : { opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.16 }}
-                className="mt-8 max-w-2xl text-base leading-8 text-white/46 sm:text-lg sm:leading-9"
+                className="pricing-above-fold mt-8 max-w-2xl text-base leading-8 text-white/46 sm:text-lg sm:leading-9"
               >
                 Every GridSpell project is custom. These packages provide a practical
                 starting point for scope, timeline, and investment—then the estimator helps
@@ -790,7 +790,7 @@ export function PricingExperience() {
                 initial={reduceMotion ? false : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.23 }}
-                className="mt-9 flex flex-wrap gap-3 text-xs text-white/34"
+                className="pricing-above-fold mt-9 flex flex-wrap gap-3 text-xs text-white/34"
               >
                 {["Custom design", "Responsive development", "Transparent scope"].map(
                   (label) => (
@@ -810,7 +810,7 @@ export function PricingExperience() {
               initial={reduceMotion ? false : { opacity: 0, scale: 0.98, y: 18 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.62, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="relative overflow-hidden rounded-[2rem] border border-white/[0.1] bg-[radial-gradient(circle_at_90%_0%,rgba(41,214,255,0.11),transparent_18rem),rgba(11,13,19,0.88)] p-6 shadow-[0_28px_90px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:p-8"
+              className="pricing-above-fold relative overflow-hidden rounded-[2rem] border border-white/[0.1] bg-[radial-gradient(circle_at_90%_0%,rgba(41,214,255,0.11),transparent_18rem),rgba(11,13,19,0.88)] p-6 shadow-[0_28px_90px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:p-8"
             >
               <div aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#8be9ff]/60 to-transparent" />
               <div className="flex items-center justify-between gap-4">
@@ -1221,7 +1221,7 @@ export function PricingExperience() {
                         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
-                        className="flex items-center justify-between gap-4"
+                        className="pricing-above-fold flex items-center justify-between gap-4"
                       >
                         <dt className="text-xs text-white/30">{item.name}</dt>
                         <dd className="text-sm font-semibold text-white/68">
@@ -1383,7 +1383,7 @@ export function PricingExperience() {
                           initial={reduceMotion ? false : { opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={reduceMotion ? undefined : { opacity: 0, y: -10 }}
-                          className="font-display text-4xl font-semibold tracking-[-0.06em] text-white"
+                          className="pricing-above-fold font-display text-4xl font-semibold tracking-[-0.06em] text-white"
                         >
                           {formatCurrency(displayedPrice)}
                         </motion.p>
@@ -1489,7 +1489,7 @@ export function PricingExperience() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute left-[16%] right-[16%] top-8 hidden h-px origin-left bg-gradient-to-r from-[#7c5cff] via-[#8be9ff] to-[#29d6ff] lg:block"
+                className="pricing-above-fold absolute left-[16%] right-[16%] top-8 hidden h-px origin-left bg-gradient-to-r from-[#7c5cff] via-[#8be9ff] to-[#29d6ff] lg:block"
               />
               {[
                 {
@@ -1587,7 +1587,7 @@ export function PricingExperience() {
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="pointer-events-auto mx-auto flex max-w-md items-center justify-between gap-4 rounded-full border border-white/[0.12] bg-[#0b0d13]/94 p-2 pl-5 shadow-2xl backdrop-blur-xl"
+          className="pricing-above-fold pointer-events-auto mx-auto flex max-w-md items-center justify-between gap-4 rounded-full border border-white/[0.12] bg-[#0b0d13]/94 p-2 pl-5 shadow-2xl backdrop-blur-xl"
         >
           <div>
             <p className="text-[0.52rem] font-semibold uppercase tracking-[0.2em] text-white/24">

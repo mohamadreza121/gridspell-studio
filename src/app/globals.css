@@ -410,3 +410,11 @@ body {
   border-color: rgba(255, 95, 109, 0.68);
   box-shadow: 0 0 0 4px rgba(255, 95, 109, 0.1);
 }
+
+@media (max-width: 379px) {
+  .pricing-above-fold,
+  .pricing-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

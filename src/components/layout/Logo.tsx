@@ -2,13 +2,16 @@ import Link from "next/link";
 
 type LogoProps = {
   compact?: boolean;
+  responsiveCompact?: boolean;
   className?: string;
 };
 
 function GridSpellMark({
-  compact = false
+  compact = false,
+  responsiveCompact = false
 }: {
   compact?: boolean;
+  responsiveCompact?: boolean;
 }) {
   return (
     <span
@@ -17,7 +20,9 @@ function GridSpellMark({
         "group/mark relative block shrink-0",
         compact
           ? "h-10 w-10"
-          : "h-11 w-11 sm:h-12 sm:w-12"
+          : responsiveCompact
+            ? "h-10 w-10 min-[380px]:h-11 min-[380px]:w-11 sm:h-12 sm:w-12"
+            : "h-11 w-11 sm:h-12 sm:w-12"
       ].join(" ")}
     >
       {/* Ambient glow */}
@@ -148,6 +153,7 @@ function GridSpellMark({
 
 export function Logo({
   compact = false,
+  responsiveCompact = false,
   className = ""
 }: LogoProps) {
   return (
@@ -164,10 +170,20 @@ export function Logo({
         className
       ].join(" ")}
     >
-      <GridSpellMark compact={compact} />
+      <GridSpellMark
+        compact={compact}
+        responsiveCompact={responsiveCompact}
+      />
 
       {!compact ? (
-        <span className="relative flex items-baseline font-display">
+        <span
+          className={[
+            "relative items-baseline font-display",
+            responsiveCompact
+              ? "hidden min-[380px]:flex"
+              : "flex"
+          ].join(" ")}
+        >
           <span className="text-[1.15rem] font-semibold tracking-[-0.055em] text-white sm:text-[1.3rem]">
             Grid
           </span>

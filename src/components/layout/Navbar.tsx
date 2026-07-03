@@ -41,7 +41,7 @@ export function Navbar({
   const pathname = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [compactMenu, setCompactMenu] = useState(false);
+  const [compactMenu, setCompactMenu] = useState(true);
 
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuDialogRef = useRef<HTMLDivElement>(null);
@@ -252,7 +252,7 @@ export function Navbar({
     <>
       {/* Persistent transparent navigation bar */}
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[100] bg-transparent">
-        <div className="mx-auto flex h-24 w-full max-w-[1920px] items-center justify-between px-5 sm:px-8 lg:px-12">
+        <div className="mx-auto flex h-20 w-full max-w-[1920px] items-center justify-between px-3 min-[380px]:h-24 min-[380px]:px-5 sm:px-8 lg:px-12">
           {/* Logo */}
           <motion.div
             className="pointer-events-auto relative z-10"
@@ -264,7 +264,7 @@ export function Navbar({
               ease: "easeOut"
             }}
           >
-            <Logo />
+            <Logo responsiveCompact />
           </motion.div>
 
           {/* Menu trigger */}
@@ -281,7 +281,8 @@ export function Navbar({
             aria-haspopup="dialog"
             onClick={toggleMenu}
             className={[
-              "pointer-events-auto group relative z-10 flex h-14 w-[8.5rem] items-center justify-center overflow-hidden rounded-full border",
+              "pointer-events-auto group relative z-10 flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border",
+              "min-[380px]:h-14 min-[380px]:w-[8.5rem]",
               "transition-[border-color,background-color,box-shadow] duration-300",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be9ff]/80",
               "focus-visible:ring-offset-2 focus-visible:ring-offset-[#07080c]",
@@ -301,8 +302,8 @@ export function Navbar({
               ].join(" ")}
             />
 
-            <span className="relative flex h-full w-full items-center justify-between gap-3 px-5">
-              <span className="text-[0.68rem] font-semibold uppercase tracking-[0.24em]">
+            <span className="relative flex h-full w-full items-center justify-center px-0 min-[380px]:justify-between min-[380px]:gap-3 min-[380px]:px-5">
+              <span className="hidden text-[0.68rem] font-semibold uppercase tracking-[0.24em] min-[380px]:inline">
                 {menuOpen ? "Close" : "Menu"}
               </span>
 
@@ -510,7 +511,7 @@ export function Navbar({
               ].join(" ")}
             />
 
-            <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1920px] flex-col px-5 pb-7 pt-28 sm:px-8 sm:pb-8 sm:pt-32 lg:px-12 lg:pb-12">
+            <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1920px] flex-col px-4 pb-6 pt-24 min-[380px]:px-5 min-[380px]:pb-7 min-[380px]:pt-28 sm:px-8 sm:pb-8 sm:pt-32 lg:px-12 lg:pb-12">
               <div className="grid flex-1 gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(20rem,0.6fr)] lg:gap-20">
                 {/* Main navigation */}
                 <nav

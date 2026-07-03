@@ -48,7 +48,7 @@ test.describe("responsive marketing pages", () => {
   for (const route of publicRoutes) {
     test(`${route} fits the viewport without runtime rendering errors`, async ({
       page
-    }) => {
+    }, testInfo) => {
       const runtimeProblems: string[] = [];
 
       page.on("console", (message) => {
@@ -66,6 +66,35 @@ test.describe("responsive marketing pages", () => {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await expect(page.locator("body")).toBeVisible();
       await page.waitForTimeout(250);
+
+      if (testInfo.project.name === "small-phone-chromium" && route === "/") {
+        const menuButton = page.locator(
+          'button[aria-controls="gridspell-menu"]'
+        );
+
+        await expect(menuButton).toBeVisible();
+        await menuButton.click();
+
+        await expect(
+          page.getByRole("dialog", {
+            name: "Main navigation"
+          })
+        ).toBeVisible();
+
+        await menuButton.click();
+      }
+
+      if (
+        testInfo.project.name === "small-phone-chromium" &&
+        route === "/pricing"
+      ) {
+        await expect(
+          page.getByRole("heading", {
+            level: 1,
+            name: /Choose a starting point/i
+          })
+        ).toBeVisible();
+      }
 
       const dimensions = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
