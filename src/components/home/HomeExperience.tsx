@@ -446,7 +446,7 @@ function HeroScene({
       <Heading
         role={headingAs === "div" ? "heading" : undefined}
         aria-level={headingAs === "div" ? 1 : undefined}
-        className="mt-6 max-w-[11.5ch] text-balance font-display text-[clamp(3.35rem,8.4vw,10rem)] font-semibold leading-[0.78] tracking-[-0.078em] text-white"
+        className="mt-6 max-w-[11.5ch] text-balance font-display text-[clamp(2.85rem,14.5vw,3.35rem)] font-semibold leading-[0.86] tracking-[-0.068em] text-white min-[380px]:text-[clamp(3.35rem,8.4vw,10rem)] min-[380px]:leading-[0.78] min-[380px]:tracking-[-0.078em]"
       >
         Built on structure.
         <span className="block bg-gradient-to-r from-[#a99aff] via-[#7eb3ff] to-[#8be9ff] bg-clip-text text-transparent">

@@ -74,21 +74,31 @@ test.describe("responsive marketing pages", () => {
         testInfo.project.name === "small-phone-chromium" &&
         route === "/"
       ) {
-        const menuButton = page.locator(
-          'button[aria-controls="gridspell-menu"]'
+        const tinyMenuButton = page.locator(
+          'label[for="tiny-nav-toggle"].tiny-nav__button'
         );
 
-        await expect(menuButton).toBeVisible();
-        await menuButton.click();
+        const tinyMenuToggle = page.locator("#tiny-nav-toggle");
+        const tinyMenuPanel = page.locator(".tiny-nav__panel");
+        const tinyMenuClose = page.locator(
+          'label[for="tiny-nav-toggle"].tiny-nav__close'
+        );
 
-        const menuDialog = page.getByRole("dialog", {
-          name: "Main navigation"
-        });
+        await expect(tinyMenuButton).toBeVisible();
 
-        await expect(menuDialog).toBeVisible();
+        await tinyMenuButton.click();
+        await expect(tinyMenuToggle).toBeChecked();
+        await expect(tinyMenuPanel).toBeVisible();
 
-        await menuButton.click();
-        await expect(menuDialog).toBeHidden();
+        await expect(
+          tinyMenuPanel.getByRole("link", {
+            name: /Start a project/i
+          })
+        ).toBeVisible();
+
+        await tinyMenuClose.click();
+        await expect(tinyMenuToggle).not.toBeChecked();
+        await expect(tinyMenuPanel).toBeHidden();
       }
 
       if (

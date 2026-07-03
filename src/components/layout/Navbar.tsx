@@ -276,6 +276,69 @@ export function Navbar({
             <Logo responsiveCompact />
           </motion.div>
 
+          <div className="tiny-nav">
+            <input
+              id="tiny-nav-toggle"
+              type="checkbox"
+              className="tiny-nav__input"
+              aria-hidden="true"
+            />
+
+            <label
+              htmlFor="tiny-nav-toggle"
+              className="tiny-nav__button"
+              aria-label="Open navigation"
+            >
+              <span className="tiny-nav__icon">
+                <span />
+                <span />
+                <span />
+              </span>
+            </label>
+
+            <div className="tiny-nav__panel">
+              <div className="tiny-nav__panel-inner">
+                <div className="tiny-nav__panel-top">
+                  <span className="tiny-nav__eyebrow">
+                    Navigate GridSpell
+                  </span>
+
+                  <label
+                    htmlFor="tiny-nav-toggle"
+                    className="tiny-nav__close"
+                    aria-label="Close navigation"
+                  >
+                    ×
+                  </label>
+                </div>
+
+                <nav
+                  className="tiny-nav__links"
+                  aria-label="Small phone navigation"
+                >
+                  {marketingNavigation.map((item, index) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="tiny-nav__link"
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <strong>{item.label}</strong>
+                    </Link>
+                  ))}
+                </nav>
+
+                <Link
+                  href="/start-project"
+                  className="tiny-nav__cta"
+                >
+                  Start a project
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
           {/* Menu trigger */}
           <button
             ref={menuButtonRef}
@@ -290,7 +353,7 @@ export function Navbar({
             aria-haspopup="dialog"
             onClick={toggleMenu}
             className={[
-              "pointer-events-auto group relative z-10 flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border",
+              "pointer-events-auto group relative z-10 hidden h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border min-[380px]:flex",
               "min-[380px]:h-14 min-[380px]:w-[8.5rem]",
               "transition-[border-color,background-color,box-shadow] duration-300",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be9ff]/80",

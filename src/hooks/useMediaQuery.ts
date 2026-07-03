@@ -2,7 +2,10 @@
 
 import { useSyncExternalStore } from "react";
 
-function subscribeToMediaQuery(mediaQuery: MediaQueryList, onStoreChange: () => void) {
+function subscribeToMediaQuery(
+  mediaQuery: MediaQueryList,
+  onStoreChange: () => void
+) {
   if (typeof mediaQuery.addEventListener === "function") {
     mediaQuery.addEventListener("change", onStoreChange);
 
@@ -20,7 +23,10 @@ function subscribeToMediaQuery(mediaQuery: MediaQueryList, onStoreChange: () => 
 
 function createMediaQueryStore(query: string) {
   function subscribe(onStoreChange: () => void) {
-    return subscribeToMediaQuery(window.matchMedia(query), onStoreChange);
+    return subscribeToMediaQuery(
+      window.matchMedia(query),
+      onStoreChange
+    );
   }
 
   function getSnapshot() {
