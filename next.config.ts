@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   headers: async () => [
     {
-      source: "/videos/work/:path*",
+      source: "/videos/:path*",
       headers: [
         {
           key: "Cache-Control",

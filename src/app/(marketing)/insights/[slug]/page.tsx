@@ -13,6 +13,7 @@ import {
   getInsightBySlug,
   insightArticles
 } from "@/config/insights";
+import { createPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{
@@ -36,10 +37,12 @@ export async function generateMetadata({
     return {};
   }
 
-  return {
-    title: `${article.title} | GridSpell Insights`,
-    description: article.excerpt
-  };
+  return createPageMetadata({
+    title: article.title,
+    description: article.excerpt,
+    path: `/insights/${article.slug}`,
+    imageAlt: `${article.title} — GridSpell Insights`
+  });
 }
 
 export default async function InsightArticlePage({

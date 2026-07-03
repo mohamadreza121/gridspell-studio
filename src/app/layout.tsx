@@ -27,9 +27,6 @@ export const metadata: Metadata = {
     "SEO setup",
     "Google Ads setup"
   ],
-  alternates: {
-    canonical: "/"
-  },
   manifest: "/site.webmanifest",
   icons: {
     icon: [
