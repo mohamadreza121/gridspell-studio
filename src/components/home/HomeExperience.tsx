@@ -627,7 +627,12 @@ function PricingScene() {
   const [type, setType] = useState<ProductType>("website");
   const packageId = recommendation(pages, type);
   const selectedPackage = packages.find((item) => item.id === packageId) ?? packages[0];
-  const high = selectedPackage.startingPrice + Math.max(1000, Math.round((selectedPackage.startingPrice * 0.18) / 50) * 50);
+  const high =
+    selectedPackage.startingPrice +
+    Math.max(
+      700,
+      Math.round((selectedPackage.startingPrice * 0.15) / 50) * 50
+    );
   const money = (value: number) => new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD", maximumFractionDigits: 0 }).format(value);
 
   return (

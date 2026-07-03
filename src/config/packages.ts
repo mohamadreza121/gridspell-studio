@@ -21,8 +21,8 @@ export const packages: readonly PricingPackage[] = [
     id: "launch",
     name: "Launch",
     eyebrow: "Professional foundation",
-    price: "From CAD $2,800",
-    startingPrice: 2800,
+    price: "From CAD $1,800",
+    startingPrice: 1800,
     timeline: "3–4 weeks",
     summary:
       "A focused, custom website for a small business that needs to look credible and convert the right visitors.",
@@ -60,8 +60,8 @@ export const packages: readonly PricingPackage[] = [
     id: "growth",
     name: "Growth",
     eyebrow: "Conversion and scale",
-    price: "From CAD $5,500",
-    startingPrice: 5500,
+    price: "From CAD $4,500",
+    startingPrice: 4500,
     timeline: "5–7 weeks",
     summary:
       "A deeper sales-focused website with stronger content structure, editable sections, and practical business integrations.",
@@ -100,8 +100,8 @@ export const packages: readonly PricingPackage[] = [
     id: "custom",
     name: "Custom",
     eyebrow: "Platform and automation",
-    price: "From CAD $9,000",
-    startingPrice: 9000,
+    price: "From CAD $7,500",
+    startingPrice: 7500,
     timeline: "8+ weeks",
     summary:
       "A custom digital product for businesses that need portals, dashboards, automation, data, or complex integrations.",

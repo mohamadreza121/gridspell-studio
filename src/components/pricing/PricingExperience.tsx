@@ -62,8 +62,8 @@ const addOns: readonly AddOn[] = [
     id: "additional-page",
     name: "Additional page",
     description: "A new strategic page using the approved design system.",
-    price: 250,
-    priceLabel: "From $250",
+    price: 200,
+    priceLabel: "From $200",
     weeks: 0,
     icon: LayoutTemplate
   },
@@ -71,8 +71,8 @@ const addOns: readonly AddOn[] = [
     id: "copywriting",
     name: "Conversion copywriting",
     description: "Structured website copy shaped around clarity and action.",
-    price: 900,
-    priceLabel: "From $900",
+    price: 650,
+    priceLabel: "From $650",
     weeks: 1,
     icon: FilePenLine
   },
@@ -80,8 +80,8 @@ const addOns: readonly AddOn[] = [
     id: "reviews",
     name: "Google reviews integration",
     description: "A branded review feed with reliable fallback content.",
-    price: 350,
-    priceLabel: "From $350",
+    price: 250,
+    priceLabel: "From $250",
     weeks: 0,
     icon: BadgeCheck
   },
@@ -89,8 +89,8 @@ const addOns: readonly AddOn[] = [
     id: "multilingual",
     name: "Multilingual setup",
     description: "Language routing and reusable translated page structure.",
-    price: 600,
-    priceLabel: "From $600",
+    price: 450,
+    priceLabel: "From $450",
     weeks: 1,
     icon: Languages
   },
@@ -98,8 +98,8 @@ const addOns: readonly AddOn[] = [
     id: "motion",
     name: "Advanced motion direction",
     description: "A more cinematic interaction system beyond core transitions.",
-    price: 750,
-    priceLabel: "From $750",
+    price: 500,
+    priceLabel: "From $500",
     weeks: 1,
     icon: Sparkles
   },
@@ -107,8 +107,8 @@ const addOns: readonly AddOn[] = [
     id: "brand-refinement",
     name: "Brand refinement",
     description: "A focused visual polish for typography, colour, and digital usage.",
-    price: 650,
-    priceLabel: "From $650",
+    price: 450,
+    priceLabel: "From $450",
     weeks: 1,
     icon: WandSparkles
   }
@@ -117,7 +117,7 @@ const addOns: readonly AddOn[] = [
 const carePlans = [
   {
     name: "Essential Care",
-    monthlyPrice: 149,
+    monthlyPrice: 99,
     summary: "Reliable maintenance for a focused business website.",
     features: [
       "Software and dependency updates",
@@ -129,7 +129,7 @@ const carePlans = [
   },
   {
     name: "Growth Care",
-    monthlyPrice: 299,
+    monthlyPrice: 199,
     summary: "Ongoing improvement for a website actively generating leads.",
     features: [
       "Everything in Essential Care",
@@ -141,7 +141,7 @@ const carePlans = [
   },
   {
     name: "Custom Care",
-    monthlyPrice: 599,
+    monthlyPrice: 399,
     summary: "A flexible development partnership for evolving platforms.",
     features: [
       "Ongoing feature development",
@@ -211,41 +211,41 @@ function getScopeAdjustment(
 
   if (packageId === "launch") {
     if (pages === "6-10") {
-      price += 1700;
+      price += 1000;
       weeks += 2;
     }
     if (pages === "10+") {
-      price += 4000;
+      price += 2500;
       weeks += 4;
     }
-    if (cms) price += 750;
-    if (integration === "booking") price += 500;
+    if (cms) price += 500;
+    if (integration === "booking") price += 350;
     if (integration === "crm") {
-      price += 1250;
+      price += 900;
       weeks += 1;
     }
     if (custom === "moderate") {
-      price += 1800;
+      price += 1200;
       weeks += 2;
     }
     if (custom === "advanced") {
-      price += 4200;
+      price += 2500;
       weeks += 4;
     }
   }
 
   if (packageId === "growth") {
     if (pages === "10+") {
-      price += 2500;
+      price += 1900;
       weeks += 3;
     }
-    if (integration === "crm") price += 750;
+    if (integration === "crm") price += 500;
     if (custom === "moderate") {
-      price += 1400;
+      price += 1000;
       weeks += 2;
     }
     if (custom === "advanced") {
-      price += 3200;
+      price += 2500;
       weeks += 4;
     }
   }
@@ -664,7 +664,7 @@ export function PricingExperience() {
   );
   const estimateLow = activePackage.startingPrice + scopeAdjustment.price + addOnTotal;
   const estimateHigh =
-    estimateLow + Math.max(1000, Math.round((estimateLow * 0.18) / 50) * 50);
+    estimateLow + Math.max(700, Math.round((estimateLow * 0.15) / 50) * 50);
   const [baseLowWeeks, baseHighWeeks] = getBaseTimeline(activePackage.id);
   const timelineLow = baseLowWeeks + scopeAdjustment.weeks + addOnWeeks;
   const timelineHigh = baseHighWeeks + scopeAdjustment.weeks + addOnWeeks;
