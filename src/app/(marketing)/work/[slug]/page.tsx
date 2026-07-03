@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight, ExternalLink } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 import { DeviceShowcase } from "@/components/work/DeviceShowcase";
+import { SmallPhoneDeviceShowcase } from "@/components/work/SmallPhoneDeviceShowcase";
 import { featuredProjects } from "@/config/work";
 import { workCaseStudies } from "@/config/work-case-studies";
 import { createPageMetadata } from "@/lib/metadata";
@@ -151,7 +152,12 @@ export default async function Page({ params }: Props) {
       </section>
 
       {/* Laptop, tablet and phone showcases */}
-      <DeviceShowcase devices={caseStudy.devices} />
+      <div className="small-phone-case-study-only">
+        <SmallPhoneDeviceShowcase devices={caseStudy.devices} />
+      </div>
+      <div className="case-study-device-showcase">
+        <DeviceShowcase devices={caseStudy.devices} />
+      </div>
 
       {/* Closing summary */}
       <section className="relative border-t border-white/[0.06] py-24 sm:py-32">
