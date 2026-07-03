@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import "@/app/mobile-fixes.css";
 
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { TinyPhoneNav } from "@/components/layout/TinyPhoneNav";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -104,6 +105,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body>
+        <TinyPhoneNav accountHref="/login" accountLabel="Client login" />
         {children}
         <Suspense fallback={null}>
           <GoogleAnalytics />
