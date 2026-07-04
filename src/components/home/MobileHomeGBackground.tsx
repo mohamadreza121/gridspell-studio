@@ -90,7 +90,16 @@ export function MobileHomeGBackground() {
           .home-experience,
           .home-static-only,
           .home-static-layout,
-          .home-proof-sections,
+          .home-static-layout > section,
+          .home-static-layout .home-static-scene,
+          .home-experience + div,
+          .home-experience + div > section {
+            background: transparent !important;
+          }
+
+          .home-experience,
+          .home-static-only,
+          .home-static-layout,
           .home-experience + div {
             position: relative !important;
             z-index: 20 !important;
@@ -99,110 +108,52 @@ export function MobileHomeGBackground() {
             visibility: visible !important;
           }
 
-          .home-static-layout,
           .home-static-layout > section,
-          .home-static-layout .home-static-scene,
-          .home-proof-sections,
-          .home-experience + div {
-            background: transparent !important;
-          }
-
-          .home-static-layout {
-            isolation: isolate;
-          }
-
-          .home-static-layout > section,
-          .home-experience + div {
+          .home-experience + div > section {
             position: relative !important;
             z-index: 21;
             isolation: isolate;
-            overflow: hidden;
           }
 
           .home-static-layout > section > *,
-          .home-proof-sections > *,
-          .home-experience + div > * {
+          .home-experience + div > section > * {
             position: relative;
             z-index: 22;
           }
 
+          .home-static-layout > .page-grid,
+          .home-experience + div > .page-grid {
+            opacity: 0.22 !important;
+          }
+
           .home-static-layout .home-static-scene::before,
-          .home-proof-sections::before,
-          .home-experience + div::before {
+          .home-static-layout > section:first-of-type::before,
+          .home-experience + div > section::before {
             content: "";
             pointer-events: none;
             position: absolute;
             inset: 0;
             z-index: 0;
             background:
-              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.18), transparent 22rem),
+              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.14), transparent 22rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.1),
-                rgba(7, 8, 12, 0.22) 42%,
+                rgba(7, 8, 12, 0.08),
+                rgba(7, 8, 12, 0.2) 42%,
                 rgba(7, 8, 12, 0.34)
-              );
-          }
-
-          .home-static-layout > section::after,
-          .home-experience + div::after {
-            content: "G";
-            pointer-events: none;
-            position: absolute;
-            z-index: 1;
-            right: -34vw;
-            top: 2.5rem;
-            width: 130vw;
-            max-width: 42rem;
-            font-family: var(--font-display), Inter, ui-sans-serif, system-ui, sans-serif;
-            font-size: min(130vw, 42rem);
-            font-weight: 800;
-            line-height: 0.78;
-            letter-spacing: -0.14em;
-            color: transparent;
-            -webkit-text-stroke: 0.06em rgba(139, 233, 255, 0.14);
-            background: linear-gradient(145deg, rgba(124, 92, 255, 0.58), rgba(41, 214, 255, 0.42));
-            -webkit-background-clip: text;
-            background-clip: text;
-            opacity: 0.42;
-            filter: blur(0.2px) drop-shadow(0 0 44px rgba(124, 92, 255, 0.18));
-            transform: rotate(-3deg);
-          }
-
-          .home-static-layout > section:first-of-type::before {
-            content: "";
-            pointer-events: none;
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            background:
-              linear-gradient(
-                180deg,
-                rgba(7, 8, 12, 0.02),
-                rgba(7, 8, 12, 0.14) 54%,
-                rgba(7, 8, 12, 0.32)
               );
           }
         }
 
         @media (max-width: 379px) {
           .home-mobile-g-main {
-            opacity: 0.62 !important;
-            transform: translateX(7vw) translateY(1rem) scale(1.06);
+            opacity: 0.7 !important;
+            transform: translateX(4vw) translateY(1rem) scale(1.08);
           }
 
           .home-mobile-g-outline {
-            opacity: 0.34 !important;
-            transform: translateX(6vw) translateY(1rem) scale(1.06);
-          }
-
-          .home-static-layout > section::after,
-          .home-experience + div::after {
-            right: -39vw;
-            top: 4.4rem;
-            width: 150vw;
-            font-size: min(150vw, 38rem);
-            opacity: 0.38;
+            opacity: 0.4 !important;
+            transform: translateX(3vw) translateY(1rem) scale(1.08);
           }
 
           .home-static-layout > section:first-of-type > div {
@@ -213,15 +164,15 @@ export function MobileHomeGBackground() {
           }
 
           .home-static-layout .home-static-scene::before,
-          .home-proof-sections::before,
-          .home-experience + div::before {
+          .home-static-layout > section:first-of-type::before,
+          .home-experience + div > section::before {
             background:
-              radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.16), transparent 18rem),
+              radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.12), transparent 18rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.06),
-                rgba(7, 8, 12, 0.2) 42%,
-                rgba(7, 8, 12, 0.32)
+                rgba(7, 8, 12, 0.05),
+                rgba(7, 8, 12, 0.18) 42%,
+                rgba(7, 8, 12, 0.3)
               );
           }
         }
