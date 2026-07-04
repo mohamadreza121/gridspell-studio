@@ -177,7 +177,7 @@ export function Logo({
             Grid
           </span>
 
-          <span className="bg-gradient-to-r from-[#a895ff] via-[#78a7ff] to-[#8be9ff] bg-clip-text text-[1rem] font-semibold tracking-[-0.055em] text-[#8be9ff] min-[380px]:text-[1.15rem] supports-[(-webkit-background-clip:text)]:text-transparent sm:text-[1.3rem]">
+          <span className="text-[1rem] font-semibold tracking-[-0.055em] text-[#8be9ff] min-[380px]:bg-gradient-to-r min-[380px]:from-[#a895ff] min-[380px]:via-[#78a7ff] min-[380px]:to-[#8be9ff] min-[380px]:bg-clip-text min-[380px]:text-[1.15rem] min-[380px]:text-transparent sm:text-[1.3rem]">
             Spell
           </span>
 

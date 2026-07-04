@@ -75,13 +75,13 @@ test.describe("responsive marketing pages", () => {
         route === "/"
       ) {
         const tinyMenuButton = page.locator(
-          'label[for="tiny-nav-toggle"].tiny-nav__button'
+          'label[for="tiny-phone-nav-toggle"].tiny-phone-nav__button'
         );
 
-        const tinyMenuToggle = page.locator("#tiny-nav-toggle");
-        const tinyMenuPanel = page.locator(".tiny-nav__panel");
+        const tinyMenuToggle = page.locator("#tiny-phone-nav-toggle");
+        const tinyMenuPanel = page.locator(".tiny-phone-nav__panel");
         const tinyMenuClose = page.locator(
-          'label[for="tiny-nav-toggle"].tiny-nav__close'
+          'label[for="tiny-phone-nav-toggle"].tiny-phone-nav__close'
         );
 
         await expect(tinyMenuButton).toBeVisible();
@@ -93,6 +93,18 @@ test.describe("responsive marketing pages", () => {
         await expect(
           tinyMenuPanel.getByRole("link", {
             name: /Start a project/i
+          })
+        ).toBeVisible();
+
+        await expect(
+          tinyMenuPanel.getByRole("link", {
+            name: /Client login/i
+          })
+        ).toBeVisible();
+
+        await expect(
+          tinyMenuPanel.getByRole("link", {
+            name: /hello@gridspellstudio\.com/i
           })
         ).toBeVisible();
 
