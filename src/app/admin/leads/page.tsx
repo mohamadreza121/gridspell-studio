@@ -5,8 +5,34 @@ import { addLeadActivityAction, updateLeadAction } from "@/features/admin/action
 import { getAdminLeads } from "@/features/admin/data";
 
 const statuses = ["all", "new", "qualified", "discovery_booked", "proposal_sent", "negotiating", "won", "lost"] as const;
+const intakeDetailsMarker = "--- Project intake details ---";
 
 type Props = { searchParams: Promise<{ status?: string; error?: string; message?: string }> };
+
+function splitLeadMessage(message: string) {
+  const marker = `\n\n${intakeDetailsMarker}\n`;
+  const [body, detailsAndRest] = message.split(marker);
+
+  if (!detailsAndRest) {
+    return { body: message, details: [] as Array<[string, string]>, extraContext: "" };
+  }
+
+  const [detailsBlock, ...extraBlocks] = detailsAndRest.split("\n\n");
+  const details = detailsBlock
+    .split("\n")
+    .map((line) => {
+      const [label, ...valueParts] = line.split(":");
+      const value = valueParts.join(":").trim();
+      return [label.trim(), value] as [string, string];
+    })
+    .filter(([label, value]) => label && value);
+
+  return {
+    body,
+    details,
+    extraContext: extraBlocks.join("\n\n").trim()
+  };
+}
 
 export default async function LeadsPage({ searchParams }: Props) {
   const params = await searchParams;
@@ -33,13 +59,32 @@ export default async function LeadsPage({ searchParams }: Props) {
         {leads.length ? leads.map((lead) => {
           const assigned = Array.isArray(lead.profiles) ? lead.profiles[0] : lead.profiles;
           const leadActivities = activityByLead.get(lead.id) ?? [];
+          const parsedMessage = splitLeadMessage(lead.message);
+
           return (
             <AdminPanel key={lead.id}>
               <div className="grid gap-6 xl:grid-cols-[1fr_1.1fr]">
                 <div>
                   <div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="font-display text-2xl font-semibold text-white">{lead.name}</h2><p className="mt-1 text-sm text-white/36">{lead.company || "Independent client"} · {lead.email}</p></div><StatusBadge value={lead.status} /></div>
                   <div className="mt-5 grid gap-3 text-sm text-white/50 sm:grid-cols-2"><p><span className="text-white/25">Project:</span> {lead.project_type}</p><p><span className="text-white/25">Budget:</span> {lead.budget_range}</p><p><span className="text-white/25">Timeline:</span> {lead.timeline || "Not stated"}</p><p><span className="text-white/25">Estimate:</span> {formatMoney(lead.estimated_value)}</p><p><span className="text-white/25">Assigned:</span> {assigned?.full_name || "Unassigned"}</p><p><span className="text-white/25">Created:</span> {formatDate(lead.created_at)}</p></div>
-                  <p className="mt-5 rounded-2xl border border-white/[.07] bg-black/10 p-4 text-sm leading-7 text-white/45">{lead.message}</p>
+
+                  {parsedMessage.details.length ? (
+                    <div className="mt-5 rounded-2xl border border-[#8be9ff]/12 bg-[#8be9ff]/5 p-4">
+                      <p className="text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-[#8be9ff]">Project intake</p>
+                      <div className="mt-4 grid gap-3 text-sm text-white/50 sm:grid-cols-2">
+                        {parsedMessage.details.map(([label, value]) => (
+                          <p key={label}><span className="text-white/25">{label}:</span> {value}</p>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <p className="mt-5 rounded-2xl border border-white/[.07] bg-black/10 p-4 text-sm leading-7 text-white/45 whitespace-pre-wrap">{parsedMessage.body}</p>
+
+                  {parsedMessage.extraContext ? (
+                    <p className="mt-3 rounded-2xl border border-white/[.07] bg-white/[.02] p-4 text-xs leading-6 text-white/32 whitespace-pre-wrap">{parsedMessage.extraContext}</p>
+                  ) : null}
+
                   <div className="mt-5 grid gap-2">
                     {leadActivities.slice(0, 4).map((activity) => {
                       const actor = Array.isArray(activity.profiles) ? activity.profiles[0] : activity.profiles;
