@@ -83,93 +83,119 @@ export function MobileHomeGBackground() {
     <>
       <style jsx global>{`
         @media (max-width: 1279px) {
+          .home-mobile-g-background {
+            z-index: 0 !important;
+          }
+
           .home-experience,
-          .home-static-layout {
-            position: relative;
-            z-index: 2;
+          .home-static-only,
+          .home-static-layout,
+          .home-static-layout > section,
+          .home-static-layout .home-static-scene,
+          .home-experience + div,
+          .home-experience + div > section {
+            background: transparent !important;
+          }
+
+          .home-experience,
+          .home-static-only,
+          .home-static-layout,
+          .home-experience + div {
+            position: relative !important;
+            z-index: 20 !important;
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+          }
+
+          .home-static-layout > section,
+          .home-experience + div > section {
+            position: relative !important;
+            z-index: 21;
             isolation: isolate;
-            background: transparent !important;
           }
 
-          .home-static-layout > section {
+          .home-static-layout > section > *,
+          .home-experience + div > section > * {
             position: relative;
-            z-index: 3;
-            background: transparent !important;
-            isolation: isolate;
+            z-index: 22;
           }
 
-          .home-static-layout > section > * {
-            position: relative;
-            z-index: 2;
+          .home-static-layout > .page-grid,
+          .home-experience + div > .page-grid {
+            opacity: 0.22 !important;
           }
 
-          .home-static-layout .home-static-scene {
-            position: relative;
-            background: transparent !important;
-          }
-
-          .home-static-layout .home-static-scene::before {
+          .home-static-layout .home-static-scene::before,
+          .home-static-layout > section:first-of-type::before,
+          .home-experience + div > section::before {
             content: "";
             pointer-events: none;
             position: absolute;
             inset: 0;
             z-index: 0;
             background:
+              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.14), transparent 22rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.18),
-                rgba(7, 8, 12, 0.34) 42%,
-                rgba(7, 8, 12, 0.46)
-              );
-          }
-
-          .home-static-layout > section:first-of-type::before {
-            content: "";
-            pointer-events: none;
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            background:
-              linear-gradient(
-                180deg,
-                rgba(7, 8, 12, 0.02),
-                rgba(7, 8, 12, 0.24) 60%,
-                rgba(7, 8, 12, 0.48)
+                rgba(7, 8, 12, 0.08),
+                rgba(7, 8, 12, 0.2) 42%,
+                rgba(7, 8, 12, 0.34)
               );
           }
         }
 
         @media (max-width: 379px) {
-          .home-static-layout .home-static-scene::before {
+          .home-mobile-g-main {
+            opacity: 0.7 !important;
+            transform: translateX(4vw) translateY(1rem) scale(1.08);
+          }
+
+          .home-mobile-g-outline {
+            opacity: 0.4 !important;
+            transform: translateX(3vw) translateY(1rem) scale(1.08);
+          }
+
+          .home-static-layout > section:first-of-type > div {
+            min-height: auto !important;
+            justify-content: flex-start !important;
+            padding-top: 7.25rem !important;
+            padding-bottom: 3.5rem !important;
+          }
+
+          .home-static-layout .home-static-scene::before,
+          .home-static-layout > section:first-of-type::before,
+          .home-experience + div > section::before {
             background:
+              radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.12), transparent 18rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.08),
-                rgba(7, 8, 12, 0.24) 42%,
-                rgba(7, 8, 12, 0.38)
+                rgba(7, 8, 12, 0.05),
+                rgba(7, 8, 12, 0.18) 42%,
+                rgba(7, 8, 12, 0.3)
               );
           }
         }
       `}</style>
 
       <div
-        className="pointer-events-none fixed inset-0 z-[1] hidden overflow-hidden bg-[#07080c] max-xl:block"
+        className="home-mobile-g-background pointer-events-none fixed inset-0 z-0 hidden overflow-hidden bg-[#07080c] max-xl:block"
         aria-hidden="true"
       >
         <div className="page-grid absolute inset-0 opacity-[0.34]" />
 
-        <div className="absolute right-[-42vw] top-[5.35rem] h-[158vw] max-h-[650px] w-[158vw] max-w-[650px] opacity-[0.46] min-[380px]:right-[-26vw] min-[380px]:top-[4rem] min-[380px]:h-[126vw] min-[380px]:w-[126vw] sm:right-[-13vw] sm:top-[2.75rem] sm:h-[94vw] sm:w-[94vw] sm:opacity-[0.28] md:right-[2vw] md:h-[74vw] md:w-[74vw]">
+        <div className="home-mobile-g-outline absolute right-[-42vw] top-[5.35rem] h-[158vw] max-h-[650px] w-[158vw] max-w-[650px] opacity-[0.46] min-[380px]:right-[-26vw] min-[380px]:top-[4rem] min-[380px]:h-[126vw] min-[380px]:w-[126vw] sm:right-[-13vw] sm:top-[2.75rem] sm:h-[94vw] sm:w-[94vw] sm:opacity-[0.28] md:right-[2vw] md:h-[74vw] md:w-[74vw]">
           <MobileGridSpellG id={`${uniqueId}-outline`} outline />
         </div>
 
-        <div className="absolute right-[-47vw] top-[4.95rem] h-[164vw] max-h-[680px] w-[164vw] max-w-[680px] opacity-[0.72] min-[380px]:right-[-31vw] min-[380px]:top-[3.65rem] min-[380px]:h-[132vw] min-[380px]:w-[132vw] sm:right-[-17vw] sm:top-[2.35rem] sm:h-[98vw] sm:w-[98vw] sm:opacity-[0.46] md:right-[-1vw] md:h-[78vw] md:w-[78vw]">
+        <div className="home-mobile-g-main absolute right-[-47vw] top-[4.95rem] h-[164vw] max-h-[680px] w-[164vw] max-w-[680px] opacity-[0.72] min-[380px]:right-[-31vw] min-[380px]:top-[3.65rem] min-[380px]:h-[132vw] min-[380px]:w-[132vw] sm:right-[-17vw] sm:top-[2.35rem] sm:h-[98vw] sm:w-[98vw] sm:opacity-[0.46] md:right-[-1vw] md:h-[78vw] md:w-[78vw]">
           <MobileGridSpellG id={`${uniqueId}-main`} />
         </div>
 
         <div className="absolute right-[-5rem] top-[7rem] h-72 w-72 rounded-full bg-[#7c5cff]/12 blur-[76px] sm:right-[3rem] sm:top-[5rem] sm:h-96 sm:w-96" />
         <div className="absolute bottom-[10%] left-[-5rem] h-56 w-56 rounded-full bg-[#29d6ff]/7 blur-[72px] md:left-[8%] md:h-72 md:w-72" />
 
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,12,.01),rgba(7,8,12,.12)_38%,rgba(7,8,12,.34)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,12,.01),rgba(7,8,12,.08)_38%,rgba(7,8,12,.26)_100%)]" />
       </div>
     </>
   );
