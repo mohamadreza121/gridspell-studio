@@ -1,4 +1,4 @@
-export type PricingPackageId = "launch" | "growth" | "custom";
+export type PricingPackageId = "starter" | "launch" | "growth" | "custom";
 
 export type PricingPackage = {
   id: PricingPackageId;
@@ -18,6 +18,45 @@ export type PricingPackage = {
 
 export const packages: readonly PricingPackage[] = [
   {
+    id: "starter",
+    name: "Starter",
+    eyebrow: "Simple launch",
+    price: "From CAD $950",
+    startingPrice: 950,
+    timeline: "1–2 weeks",
+    summary:
+      "A focused one-page website or landing page for businesses that need a clean, professional online presence fast.",
+    bestFor:
+      "New businesses, personal brands, campaign pages, MVPs, and simple service offers that need one strong page instead of a full site.",
+    highlighted: false,
+    features: [
+      "One custom landing page",
+      "Responsive design",
+      "Contact or lead form",
+      "Basic SEO setup",
+      "Analytics setup",
+      "7 days of post-launch support"
+    ],
+    fullFeatures: [
+      "One custom landing page or focused one-page website",
+      "Simple content structure and conversion-focused section order",
+      "Responsive design for desktop, tablet, and phone",
+      "Contact, quote, or lead form",
+      "Basic on-page SEO and metadata setup",
+      "Analytics setup and launch support",
+      "One structured revision round",
+      "Seven days of post-launch support"
+    ],
+    example:
+      "A single-page launch site for a new service, campaign, personal brand, or simple offer with hero, proof, service details, FAQ, and contact sections.",
+    exclusions: [
+      "Multi-page website architecture",
+      "CMS or blog setup",
+      "Complex booking, CRM, or automation workflows",
+      "Custom dashboards or authenticated areas"
+    ]
+  },
+  {
     id: "launch",
     name: "Launch",
     eyebrow: "Professional foundation",
@@ -25,9 +64,9 @@ export const packages: readonly PricingPackage[] = [
     startingPrice: 1800,
     timeline: "3–4 weeks",
     summary:
-      "A focused, custom website for a small business that needs to look credible and convert the right visitors.",
+      "A focused, custom multi-page website for a small business that needs to look credible and convert the right visitors.",
     bestFor:
-      "Service businesses, consultants, and growing teams replacing a dated or template-based website.",
+      "Service businesses, consultants, and growing teams that need a professional 3–5 page website instead of a one-page launch.",
     highlighted: false,
     features: [
       "Up to 5 strategic pages",
@@ -66,7 +105,7 @@ export const packages: readonly PricingPackage[] = [
     summary:
       "A deeper sales-focused website with stronger content structure, editable sections, and practical business integrations.",
     bestFor:
-      "Established service businesses that need more pages, lead generation, content publishing, or connected systems.",
+      "Established service businesses that need service pages, blog or insights, reviews, booking, CRM routing, and tracked lead generation.",
     highlighted: true,
     features: [
       "Up to 10 strategic pages",
