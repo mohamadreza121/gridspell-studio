@@ -19,6 +19,7 @@
 }
 
 @media (max-width: 1279px) {
+  /* The footer already carries the final CTA on static mobile/tablet homepages. */
   .home-static-layout > .home-static-scene:last-child {
     display: none !important;
   }
