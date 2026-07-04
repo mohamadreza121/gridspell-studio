@@ -114,7 +114,7 @@ function MiniInterfacePreview({ project }: { project: FeaturedProject }) {
 
 export function HomeProofSections() {
   return (
-    <div className="relative overflow-hidden bg-[#07080c] text-white">
+    <div className="relative z-[3] isolate overflow-hidden bg-[#07080c] text-white">
       <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-30" />
       <div aria-hidden="true" className="pointer-events-none absolute right-[-18rem] top-24 h-[34rem] w-[34rem] rounded-full bg-[#7c5cff]/12 blur-[150px]" />
       <div aria-hidden="true" className="pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px]" />
