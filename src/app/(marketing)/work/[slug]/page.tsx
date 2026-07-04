@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CheckCircle2, ExternalLink } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 import { DeviceShowcase } from "@/components/work/DeviceShowcase";
 import { SmallPhoneDeviceShowcase } from "@/components/work/SmallPhoneDeviceShowcase";
 import { featuredProjects } from "@/config/work";
-import { workCaseStudies } from "@/config/work-case-studies";
+import { workCaseStudies, type WorkCaseStudy } from "@/config/work-case-studies";
 import { createPageMetadata } from "@/lib/metadata";
 
 type Props = {
@@ -15,6 +15,74 @@ type Props = {
     slug: string;
   }>;
 };
+
+const gridspellCaseStudy: WorkCaseStudy = {
+  slug: "gridspell-studio",
+  client: "GridSpell Studio",
+  category: "Studio website · Business system",
+  headline: "A studio website that proves the offer by using the system itself.",
+  summary:
+    "GridSpell Studio was built as a working proof point: a premium website, pricing flow, project intake form, admin lead dashboard, and client portal foundation in one brand system.",
+  overview:
+    "The site needed to sell custom web design clearly while also showing the practical systems GridSpell can build behind a business website.",
+  liveUrl: "https://gridspellstudio.com/",
+  devices: []
+};
+
+const caseStudyProof: Record<string, {
+  challenge: string;
+  built: string;
+  outcome: string;
+  highlights: readonly string[];
+}> = {
+  "desa-foam-insulation": {
+    challenge:
+      "The business needed a modern service website that explained its work clearly, looked trustworthy on mobile, and guided visitors toward estimate requests.",
+    built:
+      "GridSpell built a responsive Next.js website with clearer service structure, project visuals, SEO foundations, and a stronger inquiry path.",
+    outcome:
+      "The final experience presents DESA as a more professional contractor and makes the path from service research to action easier to follow.",
+    highlights: [
+      "Service page architecture",
+      "Mobile-first service browsing",
+      "Project visuals and trust messaging",
+      "SEO-ready page structure"
+    ]
+  },
+  "gridspell-studio": {
+    challenge:
+      "The studio needed more than a portfolio. It needed to explain the offer, show pricing, collect better project briefs, and support client operations.",
+    built:
+      "GridSpell built its own Next.js marketing site with package-aware pricing, project intake, email notifications, admin lead management, client portal structure, SEO foundations, and small-phone fallbacks.",
+    outcome:
+      "The finished system demonstrates the full offer: strategy, design, development, lead capture, dashboards, and launch foundations.",
+    highlights: [
+      "Package-aware project brief",
+      "Admin lead dashboard",
+      "Client portal foundation",
+      "Responsive small-phone support"
+    ]
+  },
+  "network-engineering-portfolio": {
+    challenge:
+      "The portfolio needed to communicate practical technical ability without relying on a plain resume layout.",
+    built:
+      "GridSpell structured the experience around technical credibility, project organization, service positioning, and a more memorable visual direction.",
+    outcome:
+      "The result is a portfolio that feels more polished, easier to scan, and more credible for technical opportunities.",
+    highlights: [
+      "Technical project storytelling",
+      "Interactive presentation",
+      "Clear service structure",
+      "Responsive layouts"
+    ]
+  }
+};
+
+function getCaseStudy(slug: string) {
+  return workCaseStudies.find((item) => item.slug === slug) ??
+    (slug === "gridspell-studio" ? gridspellCaseStudy : null);
+}
 
 export function generateStaticParams() {
   return featuredProjects.map((project) => ({
@@ -25,7 +93,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = featuredProjects.find((item) => item.slug === slug);
-  const caseStudy = workCaseStudies.find((item) => item.slug === slug);
+  const caseStudy = getCaseStudy(slug);
 
   if (!project || !caseStudy) return {};
 
@@ -42,11 +110,14 @@ export default async function Page({ params }: Props) {
   const { slug } = await params;
 
   const project = featuredProjects.find((item) => item.slug === slug);
-  const caseStudy = workCaseStudies.find((item) => item.slug === slug);
+  const caseStudy = getCaseStudy(slug);
 
   if (!project || !caseStudy) {
     notFound();
   }
+
+  const proof = caseStudyProof[project.slug];
+  const hasDeviceShowcase = caseStudy.devices.length > 0;
 
   return (
     <main className="overflow-hidden bg-[#07080c] text-white">
@@ -151,13 +222,57 @@ export default async function Page({ params }: Props) {
         </Container>
       </section>
 
+      {proof ? (
+        <section className="relative border-b border-white/[0.06] py-24 sm:py-32">
+          <Container className="grid gap-12 xl:grid-cols-[0.78fr_1.22fr] xl:items-start">
+            <div>
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-[#8be9ff]">
+                Business proof
+              </p>
+              <h2 className="mt-6 max-w-[12ch] font-display text-[clamp(2.8rem,5vw,5.6rem)] font-semibold leading-[0.88] tracking-[-0.065em]">
+                What was solved and built.
+              </h2>
+            </div>
+
+            <div className="grid gap-5">
+              {([
+                ["Problem", proof.challenge],
+                ["Built", proof.built],
+                ["Result", proof.outcome]
+              ] as const).map(([label, text]) => (
+                <article key={label} className="rounded-[1.65rem] border border-white/[0.08] bg-white/[0.025] p-5 sm:p-6">
+                  <p className="text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-[#8be9ff]">{label}</p>
+                  <p className="mt-4 text-base leading-8 text-white/46">{text}</p>
+                </article>
+              ))}
+
+              <div className="rounded-[1.65rem] border border-[#8be9ff]/16 bg-[#8be9ff]/6 p-5 sm:p-6">
+                <p className="text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-[#8be9ff]">Key features</p>
+                <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {proof.highlights.map((item) => (
+                    <li key={item} className="flex gap-3 text-sm leading-7 text-white/54">
+                      <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#8be9ff]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
       {/* Laptop, tablet and phone showcases */}
-      <div className="small-phone-case-study-only">
-        <SmallPhoneDeviceShowcase devices={caseStudy.devices} />
-      </div>
-      <div className="case-study-device-showcase">
-        <DeviceShowcase devices={caseStudy.devices} />
-      </div>
+      {hasDeviceShowcase ? (
+        <>
+          <div className="small-phone-case-study-only">
+            <SmallPhoneDeviceShowcase devices={caseStudy.devices} />
+          </div>
+          <div className="case-study-device-showcase">
+            <DeviceShowcase devices={caseStudy.devices} />
+          </div>
+        </>
+      ) : null}
 
       {/* Closing summary */}
       <section className="relative border-t border-white/[0.06] py-24 sm:py-32">
