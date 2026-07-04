@@ -93,30 +93,36 @@ export function MobileHomeGBackground() {
           .home-static-layout > section,
           .home-static-layout .home-static-scene,
           .home-experience + div,
-          .home-experience + div > section {
+          .home-experience + div > section,
+          .small-phone-home-pricing-only,
+          .small-phone-home-pricing {
             background: transparent !important;
+            background-color: transparent !important;
           }
 
           .home-experience,
           .home-static-only,
           .home-static-layout,
-          .home-experience + div {
+          .home-experience + div,
+          .small-phone-home-pricing-only,
+          .small-phone-home-pricing {
             position: relative !important;
             z-index: 20 !important;
-            display: block !important;
             opacity: 1 !important;
             visibility: visible !important;
           }
 
           .home-static-layout > section,
-          .home-experience + div > section {
+          .home-experience + div > section,
+          .small-phone-home-pricing {
             position: relative !important;
             z-index: 21;
             isolation: isolate;
           }
 
           .home-static-layout > section > *,
-          .home-experience + div > section > * {
+          .home-experience + div > section > *,
+          .small-phone-home-pricing > * {
             position: relative;
             z-index: 22;
           }
@@ -128,7 +134,8 @@ export function MobileHomeGBackground() {
 
           .home-static-layout .home-static-scene::before,
           .home-static-layout > section:first-of-type::before,
-          .home-experience + div > section::before {
+          .home-experience + div > section::before,
+          .small-phone-home-pricing::before {
             content: "";
             pointer-events: none;
             position: absolute;
@@ -156,6 +163,20 @@ export function MobileHomeGBackground() {
             transform: translateX(3vw) translateY(1rem) scale(1.08);
           }
 
+          .home-static-layout,
+          .home-static-layout > section,
+          .home-static-layout > section > div,
+          .home-static-layout .home-static-scene,
+          .home-static-layout .home-static-scene > div,
+          .home-experience + div,
+          .home-experience + div > section,
+          .home-experience + div > section > div,
+          .small-phone-home-pricing-only,
+          .small-phone-home-pricing {
+            background: transparent !important;
+            background-color: transparent !important;
+          }
+
           .home-static-layout > section:first-of-type > div {
             min-height: auto !important;
             justify-content: flex-start !important;
@@ -163,9 +184,14 @@ export function MobileHomeGBackground() {
             padding-bottom: 3.5rem !important;
           }
 
+          .small-phone-home-pricing {
+            border-top-color: rgba(255, 255, 255, 0.055) !important;
+          }
+
           .home-static-layout .home-static-scene::before,
           .home-static-layout > section:first-of-type::before,
-          .home-experience + div > section::before {
+          .home-experience + div > section::before,
+          .small-phone-home-pricing::before {
             background:
               radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.12), transparent 18rem),
               linear-gradient(
