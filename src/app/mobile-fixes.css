@@ -18,6 +18,14 @@
   }
 }
 
+@media (max-width: 1279px) {
+  /* The footer already carries the final CTA on static mobile/tablet homepages. */
+  .home-static-layout > .home-static-scene:last-child,
+  .home-static-layout > section:nth-of-type(8) {
+    display: none !important;
+  }
+}
+
 @media (max-width: 379px) {
   html,
   body {
