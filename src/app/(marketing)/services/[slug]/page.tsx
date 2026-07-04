@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Check } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 import { PageIntro } from "@/components/ui/PageIntro";
@@ -51,15 +51,15 @@ export default async function Page({ params }: Props) {
           </div>
           <div className="rounded-[2rem] border border-white/[.09] bg-white/[.025] p-8">
             <p className="text-xs uppercase tracking-[.32em] text-[#8be9ff]">
-              Core deliverables
+              Outcomes
             </p>
             <ul className="mt-8 grid gap-5">
-              {service.deliverables.map((item) => (
+              {service.outcomes.map((item) => (
                 <li
                   key={item}
                   className="flex gap-4 border-b border-white/[.07] pb-5 text-lg text-white/62"
                 >
-                  <Check className="mt-1 h-5 w-5 text-[#8be9ff]" />
+                  <CheckCircle2 className="mt-1 h-5 w-5 text-[#8be9ff]" />
                   {item}
                 </li>
               ))}
