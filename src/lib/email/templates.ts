@@ -82,17 +82,26 @@ function layout(input: {
 export function leadConfirmationTemplate(input: {
   name: string;
   projectType: string;
+  selectedPackage?: string | null;
+  budget?: string | null;
+  estimatedRange?: string | null;
   timeline?: string | null;
   siteUrl: string;
 }): EmailTemplate {
   const firstName = input.name.trim().split(/\s+/)[0] || input.name;
   const subject = "We received your GridSpell project inquiry";
   const preview = "Your project brief is safely in our queue.";
-  const text = `Hi ${firstName},\n\nThanks for reaching out to GridSpell. We received your inquiry for ${input.projectType}. We will review the scope and reply with the clearest next step.\n\n${input.timeline ? `Preferred timeline: ${input.timeline}\n\n` : ""}GridSpell\n${input.siteUrl}`;
+  const text = `Hi ${firstName},\n\nThanks for reaching out to GridSpell. We received your inquiry for ${input.projectType}. We will review the scope and reply with the clearest next step.\n\n${input.selectedPackage ? `Selected package: ${input.selectedPackage}\n` : ""}${input.budget ? `Budget range: ${input.budget}\n` : ""}${input.estimatedRange ? `Planning range: ${input.estimatedRange}\n` : ""}${input.timeline ? `Preferred timeline: ${input.timeline}\n` : ""}\nGridSpell\n${input.siteUrl}`;
   const content = [
     paragraph(`Hi ${firstName},`),
-    paragraph(`Thanks for reaching out. We received your inquiry for ${input.projectType} and will review the scope, goals, and timeline before replying with the clearest next step.`),
-    detailRows([["Project type", input.projectType], ["Preferred timeline", input.timeline]]),
+    paragraph(`Thanks for reaching out. We received your inquiry for ${input.projectType} and will review the scope, goals, pricing context, and timeline before replying with the clearest next step.`),
+    detailRows([
+      ["Project type", input.projectType],
+      ["Selected package", input.selectedPackage],
+      ["Budget range", input.budget],
+      ["Planning range", input.estimatedRange],
+      ["Preferred timeline", input.timeline]
+    ]),
     paragraph("You do not need to submit the form again. We will contact you directly at this email address."),
     button("Visit GridSpell", input.siteUrl)
   ].join("");
@@ -104,24 +113,37 @@ export function adminLeadNotificationTemplate(input: {
   name: string;
   email: string;
   company?: string | null;
+  phone?: string | null;
+  currentWebsite?: string | null;
   projectType: string;
+  selectedPackage?: string | null;
   budget: string;
+  estimatedRange?: string | null;
   timeline?: string | null;
+  servicesNeeded?: string[];
+  addOns?: string | null;
   message: string;
   adminUrl: string;
 }): EmailTemplate {
   const subject = `New GridSpell lead — ${input.name}`;
   const preview = `${input.projectType} inquiry from ${input.email}`;
-  const text = `New lead\n\nName: ${input.name}\nEmail: ${input.email}\nCompany: ${input.company ?? "—"}\nProject type: ${input.projectType}\nBudget: ${input.budget}\nTimeline: ${input.timeline ?? "—"}\n\n${input.message}\n\n${input.adminUrl}`;
+  const services = input.servicesNeeded?.length ? input.servicesNeeded.join(", ") : null;
+  const text = `New lead\n\nName: ${input.name}\nEmail: ${input.email}\nPhone: ${input.phone ?? "—"}\nCompany: ${input.company ?? "—"}\nCurrent website: ${input.currentWebsite ?? "—"}\nProject type: ${input.projectType}\nSelected package: ${input.selectedPackage ?? "—"}\nBudget: ${input.budget}\nPlanning range: ${input.estimatedRange ?? "—"}\nTimeline: ${input.timeline ?? "—"}\nServices needed: ${services ?? "—"}\nAdd-ons: ${input.addOns ?? "—"}\n\n${input.message}\n\n${input.adminUrl}`;
   const content = [
     paragraph("A new website inquiry was submitted."),
     detailRows([
       ["Name", input.name],
       ["Email", input.email],
+      ["Phone", input.phone],
       ["Company", input.company],
+      ["Current website", input.currentWebsite],
       ["Project type", input.projectType],
+      ["Selected package", input.selectedPackage],
       ["Budget", input.budget],
-      ["Timeline", input.timeline]
+      ["Planning range", input.estimatedRange],
+      ["Timeline", input.timeline],
+      ["Services needed", services],
+      ["Selected additions", input.addOns]
     ]),
     paragraph(input.message),
     button("Open lead pipeline", input.adminUrl)
@@ -198,7 +220,7 @@ export function paymentConfirmationTemplate(input: {
   const greeting = input.clientName ? `Hi ${input.clientName.trim().split(/\s+/)[0]},` : "Hello,";
   const subject = `Payment received — ${input.invoiceNumber}`;
   const preview = `GridSpell received your payment of ${input.amount}.`;
-  const text = `${greeting}\n\nWe received your payment of ${input.amount} for ${input.invoiceNumber}.\n${input.projectName ? `Project: ${input.projectName}\n` : ""}\n${input.billingUrl}`;
+  const text = `${greeting}\n\nWe received your payment of ${input.amount} for ${input.invoiceNumber}.\n${input.projectName ? `Project: ${input.projectName}\n` : ""}${input.billingUrl}`;
   const content = [
     paragraph(greeting),
     paragraph(`We received your payment of ${input.amount}. Your billing record has been updated automatically.`),
