@@ -90,7 +90,8 @@ export function MobileHomeGBackground() {
           .home-experience,
           .home-static-only,
           .home-static-layout,
-          .home-proof-sections {
+          .home-proof-sections,
+          .home-experience + div {
             position: relative !important;
             z-index: 20 !important;
             display: block !important;
@@ -101,7 +102,8 @@ export function MobileHomeGBackground() {
           .home-static-layout,
           .home-static-layout > section,
           .home-static-layout .home-static-scene,
-          .home-proof-sections {
+          .home-proof-sections,
+          .home-experience + div {
             background: transparent !important;
           }
 
@@ -116,13 +118,15 @@ export function MobileHomeGBackground() {
           }
 
           .home-static-layout > section > *,
-          .home-proof-sections > * {
+          .home-proof-sections > *,
+          .home-experience + div > * {
             position: relative;
             z-index: 22;
           }
 
           .home-static-layout .home-static-scene::before,
-          .home-proof-sections::before {
+          .home-proof-sections::before,
+          .home-experience + div::before {
             content: "";
             pointer-events: none;
             position: absolute;
@@ -173,7 +177,8 @@ export function MobileHomeGBackground() {
           }
 
           .home-static-layout .home-static-scene::before,
-          .home-proof-sections::before {
+          .home-proof-sections::before,
+          .home-experience + div::before {
             background:
               radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.2), transparent 18rem),
               linear-gradient(
