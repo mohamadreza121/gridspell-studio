@@ -89,7 +89,8 @@ export function MobileHomeGBackground() {
 
           .home-experience,
           .home-static-only,
-          .home-static-layout {
+          .home-static-layout,
+          .home-proof-sections {
             position: relative !important;
             z-index: 20 !important;
             display: block !important;
@@ -97,39 +98,42 @@ export function MobileHomeGBackground() {
             visibility: visible !important;
           }
 
+          .home-static-layout,
+          .home-static-layout > section,
+          .home-static-layout .home-static-scene,
+          .home-proof-sections {
+            background: transparent !important;
+          }
+
           .home-static-layout {
             isolation: isolate;
-            background: transparent !important;
           }
 
           .home-static-layout > section {
             position: relative;
             z-index: 21;
-            background: transparent !important;
             isolation: isolate;
           }
 
-          .home-static-layout > section > * {
+          .home-static-layout > section > *,
+          .home-proof-sections > * {
             position: relative;
             z-index: 22;
           }
 
-          .home-static-layout .home-static-scene {
-            position: relative;
-            background: transparent !important;
-          }
-
-          .home-static-layout .home-static-scene::before {
+          .home-static-layout .home-static-scene::before,
+          .home-proof-sections::before {
             content: "";
             pointer-events: none;
             position: absolute;
             inset: 0;
             z-index: 0;
             background:
+              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.26), transparent 22rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.18),
-                rgba(7, 8, 12, 0.34) 42%,
+                rgba(7, 8, 12, 0.16),
+                rgba(7, 8, 12, 0.3) 42%,
                 rgba(7, 8, 12, 0.46)
               );
           }
@@ -144,21 +148,21 @@ export function MobileHomeGBackground() {
               linear-gradient(
                 180deg,
                 rgba(7, 8, 12, 0.02),
-                rgba(7, 8, 12, 0.24) 60%,
-                rgba(7, 8, 12, 0.48)
+                rgba(7, 8, 12, 0.18) 54%,
+                rgba(7, 8, 12, 0.4)
               );
           }
         }
 
         @media (max-width: 379px) {
           .home-mobile-g-main {
-            opacity: 0.34 !important;
-            transform: translateX(18vw) translateY(0.75rem) scale(0.96);
+            opacity: 0.58 !important;
+            transform: translateX(10vw) translateY(1.25rem) scale(1.05);
           }
 
           .home-mobile-g-outline {
-            opacity: 0.2 !important;
-            transform: translateX(16vw) translateY(0.75rem) scale(0.96);
+            opacity: 0.32 !important;
+            transform: translateX(9vw) translateY(1.25rem) scale(1.05);
           }
 
           .home-static-layout > section:first-of-type > div {
@@ -168,13 +172,15 @@ export function MobileHomeGBackground() {
             padding-bottom: 3.5rem !important;
           }
 
-          .home-static-layout .home-static-scene::before {
+          .home-static-layout .home-static-scene::before,
+          .home-proof-sections::before {
             background:
+              radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.2), transparent 18rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.12),
-                rgba(7, 8, 12, 0.3) 42%,
-                rgba(7, 8, 12, 0.46)
+                rgba(7, 8, 12, 0.1),
+                rgba(7, 8, 12, 0.26) 42%,
+                rgba(7, 8, 12, 0.42)
               );
           }
         }
@@ -197,7 +203,7 @@ export function MobileHomeGBackground() {
         <div className="absolute right-[-5rem] top-[7rem] h-72 w-72 rounded-full bg-[#7c5cff]/12 blur-[76px] sm:right-[3rem] sm:top-[5rem] sm:h-96 sm:w-96" />
         <div className="absolute bottom-[10%] left-[-5rem] h-56 w-56 rounded-full bg-[#29d6ff]/7 blur-[72px] md:left-[8%] md:h-72 md:w-72" />
 
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,12,.01),rgba(7,8,12,.12)_38%,rgba(7,8,12,.34)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,12,.01),rgba(7,8,12,.08)_38%,rgba(7,8,12,.26)_100%)]" />
       </div>
     </>
   );
