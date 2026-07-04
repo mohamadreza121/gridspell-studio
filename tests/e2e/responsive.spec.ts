@@ -7,6 +7,12 @@ const publicRoutes = [
   "/work/gridspell-studio",
   "/work/network-engineering-portfolio",
   "/services",
+  "/services/business-websites",
+  "/services/website-redesign",
+  "/services/landing-pages",
+  "/services/client-portals",
+  "/services/full-stack-apps",
+  "/services/care-plans",
   "/process",
   "/pricing",
   "/about",
@@ -103,6 +109,12 @@ test.describe("responsive marketing pages", () => {
         await expect(
           page.locator(".small-phone-home-pricing, .small-phone-home-pricing-only")
         ).toHaveCount(0);
+      }
+
+      if (route.startsWith("/services/")) {
+        await expect(page.getByText(/Why it matters/i)).toBeVisible();
+        await expect(page.getByText(/Outcomes/i)).toBeVisible();
+        await expect(page.getByText(/Core deliverables/i)).toBeVisible();
       }
 
       if (isSmallPhoneProject(testInfo.project.name) && route === "/") {

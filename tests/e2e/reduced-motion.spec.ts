@@ -5,6 +5,8 @@ const routes = [
   "/work",
   "/work/gridspell-studio",
   "/services",
+  "/services/business-websites",
+  "/services/client-portals",
   "/pricing",
   "/start-project",
   "/about",
