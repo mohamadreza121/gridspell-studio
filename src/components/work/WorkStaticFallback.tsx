@@ -2,11 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, ExternalLink } from "lucide-react";
 
+import { ExperienceLab } from "@/components/work/experience-lab/ExperienceLab";
 import { Container } from "@/components/ui/Container";
 import { featuredProjects, type FeaturedProject } from "@/config/work";
 
 function startProjectHref(project: FeaturedProject) {
-  const packageId = project.slug === "gridspell-studio" ? "custom" : project.slug === "network-engineering-portfolio" ? "launch" : "growth";
+  const packageId =
+    project.slug === "gridspell-studio"
+      ? "custom"
+      : project.slug === "network-engineering-portfolio"
+        ? "launch"
+        : "growth";
   const params = new URLSearchParams({ package: packageId, source: project.slug });
 
   return `/start-project?${params.toString()}`;
@@ -35,7 +41,11 @@ export function WorkStaticFallback() {
             the system behind the interface, and the result the website is meant to support.
           </p>
         </div>
+      </Container>
 
+      <ExperienceLab />
+
+      <Container className="relative">
         <div className="mt-16 grid gap-16">
           {featuredProjects.map((project, index) => (
             <article
