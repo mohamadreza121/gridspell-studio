@@ -81,21 +81,21 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
       "max-image-preview": "large",
-      "max-snippet": -1
+      "max-snippet": -1,
+      "max-video-preview": -1
     }
   },
-  alternates: {
-    canonical: "/"
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
   }
 };
 
 export const viewport: Viewport = {
+  themeColor: "#07080C",
+  colorScheme: "dark",
   width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-  themeColor: "#07080c"
+  initialScale: 1
 };
 
 export default function RootLayout({
@@ -104,11 +104,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-[#07080c] antialiased">
-      <body className="bg-[#07080c] text-white">
-        <GoogleAnalytics />
+    <html lang="en" data-scroll-behavior="smooth">
+      <body>
         <TinyPhoneNav accountHref="/login" accountLabel="Client login" />
-        <Suspense fallback={null}>{children}</Suspense>
+        {children}
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
       </body>
     </html>
   );
