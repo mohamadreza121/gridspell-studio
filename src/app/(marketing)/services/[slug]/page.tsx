@@ -40,7 +40,7 @@ export default async function Page({ params }: Props) {
     <>
       <PageIntro
         eyebrow={`Service ${service.number}`}
-        title={service.title}
+        title={service.salesHeadline}
         description={service.summary}
       />
       <section className="py-20 lg:py-28">
