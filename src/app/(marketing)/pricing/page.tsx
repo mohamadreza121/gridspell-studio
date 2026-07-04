@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { PricingExperience } from "@/components/pricing/PricingExperience";
+import { PricingClarityExperience } from "@/components/pricing/PricingClarityExperience";
 import { SmallPhonePricingFallback } from "@/components/pricing/SmallPhonePricingFallback";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -18,7 +18,7 @@ export default function PricingPage() {
         <SmallPhonePricingFallback />
       </div>
       <div className="pricing-experience-shell">
-        <PricingExperience />
+        <PricingClarityExperience />
       </div>
     </>
   );
