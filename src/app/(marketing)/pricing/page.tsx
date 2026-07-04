@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PricingExperience } from "@/components/pricing/PricingExperience";
+import { SmallPhonePricingFallback } from "@/components/pricing/SmallPhonePricingFallback";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -11,5 +12,14 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function PricingPage() {
-  return <PricingExperience />;
+  return (
+    <>
+      <div className="small-phone-pricing-only">
+        <SmallPhonePricingFallback />
+      </div>
+      <div className="pricing-experience-shell">
+        <PricingExperience />
+      </div>
+    </>
+  );
 }

@@ -4,6 +4,7 @@ import { HomeBackgroundBoundary } from "@/components/home/HomeBackgroundBoundary
 import { HomeExperience } from "@/components/home/HomeExperience";
 import { HomeHeroActionsPlacement } from "@/components/home/HomeHeroActionsPlacement";
 import { HomeHeroModeShowcase } from "@/components/home/HomeHeroModeShowcase";
+import { SmallPhoneHomePricing } from "@/components/home/SmallPhoneHomePricing";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -18,6 +19,9 @@ export default function HomePage() {
     <>
       <HomeBackgroundBoundary />
       <HomeExperience />
+      <div className="small-phone-home-pricing-only">
+        <SmallPhoneHomePricing />
+      </div>
       <HomeHeroModeShowcase />
       <HomeHeroActionsPlacement />
     </>

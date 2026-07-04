@@ -1,0 +1,373 @@
+/*
+ * Small-phone compatibility layer.
+ * Keep this file scoped to narrow screens so tablet and desktop layouts remain unchanged.
+ */
+
+.tiny-phone-nav,
+.small-phone-pricing-only,
+.small-phone-home-pricing-only,
+.small-phone-case-study-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .pricing-reveal,
+  .pricing-above-fold {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 379px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  main {
+    overflow-x: clip;
+  }
+
+  a,
+  button,
+  label {
+    touch-action: manipulation;
+  }
+
+  .page-grid {
+    background-size: 42px 42px;
+  }
+
+  .glass-panel {
+    border-radius: 1.25rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  a,
+  button,
+  span {
+    overflow-wrap: anywhere;
+  }
+
+  .home-static-layout {
+    background: transparent !important;
+  }
+
+  .home-static-scene {
+    padding-block: 4rem;
+  }
+
+  .home-static-layout > section:first-of-type {
+    background: transparent !important;
+  }
+
+  .home-static-layout > section:first-of-type .bg-clip-text.text-transparent {
+    background-image: none !important;
+    color: #8be9ff !important;
+    -webkit-text-fill-color: #8be9ff !important;
+  }
+
+  .home-static-layout > section:first-of-type h1 {
+    max-width: 12ch;
+  }
+
+  .tiny-nav {
+    display: none !important;
+  }
+
+  .tiny-phone-nav {
+    pointer-events: auto;
+    position: fixed;
+    top: 1.25rem;
+    right: 1rem;
+    z-index: 240;
+    display: block;
+  }
+
+  .tiny-phone-nav__input {
+    position: fixed;
+    left: -9999px;
+    opacity: 0;
+  }
+
+  .tiny-phone-nav__button {
+    position: relative;
+    z-index: 250;
+    display: grid;
+    height: 3rem;
+    width: 3rem;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    background: rgba(7, 8, 12, 0.72);
+    color: #ffffff;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    cursor: pointer;
+  }
+
+  .tiny-phone-nav__icon {
+    position: relative;
+    display: block;
+    height: 0.875rem;
+    width: 1.25rem;
+  }
+
+  .tiny-phone-nav__icon span {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .tiny-phone-nav__icon span:nth-child(1) {
+    top: 0;
+    width: 1.25rem;
+  }
+
+  .tiny-phone-nav__icon span:nth-child(2) {
+    top: 50%;
+    right: 0;
+    left: auto;
+    width: 0.875rem;
+    transform: translateY(-50%);
+  }
+
+  .tiny-phone-nav__icon span:nth-child(3) {
+    bottom: 0;
+    width: 1.25rem;
+  }
+
+  .tiny-phone-nav__panel {
+    position: fixed;
+    z-index: 245;
+    inset: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background:
+      radial-gradient(circle at 88% 12%, rgba(41, 214, 255, 0.12), transparent 16rem),
+      radial-gradient(circle at 8% 86%, rgba(124, 92, 255, 0.16), transparent 18rem),
+      #07080c;
+    color: #ffffff;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.75rem);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 180ms ease;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tiny-phone-nav__input:checked ~ .tiny-phone-nav__panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .tiny-phone-nav__panel::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity: 0.55;
+  }
+
+  .tiny-phone-nav__panel-inner {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding: 5.75rem 1rem 1.5rem;
+  }
+
+  .tiny-phone-nav__panel-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 1rem;
+  }
+
+  .tiny-phone-nav__eyebrow {
+    color: #8be9ff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  .tiny-phone-nav__close {
+    display: grid;
+    height: 2.75rem;
+    width: 2.75rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid rgba(139, 233, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(139, 233, 255, 0.07);
+    color: #8be9ff;
+    font-size: 1.7rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .tiny-phone-nav__links {
+    display: grid;
+    margin-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .tiny-phone-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.86rem 0;
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  .tiny-phone-nav__link span {
+    width: 1.75rem;
+    flex: 0 0 auto;
+    color: #8be9ff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+  }
+
+  .tiny-phone-nav__link strong {
+    font-family: "Segoe UI Variable Display", Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1.7rem, 10vw, 2.55rem);
+    font-weight: 650;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+  }
+
+  .tiny-phone-nav__actions {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .tiny-phone-nav__cta,
+  .tiny-phone-nav__secondary,
+  .tiny-phone-nav__email {
+    display: flex;
+    min-height: 3.35rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 750;
+  }
+
+  .tiny-phone-nav__cta {
+    background: linear-gradient(135deg, #7c5cff 0%, #6477ff 48%, #29d6ff 100%);
+    color: #ffffff;
+    box-shadow: 0 20px 70px rgba(41, 214, 255, 0.16);
+  }
+
+  .tiny-phone-nav__secondary,
+  .tiny-phone-nav__email {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .tiny-phone-nav__email {
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  .tiny-phone-nav__note {
+    margin-top: 1rem;
+    border: 1px solid rgba(139, 233, 255, 0.12);
+    border-radius: 1.25rem;
+    background: rgba(139, 233, 255, 0.045);
+    padding: 0.9rem;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+
+  .pricing-experience-shell,
+  .case-study-device-showcase {
+    display: none !important;
+  }
+
+  .small-phone-pricing-only,
+  .small-phone-home-pricing-only,
+  .small-phone-case-study-only {
+    display: block;
+  }
+
+  .small-phone-pricing-page,
+  .small-phone-home-pricing,
+  .small-phone-case-study {
+    position: relative;
+    overflow: hidden;
+    background: #07080c;
+    color: #ffffff;
+  }
+
+  .small-phone-pricing-page,
+  .small-phone-case-study {
+    padding: 7rem 0 4rem;
+  }
+
+  .small-phone-home-pricing {
+    padding: 4.25rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.055);
+  }
+
+  .small-phone-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 1.4rem;
+    background: rgba(255, 255, 255, 0.028);
+    padding: 1rem;
+  }
+
+  .small-phone-card--featured {
+    border-color: rgba(139, 233, 255, 0.24);
+    background:
+      radial-gradient(circle at 88% 0%, rgba(41, 214, 255, 0.1), transparent 12rem),
+      rgba(124, 92, 255, 0.075);
+  }
+
+  .small-phone-button {
+    display: inline-flex;
+    min-height: 3.15rem;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #7c5cff 0%, #6477ff 48%, #29d6ff 100%);
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 750;
+  }
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .bg-clip-text.text-transparent {
+    color: #8be9ff !important;
+    -webkit-text-fill-color: #8be9ff !important;
+  }
+}
