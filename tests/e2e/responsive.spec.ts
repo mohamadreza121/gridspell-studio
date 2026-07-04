@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const publicRoutes = [
   "/",
@@ -39,7 +39,7 @@ function isSmallPhoneProject(projectName: string) {
   return projectName === "small-phone-chromium";
 }
 
-async function expectHomepageProofContent(page: Parameters<Parameters<typeof test>[1]>[0]["page"]) {
+async function expectHomepageProofContent(page: Page) {
   await expect(
     page.getByRole("heading", {
       name: /Real proof, not just polish/i
