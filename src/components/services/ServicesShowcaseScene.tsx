@@ -26,13 +26,6 @@ import { cn } from "@/lib/utils";
 
 const SERVICE_COUNT = services.length;
 
-type SceneTimeline = {
-  input: number[];
-  opacity: number[];
-  localProgress: number[];
-};
-
-
 const serviceSceneClassMap: Record<
   string,
   {
@@ -45,8 +38,15 @@ const serviceSceneClassMap: Record<
     title: "services-scene__title--business"
   },
   "care-plans": {
-    visual: "services-scene__visual--care"
+    visual: "services-scene__visual--care",
+    title: "services-scene__title--care"
   }
+};
+
+type SceneTimeline = {
+  input: number[];
+  opacity: number[];
+  localProgress: number[];
 };
 
 function getSceneTimeline(
