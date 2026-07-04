@@ -18,6 +18,12 @@
   }
 }
 
+@media (max-width: 1279px) {
+  .home-static-layout > section:last-of-type {
+    display: none !important;
+  }
+}
+
 @media (max-width: 379px) {
   html,
   body {
