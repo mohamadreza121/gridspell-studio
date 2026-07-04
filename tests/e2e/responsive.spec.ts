@@ -1,8 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const publicRoutes = [
   "/",
   "/work",
+  "/work/desa-foam-insulation",
+  "/work/gridspell-studio",
+  "/work/network-engineering-portfolio",
   "/services",
   "/process",
   "/pricing",
@@ -31,6 +34,30 @@ const turnstileStub = `
     remove: function () {}
   };
 `;
+
+function isSmallPhoneProject(projectName: string) {
+  return projectName === "small-phone-chromium";
+}
+
+async function expectHomepageProofContent(page: Page) {
+  await expect(
+    page.getByRole("heading", {
+      name: /Real proof, not just polish/i
+    })
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole("heading", {
+      name: /More than a pretty homepage/i
+    })
+  ).toBeVisible();
+
+  await expect(page.getByRole("heading", { name: /DESA Foam Insulation/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /GridSpell Studio/i })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /Network Engineering Portfolio/i })
+  ).toBeVisible();
+}
 
 test.describe("responsive marketing pages", () => {
   test.beforeEach(async ({ page }) => {
@@ -70,10 +97,15 @@ test.describe("responsive marketing pages", () => {
       await expect(page.locator("body")).toBeVisible();
       await page.waitForTimeout(250);
 
-      if (
-        testInfo.project.name === "small-phone-chromium" &&
-        route === "/"
-      ) {
+      if (route === "/") {
+        await expectHomepageProofContent(page);
+
+        await expect(
+          page.locator(".small-phone-home-pricing, .small-phone-home-pricing-only")
+        ).toHaveCount(0);
+      }
+
+      if (isSmallPhoneProject(testInfo.project.name) && route === "/") {
         const tinyMenuButton = page.locator(
           'label[for="tiny-phone-nav-toggle"].tiny-phone-nav__button'
         );
@@ -113,15 +145,25 @@ test.describe("responsive marketing pages", () => {
         await expect(tinyMenuPanel).toBeHidden();
       }
 
-      if (
-        testInfo.project.name === "small-phone-chromium" &&
-        route === "/pricing"
-      ) {
+      if (isSmallPhoneProject(testInfo.project.name) && route === "/pricing") {
         await expect(
           page.getByRole("heading", {
             level: 1,
             name: /Choose a starting point/i
           })
+        ).toBeVisible();
+      }
+
+      if (route === "/work/gridspell-studio") {
+        await expect(
+          page.getByRole("heading", {
+            level: 1,
+            name: /GridSpell Studio/i
+          })
+        ).toBeVisible();
+
+        await expect(
+          page.getByText(/studio website that proves the offer/i)
         ).toBeVisible();
       }
 
