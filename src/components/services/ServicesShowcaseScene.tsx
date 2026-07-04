@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { type CSSProperties, useRef, useState } from "react";
 import {
   motion,
   type MotionValue,
@@ -48,6 +48,19 @@ const serviceSceneClassMap: Record<
     title: "services-scene__title--care"
   }
 };
+
+function getSceneTitleStyle(slug: string): CSSProperties | undefined {
+  if (slug !== "business-websites" && slug !== "care-plans") {
+    return undefined;
+  }
+
+  return {
+    fontSize: "clamp(2.15rem, 3.05vw, 4.25rem)",
+    lineHeight: 0.9,
+    letterSpacing: "-0.061em",
+    maxWidth: "12.8ch"
+  };
+}
 
 function getSceneTimeline(
   index: number,
@@ -136,6 +149,7 @@ function ServiceChapter({
   const first = index === 0;
   const last = index === count - 1;
   const sceneClasses = serviceSceneClassMap[service.slug] ?? {};
+  const titleStyle = getSceneTitleStyle(service.slug);
 
   const localProgress = useTransform(
     progress,
@@ -321,6 +335,7 @@ function ServiceChapter({
             "services-scene__title mt-6 text-balance font-display text-[clamp(3rem,4.65vw,5.9rem)] font-semibold leading-[0.85] tracking-[-0.073em] text-white",
             sceneClasses.title
           )}
+          style={titleStyle}
         >
           {service.title}
         </h2>
