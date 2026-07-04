@@ -13,6 +13,17 @@ function highRange(startingPrice: number) {
   return startingPrice + Math.max(700, Math.round((startingPrice * 0.15) / 50) * 50);
 }
 
+function startProjectHref(item: (typeof packages)[number], high: number) {
+  const params = new URLSearchParams({
+    package: item.id,
+    estimateLow: String(item.startingPrice),
+    estimateHigh: String(high),
+    timeline: item.timeline
+  });
+
+  return `/start-project?${params.toString()}`;
+}
+
 export function SmallPhoneHomePricing() {
   return (
     <section className="small-phone-home-pricing">
@@ -36,7 +47,7 @@ export function SmallPhoneHomePricing() {
             return (
               <a
                 key={item.id}
-                href={`/start-project?package=${item.id}&estimateLow=${item.startingPrice}&estimateHigh=${high}`}
+                href={startProjectHref(item, high)}
                 className={item.highlighted ? "small-phone-card small-phone-card--featured block" : "small-phone-card block"}
               >
                 <div className="flex items-start justify-between gap-4">

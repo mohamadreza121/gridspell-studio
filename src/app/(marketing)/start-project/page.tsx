@@ -18,18 +18,18 @@ export const metadata: Metadata = createPageMetadata({
 const nextSteps = [
   {
     icon: SearchCheck,
-    title: "Fit and scope review",
-    text: "GridSpell checks the goals, required functionality, budget, and timeline."
+    title: "Scope and fit review",
+    text: "GridSpell checks the package, business goal, budget range, timeline, and required services."
   },
   {
     icon: Clock3,
-    title: "Discovery conversation",
-    text: "Qualified projects move into a focused conversation about priorities and constraints."
+    title: "Practical recommendation",
+    text: "You receive a clear next step: a proposal path, paid discovery, or a better-fit alternative."
   },
   {
     icon: ArrowRight,
-    title: "Recommended next step",
-    text: "You receive a clear direction: proposal, paid discovery, or a more suitable alternative."
+    title: "Proposal or project plan",
+    text: "Qualified projects move into a focused scope, timeline, payment structure, and launch plan."
   }
 ];
 
@@ -38,8 +38,8 @@ export default function StartProjectPage() {
     <>
       <PageIntro
         eyebrow="Start a project"
-        title="Tell us what needs to change."
-        description="The best projects begin with a clear business problem, a realistic investment, and shared expectations."
+        title="Tell GridSpell what you are building."
+        description="Use this form to share the business goal, package, budget range, timeline, and services needed. You will receive a practical recommendation before anything is approved."
       />
 
       <section className="py-20 lg:py-28">
@@ -73,14 +73,24 @@ export default function StartProjectPage() {
             <div className="mt-5 rounded-[2rem] border border-[#7c5cff]/24 bg-[#7c5cff]/7 p-6 sm:p-8">
               <div className="flex items-center gap-3">
                 <CircleCheck className="h-5 w-5 text-[#8be9ff]" />
-                <p className="text-sm font-semibold">A strong fit usually includes</p>
+                <p className="text-sm font-semibold">A strong inquiry includes</p>
               </div>
               <ul className="mt-5 grid gap-3 text-sm leading-7 text-white/42">
-                <li>An established business or serious product idea</li>
-                <li>A decision maker involved in the project</li>
-                <li>A realistic budget and timeline</li>
-                <li>Willingness to provide content and feedback</li>
+                <li>A clear business goal or problem to solve</li>
+                <li>The current website or brand context</li>
+                <li>A realistic budget range and timeline</li>
+                <li>Services needed, such as design, development, SEO, booking, CRM, or support</li>
               </ul>
+            </div>
+
+            <div className="mt-5 rounded-[2rem] border border-[#8be9ff]/18 bg-[#8be9ff]/6 p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
+                Pricing note
+              </p>
+              <p className="mt-4 text-sm leading-7 text-white/44">
+                Payment plans are available for approved projects. The form captures your
+                package and budget range so the first reply is specific, not generic.
+              </p>
             </div>
           </aside>
 

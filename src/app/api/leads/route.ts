@@ -6,6 +6,7 @@ import {
   experienceScenes,
   motionOptions
 } from "@/config/experience-lab";
+import { packages } from "@/config/packages";
 import {
   adminLeadNotificationTemplate,
   leadConfirmationTemplate
@@ -18,8 +19,19 @@ import { verifyTurnstile } from "@/lib/security/turnstile";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { leadSubmissionSchema } from "@/validations/lead";
 
-const MAX_BODY_BYTES = 24_000;
+const MAX_BODY_BYTES = 40_000;
 const MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
+const INTAKE_DETAILS_MARKER = "--- Project intake details ---";
+
+type ProjectIntakeLead = {
+  currentWebsite?: string | null;
+  selectedPackage?: string | null;
+  estimateLow?: number;
+  estimateHigh?: number;
+  pricingTimeline?: string | null;
+  addOns?: string | null;
+  servicesNeeded: string[];
+};
 
 function jsonError(message: string, status: number, retryAfter?: number) {
   return NextResponse.json(
@@ -61,6 +73,60 @@ function getExperienceSelection(request: Request) {
   } catch {
     return null;
   }
+}
+
+function packageLabel(packageId?: string | null) {
+  if (!packageId) return null;
+  const selectedPackage = packages.find((item) => item.id === packageId);
+  return selectedPackage ? `${selectedPackage.name} (${selectedPackage.price})` : packageId;
+}
+
+function formatCurrency(value?: number | null) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+
+  return new Intl.NumberFormat("en-CA", {
+    style: "currency",
+    currency: "CAD",
+    maximumFractionDigits: 0
+  }).format(value);
+}
+
+function estimateRange(input: { estimateLow?: number; estimateHigh?: number }) {
+  const low = formatCurrency(input.estimateLow);
+  const high = formatCurrency(input.estimateHigh);
+
+  if (low && high) return `${low}–${high}`;
+  if (low) return low;
+  if (high) return high;
+  return null;
+}
+
+function buildProjectIntakeDetails(lead: ProjectIntakeLead) {
+  const rows: Array<[string, string | null | undefined]> = [
+    ["Current website", lead.currentWebsite],
+    ["Selected package", packageLabel(lead.selectedPackage)],
+    ["Planning range", estimateRange(lead)],
+    ["Pricing timeline", lead.pricingTimeline],
+    ["Selected additions", lead.addOns],
+    ["Services needed", lead.servicesNeeded.length ? lead.servicesNeeded.join(", ") : null]
+  ];
+
+  return rows
+    .filter(([, value]) => value)
+    .map(([label, value]) => `${label}: ${value}`)
+    .join("\n");
+}
+
+function getEstimatedValue(input: { estimateLow?: number; estimateHigh?: number }) {
+  if (typeof input.estimateHigh === "number" && Number.isFinite(input.estimateHigh)) {
+    return input.estimateHigh;
+  }
+
+  if (typeof input.estimateLow === "number" && Number.isFinite(input.estimateLow)) {
+    return input.estimateLow;
+  }
+
+  return null;
 }
 
 export async function POST(request: Request) {
@@ -146,9 +212,19 @@ export async function POST(request: Request) {
     }
 
     const experienceSelection = getExperienceSelection(request);
-    const messageForStorage = experienceSelection
-      ? `${lead.message}\n\nExperience Lab selection:\n${experienceSelection}`
-      : lead.message;
+    const projectIntakeDetails = buildProjectIntakeDetails(lead);
+    const messageBlocks = [lead.message];
+
+    if (projectIntakeDetails) {
+      messageBlocks.push(`${INTAKE_DETAILS_MARKER}\n${projectIntakeDetails}`);
+    }
+
+    if (experienceSelection) {
+      messageBlocks.push(`Experience Lab selection:\n${experienceSelection}`);
+    }
+
+    const messageForStorage = messageBlocks.join("\n\n");
+    const estimatedValue = getEstimatedValue(lead);
 
     const admin = createAdminClient();
     const { data, error } = await admin
@@ -160,8 +236,9 @@ export async function POST(request: Request) {
         phone: lead.phone || null,
         project_type: lead.projectType,
         budget_range: lead.budget,
-        timeline: lead.timeline || null,
+        timeline: lead.timeline || lead.pricingTimeline || null,
         message: messageForStorage,
+        estimated_value: estimatedValue,
         source: "website"
       })
       .select("id")
@@ -182,7 +259,10 @@ export async function POST(request: Request) {
         template: leadConfirmationTemplate({
           name: lead.name,
           projectType: lead.projectType,
-          timeline: lead.timeline,
+          selectedPackage: packageLabel(lead.selectedPackage),
+          budget: lead.budget,
+          timeline: lead.timeline || lead.pricingTimeline,
+          estimatedRange: estimateRange(lead),
           siteUrl
         }),
         replyTo: adminEmail || undefined,
@@ -198,10 +278,16 @@ export async function POST(request: Request) {
             name: lead.name,
             email: lead.email,
             company: lead.company,
+            phone: lead.phone,
+            currentWebsite: lead.currentWebsite,
             projectType: lead.projectType,
+            selectedPackage: packageLabel(lead.selectedPackage),
             budget: lead.budget,
-            timeline: lead.timeline,
-            message: messageForStorage,
+            estimatedRange: estimateRange(lead),
+            timeline: lead.timeline || lead.pricingTimeline,
+            servicesNeeded: lead.servicesNeeded,
+            addOns: lead.addOns,
+            message: lead.message,
             adminUrl: `${siteUrl}/admin/leads`
           }),
           replyTo: lead.email,
