@@ -1,38 +1,16 @@
-/* Stable scene-specific sizing fixes for /services.
-   The transform is applied to an inner div so it does not fight Motion transforms.
-*/
-
 @media (min-width: 1280px) {
-  .services-scene__visual {
-    transform-origin: center center;
-  }
-
-  .services-scene__visual--business {
-    max-width: 34rem;
-    transform: scale(0.86);
-  }
-
-  .services-scene__visual--care {
-    max-width: 34rem;
-    transform: scale(0.86);
-  }
-
-  .services-scene__title--business {
-    max-width: 11.2ch;
-    font-size: clamp(2.7rem, 4vw, 5rem) !important;
-    line-height: 0.88 !important;
-    letter-spacing: -0.07em !important;
+  .services-scene__title--business,
+  .services-scene__title--care {
+    max-width: 16ch !important;
+    font-size: clamp(2rem, 2.5vw, 3.55rem) !important;
+    line-height: 0.96 !important;
+    letter-spacing: -0.055em !important;
   }
 }
 
 @media (min-width: 1536px) {
-  .services-scene__visual--business {
-    max-width: 36rem;
-    transform: scale(0.88);
-  }
-
-  .services-scene__visual--care {
-    max-width: 36rem;
-    transform: scale(0.88);
+  .services-scene__title--business,
+  .services-scene__title--care {
+    font-size: clamp(2.1rem, 2.45vw, 3.75rem) !important;
   }
 }
