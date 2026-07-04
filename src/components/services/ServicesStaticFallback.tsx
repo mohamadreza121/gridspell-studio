@@ -19,7 +19,7 @@ export function ServicesStaticFallback() {
           </p>
 
           <h1 className="mt-7 text-balance font-display text-[clamp(4rem,12vw,7.6rem)] font-semibold leading-[0.82] tracking-[-0.075em] text-white">
-            A complete digital partner.
+            Clear websites. Useful systems.
           </h1>
 
           <p className="mt-7 max-w-2xl text-base leading-8 text-white/45 sm:text-lg">
