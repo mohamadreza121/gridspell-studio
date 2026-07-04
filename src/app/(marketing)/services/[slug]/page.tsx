@@ -43,6 +43,18 @@ export default async function Page({ params }: Props) {
         title={service.salesHeadline}
         description={service.summary}
       />
+      <section className="border-y border-white/[0.07] bg-white/[0.012] py-20 lg:py-28">
+        <Container className="grid gap-5 lg:grid-cols-2">
+          <article className="rounded-[2rem] border border-white/[0.09] bg-white/[0.025] p-6 sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#8be9ff]">Why it matters</p>
+            <p className="mt-5 text-base leading-8 text-white/52">{service.problem}</p>
+          </article>
+          <article className="rounded-[2rem] border border-[#8be9ff]/18 bg-[#8be9ff]/6 p-6 sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#8be9ff]">GridSpell approach</p>
+            <p className="mt-5 text-base leading-8 text-white/58">{service.promise}</p>
+          </article>
+        </Container>
+      </section>
       <section className="py-20 lg:py-28">
         <Container className="grid gap-14 lg:grid-cols-[.8fr_1.2fr]">
           <div>
@@ -55,10 +67,7 @@ export default async function Page({ params }: Props) {
             </p>
             <ul className="mt-8 grid gap-5">
               {service.outcomes.map((item) => (
-                <li
-                  key={item}
-                  className="flex gap-4 border-b border-white/[.07] pb-5 text-lg text-white/62"
-                >
+                <li key={item} className="flex gap-4 border-b border-white/[.07] pb-5 text-lg text-white/62">
                   <CheckCircle2 className="mt-1 h-5 w-5 text-[#8be9ff]" />
                   {item}
                 </li>
