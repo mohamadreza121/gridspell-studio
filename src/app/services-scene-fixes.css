@@ -1,0 +1,30 @@
+/* Desktop service showcase refinements.
+ * Keeps the first and last animated service scenes balanced with the middle scenes.
+ */
+
+@media (min-width: 1280px) {
+  div[class*="relative min-h-0 flex-1"] > section:first-child > div:nth-of-type(2) > div {
+    max-width: 560px !important;
+  }
+
+  div[class*="relative min-h-0 flex-1"] > section:last-child > div:nth-of-type(2) > div {
+    max-width: 590px !important;
+  }
+
+  div[class*="relative min-h-0 flex-1"] > section:first-child > div:nth-of-type(3) h2 {
+    font-size: clamp(2.65rem, 4.05vw, 5.15rem) !important;
+    line-height: 0.88 !important;
+    letter-spacing: -0.068em !important;
+    max-width: 11.5ch;
+  }
+}
+
+@media (min-width: 1536px) {
+  div[class*="relative min-h-0 flex-1"] > section:first-child > div:nth-of-type(2) > div {
+    max-width: 600px !important;
+  }
+
+  div[class*="relative min-h-0 flex-1"] > section:last-child > div:nth-of-type(2) > div {
+    max-width: 620px !important;
+  }
+}
