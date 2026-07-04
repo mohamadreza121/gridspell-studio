@@ -3,11 +3,8 @@ import {
   ArrowUpRight,
   BarChart3,
   CheckCircle2,
-  FileText,
   Gauge,
-  Layers3,
   LayoutDashboard,
-  MailCheck,
   MessageSquareText,
   SearchCheck,
   ShieldCheck,
@@ -68,15 +65,19 @@ const buildFacts = [
   "SEO-ready metadata, sitemap, and page architecture"
 ] as const;
 
-function startProjectHref(project: FeaturedProject) {
-  const type = project.slug === "gridspell-studio"
-    ? "Full-stack web application"
-    : project.slug === "network-engineering-portfolio"
-      ? "Business website"
-      : "Business website";
+const projectPackageMap: Record<string, { id: string; low: number; high: number; timeline: string }> = {
+  "desa-foam-insulation": { id: "growth", low: 4500, high: 5200, timeline: "5–7 weeks" },
+  "gridspell-studio": { id: "custom", low: 7500, high: 8650, timeline: "8+ weeks" },
+  "network-engineering-portfolio": { id: "launch", low: 1800, high: 2500, timeline: "3–4 weeks" }
+};
 
+function startProjectHref(project: FeaturedProject) {
+  const packageInfo = projectPackageMap[project.slug] ?? projectPackageMap["desa-foam-insulation"];
   const params = new URLSearchParams({
-    projectType: type,
+    package: packageInfo.id,
+    estimateLow: String(packageInfo.low),
+    estimateHigh: String(packageInfo.high),
+    timeline: packageInfo.timeline,
     source: project.slug
   });
 
