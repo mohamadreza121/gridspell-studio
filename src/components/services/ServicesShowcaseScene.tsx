@@ -32,6 +32,23 @@ type SceneTimeline = {
   localProgress: number[];
 };
 
+
+const serviceSceneClassMap: Record<
+  string,
+  {
+    visual?: string;
+    title?: string;
+  }
+> = {
+  "business-websites": {
+    visual: "services-scene__visual--business",
+    title: "services-scene__title--business"
+  },
+  "care-plans": {
+    visual: "services-scene__visual--care"
+  }
+};
+
 function getSceneTimeline(
   index: number,
   count: number
@@ -118,6 +135,7 @@ function ServiceChapter({
 
   const first = index === 0;
   const last = index === count - 1;
+  const sceneClasses = serviceSceneClassMap[service.slug] ?? {};
 
   const localProgress = useTransform(
     progress,
@@ -262,11 +280,18 @@ function ServiceChapter({
           transformOrigin: "50% 50%"
         }}
       >
-        <ServiceVisual
-          index={index}
-          progress={localProgress}
-          active={active}
-        />
+        <div
+          className={cn(
+            "services-scene__visual relative mx-auto w-full",
+            sceneClasses.visual
+          )}
+        >
+          <ServiceVisual
+            index={index}
+            progress={localProgress}
+            active={active}
+          />
+        </div>
       </motion.div>
 
       {/* Service content */}
@@ -291,7 +316,12 @@ function ServiceChapter({
           </span>
         </div>
 
-        <h2 className="mt-6 text-balance font-display text-[clamp(3rem,4.65vw,5.9rem)] font-semibold leading-[0.85] tracking-[-0.073em] text-white">
+        <h2
+          className={cn(
+            "services-scene__title mt-6 text-balance font-display text-[clamp(3rem,4.65vw,5.9rem)] font-semibold leading-[0.85] tracking-[-0.073em] text-white",
+            sceneClasses.title
+          )}
+        >
           {service.title}
         </h2>
 

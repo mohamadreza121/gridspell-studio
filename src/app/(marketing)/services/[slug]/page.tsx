@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight, CheckCircle2 } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
-import { PageIntro } from "@/components/ui/PageIntro";
 import { packages } from "@/config/packages";
 import { getServiceBySlug, services } from "@/config/services";
 import { createPageMetadata } from "@/lib/metadata";
@@ -12,6 +11,96 @@ import { createPageMetadata } from "@/lib/metadata";
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+const serviceHeroThemes: Record<
+  string,
+  {
+    eyebrow: string;
+    chips: string[];
+    glowA: string;
+    glowB: string;
+    panelBorder: string;
+    panelBg: string;
+    statLabel: string;
+    statValue: string;
+    statCaption: string;
+  }
+> = {
+  "business-websites": {
+    eyebrow: "Conversion website",
+    chips: ["Positioning", "Proof", "Lead capture"],
+    glowA: "bg-[radial-gradient(circle,rgba(41,214,255,0.22),transparent_62%)]",
+    glowB: "bg-[radial-gradient(circle,rgba(124,92,255,0.20),transparent_64%)]",
+    panelBorder: "border-[#8be9ff]/20",
+    panelBg:
+      "bg-[linear-gradient(145deg,rgba(11,13,19,0.94),rgba(41,214,255,0.08))]",
+    statLabel: "Primary goal",
+    statValue: "Convert more qualified visitors",
+    statCaption: "Clear message, stronger proof, better next step"
+  },
+  "website-redesign": {
+    eyebrow: "Strategic relaunch",
+    chips: ["Audit", "Restructure", "Relaunch"],
+    glowA: "bg-[radial-gradient(circle,rgba(124,92,255,0.24),transparent_62%)]",
+    glowB: "bg-[radial-gradient(circle,rgba(100,119,255,0.18),transparent_64%)]",
+    panelBorder: "border-[#7c5cff]/20",
+    panelBg:
+      "bg-[linear-gradient(145deg,rgba(11,13,19,0.94),rgba(124,92,255,0.08))]",
+    statLabel: "Primary goal",
+    statValue: "Fix what is underperforming",
+    statCaption: "Better clarity, better structure, better trust"
+  },
+  "landing-pages": {
+    eyebrow: "Campaign page",
+    chips: ["Offers", "Testing", "Conversion"],
+    glowA: "bg-[radial-gradient(circle,rgba(255,120,214,0.20),transparent_60%)]",
+    glowB: "bg-[radial-gradient(circle,rgba(41,214,255,0.18),transparent_65%)]",
+    panelBorder: "border-pink-400/20",
+    panelBg:
+      "bg-[linear-gradient(145deg,rgba(11,13,19,0.94),rgba(255,120,214,0.08))]",
+    statLabel: "Primary goal",
+    statValue: "Turn campaigns into enquiries",
+    statCaption: "Focused pages built to reduce drop-off"
+  },
+  "client-portals": {
+    eyebrow: "Private workflow system",
+    chips: ["Accounts", "Permissions", "Workflow"],
+    glowA: "bg-[radial-gradient(circle,rgba(41,214,255,0.22),transparent_62%)]",
+    glowB: "bg-[radial-gradient(circle,rgba(86,255,180,0.16),transparent_65%)]",
+    panelBorder: "border-cyan-400/20",
+    panelBg:
+      "bg-[linear-gradient(145deg,rgba(11,13,19,0.94),rgba(41,214,255,0.08))]",
+    statLabel: "Primary goal",
+    statValue: "Reduce admin work and friction",
+    statCaption: "Client-facing systems that actually improve operations"
+  },
+  "full-stack-apps": {
+    eyebrow: "Custom product build",
+    chips: ["Product", "Logic", "Integrations"],
+    glowA: "bg-[radial-gradient(circle,rgba(100,119,255,0.24),transparent_62%)]",
+    glowB: "bg-[radial-gradient(circle,rgba(41,214,255,0.16),transparent_65%)]",
+    panelBorder: "border-indigo-400/20",
+    panelBg:
+      "bg-[linear-gradient(145deg,rgba(11,13,19,0.94),rgba(100,119,255,0.09))]",
+    statLabel: "Primary goal",
+    statValue: "Build something operationally useful",
+    statCaption: "Purpose-built web apps with business logic and scale in mind"
+  },
+  "care-plans": {
+    eyebrow: "Ongoing support",
+    chips: ["Updates", "Monitoring", "Growth"],
+    glowA: "bg-[radial-gradient(circle,rgba(86,255,180,0.20),transparent_62%)]",
+    glowB: "bg-[radial-gradient(circle,rgba(41,214,255,0.16),transparent_65%)]",
+    panelBorder: "border-emerald-400/20",
+    panelBg:
+      "bg-[linear-gradient(145deg,rgba(11,13,19,0.94),rgba(86,255,180,0.08))]",
+    statLabel: "Primary goal",
+    statValue: "Keep the website reliable after launch",
+    statCaption: "Protection, upkeep, and steady improvement"
+  }
+};
+
+
 
 export function generateStaticParams() {
   return services.map((service) => ({ slug: service.slug }));
@@ -41,13 +130,91 @@ export default async function Page({ params }: Props) {
   const recommendedPackage = packages.find((item) => item.id === service.packageId);
   const relatedServices = services.filter((item) => item.slug !== service.slug).slice(0, 3);
 
+  const heroTheme =
+  serviceHeroThemes[service.slug] ?? serviceHeroThemes["business-websites"];
+
   return (
     <>
-      <PageIntro
-        eyebrow={`Service ${service.number}`}
-        title={service.salesHeadline}
-        description={service.summary}
-      />
+      <section className="relative overflow-hidden border-b border-white/[0.07] bg-[#07080c]">
+        <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-25" />
+
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute left-[-10rem] top-[-4rem] h-[28rem] w-[28rem] rounded-full blur-[110px] ${heroTheme.glowA}`}
+        />
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute right-[-10rem] top-16 h-[30rem] w-[30rem] rounded-full blur-[120px] ${heroTheme.glowB}`}
+        />
+
+        <Container className="relative grid gap-12 pb-16 pt-32 sm:pb-20 sm:pt-36 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:pb-24">
+          <div>
+            <p className="text-[0.66rem] font-semibold uppercase tracking-[0.36em] text-[#8be9ff]">
+              Service {service.number} · {heroTheme.eyebrow}
+            </p>
+
+            <h1 className="mt-6 max-w-[11.5ch] text-balance font-display text-[clamp(3.1rem,8vw,6.4rem)] font-semibold leading-[0.84] tracking-[-0.075em] text-white">
+              {service.salesHeadline}
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/48 sm:text-lg sm:leading-9">
+              {service.summary}
+            </p>
+
+            <div className="mt-7 flex flex-wrap gap-2">
+              {heroTheme.chips.map((chip) => (
+                <span
+                  key={chip}
+                  className="rounded-full border border-white/[0.1] bg-white/[0.03] px-4 py-2 text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-white/46"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div
+            className={`relative overflow-hidden rounded-[2rem] border p-6 sm:p-7 lg:p-8 ${heroTheme.panelBorder} ${heroTheme.panelBg}`}
+          >
+            <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),transparent)]" />
+
+            <div className="relative">
+              <p className="text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-[#8be9ff]">
+                {heroTheme.statLabel}
+              </p>
+
+              <h2 className="mt-5 max-w-[14ch] font-display text-3xl font-semibold leading-[0.94] tracking-[-0.05em] text-white sm:text-[2.5rem]">
+                {heroTheme.statValue}
+              </h2>
+
+              <p className="mt-4 max-w-md text-sm leading-7 text-white/42">
+                {heroTheme.statCaption}
+              </p>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.04] p-4">
+                  <p className="text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-white/28">
+                    Best fit
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-white/54">{service.idealFor}</p>
+                </div>
+
+                <div className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.04] p-4">
+                  <p className="text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-white/28">
+                    Starting point
+                  </p>
+                  <p className="mt-3 font-display text-2xl font-semibold tracking-[-0.045em] text-white">
+                    {recommendedPackage?.name ?? "Custom"}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#8be9ff]">
+                    {recommendedPackage?.price ?? "Quoted by scope"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
       <section className="border-y border-white/[0.07] bg-white/[0.012] py-20 lg:py-28">
         <Container className="grid gap-5 lg:grid-cols-2">
           <article className="rounded-[2rem] border border-white/[0.09] bg-white/[0.025] p-6 sm:p-8">
