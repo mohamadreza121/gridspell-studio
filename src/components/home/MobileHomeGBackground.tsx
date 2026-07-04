@@ -111,10 +111,12 @@ export function MobileHomeGBackground() {
             isolation: isolate;
           }
 
-          .home-static-layout > section {
-            position: relative;
+          .home-static-layout > section,
+          .home-experience + div {
+            position: relative !important;
             z-index: 21;
             isolation: isolate;
+            overflow: hidden;
           }
 
           .home-static-layout > section > *,
@@ -133,13 +135,38 @@ export function MobileHomeGBackground() {
             inset: 0;
             z-index: 0;
             background:
-              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.26), transparent 22rem),
+              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.18), transparent 22rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.16),
-                rgba(7, 8, 12, 0.3) 42%,
-                rgba(7, 8, 12, 0.46)
+                rgba(7, 8, 12, 0.1),
+                rgba(7, 8, 12, 0.22) 42%,
+                rgba(7, 8, 12, 0.34)
               );
+          }
+
+          .home-static-layout > section::after,
+          .home-experience + div::after {
+            content: "G";
+            pointer-events: none;
+            position: absolute;
+            z-index: 1;
+            right: -34vw;
+            top: 2.5rem;
+            width: 130vw;
+            max-width: 42rem;
+            font-family: var(--font-display), Inter, ui-sans-serif, system-ui, sans-serif;
+            font-size: min(130vw, 42rem);
+            font-weight: 800;
+            line-height: 0.78;
+            letter-spacing: -0.14em;
+            color: transparent;
+            -webkit-text-stroke: 0.06em rgba(139, 233, 255, 0.14);
+            background: linear-gradient(145deg, rgba(124, 92, 255, 0.58), rgba(41, 214, 255, 0.42));
+            -webkit-background-clip: text;
+            background-clip: text;
+            opacity: 0.42;
+            filter: blur(0.2px) drop-shadow(0 0 44px rgba(124, 92, 255, 0.18));
+            transform: rotate(-3deg);
           }
 
           .home-static-layout > section:first-of-type::before {
@@ -152,21 +179,30 @@ export function MobileHomeGBackground() {
               linear-gradient(
                 180deg,
                 rgba(7, 8, 12, 0.02),
-                rgba(7, 8, 12, 0.18) 54%,
-                rgba(7, 8, 12, 0.4)
+                rgba(7, 8, 12, 0.14) 54%,
+                rgba(7, 8, 12, 0.32)
               );
           }
         }
 
         @media (max-width: 379px) {
           .home-mobile-g-main {
-            opacity: 0.58 !important;
-            transform: translateX(10vw) translateY(1.25rem) scale(1.05);
+            opacity: 0.62 !important;
+            transform: translateX(7vw) translateY(1rem) scale(1.06);
           }
 
           .home-mobile-g-outline {
-            opacity: 0.32 !important;
-            transform: translateX(9vw) translateY(1.25rem) scale(1.05);
+            opacity: 0.34 !important;
+            transform: translateX(6vw) translateY(1rem) scale(1.06);
+          }
+
+          .home-static-layout > section::after,
+          .home-experience + div::after {
+            right: -39vw;
+            top: 4.4rem;
+            width: 150vw;
+            font-size: min(150vw, 38rem);
+            opacity: 0.38;
           }
 
           .home-static-layout > section:first-of-type > div {
@@ -180,12 +216,12 @@ export function MobileHomeGBackground() {
           .home-proof-sections::before,
           .home-experience + div::before {
             background:
-              radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.2), transparent 18rem),
+              radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.16), transparent 18rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.1),
-                rgba(7, 8, 12, 0.26) 42%,
-                rgba(7, 8, 12, 0.42)
+                rgba(7, 8, 12, 0.06),
+                rgba(7, 8, 12, 0.2) 42%,
+                rgba(7, 8, 12, 0.32)
               );
           }
         }
