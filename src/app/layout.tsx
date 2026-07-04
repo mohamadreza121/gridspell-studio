@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import "@/app/globals.css";
 import "@/app/mobile-fixes.css";
+import "@/app/services-scene-fixes.css";
 
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { TinyPhoneNav } from "@/components/layout/TinyPhoneNav";
@@ -80,21 +81,21 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      "max-video-preview": -1,
       "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1
+      "max-snippet": -1
     }
   },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
+  alternates: {
+    canonical: "/"
   }
 };
 
 export const viewport: Viewport = {
-  themeColor: "#07080C",
-  colorScheme: "dark",
   width: "device-width",
-  initialScale: 1
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#07080c"
 };
 
 export default function RootLayout({
@@ -103,13 +104,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
-      <body>
+    <html lang="en" className="bg-[#07080c] antialiased">
+      <body className="bg-[#07080c] text-white">
+        <GoogleAnalytics />
         <TinyPhoneNav accountHref="/login" accountLabel="Client login" />
-        {children}
-        <Suspense fallback={null}>
-          <GoogleAnalytics />
-        </Suspense>
+        <Suspense fallback={null}>{children}</Suspense>
       </body>
     </html>
   );
