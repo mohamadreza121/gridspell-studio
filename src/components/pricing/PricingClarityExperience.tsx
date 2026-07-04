@@ -27,7 +27,7 @@ const currency = new Intl.NumberFormat("en-CA", {
   maximumFractionDigits: 0
 });
 
-const packageClarity: Record<string, { when: string; avoid: string; range: string }> = {
+const packageClarity: Record<PricingPackage["id"], { when: string; avoid: string; range: string }> = {
   starter: {
     when: "You need one strong page, a campaign page, or a simple professional presence.",
     avoid: "You need separate service pages, a CMS, booking, CRM, or a larger SEO structure.",
@@ -104,6 +104,12 @@ const carePlans = [
   }
 ] as const;
 
+const closingProof = [
+  { icon: SearchCheck, label: "Scope reviewed by a person" },
+  { icon: ShieldCheck, label: "No automatic commitment" },
+  { icon: Clock3, label: "Clear recommended next step" }
+] as const;
+
 function highRange(startingPrice: number) {
   return startingPrice + Math.max(700, Math.round((startingPrice * 0.15) / 50) * 50);
 }
@@ -154,7 +160,7 @@ function PackageCard({ item }: { item: PricingPackage }) {
         {item.price}
       </p>
       <p className="relative mt-2 text-sm font-semibold text-[#8be9ff]">
-        {currency.format(item.startingPrice)}–{currency.format(high)} planning range
+        {clarity.range}
       </p>
       <p className="relative mt-3 flex items-center gap-2 text-xs text-white/34">
         <CalendarDays className="h-3.5 w-3.5 text-[#8be9ff]" />
@@ -402,14 +408,10 @@ export function PricingClarityExperience() {
               </Link>
             </div>
             <div className="mx-auto mt-10 grid max-w-3xl gap-3 border-t border-white/[0.08] pt-8 sm:grid-cols-3">
-              {[
-                [SearchCheck, "Scope reviewed by a person"],
-                [ShieldCheck, "No automatic commitment"],
-                [Clock3, "Clear recommended next step"]
-              ].map(([Icon, label]) => (
-                <div key={label as string} className="flex items-center justify-center gap-2 text-xs text-white/38">
+              {closingProof.map(({ icon: Icon, label }) => (
+                <div key={label} className="flex items-center justify-center gap-2 text-xs text-white/38">
                   <Icon className="h-4 w-4 text-[#8be9ff]" />
-                  {label as string}
+                  {label}
                 </div>
               ))}
             </div>
