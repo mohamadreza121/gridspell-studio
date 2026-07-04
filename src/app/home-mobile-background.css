@@ -1,0 +1,74 @@
+@media (max-width: 1279px) {
+  .home-mobile-g-background {
+    z-index: 0 !important;
+  }
+
+  .home-experience,
+  .home-static-only,
+  .home-static-layout,
+  .home-static-layout > section,
+  .home-static-layout .home-static-scene,
+  .home-experience + div {
+    position: relative;
+    background: transparent !important;
+  }
+
+  .home-experience,
+  .home-static-only,
+  .home-static-layout,
+  .home-experience + div {
+    z-index: 20;
+  }
+
+  .home-static-layout > section {
+    z-index: 21;
+    isolation: isolate;
+  }
+
+  .home-static-layout > section > *,
+  .home-experience + div > * {
+    position: relative;
+    z-index: 22;
+  }
+
+  .home-static-layout > .page-grid,
+  .home-experience + div > .page-grid {
+    opacity: 0.24 !important;
+  }
+
+  .home-static-layout .home-static-scene::before,
+  .home-static-layout > section:first-of-type::before,
+  .home-experience + div::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, rgba(7, 8, 12, 0.08), rgba(7, 8, 12, 0.22) 44%, rgba(7, 8, 12, 0.38));
+  }
+}
+
+@media (max-width: 379px) {
+  .home-mobile-g-main {
+    opacity: 0.62 !important;
+    transform: translateX(7vw) translateY(1rem) scale(1.06);
+  }
+
+  .home-mobile-g-outline {
+    opacity: 0.34 !important;
+    transform: translateX(6vw) translateY(1rem) scale(1.06);
+  }
+
+  .home-static-layout > section:first-of-type > div {
+    min-height: auto !important;
+    justify-content: flex-start !important;
+    padding-top: 7.25rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  .home-static-layout .home-static-scene::before,
+  .home-static-layout > section:first-of-type::before,
+  .home-experience + div::before {
+    background: linear-gradient(180deg, rgba(7, 8, 12, 0.06), rgba(7, 8, 12, 0.2) 44%, rgba(7, 8, 12, 0.34));
+  }
+}
