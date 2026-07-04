@@ -19,7 +19,7 @@
 }
 
 @media (max-width: 1279px) {
-  .home-static-layout > section:last-of-type {
+  .home-static-layout > .home-static-scene:last-of-type {
     display: none !important;
   }
 }
