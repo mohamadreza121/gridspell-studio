@@ -1,9 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ExternalLink } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, ExternalLink } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
-import { featuredProjects } from "@/config/work";
+import { featuredProjects, type FeaturedProject } from "@/config/work";
+
+function startProjectHref(project: FeaturedProject) {
+  const packageId = project.slug === "gridspell-studio" ? "custom" : project.slug === "network-engineering-portfolio" ? "launch" : "growth";
+  const params = new URLSearchParams({ package: packageId, source: project.slug });
+
+  return `/start-project?${params.toString()}`;
+}
 
 export function WorkStaticFallback() {
   return (
@@ -24,8 +31,8 @@ export function WorkStaticFallback() {
           </h1>
 
           <p className="mt-7 max-w-2xl text-base leading-8 text-white/45 sm:text-lg">
-            Each case study explains the business problem, the strategic choices,
-            the digital system, and the outcome.
+            Each case study explains the business problem, what GridSpell built,
+            the system behind the interface, and the result the website is meant to support.
           </p>
         </div>
 
@@ -72,12 +79,46 @@ export function WorkStaticFallback() {
                   {project.description}
                 </p>
 
+                {project.proof ? (
+                  <div className="mt-7 grid gap-4 lg:grid-cols-3">
+                    {([
+                      ["Problem", project.proof.problem],
+                      ["Built", project.proof.built],
+                      ["Result", project.proof.result]
+                    ] as const).map(([label, text]) => (
+                      <div key={label} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
+                        <p className="text-[0.56rem] font-semibold uppercase tracking-[0.2em] text-white/25">{label}</p>
+                        <p className="mt-3 text-sm leading-7 text-white/43">{text}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {project.proof ? (
+                  <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                    {project.proof.features.map((feature) => (
+                      <li key={feature} className="flex gap-3 text-sm leading-7 text-white/52">
+                        <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#8be9ff]" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+
                 <div className="mt-7 flex flex-wrap gap-4">
                   <Link
                     href={`/work/${project.slug}`}
                     className="inline-flex items-center gap-2 text-sm font-semibold text-[#8be9ff]"
                   >
                     View case study
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+
+                  <Link
+                    href={startProjectHref(project)}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white/56"
+                  >
+                    Start similar project
                     <ArrowUpRight className="h-4 w-4" />
                   </Link>
 
