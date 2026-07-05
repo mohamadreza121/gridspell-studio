@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -214,58 +214,92 @@ function DecisionObject() {
 }
 
 function WarpDivider({ solid = false }: { solid?: boolean }) {
+  const dividerRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll();
+  const { scrollYProgress } = useScroll({
+    target: dividerRef,
+    offset: ["start 92%", "end 8%"]
+  });
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 28,
-    mass: 0.2
+    stiffness: 150,
+    damping: 26,
+    mass: 0.22
   });
 
-  const y = useTransform(smoothProgress, [0, 1], [22, -22]);
-  const skewY = useTransform(smoothProgress, [0, 1], [-7, 7]);
-  const rotate = useTransform(smoothProgress, [0, 1], [-1.8, 1.8]);
-  const lineY = useTransform(smoothProgress, [0, 1], [14, -14]);
+  const y = useTransform(smoothProgress, [0, 0.5, 1], [76, 0, -76]);
+  const counterY = useTransform(smoothProgress, [0, 0.5, 1], [-54, 0, 54]);
+  const skewY = useTransform(smoothProgress, [0, 0.5, 1], [-11, 0, 11]);
+  const rotate = useTransform(smoothProgress, [0, 0.5, 1], [-3, 0, 3]);
+  const scaleX = useTransform(smoothProgress, [0, 0.5, 1], [1.18, 0.94, 1.18]);
+  const scaleY = useTransform(smoothProgress, [0, 0.5, 1], [0.72, 1.22, 0.72]);
+  const glowOpacity = useTransform(smoothProgress, [0, 0.5, 1], [0.2, 1, 0.2]);
+  const waveY = useTransform(smoothProgress, [0, 0.5, 1], [38, -8, -38]);
 
   return (
-    <div className="pointer-events-none relative z-10 -my-10 h-32 overflow-hidden">
+    <div ref={dividerRef} className="pointer-events-none relative z-10 -my-20 h-56 overflow-hidden">
       <motion.div
         className={
           solid
-            ? "absolute -left-14 -right-14 top-1/2 h-28 origin-center bg-[#0b0d13]/96 shadow-[0_-35px_95px_rgba(124,92,255,0.08),0_35px_95px_rgba(41,214,255,0.06)]"
-            : "absolute -left-14 -right-14 top-1/2 h-28 origin-center border-y border-white/[0.055] bg-[#07080c]/22 shadow-[0_-28px_85px_rgba(41,214,255,0.055),0_28px_85px_rgba(124,92,255,0.055)] backdrop-blur-[1px]"
+            ? "absolute -left-24 -right-24 top-1/2 h-36 origin-center bg-[#0b0d13] shadow-[0_-45px_130px_rgba(124,92,255,0.12),0_45px_130px_rgba(41,214,255,0.1)]"
+            : "absolute -left-24 -right-24 top-1/2 h-36 origin-center border-y border-white/[0.07] bg-[#07080c]/35 shadow-[0_-40px_120px_rgba(41,214,255,0.1),0_40px_120px_rgba(124,92,255,0.1)] backdrop-blur-[2px]"
         }
         style={{
           y: reduceMotion ? 0 : y,
           skewY: reduceMotion ? 0 : skewY,
-          rotate: reduceMotion ? 0 : rotate
+          rotate: reduceMotion ? 0 : rotate,
+          scaleX: reduceMotion ? 1 : scaleX,
+          scaleY: reduceMotion ? 1 : scaleY,
+          clipPath:
+            "polygon(0 30%, 12% 18%, 29% 34%, 44% 18%, 62% 34%, 79% 16%, 100% 30%, 100% 70%, 84% 84%, 65% 66%, 48% 84%, 30% 67%, 12% 84%, 0 70%)"
+        }}
+      />
+
+      <motion.div
+        className="absolute left-1/2 top-1/2 h-40 w-[120vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,233,255,0.16),rgba(124,92,255,0.1)_36%,transparent_68%)] blur-2xl"
+        style={{
+          y: reduceMotion ? 0 : counterY,
+          opacity: reduceMotion ? 0.55 : glowOpacity,
+          scaleX: reduceMotion ? 1 : scaleX
         }}
       />
 
       <motion.svg
         aria-hidden="true"
-        viewBox="0 0 1440 120"
+        viewBox="0 0 1440 180"
         preserveAspectRatio="none"
-        className="absolute inset-x-0 top-1/2 h-24 -translate-y-1/2 opacity-80"
+        className="absolute inset-x-0 top-1/2 h-40 -translate-y-1/2 opacity-95"
         style={{
-          y: reduceMotion ? 0 : lineY
+          y: reduceMotion ? 0 : waveY,
+          scaleX: reduceMotion ? 1 : scaleX
         }}
       >
         <path
-          d="M0 64 C220 12 360 108 560 60 C760 12 880 94 1080 54 C1250 20 1340 42 1440 18"
+          d="M0 94 C160 28 314 154 520 86 C742 12 888 148 1096 82 C1248 34 1362 54 1440 22"
           fill="none"
-          stroke="rgba(139,233,255,0.22)"
-          strokeWidth="1"
+          stroke="rgba(139,233,255,0.38)"
+          strokeWidth="1.5"
         />
         <path
-          d="M0 78 C230 30 390 118 590 72 C760 34 925 100 1110 70 C1270 44 1355 58 1440 36"
+          d="M0 122 C210 52 340 166 575 112 C790 62 928 158 1140 108 C1280 76 1374 76 1440 56"
           fill="none"
-          stroke="rgba(124,92,255,0.18)"
+          stroke="rgba(169,154,255,0.28)"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M0 70 C235 6 385 122 608 72 C820 24 984 116 1180 72 C1320 40 1390 42 1440 36"
+          fill="none"
+          stroke="rgba(255,255,255,0.13)"
           strokeWidth="1"
         />
       </motion.svg>
 
-      <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-[#8be9ff]/28 to-transparent" />
+      <motion.div
+        className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-[#8be9ff]/60 to-transparent"
+        style={{
+          y: reduceMotion ? 0 : counterY,
+          opacity: reduceMotion ? 0.65 : glowOpacity
+        }}
+      />
     </div>
   );
 }
