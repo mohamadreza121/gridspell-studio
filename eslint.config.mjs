@@ -32,6 +32,7 @@ export default defineConfig([
     files: [
       "src/components/home/HomeExperience.tsx",
       "src/components/home/HomeHeroModeShowcase.tsx",
+      "src/components/pricing/PricingClarityExperience.tsx",
       "src/components/process/ProcessPhoneMockup.tsx",
       "src/components/process/dashboard-tour/ClientDashboardTour.tsx"
     ],
