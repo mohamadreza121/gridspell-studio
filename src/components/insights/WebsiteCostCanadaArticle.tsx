@@ -105,9 +105,11 @@ function Reveal({
 function PricingCompass() {
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, 210]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [-8, 18]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1.08, 0.98]);
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, 220]);
+  const x = useTransform(scrollYProgress, [0, 1], [0, -34]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [-7, 10]);
+  const blueprintGlow = useTransform(scrollYProgress, [0, 0.55, 1], [0.6, 1, 0.72]);
 
   return (
     <motion.div
@@ -119,22 +121,113 @@ function PricingCompass() {
     >
       <div className="absolute inset-0 bg-[#07080c]" />
       <div className="page-grid absolute inset-0 opacity-30" />
+
+      <div className="absolute left-[-18rem] top-[22%] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/7 blur-[150px]" />
+      <div className="absolute right-[-14rem] top-[8rem] h-[34rem] w-[34rem] rounded-full bg-[#7c5cff]/10 blur-[150px]" />
+
       <motion.div
-        className="absolute right-[-18rem] top-[9rem] h-[44rem] w-[44rem] rounded-full border border-[#8be9ff]/13 bg-[radial-gradient(circle_at_50%_50%,rgba(124,92,255,0.16),rgba(41,214,255,0.07)_42%,transparent_70%)] shadow-[0_0_130px_rgba(124,92,255,0.18)] max-md:right-[-25rem] max-md:top-[7rem]"
+        className="absolute right-[-7rem] top-[6.75rem] h-[45rem] w-[43rem] max-w-none rounded-[2.6rem] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.012))] shadow-[0_0_140px_rgba(124,92,255,0.16)] backdrop-blur-[2px] max-lg:right-[-15rem] max-lg:top-[8rem] max-lg:h-[38rem] max-lg:w-[36rem] max-md:right-[-17rem] max-md:top-[9rem] max-md:h-[34rem] max-md:w-[32rem] max-sm:right-[-13.5rem] max-sm:top-[8rem] max-sm:h-[29rem] max-sm:w-[27rem]"
         style={{
+          x: reduceMotion ? 0 : x,
           rotate: reduceMotion ? 0 : rotate,
-          scale: reduceMotion ? 1 : scale
+          opacity: reduceMotion ? 0.78 : blueprintGlow
         }}
       >
-        <div className="absolute inset-[13%] rounded-full border border-white/[0.08]" />
-        <div className="absolute inset-[28%] rounded-full border border-[#8be9ff]/16" />
-        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-[#8be9ff]/28 to-transparent" />
-        <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-gradient-to-r from-transparent via-[#7c5cff]/30 to-transparent" />
-        <span className="absolute left-[19%] top-[22%] rounded-full border border-white/[0.08] bg-[#07080c]/70 px-4 py-2 text-xs font-semibold text-white/48 backdrop-blur-md">DIY</span>
-        <span className="absolute right-[13%] top-[35%] rounded-full border border-[#8be9ff]/18 bg-[#07080c]/70 px-4 py-2 text-xs font-semibold text-[#8be9ff] backdrop-blur-md">PRO</span>
-        <span className="absolute bottom-[17%] left-[30%] rounded-full border border-[#7c5cff]/20 bg-[#07080c]/70 px-4 py-2 text-xs font-semibold text-[#a99aff] backdrop-blur-md">CUSTOM</span>
+        {/* Outer blueprint glow */}
+        <div className="absolute inset-0 rounded-[2.6rem] bg-[radial-gradient(circle_at_74%_18%,rgba(139,233,255,0.08),transparent_18rem),radial-gradient(circle_at_12%_82%,rgba(124,92,255,0.11),transparent_20rem)]" />
+
+        {/* Browser / website frame top */}
+        <div className="absolute inset-x-0 top-0 h-14 border-b border-white/[0.08] bg-white/[0.022]" />
+        <div className="absolute left-6 top-5 flex gap-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#8be9ff]/45 shadow-[0_0_14px_rgba(139,233,255,0.65)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/16" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
+        </div>
+
+        <div className="absolute left-28 right-8 top-4 h-6 rounded-full border border-white/[0.07] bg-[#07080c]/45" />
+
+        {/* Technical measurement lines */}
+        <div className="absolute left-4 top-24 bottom-10 w-px bg-gradient-to-b from-transparent via-white/[0.1] to-transparent" />
+        <div className="absolute right-4 top-24 bottom-10 w-px bg-gradient-to-b from-transparent via-white/[0.07] to-transparent" />
+        <div className="absolute left-8 right-8 top-[22.7rem] border-t border-dashed border-white/[0.08]" />
+        <div className="absolute left-[64%] top-20 h-[20rem] w-px border-l border-dashed border-[#8be9ff]/16" />
+
+        {/* Hero wireframe */}
+        <div className="absolute left-8 right-8 top-20 h-28 rounded-[1.35rem] border border-[#8be9ff]/18 bg-[#8be9ff]/[0.035]" />
+        <div className="absolute left-11 top-[6.45rem] h-3 w-28 rounded-full bg-white/18" />
+        <div className="absolute left-11 top-[8.05rem] h-2 w-48 rounded-full bg-white/10" />
+        <div className="absolute left-11 top-[9.35rem] h-2 w-36 rounded-full bg-white/8" />
+        <div className="absolute right-12 top-[7rem] h-14 w-24 rounded-[0.9rem] border border-[#8be9ff]/18 bg-[#8be9ff]/[0.045]" />
+
+        <span className="absolute left-10 top-[5.95rem] text-[0.55rem] font-semibold uppercase tracking-[0.2em] text-[#8be9ff]">
+          Hero
+        </span>
+
+        {/* Service/content blocks */}
+        <div className="absolute left-8 top-56 h-40 w-[58%] rounded-[1.2rem] border border-white/[0.08] bg-white/[0.02]" />
+        <div className="absolute left-12 top-[15.9rem] grid gap-2">
+          <span className="h-2 w-32 rounded-full bg-white/12" />
+          <span className="h-2 w-44 rounded-full bg-white/8" />
+          <span className="h-2 w-28 rounded-full bg-white/8" />
+        </div>
+
+        <div className="absolute right-8 top-56 h-40 w-[28%] rounded-[1.2rem] border border-[#7c5cff]/20 bg-[#7c5cff]/[0.045]" />
+        <div className="absolute right-12 top-[15.9rem] grid gap-2">
+          <span className="h-2 w-16 rounded-full bg-[#a99aff]/24" />
+          <span className="h-2 w-20 rounded-full bg-white/8" />
+          <span className="h-2 w-12 rounded-full bg-white/8" />
+        </div>
+
+        <span className="absolute left-10 top-[15.15rem] text-[0.55rem] font-semibold uppercase tracking-[0.18em] text-white/42">
+          Service pages
+        </span>
+
+        <span className="absolute right-14 top-[15.15rem] text-[0.55rem] font-semibold uppercase tracking-[0.18em] text-[#a99aff]">
+          SEO
+        </span>
+
+        {/* Three feature blocks */}
+        <div className="absolute left-8 top-[26rem] h-24 w-[42%] rounded-[1rem] border border-white/[0.08] bg-white/[0.018]" />
+        <div className="absolute left-[46%] top-[26rem] h-24 w-[22%] rounded-[1rem] border border-[#8be9ff]/18 bg-[#8be9ff]/[0.04]" />
+        <div className="absolute right-8 top-[26rem] h-24 w-[24%] rounded-[1rem] border border-white/[0.08] bg-white/[0.018]" />
+
+        <span className="absolute left-10 top-[25.2rem] text-[0.55rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+          Copy
+        </span>
+
+        <span className="absolute left-[48%] top-[25.2rem] text-[0.55rem] font-semibold uppercase tracking-[0.18em] text-[#8be9ff]">
+          CTA
+        </span>
+
+        <span className="absolute right-14 top-[25.2rem] text-[0.55rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+          CMS
+        </span>
+
+        {/* Conversion flow block */}
+        <div className="absolute left-8 bottom-10 right-8 h-20 rounded-[1.1rem] border border-[#8be9ff]/18 bg-[#8be9ff]/[0.032]" />
+        <span className="absolute left-10 bottom-[5.8rem] text-[0.55rem] font-semibold uppercase tracking-[0.18em] text-[#8be9ff]">
+          Conversion flow
+        </span>
+
+        <div className="absolute left-12 bottom-[3.85rem] h-2 w-36 rounded-full bg-white/12" />
+        <div className="absolute left-12 bottom-[2.7rem] h-2 w-56 rounded-full bg-white/8" />
+        <div className="absolute right-12 bottom-[3.15rem] h-10 w-24 rounded-full border border-[#8be9ff]/18 bg-[#8be9ff]/[0.045]" />
+
+        {/* Nodes */}
+        <div className="absolute left-[63.5%] top-[8.7rem] h-2.5 w-2.5 rounded-full bg-[#8be9ff] shadow-[0_0_18px_rgba(139,233,255,0.85)]" />
+        <div className="absolute left-[63.5%] top-[18rem] h-2.5 w-2.5 rounded-full bg-[#a99aff] shadow-[0_0_18px_rgba(169,154,255,0.8)]" />
+        <div className="absolute left-[47.5%] top-[27.7rem] h-2.5 w-2.5 rounded-full bg-[#8be9ff] shadow-[0_0_18px_rgba(139,233,255,0.85)]" />
+        <div className="absolute right-[18%] bottom-[3.95rem] h-2.5 w-2.5 rounded-full bg-[#8be9ff] shadow-[0_0_18px_rgba(139,233,255,0.85)]" />
+
+        {/* Floating scope labels */}
+        <div className="absolute -left-10 top-40 rounded-full border border-[#8be9ff]/16 bg-[#07080c]/72 px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-[#8be9ff] shadow-[0_16px_70px_rgba(0,0,0,0.3)] backdrop-blur-md max-sm:hidden">
+          Scope
+        </div>
+
+        <div className="absolute -right-8 bottom-36 rounded-full border border-[#7c5cff]/20 bg-[#07080c]/72 px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-[#a99aff] shadow-[0_16px_70px_rgba(0,0,0,0.3)] backdrop-blur-md max-md:hidden">
+          Quote logic
+        </div>
       </motion.div>
-      <div className="absolute bottom-[-16rem] left-[-16rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px]" />
     </motion.div>
   );
 }
