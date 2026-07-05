@@ -154,15 +154,25 @@ export function MobileHomeGBackground() {
 
         @media (max-width: 379px) {
           .home-mobile-g-main {
-            opacity: 0.7 !important;
-            transform: translateX(4vw) translateY(1rem) scale(1.08);
+            opacity: 0.52 !important;
+            transform: translateX(10vw) translateY(1.75rem) scale(0.96);
           }
 
           .home-mobile-g-outline {
-            opacity: 0.4 !important;
-            transform: translateX(3vw) translateY(1rem) scale(1.08);
+            opacity: 0.28 !important;
+            transform: translateX(8vw) translateY(1.6rem) scale(0.96);
           }
 
+          .home-presentation-only {
+            display: none !important;
+          }
+
+          .home-static-only {
+            display: block !important;
+          }
+
+          .home-experience,
+          .home-static-only,
           .home-static-layout,
           .home-static-layout > section,
           .home-static-layout > section > div,
@@ -173,15 +183,73 @@ export function MobileHomeGBackground() {
           .home-experience + div > section > div,
           .small-phone-home-pricing-only,
           .small-phone-home-pricing {
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
             background: transparent !important;
             background-color: transparent !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: none !important;
+            filter: none !important;
+          }
+
+          .home-static-layout {
+            display: block !important;
+            position: relative !important;
+            z-index: 20 !important;
+            padding-top: 0 !important;
+          }
+
+          .home-static-layout > section:first-of-type {
+            display: block !important;
+            min-height: auto !important;
           }
 
           .home-static-layout > section:first-of-type > div {
+            display: flex !important;
             min-height: auto !important;
             justify-content: flex-start !important;
-            padding-top: 7.25rem !important;
-            padding-bottom: 3.5rem !important;
+            padding-top: 6.35rem !important;
+            padding-bottom: 3.25rem !important;
+          }
+
+          .home-static-layout .home-hero-mode-host {
+            display: block !important;
+            position: relative !important;
+            z-index: 30 !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin-top: 1.2rem !important;
+          }
+
+          .home-static-layout .home-hero-card-actions-host {
+            display: none !important;
+          }
+
+          .home-static-layout .home-hero-original-actions-hidden {
+            display: flex !important;
+          }
+
+          .home-static-layout .home-hero-mode-card {
+            border-radius: 1.15rem !important;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34) !important;
+          }
+
+          .home-static-layout .home-hero-mode-card > div:last-child {
+            padding: 0.85rem !important;
+          }
+
+          .home-static-layout .home-hero-mode-card .page-grid {
+            opacity: 0.14 !important;
+          }
+
+          .home-static-layout .home-hero-mode-tabs {
+            margin-top: 2rem !important;
+          }
+
+          .home-static-layout .home-static-scene {
+            padding-block: 3.5rem !important;
           }
 
           .small-phone-home-pricing {
