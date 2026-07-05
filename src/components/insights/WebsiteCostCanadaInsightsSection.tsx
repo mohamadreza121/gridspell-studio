@@ -57,7 +57,7 @@ export function WebsiteCostCanadaInsightsSection() {
 
           <Link
             href="/insights/professional-website-cost-canada"
-            className="group relative min-h-[34rem] overflow-hidden rounded-[2.35rem] border border-white/[0.1] bg-[linear-gradient(145deg,rgba(124,92,255,0.13),rgba(41,214,255,0.035))] p-6 shadow-[0_32px_110px_rgba(0,0,0,0.28)] transition hover:-translate-y-1 hover:border-[#8be9ff]/28 sm:p-8"
+            className="group relative min-h-[38rem] overflow-hidden rounded-[2.35rem] border border-white/[0.1] bg-[linear-gradient(145deg,rgba(124,92,255,0.13),rgba(41,214,255,0.035))] p-6 shadow-[0_32px_110px_rgba(0,0,0,0.28)] transition hover:-translate-y-1 hover:border-[#8be9ff]/28 sm:min-h-[40rem] sm:p-8"
           >
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_18%,rgba(139,233,255,0.11),transparent_18rem)]" />
             <div aria-hidden="true" className="pointer-events-none absolute left-8 right-8 top-8 h-12 rounded-t-[1.3rem] border border-white/[0.08] bg-[#07080c]/55" />
@@ -67,7 +67,7 @@ export function WebsiteCostCanadaInsightsSection() {
               <span className="h-2 w-2 rounded-full bg-white/12" />
             </div>
 
-            <div className="relative mt-20 grid gap-4">
+            <div className="relative mt-20 grid gap-4 pb-20 sm:pb-24">
               <div className="rounded-[1.25rem] border border-[#8be9ff]/18 bg-[#8be9ff]/[0.04] p-5">
                 <p className="text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-[#8be9ff]">
                   Pricing blueprint
@@ -105,7 +105,7 @@ export function WebsiteCostCanadaInsightsSection() {
               </div>
             </div>
 
-            <div className="absolute bottom-7 left-7 right-7 flex items-center justify-between border-t border-white/[0.08] pt-5 text-sm font-semibold text-[#8be9ff]">
+            <div className="absolute bottom-5 left-7 right-7 flex items-center justify-between border-t border-white/[0.08] pt-5 text-sm font-semibold text-[#8be9ff] sm:bottom-6">
               Open guide
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </div>
