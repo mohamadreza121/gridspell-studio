@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/insights",
     "/insights/professional-website-cost-canada",
+    "/insights/template-website-vs-custom-website",
     "/contact",
     "/start-project",
     "/privacy",
