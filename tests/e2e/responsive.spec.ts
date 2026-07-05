@@ -46,23 +46,11 @@ function isSmallPhoneProject(projectName: string) {
 }
 
 async function expectHomepageProofContent(page: Page) {
-  await expect(
-    page.getByRole("heading", {
-      name: /Real proof, not just polish/i
-    })
-  ).toBeVisible();
-
-  await expect(
-    page.getByRole("heading", {
-      name: /More than a pretty homepage/i
-    })
-  ).toBeVisible();
-
-  await expect(page.getByRole("heading", { name: /DESA Foam Insulation/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /GridSpell Studio/i })).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: /Network Engineering Portfolio/i })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Real proof, not just polish/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /More than a pretty homepage/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "DESA Foam Insulation", exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "GridSpell Studio", exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Network Engineering Portfolio", exact: true }).first()).toBeVisible();
 }
 
 test.describe("responsive marketing pages", () => {
@@ -79,9 +67,7 @@ test.describe("responsive marketing pages", () => {
   });
 
   for (const route of publicRoutes) {
-    test(`${route} fits the viewport without runtime rendering errors`, async ({
-      page
-    }, testInfo) => {
+    test(`${route} fits the viewport without runtime rendering errors`, async ({ page }, testInfo) => {
       const runtimeProblems: string[] = [];
 
       page.on("console", (message) => {
@@ -96,87 +82,46 @@ test.describe("responsive marketing pages", () => {
         }
       });
 
-      await page.goto(route, {
-        waitUntil: "domcontentloaded"
-      });
-
+      await page.goto(route, { waitUntil: "domcontentloaded" });
       await expect(page.locator("body")).toBeVisible();
       await page.waitForTimeout(250);
 
       if (route === "/") {
         await expectHomepageProofContent(page);
-
-        await expect(
-          page.locator(".small-phone-home-pricing, .small-phone-home-pricing-only")
-        ).toHaveCount(0);
+        await expect(page.locator(".small-phone-home-pricing, .small-phone-home-pricing-only")).toHaveCount(0);
       }
 
       if (route.startsWith("/services/")) {
-        await expect(page.getByText(/Why it matters/i)).toBeVisible();
-        await expect(page.getByText(/Outcomes/i)).toBeVisible();
-        await expect(page.getByText(/Core deliverables/i)).toBeVisible();
+        await expect(page.getByText("Why it matters", { exact: true }).first()).toBeVisible();
+        await expect(page.getByText("Outcomes", { exact: true }).first()).toBeVisible();
+        await expect(page.getByText("Core deliverables", { exact: true }).first()).toBeVisible();
       }
 
       if (isSmallPhoneProject(testInfo.project.name) && route === "/") {
-        const tinyMenuButton = page.locator(
-          'label[for="tiny-phone-nav-toggle"].tiny-phone-nav__button'
-        );
-
+        const tinyMenuButton = page.locator('label[for="tiny-phone-nav-toggle"].tiny-phone-nav__button');
         const tinyMenuToggle = page.locator("#tiny-phone-nav-toggle");
         const tinyMenuPanel = page.locator(".tiny-phone-nav__panel");
-        const tinyMenuClose = page.locator(
-          'label[for="tiny-phone-nav-toggle"].tiny-phone-nav__close'
-        );
+        const tinyMenuClose = page.locator('label[for="tiny-phone-nav-toggle"].tiny-phone-nav__close');
 
         await expect(tinyMenuButton).toBeVisible();
-
         await tinyMenuButton.click();
         await expect(tinyMenuToggle).toBeChecked();
         await expect(tinyMenuPanel).toBeVisible();
-
-        await expect(
-          tinyMenuPanel.getByRole("link", {
-            name: /Start a project/i
-          })
-        ).toBeVisible();
-
-        await expect(
-          tinyMenuPanel.getByRole("link", {
-            name: /Client login/i
-          })
-        ).toBeVisible();
-
-        await expect(
-          tinyMenuPanel.getByRole("link", {
-            name: /hello@gridspellstudio\.com/i
-          })
-        ).toBeVisible();
-
+        await expect(tinyMenuPanel.getByRole("link", { name: /Start a project/i })).toBeVisible();
+        await expect(tinyMenuPanel.getByRole("link", { name: /Client login/i })).toBeVisible();
+        await expect(tinyMenuPanel.getByRole("link", { name: /hello@gridspellstudio\.com/i })).toBeVisible();
         await tinyMenuClose.click();
         await expect(tinyMenuToggle).not.toBeChecked();
         await expect(tinyMenuPanel).toBeHidden();
       }
 
       if (isSmallPhoneProject(testInfo.project.name) && route === "/pricing") {
-        await expect(
-          page.getByRole("heading", {
-            level: 1,
-            name: /Choose a starting point/i
-          })
-        ).toBeVisible();
+        await expect(page.getByRole("heading", { level: 1, name: /Choose a starting point/i })).toBeVisible();
       }
 
       if (route === "/work/gridspell-studio") {
-        await expect(
-          page.getByRole("heading", {
-            level: 1,
-            name: /GridSpell Studio/i
-          })
-        ).toBeVisible();
-
-        await expect(
-          page.getByText(/studio website that proves the offer/i)
-        ).toBeVisible();
+        await expect(page.getByRole("heading", { level: 1, name: /GridSpell Studio/i })).toBeVisible();
+        await expect(page.getByText(/studio website that proves the offer/i)).toBeVisible();
       }
 
       const dimensions = await page.evaluate(() => ({
@@ -184,15 +129,8 @@ test.describe("responsive marketing pages", () => {
         clientWidth: document.documentElement.clientWidth
       }));
 
-      expect(
-        dimensions.scrollWidth,
-        `${route} is wider than the browser viewport`
-      ).toBeLessThanOrEqual(dimensions.clientWidth + 2);
-
-      expect(
-        runtimeProblems,
-        `${route} logged a hydration or Motion rendering error`
-      ).toEqual([]);
+      expect(dimensions.scrollWidth, `${route} is wider than the browser viewport`).toBeLessThanOrEqual(dimensions.clientWidth + 2);
+      expect(runtimeProblems, `${route} logged a hydration or Motion rendering error`).toEqual([]);
     });
   }
 });
