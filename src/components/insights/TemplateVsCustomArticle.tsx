@@ -13,7 +13,6 @@ import {
   SearchCheck,
   ShieldCheck,
   Sparkles,
-  Split,
   Workflow,
   Zap,
   type LucideIcon
@@ -217,20 +216,56 @@ function DecisionObject() {
 function WarpDivider({ solid = false }: { solid?: boolean }) {
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
-  const bend = useTransform(scrollYProgress, [0, 1], [-5, 5]);
-  const offset = useTransform(scrollYProgress, [0, 1], [16, -16]);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 28,
+    mass: 0.2
+  });
+
+  const y = useTransform(smoothProgress, [0, 1], [22, -22]);
+  const skewY = useTransform(smoothProgress, [0, 1], [-7, 7]);
+  const rotate = useTransform(smoothProgress, [0, 1], [-1.8, 1.8]);
+  const lineY = useTransform(smoothProgress, [0, 1], [14, -14]);
 
   return (
-    <div className="pointer-events-none relative z-10 h-16 overflow-hidden">
+    <div className="pointer-events-none relative z-10 -my-10 h-32 overflow-hidden">
       <motion.div
-        className={solid ? "absolute -left-8 -right-8 top-4 h-20 origin-center bg-[#0b0d13]" : "absolute -left-8 -right-8 top-4 h-20 origin-center bg-transparent"}
+        className={
+          solid
+            ? "absolute -left-14 -right-14 top-1/2 h-28 origin-center bg-[#0b0d13]/96 shadow-[0_-35px_95px_rgba(124,92,255,0.08),0_35px_95px_rgba(41,214,255,0.06)]"
+            : "absolute -left-14 -right-14 top-1/2 h-28 origin-center border-y border-white/[0.055] bg-[#07080c]/22 shadow-[0_-28px_85px_rgba(41,214,255,0.055),0_28px_85px_rgba(124,92,255,0.055)] backdrop-blur-[1px]"
+        }
         style={{
-          y: reduceMotion ? 0 : offset,
-          skewY: reduceMotion ? 0 : bend,
-          borderTop: "1px solid rgba(255,255,255,0.07)"
+          y: reduceMotion ? 0 : y,
+          skewY: reduceMotion ? 0 : skewY,
+          rotate: reduceMotion ? 0 : rotate
         }}
       />
-      <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-[#8be9ff]/20 to-transparent" />
+
+      <motion.svg
+        aria-hidden="true"
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+        className="absolute inset-x-0 top-1/2 h-24 -translate-y-1/2 opacity-80"
+        style={{
+          y: reduceMotion ? 0 : lineY
+        }}
+      >
+        <path
+          d="M0 64 C220 12 360 108 560 60 C760 12 880 94 1080 54 C1250 20 1340 42 1440 18"
+          fill="none"
+          stroke="rgba(139,233,255,0.22)"
+          strokeWidth="1"
+        />
+        <path
+          d="M0 78 C230 30 390 118 590 72 C760 34 925 100 1110 70 C1270 44 1355 58 1440 36"
+          fill="none"
+          stroke="rgba(124,92,255,0.18)"
+          strokeWidth="1"
+        />
+      </motion.svg>
+
+      <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-[#8be9ff]/28 to-transparent" />
     </div>
   );
 }
