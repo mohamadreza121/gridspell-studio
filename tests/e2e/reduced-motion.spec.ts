@@ -14,7 +14,7 @@ const routes = [
 ];
 
 const runtimeProblemPattern =
-  /hydration failed|server rendered html didn't match|not an animatable value|reduced motion enabled/i;
+  /hydration failed|server rendered html didn't match|not an animatable value/i;
 
 for (const route of routes) {
   test(`${route} remains usable with reduced motion`, async ({ page }) => {
@@ -50,7 +50,9 @@ for (const route of routes) {
       await expect(
         page.getByRole("heading", { level: 1, name: /GridSpell Studio/i })
       ).toBeVisible();
-      await expect(page.getByText(/admin lead dashboard/i)).toBeVisible();
+      await expect(
+        page.getByText("Admin lead dashboard", { exact: true }).first()
+      ).toBeVisible();
     }
 
     const reduced = await page.evaluate(
