@@ -15,7 +15,8 @@ import {
   Sparkles,
   Split,
   Workflow,
-  Zap
+  Zap,
+  type LucideIcon
 } from "lucide-react";
 import {
   motion,
@@ -60,11 +61,38 @@ const decisionQuestions = [
   ["Will the site connect to tools?", "Booking, CRM, email, payments, dashboards, and portals often justify custom scope."]
 ] as const;
 
+const hiddenCostCards: Array<{
+  icon: LucideIcon;
+  title: string;
+  text: string;
+}> = [
+  {
+    icon: MousePointer2,
+    title: "Weak conversion",
+    text: "A clean template still fails if the offer, proof, calls to action, and contact flow are unclear."
+  },
+  {
+    icon: SearchCheck,
+    title: "Shallow SEO",
+    text: "A single generic Services page usually cannot explain every offer as well as focused service pages."
+  },
+  {
+    icon: Puzzle,
+    title: "Limited fit",
+    text: "A template can become awkward when forms, booking, CRM, reviews, or workflows need custom logic."
+  },
+  {
+    icon: ShieldCheck,
+    title: "Future rebuild",
+    text: "The cheapest first version may need to be rebuilt once the business grows past the original structure."
+  }
+];
+
 const faqs = [
   ["Are template websites bad for SEO?", "No. Templates can rank when the content, structure, technical setup, internal links, and user experience are strong. The problem is that many template sites launch with shallow pages and generic copy."],
   ["Is a custom website always better?", "No. Custom is only better when the business has a reason for custom structure, design, functionality, or long-term growth. A simple early-stage business may not need it yet."],
   ["Can I start with a template and move to custom later?", "Yes. Many businesses start with a template, validate the offer, collect proof, then rebuild custom once the website needs to support real marketing and operations."],
-  ["What is the simplest rule?", "Choose a template when the website needs to exist. Choose custom when the website needs to perform." ]
+  ["What is the simplest rule?", "Choose a template when the website needs to exist. Choose custom when the website needs to perform."]
 ] as const;
 
 function Reveal({
@@ -152,7 +180,6 @@ function DecisionObject() {
         <div className="absolute left-12 top-16 rounded-full border border-[#8be9ff]/18 bg-[#8be9ff]/7 px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-[#8be9ff]">
           Template
         </div>
-
         <div className="absolute right-12 top-16 rounded-full border border-[#a99aff]/20 bg-[#7c5cff]/10 px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-[#a99aff]">
           Custom
         </div>
@@ -391,13 +418,8 @@ export function TemplateVsCustomArticle() {
               </div>
             </Reveal>
             <div className="grid gap-4 sm:grid-cols-2">
-              {[
-                [MousePointer2, "Weak conversion", "A clean template still fails if the offer, proof, calls to action, and contact flow are unclear."],
-                [SearchCheck, "Shallow SEO", "A single generic Services page usually cannot explain every offer as well as focused service pages."],
-                [Puzzle, "Limited fit", "A template can become awkward when forms, booking, CRM, reviews, or workflows need custom logic."],
-                [ShieldCheck, "Future rebuild", "The cheapest first version may need to be rebuilt once the business grows past the original structure."]
-              ].map(([Icon, title, text], index) => (
-                <Reveal key={title as string} delay={index * 0.04}>
+              {hiddenCostCards.map(({ icon: Icon, title, text }, index) => (
+                <Reveal key={title} delay={index * 0.04}>
                   <CutCard className="min-h-64">
                     <Icon className="h-6 w-6 text-[#8be9ff]" />
                     <h3 className="mt-8 font-display text-3xl font-semibold tracking-[-0.055em]">{title}</h3>
