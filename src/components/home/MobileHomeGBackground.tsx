@@ -214,13 +214,34 @@ export function MobileHomeGBackground() {
             padding-bottom: 3.25rem !important;
           }
 
-          .home-static-layout .home-hero-mode-host,
+          .home-static-layout .home-hero-mode-host {
+            display: block !important;
+            position: relative !important;
+            z-index: 30 !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin-top: 1.2rem !important;
+          }
+
           .home-static-layout .home-hero-card-actions-host {
             display: none !important;
           }
 
           .home-static-layout .home-hero-original-actions-hidden {
             display: flex !important;
+          }
+
+          .home-static-layout .home-hero-mode-card {
+            border-radius: 1.15rem !important;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34) !important;
+          }
+
+          .home-static-layout .home-hero-mode-card > div:last-child {
+            padding: 0.85rem !important;
+          }
+
+          .home-static-layout .home-hero-mode-card .page-grid {
+            opacity: 0.14 !important;
           }
 
           .home-static-layout .home-hero-mode-tabs {
