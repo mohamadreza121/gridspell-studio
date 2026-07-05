@@ -15,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/pricing",
     "/about",
     "/insights",
+    "/insights/professional-website-cost-canada",
     "/contact",
     "/start-project",
     "/privacy",
@@ -25,8 +26,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...routes.map((route) => ({
       url: `${siteConfig.url}${route}`,
       lastModified: buildDate,
-      changeFrequency: route === "/insights" ? ("weekly" as const) : ("monthly" as const),
-      priority: route === "" ? 1 : route === "/start-project" ? 0.9 : 0.7
+      changeFrequency: route.startsWith("/insights") ? ("weekly" as const) : ("monthly" as const),
+      priority: route === "" ? 1 : route === "/start-project" ? 0.9 : route.startsWith("/insights/") ? 0.78 : 0.7
     })),
     ...services.map((service) => ({
       url: `${siteConfig.url}/services/${service.slug}`,
