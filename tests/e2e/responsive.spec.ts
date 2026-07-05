@@ -17,6 +17,8 @@ const publicRoutes = [
   "/pricing",
   "/about",
   "/insights",
+  "/insights/professional-website-cost-canada",
+  "/insights/template-website-vs-custom-website",
   "/contact",
   "/start-project",
   "/privacy",
@@ -43,6 +45,12 @@ const turnstileStub = `
 
 function isSmallPhoneProject(projectName: string) {
   return projectName === "small-phone-chromium";
+}
+
+async function expectHomepageHeroContent(page: Page) {
+  await expect(page.getByRole("heading", { level: 1, name: /Built on structure/i })).toBeVisible();
+  await expect(page.getByText(/GridSpell creates premium websites/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Start a project/i }).first()).toBeVisible();
 }
 
 async function expectHomepageProofContent(page: Page) {
@@ -87,6 +95,7 @@ test.describe("responsive marketing pages", () => {
       await page.waitForTimeout(250);
 
       if (route === "/") {
+        await expectHomepageHeroContent(page);
         await expectHomepageProofContent(page);
         await expect(page.locator(".small-phone-home-pricing, .small-phone-home-pricing-only")).toHaveCount(0);
       }
