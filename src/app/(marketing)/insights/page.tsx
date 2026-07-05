@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { InsightsExperienceBoundary } from "@/components/insights/InsightsExperienceBoundary";
+import { TemplateVsCustomInsightsSection } from "@/components/insights/TemplateVsCustomInsightsSection";
 import { WebsiteCostCanadaInsightsSection } from "@/components/insights/WebsiteCostCanadaInsightsSection";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -16,6 +17,7 @@ export default function InsightsPage() {
     <>
       <InsightsExperienceBoundary />
       <WebsiteCostCanadaInsightsSection />
+      <TemplateVsCustomInsightsSection />
     </>
   );
 }
