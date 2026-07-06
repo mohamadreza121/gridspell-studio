@@ -4,6 +4,9 @@ export function TinyViewportRecoveryStyles() {
   return (
     <style jsx global>{`
       @media (max-width: 379px) {
+        main,
+        main section,
+        main article,
         .tiny-viewport-content,
         .tiny-viewport-content main,
         .tiny-viewport-content section,
@@ -12,6 +15,8 @@ export function TinyViewportRecoveryStyles() {
           visibility: visible !important;
         }
 
+        main [style*="opacity: 0"],
+        main [style*="opacity:0"],
         .tiny-viewport-content [style*="opacity: 0"],
         .tiny-viewport-content [style*="opacity:0"] {
           opacity: 1 !important;
@@ -20,6 +25,8 @@ export function TinyViewportRecoveryStyles() {
           visibility: visible !important;
         }
 
+        main [style*="translate"],
+        main [style*="blur"],
         .tiny-viewport-content [style*="translate"],
         .tiny-viewport-content [style*="blur"] {
           transform: none !important;
