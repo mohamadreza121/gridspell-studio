@@ -74,13 +74,13 @@ function HomeFAQSection() {
 export default function HomePage() {
   return (
     <>
-      <TinyViewportRecoveryStyles />
       <HomeBackgroundBoundary />
       <HomeExperience />
       <HomeProofSections />
       <HomeHeroModeShowcase />
       <HomeFAQSection />
       <HomeHeroActionsPlacement />
+      <TinyViewportRecoveryStyles />
     </>
   );
 }
