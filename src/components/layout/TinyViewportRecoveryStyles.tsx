@@ -33,6 +33,23 @@ export function TinyViewportRecoveryStyles() {
           filter: none !important;
         }
 
+        main > section,
+        main section {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+        }
+
+        main > section::before,
+        main > section::after,
+        main section::before,
+        main section::after {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          opacity: 0 !important;
+        }
+
         .home-mobile-g-background {
           display: block !important;
           opacity: 1 !important;
@@ -111,32 +128,6 @@ export function TinyViewportRecoveryStyles() {
         .home-proof-sections > .page-grid,
         .home-faq-section > .page-grid {
           opacity: 0.1 !important;
-        }
-
-        .insight-article-page,
-        .insight-article-page > section,
-        .insight-article-page section {
-          background: transparent !important;
-          background-color: transparent !important;
-          background-image: none !important;
-        }
-
-        .insight-article-page section::before,
-        .insight-article-page section::after,
-        .insight-article-page > div:not([aria-hidden="true"])::before,
-        .insight-article-page > div:not([aria-hidden="true"])::after {
-          background: transparent !important;
-          background-color: transparent !important;
-          background-image: none !important;
-          opacity: 0 !important;
-        }
-
-        .insight-article-page,
-        .insight-article-page > section,
-        .insight-article-page section,
-        .insight-article-page section > * {
-          opacity: 1 !important;
-          visibility: visible !important;
         }
       }
     `}</style>
