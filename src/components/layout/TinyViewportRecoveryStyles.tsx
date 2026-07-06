@@ -57,6 +57,27 @@ export function TinyViewportRecoveryStyles() {
           background-image: none !important;
         }
 
+        .home-static-layout :is(div, section, article, aside, figure, details)[class*="bg-"]:not(.bg-clip-text),
+        .home-static-layout :is(div, section, article, aside, figure, details)[class*="bg["],
+        .home-static-layout .glass-panel,
+        .home-static-layout .home-hero-mode-card,
+        .home-static-layout .home-hero-mode-card > div,
+        .home-static-layout .home-hero-mode-card > div > div,
+        .home-static-layout .home-hero-mode-card article,
+        .home-static-layout .home-hero-mode-card [class*="bg-"]:not(.bg-clip-text) {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+        }
+
+        .home-static-layout .home-hero-mode-card,
+        .home-static-layout .glass-panel {
+          border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
         main::before,
         main::after,
         main > section::before,
@@ -114,12 +135,12 @@ export function TinyViewportRecoveryStyles() {
         }
 
         .home-mobile-g-main {
-          opacity: 0.74 !important;
+          opacity: 0.78 !important;
           transform: translateX(4vw) translateY(0.75rem) scale(1.08) !important;
         }
 
         .home-mobile-g-outline {
-          opacity: 0.42 !important;
+          opacity: 0.44 !important;
           transform: translateX(3vw) translateY(0.65rem) scale(1.08) !important;
         }
 
@@ -153,17 +174,6 @@ export function TinyViewportRecoveryStyles() {
           z-index: 22 !important;
         }
 
-        .home-static-layout .glass-panel,
-        .home-static-layout .home-hero-mode-card,
-        .home-static-layout .home-hero-mode-card > div,
-        .home-static-layout [class*="bg-[#07080c]"],
-        .home-static-layout [class*="bg-[#080a0f]"],
-        .home-static-layout [class*="bg-[#090b11]"],
-        .home-static-layout [class*="bg-[#0a0c12]"] {
-          background-color: rgba(8, 10, 15, 0.42) !important;
-          background-image: none !important;
-        }
-
         .home-static-layout .home-hero-mode-host,
         .home-static-layout .home-hero-mode-card {
           display: block !important;
@@ -178,19 +188,16 @@ export function TinyViewportRecoveryStyles() {
           position: relative;
           z-index: 26;
           margin-top: 1.35rem;
-          border: 1px solid rgba(255, 255, 255, 0.11);
+          border: 1px solid rgba(255, 255, 255, 0.14);
           border-radius: 1.15rem;
           padding: 1rem;
           color: rgba(255, 255, 255, 0.72);
           font-size: 0.78rem;
           line-height: 1.55;
           letter-spacing: 0.01em;
-          background:
-            radial-gradient(circle at 82% 12%, rgba(41, 214, 255, 0.12), transparent 12rem),
-            radial-gradient(circle at 14% 94%, rgba(124, 92, 255, 0.15), transparent 14rem),
-            rgba(8, 10, 15, 0.52) !important;
-          box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
-          backdrop-filter: blur(14px);
+          background: transparent !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
         }
 
         .home-static-layout > section:first-of-type > div:has(.home-hero-mode-host:not(:empty))::after {
