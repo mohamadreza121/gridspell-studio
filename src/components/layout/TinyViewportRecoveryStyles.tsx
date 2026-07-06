@@ -57,20 +57,41 @@ export function TinyViewportRecoveryStyles() {
           background-image: none !important;
         }
 
-        .home-static-layout :is(div, section, article, aside, figure, details)[class*="bg-"]:not(.bg-clip-text),
-        .home-static-layout :is(div, section, article, aside, figure, details)[class*="bg["],
+        .home-static-layout div[class*="bg-"],
+        .home-static-layout section[class*="bg-"],
+        .home-static-layout article[class*="bg-"],
+        .home-static-layout aside[class*="bg-"],
+        .home-static-layout figure[class*="bg-"],
+        .home-static-layout details[class*="bg-"],
+        .home-static-layout span[class*="bg-"],
+        .home-static-layout button[class*="bg-"],
+        .home-static-layout a[class*="bg-"],
         .home-static-layout .glass-panel,
         .home-static-layout .home-hero-mode-card,
         .home-static-layout .home-hero-mode-card > div,
         .home-static-layout .home-hero-mode-card > div > div,
         .home-static-layout .home-hero-mode-card article,
-        .home-static-layout .home-hero-mode-card [class*="bg-"]:not(.bg-clip-text) {
+        .home-static-layout .home-hero-mode-card span,
+        .home-static-layout .home-hero-mode-card button,
+        .home-static-layout .home-hero-mode-card a,
+        .home-static-layout .home-hero-mode-card div[class*="bg-"],
+        .home-static-layout .home-hero-mode-card span[class*="bg-"] {
           background: transparent !important;
           background-color: transparent !important;
           background-image: none !important;
           box-shadow: none !important;
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
+        }
+
+        .home-static-layout .bg-clip-text,
+        .home-static-layout .bg-gradient-to-r.bg-clip-text,
+        .home-static-layout span.bg-clip-text {
+          background-image: linear-gradient(90deg, #a99aff, #7eb3ff, #8be9ff) !important;
+          background-clip: text !important;
+          -webkit-background-clip: text !important;
+          color: transparent !important;
+          -webkit-text-fill-color: transparent !important;
         }
 
         .home-static-layout .home-hero-mode-card,
@@ -198,11 +219,6 @@ export function TinyViewportRecoveryStyles() {
           background: transparent !important;
           box-shadow: none !important;
           backdrop-filter: none !important;
-        }
-
-        .home-static-layout > section:first-of-type > div:has(.home-hero-mode-host:not(:empty))::after {
-          content: none !important;
-          display: none !important;
         }
 
         .home-static-layout > .page-grid,
