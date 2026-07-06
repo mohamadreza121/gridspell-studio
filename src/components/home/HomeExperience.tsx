@@ -490,6 +490,49 @@ function HeroScene({
         )}
       </div>
 
+
+      <div className="tiny-hero-card mt-7 rounded-[1.35rem] border border-white/[0.1] bg-[linear-gradient(145deg,rgba(255,255,255,0.045),rgba(255,255,255,0.018)),rgba(11,13,19,0.78)] p-4 shadow-[0_24px_70px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+        <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
+          <span className="h-2 w-2 rounded-full bg-white/20" />
+          <span className="h-2 w-2 rounded-full bg-white/12" />
+          <span className="h-2 w-2 rounded-full bg-white/[0.07]" />
+          <span className="ml-auto rounded-full border border-[#8be9ff]/16 bg-[#8be9ff]/7 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.14em] text-[#8be9ff]">
+            Live
+          </span>
+        </div>
+
+        <div className="mt-5 rounded-[1rem] border border-white/[0.08] bg-white/[0.025] p-4">
+          <p className="text-[0.52rem] font-semibold uppercase tracking-[0.18em] text-[#8be9ff]">
+            Marketing experience
+          </p>
+          <h3 className="mt-3 text-xl font-semibold leading-tight tracking-[-0.04em] text-white">
+            A premium first impression built to convert.
+          </h3>
+          <p className="mt-3 text-sm leading-6 text-white/44">
+            Strategy, interface, development, SEO, analytics, and reliable lead capture.
+          </p>
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.07]">
+            <div className="h-full w-[92%] rounded-full bg-gradient-to-r from-[#7c5cff] to-[#29d6ff]" />
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {["Strategy", "Interface", "System"].map((item, index) => (
+            <div
+              key={item}
+              className="rounded-xl border border-white/[0.08] bg-white/[0.025] p-3"
+            >
+              <p className="font-mono text-[0.5rem] text-white/24">
+                0{index + 1}
+              </p>
+              <p className="mt-3 text-xs font-semibold text-white/48">
+                {item}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="mt-auto flex items-center gap-3 pt-8 text-[0.64rem] uppercase tracking-[0.34em] text-white/24">
         <ArrowDown className="h-4 w-4" />
         Scroll to change scene

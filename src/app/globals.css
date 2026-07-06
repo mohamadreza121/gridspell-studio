@@ -229,6 +229,10 @@ body {
   min-height: auto;
 }
 
+.tiny-hero-card {
+  display: none;
+}
+
 /*
  * The desktop homepage is always the pinned single-scene presentation.
  * Do not gate it behind viewport height or the operating-system motion setting:
@@ -661,5 +665,13 @@ body {
     color: #ffffff;
     font-size: 0.9rem;
     font-weight: 700;
+  }
+
+  .tiny-hero-card {
+    display: block;
+  }
+
+  .home-hero-mode-host {
+    display: none !important;
   }
 }
