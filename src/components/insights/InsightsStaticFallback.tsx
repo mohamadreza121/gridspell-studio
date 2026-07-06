@@ -54,6 +54,110 @@ function StaticInsightBackgroundMark() {
   );
 }
 
+function StaticInsightGlyph() {
+  return (
+    <div
+      aria-hidden="true"
+      className="static-insight-glyph relative mb-8 aspect-square w-full max-w-[20rem] overflow-visible"
+    >
+      <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgba(124,92,255,0.16),rgba(41,214,255,0.06)_42%,transparent_70%)] blur-3xl" />
+
+      <svg
+        viewBox="0 0 600 600"
+        className="relative h-full w-full overflow-visible"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient
+            id="static-insight-glyph-gradient"
+            x1="100"
+            y1="80"
+            x2="520"
+            y2="530"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#9d87ff" />
+            <stop offset="0.5" stopColor="#7c5cff" />
+            <stop offset="1" stopColor="#29d6ff" />
+          </linearGradient>
+
+          <filter
+            id="static-insight-glyph-glow"
+            x="-70%"
+            y="-70%"
+            width="240%"
+            height="240%"
+          >
+            <feGaussianBlur stdDeviation="12" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <circle
+          cx="300"
+          cy="300"
+          r="220"
+          stroke="rgba(255,255,255,0.1)"
+          strokeWidth="2"
+          strokeDasharray="9 15"
+          transform="rotate(35 300 300)"
+        />
+
+        <path
+          d="M300 82 A218 218 0 0 1 504 224"
+          stroke="url(#static-insight-glyph-gradient)"
+          strokeWidth="7"
+          strokeLinecap="round"
+          filter="url(#static-insight-glyph-glow)"
+        />
+
+        <path
+          d="M179 203 L300 132 L430 208 L430 363 L300 443 L169 359 Z"
+          fill="rgba(124,92,255,0.055)"
+          stroke="url(#static-insight-glyph-gradient)"
+          strokeWidth="3"
+        />
+
+        <path
+          d="M179 203 L300 290 L430 208 M300 290 L300 443 M300 290 L169 359"
+          stroke="rgba(255,255,255,0.15)"
+          strokeWidth="2"
+        />
+
+        <circle
+          cx="300"
+          cy="290"
+          r="38"
+          fill="rgba(41,214,255,0.08)"
+          stroke="#8be9ff"
+          strokeWidth="4"
+          filter="url(#static-insight-glyph-glow)"
+        />
+
+        {[
+          [108, 280],
+          [472, 335],
+          [378, 502],
+          [211, 482]
+        ].map(([cx, cy], index) => (
+          <circle
+            key={`${cx}-${cy}`}
+            cx={cx}
+            cy={cy}
+            r={index % 2 === 0 ? 7 : 5}
+            fill={index % 2 === 0 ? "#7c5cff" : "#8be9ff"}
+            opacity="0.85"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 export function InsightsStaticFallback() {
   const featuredArticle =
     insightArticles.find((article) => article.featured) ?? insightArticles[0];
@@ -86,6 +190,7 @@ export function InsightsStaticFallback() {
         </div>
 
         <section className="mt-16 rounded-[2rem] border border-[#8be9ff]/18 bg-white/[0.025] p-7 backdrop-blur-sm sm:p-10">
+          <StaticInsightGlyph />
           <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[#8be9ff]">
             Featured · {featuredArticle.category}
           </p>

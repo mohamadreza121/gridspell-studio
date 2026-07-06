@@ -631,7 +631,7 @@ function ExperiencePreview({
 
   return (
     <div
-      className="relative overflow-hidden rounded-[2rem] border border-white/[0.13] bg-[#050609] p-2 shadow-[0_50px_150px_rgba(0,0,0,0.55)] sm:p-3"
+      className="experience-lab-preview-frame relative overflow-hidden rounded-[2rem] border border-white/[0.13] bg-[#050609] p-2 shadow-[0_50px_150px_rgba(0,0,0,0.55)] sm:p-3"
       style={style}
     >
       <div className="overflow-hidden rounded-[1.5rem] border border-white/[0.08]" style={{ background: palette.surface }}>
@@ -795,7 +795,7 @@ function ExperienceControls({
   onSurprise: () => void;
 }) {
   return (
-    <aside className="rounded-[2rem] border border-white/[0.1] bg-[#0b0d13]/92 p-5 shadow-[0_30px_90px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:p-6 lg:sticky lg:top-28">
+    <aside className="experience-lab-controls rounded-[2rem] border border-white/[0.1] bg-[#0b0d13]/92 p-5 shadow-[0_30px_90px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:p-6 lg:sticky lg:top-28">
       <div className="flex items-start justify-between gap-5">
         <div>
           <p className="text-[0.58rem] font-semibold uppercase tracking-[0.3em] text-[#8be9ff]">
@@ -1047,7 +1047,7 @@ export function ExperienceLab() {
   }
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-[#07080c] pb-28 pt-32 lg:pb-36 lg:pt-40">
+    <section ref={sectionRef} className="experience-lab-section relative overflow-hidden bg-[#07080c] pb-28 pt-32 lg:pb-36 lg:pt-40">
       <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-40" />
       <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 h-[38rem] w-[72rem] -translate-x-1/2 rounded-full bg-[#7c5cff]/10 blur-[170px]" />
 
@@ -1076,7 +1076,7 @@ export function ExperienceLab() {
               <button
                 type="button"
                 onClick={() => sectionRef.current?.querySelector<HTMLElement>("[data-lab-workspace]")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="inline-flex min-h-12 items-center gap-2 rounded-full bg-gradient-to-r from-[#7c5cff] to-[#29d6ff] px-5 text-sm font-semibold !text-[#05070b] shadow-[0_14px_40px_rgba(41,214,255,0.18)] transition hover:-translate-y-0.5 hover:brightness-110"
+                className="experience-lab-primary inline-flex min-h-12 items-center gap-2 rounded-full bg-gradient-to-r from-[#7c5cff] to-[#29d6ff] px-5 text-sm font-semibold !text-[#05070b] shadow-[0_14px_40px_rgba(41,214,255,0.18)] transition hover:-translate-y-0.5 hover:brightness-110"
               >
                 Start designing
                 <ArrowRight className="h-4 w-4" />
@@ -1084,7 +1084,7 @@ export function ExperienceLab() {
               <button
                 type="button"
                 onClick={surpriseMe}
-                className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/12 bg-white/[0.035] px-5 text-sm font-semibold text-white/62 transition hover:border-white/22 hover:bg-white/[0.06] hover:text-white"
+                className="experience-lab-secondary inline-flex min-h-12 items-center gap-2 rounded-full border border-white/12 bg-white/[0.035] px-5 text-sm font-semibold text-white/62 transition hover:border-white/22 hover:bg-white/[0.06] hover:text-white"
               >
                 <Shuffle className="h-4 w-4" />
                 Surprise me
