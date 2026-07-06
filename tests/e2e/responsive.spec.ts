@@ -49,7 +49,7 @@ function isSmallPhoneProject(projectName: string) {
 
 async function expectHomepageHeroContent(page: Page) {
   await expect(page.getByRole("heading", { level: 1, name: /Built on structure/i })).toBeVisible();
-  await expect(page.getByText(/GridSpell creates premium websites/i)).toBeVisible();
+  await expect(page.getByText(/GridSpell creates premium websites/i).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Start a project/i }).first()).toBeVisible();
 }
 
