@@ -15,20 +15,26 @@ export function TinyViewportRecoveryStyles() {
           visibility: visible !important;
         }
 
-        main [style*="opacity: 0"],
-        main [style*="opacity:0"],
-        .tiny-viewport-content [style*="opacity: 0"],
-        .tiny-viewport-content [style*="opacity:0"] {
+        main {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+        }
+
+        main [style],
+        .tiny-viewport-content [style] {
           opacity: 1 !important;
-          transform: none !important;
-          filter: none !important;
           visibility: visible !important;
         }
 
         main [style*="translate"],
         main [style*="blur"],
+        main [style*="opacity: 0"],
+        main [style*="opacity:0"],
         .tiny-viewport-content [style*="translate"],
-        .tiny-viewport-content [style*="blur"] {
+        .tiny-viewport-content [style*="blur"],
+        .tiny-viewport-content [style*="opacity: 0"],
+        .tiny-viewport-content [style*="opacity:0"] {
           transform: none !important;
           filter: none !important;
         }
@@ -44,6 +50,7 @@ export function TinyViewportRecoveryStyles() {
         main > section::after,
         main section::before,
         main section::after {
+          content: none !important;
           background: transparent !important;
           background-color: transparent !important;
           background-image: none !important;
@@ -94,6 +101,7 @@ export function TinyViewportRecoveryStyles() {
         .home-faq-section::after,
         .small-phone-home-pricing::before,
         .small-phone-home-pricing::after {
+          content: none !important;
           background: transparent !important;
           background-color: transparent !important;
           background-image: none !important;
@@ -122,6 +130,13 @@ export function TinyViewportRecoveryStyles() {
         .home-faq-section > * {
           position: relative !important;
           z-index: 22 !important;
+        }
+
+        .home-static-layout .home-hero-mode-host,
+        .home-static-layout .home-hero-mode-card {
+          display: block !important;
+          opacity: 1 !important;
+          visibility: visible !important;
         }
 
         .home-static-layout > .page-grid,
