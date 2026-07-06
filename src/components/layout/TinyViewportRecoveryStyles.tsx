@@ -3,7 +3,7 @@
 export function TinyViewportRecoveryStyles() {
   return (
     <style jsx global>{`
-      @media (max-width: 379px) {
+      @media (max-width: 480px) {
         main,
         main section,
         main article,
@@ -33,6 +33,23 @@ export function TinyViewportRecoveryStyles() {
           filter: none !important;
         }
 
+        main > section,
+        main section {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+        }
+
+        main > section::before,
+        main > section::after,
+        main section::before,
+        main section::after {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          opacity: 0 !important;
+        }
+
         .home-mobile-g-background {
           display: block !important;
           opacity: 1 !important;
@@ -40,7 +57,7 @@ export function TinyViewportRecoveryStyles() {
         }
 
         .home-mobile-g-main {
-          opacity: 0.72 !important;
+          opacity: 0.74 !important;
           transform: translateX(4vw) translateY(0.75rem) scale(1.08) !important;
         }
 
@@ -54,42 +71,63 @@ export function TinyViewportRecoveryStyles() {
         .home-static-layout,
         .home-static-layout > section,
         .home-static-layout .home-static-scene,
-        .home-experience + div,
-        .home-experience + div > section,
+        .home-proof-sections,
+        .home-proof-sections > section,
         .home-faq-section,
         .small-phone-home-pricing-only,
         .small-phone-home-pricing {
           background: transparent !important;
           background-color: transparent !important;
           background-image: none !important;
+          position: relative !important;
         }
 
         .home-static-layout .home-static-scene::before,
-        .home-static-layout > section:first-of-type::before,
-        .home-experience + div::before,
-        .home-experience + div > section::before,
+        .home-static-layout .home-static-scene::after,
+        .home-static-layout > section::before,
+        .home-static-layout > section::after,
+        .home-proof-sections::before,
+        .home-proof-sections::after,
+        .home-proof-sections > section::before,
+        .home-proof-sections > section::after,
         .home-faq-section::before,
-        .small-phone-home-pricing::before {
+        .home-faq-section::after,
+        .small-phone-home-pricing::before,
+        .small-phone-home-pricing::after {
           background: transparent !important;
+          background-color: transparent !important;
           background-image: none !important;
           opacity: 0 !important;
-        }
-
-        .home-experience + div > [aria-hidden="true"],
-        .home-faq-section > .page-grid,
-        .home-static-layout > .page-grid {
-          opacity: 0.12 !important;
         }
 
         .home-experience,
         .home-static-only,
         .home-static-layout,
-        .home-experience + div,
+        .home-proof-sections,
         .home-faq-section {
-          position: relative !important;
           z-index: 20 !important;
           opacity: 1 !important;
           visibility: visible !important;
+        }
+
+        .home-static-layout > section,
+        .home-proof-sections > section,
+        .home-faq-section {
+          z-index: 21 !important;
+          isolation: isolate;
+        }
+
+        .home-static-layout > section > *,
+        .home-proof-sections > section > *,
+        .home-faq-section > * {
+          position: relative !important;
+          z-index: 22 !important;
+        }
+
+        .home-static-layout > .page-grid,
+        .home-proof-sections > .page-grid,
+        .home-faq-section > .page-grid {
+          opacity: 0.1 !important;
         }
       }
     `}</style>

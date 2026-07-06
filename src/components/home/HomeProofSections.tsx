@@ -114,12 +114,12 @@ function MiniInterfacePreview({ project }: { project: FeaturedProject }) {
 
 export function HomeProofSections() {
   return (
-    <div className="relative z-[3] isolate overflow-hidden bg-[#07080c] text-white">
-      <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-30" />
-      <div aria-hidden="true" className="pointer-events-none absolute right-[-18rem] top-24 h-[34rem] w-[34rem] rounded-full bg-[#7c5cff]/12 blur-[150px]" />
-      <div aria-hidden="true" className="pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px]" />
+    <div className="home-proof-sections relative z-[3] isolate overflow-hidden bg-[#07080c] text-white max-[480px]:bg-transparent">
+      <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-30 max-[480px]:opacity-10" />
+      <div aria-hidden="true" className="pointer-events-none absolute right-[-18rem] top-24 h-[34rem] w-[34rem] rounded-full bg-[#7c5cff]/12 blur-[150px] max-[480px]:hidden" />
+      <div aria-hidden="true" className="pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px] max-[480px]:hidden" />
 
-      <section className="relative border-t border-white/[0.06] py-24 sm:py-32">
+      <section className="relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
         <Container>
           <div className="grid gap-10 xl:grid-cols-[0.68fr_1.32fr] xl:items-end">
             <div>
@@ -199,7 +199,7 @@ export function HomeProofSections() {
         </Container>
       </section>
 
-      <section className="relative border-t border-white/[0.06] py-24 sm:py-32">
+      <section className="relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
         <Container>
           <div className="grid gap-12 xl:grid-cols-[0.82fr_1.18fr] xl:items-start">
             <div>
@@ -258,26 +258,17 @@ export function HomeProofSections() {
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
                 Build with the same system
               </p>
-              <h3 className="mt-4 max-w-2xl font-display text-3xl font-semibold tracking-[-0.055em] text-white sm:text-4xl">
-                Get a custom website with the lead system, launch setup, and support behind it.
+              <h3 className="mt-4 max-w-2xl font-display text-3xl font-semibold leading-tight tracking-[-0.055em] text-white sm:text-4xl">
+                Start with a website. Grow into the system behind it.
               </h3>
             </div>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row lg:mt-0">
-              <Link
-                href="/start-project"
-                className="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/15 bg-[linear-gradient(135deg,#7c5cff_0%,#6477ff_48%,#29d6ff_100%)] px-6 text-sm font-semibold text-white shadow-[0_14px_44px_rgba(92,104,255,0.26)] transition hover:-translate-y-0.5"
-              >
-                Start a project
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.035] px-6 text-sm font-semibold text-white/58 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
-              >
-                View pricing
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
+            <Link
+              href="/start-project"
+              className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-[#08090d] transition hover:-translate-y-0.5 lg:mt-0"
+            >
+              Start a project
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
         </Container>
       </section>
