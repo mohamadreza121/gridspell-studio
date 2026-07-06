@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const publicRoutes = [
   "/",
@@ -47,9 +47,31 @@ function isSmallPhoneProject(projectName: string) {
   return projectName === "small-phone-chromium";
 }
 
+async function expectOneVisible(locator: Locator, message: string) {
+  await expect
+    .poll(
+      async () => {
+        const count = await locator.count();
+
+        for (let index = 0; index < count; index += 1) {
+          if (await locator.nth(index).isVisible()) {
+            return true;
+          }
+        }
+
+        return false;
+      },
+      { message }
+    )
+    .toBe(true);
+}
+
 async function expectHomepageHeroContent(page: Page) {
   await expect(page.getByRole("heading", { level: 1, name: /Built on structure/i })).toBeVisible();
-  await expect(page.getByText(/GridSpell creates premium websites/i)).toBeVisible();
+  await expectOneVisible(
+    page.getByText(/GridSpell creates premium websites/i),
+    "Expected at least one visible homepage hero description"
+  );
   await expect(page.getByRole("link", { name: /Start a project/i }).first()).toBeVisible();
 }
 
