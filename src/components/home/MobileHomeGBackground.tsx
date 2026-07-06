@@ -94,6 +94,7 @@ export function MobileHomeGBackground() {
           .home-static-layout .home-static-scene,
           .home-experience + div,
           .home-experience + div > section,
+          .home-faq-section,
           .small-phone-home-pricing-only,
           .small-phone-home-pricing {
             background: transparent !important;
@@ -104,6 +105,7 @@ export function MobileHomeGBackground() {
           .home-static-only,
           .home-static-layout,
           .home-experience + div,
+          .home-faq-section,
           .small-phone-home-pricing-only,
           .small-phone-home-pricing {
             position: relative !important;
@@ -114,6 +116,7 @@ export function MobileHomeGBackground() {
 
           .home-static-layout > section,
           .home-experience + div > section,
+          .home-faq-section,
           .small-phone-home-pricing {
             position: relative !important;
             z-index: 21;
@@ -122,14 +125,16 @@ export function MobileHomeGBackground() {
 
           .home-static-layout > section > *,
           .home-experience + div > section > *,
+          .home-faq-section > *,
           .small-phone-home-pricing > * {
             position: relative;
             z-index: 22;
           }
 
           .home-static-layout > .page-grid,
-          .home-experience + div > .page-grid {
-            opacity: 0.22 !important;
+          .home-experience + div > .page-grid,
+          .home-faq-section > .page-grid {
+            opacity: 0.18 !important;
           }
 
           .home-static-layout .home-static-scene::before,
@@ -142,25 +147,25 @@ export function MobileHomeGBackground() {
             inset: 0;
             z-index: 0;
             background:
-              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.14), transparent 22rem),
+              radial-gradient(circle at 78% 18%, rgba(7, 8, 12, 0.08), transparent 22rem),
               linear-gradient(
                 180deg,
-                rgba(7, 8, 12, 0.08),
-                rgba(7, 8, 12, 0.2) 42%,
-                rgba(7, 8, 12, 0.34)
+                rgba(7, 8, 12, 0.04),
+                rgba(7, 8, 12, 0.1) 42%,
+                rgba(7, 8, 12, 0.16)
               );
           }
         }
 
         @media (max-width: 379px) {
           .home-mobile-g-main {
-            opacity: 0.52 !important;
-            transform: translateX(10vw) translateY(1.75rem) scale(0.96);
+            opacity: 0.62 !important;
+            transform: translateX(8vw) translateY(1.4rem) scale(1.02);
           }
 
           .home-mobile-g-outline {
-            opacity: 0.28 !important;
-            transform: translateX(8vw) translateY(1.6rem) scale(0.96);
+            opacity: 0.34 !important;
+            transform: translateX(7vw) translateY(1.25rem) scale(1.02);
           }
 
           .home-presentation-only {
@@ -181,6 +186,8 @@ export function MobileHomeGBackground() {
           .home-experience + div,
           .home-experience + div > section,
           .home-experience + div > section > div,
+          .home-faq-section,
+          .home-faq-section > div,
           .small-phone-home-pricing-only,
           .small-phone-home-pricing {
             height: auto !important;
@@ -252,22 +259,23 @@ export function MobileHomeGBackground() {
             padding-block: 3.5rem !important;
           }
 
-          .small-phone-home-pricing {
-            border-top-color: rgba(255, 255, 255, 0.055) !important;
-          }
-
           .home-static-layout .home-static-scene::before,
           .home-static-layout > section:first-of-type::before,
           .home-experience + div > section::before,
+          .home-faq-section::before,
           .small-phone-home-pricing::before {
-            background:
-              radial-gradient(circle at 82% 14%, rgba(7, 8, 12, 0.12), transparent 18rem),
-              linear-gradient(
-                180deg,
-                rgba(7, 8, 12, 0.05),
-                rgba(7, 8, 12, 0.18) 42%,
-                rgba(7, 8, 12, 0.3)
-              );
+            background: none !important;
+            opacity: 0 !important;
+          }
+
+          .home-static-layout > .page-grid,
+          .home-experience + div > .page-grid,
+          .home-faq-section > .page-grid {
+            opacity: 0.14 !important;
+          }
+
+          .small-phone-home-pricing {
+            border-top-color: rgba(255, 255, 255, 0.055) !important;
           }
         }
       `}</style>
