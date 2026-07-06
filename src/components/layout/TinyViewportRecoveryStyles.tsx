@@ -3,7 +3,7 @@
 export function TinyViewportRecoveryStyles() {
   return (
     <style jsx global>{`
-      @media (max-width: 480px) {
+      @media (max-width: 379px) {
         .mobile-marketing-g-background {
           display: none !important;
         }
