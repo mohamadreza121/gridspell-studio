@@ -283,16 +283,6 @@ export function MobileHomeGBackground() {
         }
 
         @media (max-width: 379px) {
-          .home-mobile-g-background {
-            display: block !important;
-            position: fixed !important;
-            inset: 0 !important;
-            z-index: 0 !important;
-            opacity: 1 !important;
-            background: #07080c !important;
-            background-color: #07080c !important;
-          }
-
           .home-mobile-g-main {
             opacity: 0.82 !important;
             transform: translateX(4vw) translateY(0.75rem) scale(1.1) !important;
@@ -301,6 +291,38 @@ export function MobileHomeGBackground() {
           .home-mobile-g-outline {
             opacity: 0.48 !important;
             transform: translateX(3vw) translateY(0.65rem) scale(1.1) !important;
+          }
+
+          #main-content {
+            position: relative !important;
+            z-index: 1 !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            background-image: none !important;
+          }
+
+          #main-content > *:not(.home-mobile-g-background) {
+            position: relative !important;
+            z-index: 1 !important;
+          }
+
+                    .home-mobile-g-background {
+            display: block !important;
+            position: fixed !important;
+            top: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            min-height: 100svh !important;
+            z-index: 0 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            overflow: hidden !important;
+            background: #07080c !important;
+            background-color: #07080c !important;
           }
 
           .home-experience,
@@ -320,39 +342,6 @@ export function MobileHomeGBackground() {
             background: transparent !important;
             background-color: transparent !important;
             background-image: none !important;
-          }
-
-          .home-static-layout div[class*="bg-"],
-          .home-static-layout section[class*="bg-"],
-          .home-static-layout article[class*="bg-"],
-          .home-static-layout aside[class*="bg-"],
-          .home-static-layout figure[class*="bg-"],
-          .home-static-layout details[class*="bg-"],
-          .home-static-layout button[class*="bg-"],
-          .home-static-layout a[class*="bg-"],
-          .home-static-layout .glass-panel,
-          .home-static-layout .home-hero-mode-card,
-          .home-static-layout .home-hero-mode-card > div,
-          .home-static-layout .home-hero-mode-card > div > div,
-          .home-static-layout .home-hero-mode-card article,
-          .home-static-layout .home-hero-mode-card button,
-          .home-static-layout .home-hero-mode-card a {
-            background: transparent !important;
-            background-color: transparent !important;
-            background-image: none !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-          }
-
-          .home-static-layout span[class*="bg-"]:not(.bg-clip-text),
-          .home-static-layout .home-hero-mode-card span[class*="bg-"]:not(.bg-clip-text) {
-            background: transparent !important;
-            background-color: transparent !important;
-            background-image: none !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
           }
 
           .home-static-layout .bg-clip-text,

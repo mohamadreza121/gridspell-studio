@@ -30,7 +30,7 @@ export function TinyViewportRecoveryStyles() {
           background-image: none !important;
         }
 
-        #main-content > * {
+        #main-content > *:not(.home-mobile-g-background) {
           position: relative !important;
           z-index: 1 !important;
         }
@@ -55,33 +55,6 @@ export function TinyViewportRecoveryStyles() {
           background: transparent !important;
           background-color: transparent !important;
           background-image: none !important;
-        }
-
-        .home-static-layout div[class*="bg-"],
-        .home-static-layout section[class*="bg-"],
-        .home-static-layout article[class*="bg-"],
-        .home-static-layout aside[class*="bg-"],
-        .home-static-layout figure[class*="bg-"],
-        .home-static-layout details[class*="bg-"],
-        .home-static-layout span[class*="bg-"],
-        .home-static-layout button[class*="bg-"],
-        .home-static-layout a[class*="bg-"],
-        .home-static-layout .glass-panel,
-        .home-static-layout .home-hero-mode-card,
-        .home-static-layout .home-hero-mode-card > div,
-        .home-static-layout .home-hero-mode-card > div > div,
-        .home-static-layout .home-hero-mode-card article,
-        .home-static-layout .home-hero-mode-card span,
-        .home-static-layout .home-hero-mode-card button,
-        .home-static-layout .home-hero-mode-card a,
-        .home-static-layout .home-hero-mode-card div[class*="bg-"],
-        .home-static-layout .home-hero-mode-card span[class*="bg-"] {
-          background: transparent !important;
-          background-color: transparent !important;
-          background-image: none !important;
-          box-shadow: none !important;
-          backdrop-filter: none !important;
-          -webkit-backdrop-filter: none !important;
         }
 
         .home-static-layout .bg-clip-text,
@@ -147,9 +120,17 @@ export function TinyViewportRecoveryStyles() {
         .home-mobile-g-background {
           display: block !important;
           position: fixed !important;
-          inset: 0 !important;
+          top: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          min-height: 100vh !important;
+          min-height: 100svh !important;
           z-index: 0 !important;
           opacity: 1 !important;
+          visibility: visible !important;
           overflow: hidden !important;
           background: #07080c !important;
           background-color: #07080c !important;
@@ -200,25 +181,6 @@ export function TinyViewportRecoveryStyles() {
           display: block !important;
           opacity: 1 !important;
           visibility: visible !important;
-        }
-
-        .home-static-layout > section:first-of-type > div::after {
-          content: "Websites\\A A premium first impression built to convert.\\A Strategy · Interface · System";
-          white-space: pre-line;
-          display: block;
-          position: relative;
-          z-index: 26;
-          margin-top: 1.35rem;
-          border: 1px solid rgba(255, 255, 255, 0.14);
-          border-radius: 1.15rem;
-          padding: 1rem;
-          color: rgba(255, 255, 255, 0.72);
-          font-size: 0.78rem;
-          line-height: 1.55;
-          letter-spacing: 0.01em;
-          background: transparent !important;
-          box-shadow: none !important;
-          backdrop-filter: none !important;
         }
 
         .home-static-layout > .page-grid,

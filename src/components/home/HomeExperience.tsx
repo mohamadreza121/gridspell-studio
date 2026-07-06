@@ -753,7 +753,7 @@ function DesktopPresentation() {
 
 function StaticHomepage() {
   return (
-    <div className="home-static-layout relative overflow-hidden bg-[#07080c]">
+    <div className="home-static-layout relative overflow-hidden">
       <div className="page-grid pointer-events-none absolute inset-0 opacity-40" />
       <section className="relative"><HeroScene staticMode /></section>
       <section className="home-static-scene"><StaticWorkGallery /></section>
