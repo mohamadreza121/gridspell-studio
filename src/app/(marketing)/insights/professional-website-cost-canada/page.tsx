@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { WebsiteCostCanadaArticle } from "@/components/insights/WebsiteCostCanadaArticle";
+import { TinyViewportRecoveryStyles } from "@/components/layout/TinyViewportRecoveryStyles";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -12,5 +13,10 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function ProfessionalWebsiteCostCanadaPage() {
-  return <WebsiteCostCanadaArticle />;
+  return (
+    <div className="tiny-viewport-content">
+      <TinyViewportRecoveryStyles />
+      <WebsiteCostCanadaArticle />
+    </div>
+  );
 }
