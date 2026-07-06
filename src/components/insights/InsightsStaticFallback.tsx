@@ -4,6 +4,56 @@ import { ArrowUpRight, Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { insightArticles } from "@/config/insights";
 
+function StaticInsightBackgroundMark() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute right-[-15rem] top-20 h-[34rem] w-[34rem] opacity-70 sm:right-[-10rem] sm:h-[40rem] sm:w-[40rem]"
+    >
+      <div className="absolute inset-0 rounded-full bg-[#7c5cff]/10 blur-[105px]" />
+      <svg
+        viewBox="0 0 1000 1000"
+        className="relative h-full w-full rotate-[-8deg] overflow-visible"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="insights-static-g" x1="180" y1="170" x2="835" y2="810" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#9D87FF" />
+            <stop offset="44%" stopColor="#7C5CFF" />
+            <stop offset="76%" stopColor="#67AEFF" />
+            <stop offset="100%" stopColor="#29D6FF" />
+          </linearGradient>
+          <filter id="insights-static-g-glow" x="-18%" y="-18%" width="136%" height="136%" colorInterpolationFilters="sRGB">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.42 0" result="softGlow" />
+            <feMerge>
+              <feMergeNode in="softGlow" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <g opacity="0.5" filter="url(#insights-static-g-glow)">
+          <path
+            d="M770 308 C704 243 613 208 500 208 C337 208 208 337 208 500 C208 663 337 792 500 792 C634 792 748 705 786 584"
+            stroke="url(#insights-static-g)"
+            strokeWidth="68"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M580 560 H792"
+            stroke="url(#insights-static-g)"
+            strokeWidth="68"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export function InsightsStaticFallback() {
   const featuredArticle =
     insightArticles.find((article) => article.featured) ?? insightArticles[0];
@@ -17,8 +67,9 @@ export function InsightsStaticFallback() {
         aria-hidden="true"
         className="page-grid pointer-events-none absolute inset-0 opacity-35"
       />
+      <StaticInsightBackgroundMark />
 
-      <Container className="relative">
+      <Container className="relative z-10">
         <div className="max-w-4xl">
           <p className="text-[0.64rem] font-semibold uppercase tracking-[0.38em] text-[#8be9ff]">
             Insights
@@ -34,7 +85,7 @@ export function InsightsStaticFallback() {
           </p>
         </div>
 
-        <section className="mt-16 rounded-[2rem] border border-[#8be9ff]/18 bg-white/[0.025] p-7 sm:p-10">
+        <section className="mt-16 rounded-[2rem] border border-[#8be9ff]/18 bg-white/[0.025] p-7 backdrop-blur-sm sm:p-10">
           <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[#8be9ff]">
             Featured · {featuredArticle.category}
           </p>
