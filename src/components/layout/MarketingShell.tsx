@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar, type MarketingViewer } from "@/components/layout/Navbar";
 import { NavigationAccessibilityController } from "@/components/layout/NavigationAccessibilityController";
 import { NavigationFocusRestore } from "@/components/layout/NavigationFocusRestore";
+import { TinyViewportRecoveryStyles } from "@/components/layout/TinyViewportRecoveryStyles";
 import { getViewerContext } from "@/lib/supabase/auth";
 
 function initials(fullName: string | null, email: string | null) {
@@ -35,6 +36,7 @@ export async function MarketingShell({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <TinyViewportRecoveryStyles />
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>

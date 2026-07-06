@@ -7,6 +7,7 @@ import { HomeExperience } from "@/components/home/HomeExperience";
 import { HomeHeroActionsPlacement } from "@/components/home/HomeHeroActionsPlacement";
 import { HomeHeroModeShowcase } from "@/components/home/HomeHeroModeShowcase";
 import { HomeProofSections } from "@/components/home/HomeProofSections";
+import { TinyViewportRecoveryStyles } from "@/components/layout/TinyViewportRecoveryStyles";
 import { Container } from "@/components/ui/Container";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -73,6 +74,7 @@ function HomeFAQSection() {
 export default function HomePage() {
   return (
     <>
+      <TinyViewportRecoveryStyles />
       <HomeBackgroundBoundary />
       <HomeExperience />
       <HomeProofSections />
