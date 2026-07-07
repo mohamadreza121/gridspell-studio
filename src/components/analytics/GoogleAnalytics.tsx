@@ -29,7 +29,6 @@ export function GoogleAnalytics() {
     if (!measurementId || shouldLoad) return;
 
     let cancelled = false;
-    let timeoutId: number | undefined;
 
     const loadAnalytics = () => {
       if (cancelled) return;
@@ -43,13 +42,11 @@ export function GoogleAnalytics() {
       });
     });
 
-    timeoutId = window.setTimeout(loadAnalytics, 5200);
+    const timeoutId = window.setTimeout(loadAnalytics, 5200);
 
     return () => {
       cancelled = true;
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-      }
+      window.clearTimeout(timeoutId);
 
       ANALYTICS_INTERACTION_EVENTS.forEach((eventName) => {
         window.removeEventListener(eventName, loadAnalytics);
