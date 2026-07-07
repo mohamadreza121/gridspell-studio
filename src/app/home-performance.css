@@ -4,12 +4,48 @@
  * recovery styles no longer wait for a client-injected <style> tag.
  */
 
+@keyframes home-soft-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .home-mobile-g-background {
   display: none;
 }
 
 .tiny-hero-card {
   display: none;
+}
+
+body > header {
+  animation: home-soft-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+}
+
+.home-experience :where(h1, [role="heading"][aria-level="1"]) {
+  animation: home-soft-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) 130ms both;
+}
+
+.home-experience :where(h1, [role="heading"][aria-level="1"]) + div {
+  animation: home-soft-rise 760ms cubic-bezier(0.22, 1, 0.36, 1) 260ms both;
+}
+
+.home-experience :where(h1, [role="heading"][aria-level="1"]) + div + div {
+  animation: home-soft-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both;
+}
+
+.home-proof-sections,
+.home-faq-section,
+.home-static-layout .home-static-scene {
+  contain: layout paint style;
+  content-visibility: auto;
+  contain-intrinsic-size: 920px;
 }
 
 .home-hero-mode-tabs {
@@ -53,9 +89,21 @@
 .home-hero-mode-host {
   position: relative;
   z-index: 20;
-  margin-top: 1rem;
   width: 100%;
   max-width: 46rem;
+  margin-top: 1rem;
+  opacity: 0;
+  transform: translate3d(0, 24px, 0) scale(0.985);
+  transition:
+    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+  contain: layout paint style;
+}
+
+.home-hero-mode-host[data-hero-mode-ready="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 @media (min-width: 1280px) {
@@ -354,5 +402,21 @@
 
   .home-hero-mode-host {
     display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body > header,
+  .home-experience :where(h1, [role="heading"][aria-level="1"]),
+  .home-experience :where(h1, [role="heading"][aria-level="1"]) + div,
+  .home-experience :where(h1, [role="heading"][aria-level="1"]) + div + div {
+    animation: none !important;
+  }
+
+  .home-hero-mode-host {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
   }
 }

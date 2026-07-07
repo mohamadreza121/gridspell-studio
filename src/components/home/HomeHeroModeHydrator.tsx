@@ -17,6 +17,13 @@ type IdleWindow = Window &
     cancelIdleCallback?: (handle: number) => void;
   };
 
+const HERO_INTERACTION_EVENTS = [
+  "pointerdown",
+  "keydown",
+  "touchstart",
+  "wheel"
+] as const;
+
 const HomeHeroModeShowcaseClient = dynamic(
   () =>
     import("@/components/home/HomeHeroModeShowcase.client").then(
@@ -33,31 +40,52 @@ export function HomeHeroModeHydrator() {
 
   useEffect(() => {
     let cancelled = false;
-
-    const startInteractiveLayer = () => {
-      if (cancelled) return;
-      document.documentElement.dataset.homeHeroInteractive = "true";
-      setReady(true);
-    };
+    let started = false;
+    let timeoutId: number | undefined;
+    let idleId: number | undefined;
 
     const idleWindow = window as IdleWindow;
 
-    if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
-      const idleId = idleWindow.requestIdleCallback(startInteractiveLayer, {
-        timeout: 1200
+    const cleanupListeners = () => {
+      HERO_INTERACTION_EVENTS.forEach((eventName) => {
+        window.removeEventListener(eventName, startInteractiveLayer);
       });
 
-      return () => {
-        cancelled = true;
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+
+      if (idleId !== undefined) {
         idleWindow.cancelIdleCallback?.(idleId);
-      };
+      }
+    };
+
+    function startInteractiveLayer() {
+      if (cancelled || started) return;
+      started = true;
+      cleanupListeners();
+      document.documentElement.dataset.homeHeroInteractive = "true";
+      setReady(true);
     }
 
-    const timeoutId = window.setTimeout(startInteractiveLayer, 700);
+    HERO_INTERACTION_EVENTS.forEach((eventName) => {
+      window.addEventListener(eventName, startInteractiveLayer, {
+        once: true,
+        passive: true
+      });
+    });
+
+    if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+      idleId = idleWindow.requestIdleCallback(startInteractiveLayer, {
+        timeout: 1800
+      });
+    } else {
+      timeoutId = window.setTimeout(startInteractiveLayer, 1500);
+    }
 
     return () => {
       cancelled = true;
-      window.clearTimeout(timeoutId);
+      cleanupListeners();
     };
   }, []);
 
