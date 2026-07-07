@@ -23,8 +23,6 @@ const HERO_INTERACTION_EVENTS = [
   "wheel"
 ] as const;
 
-const HERO_IDLE_DELAY_MS = 9000;
-
 const HomeHeroModeShowcaseClient = dynamic(
   () =>
     import("@/components/home/HomeHeroModeShowcase.client").then(
@@ -81,10 +79,10 @@ export function HomeHeroModeHydrator() {
 
     if (hasIdleCallback) {
       idleId = idleWindow.requestIdleCallback?.(startInteractiveLayer, {
-        timeout: HERO_IDLE_DELAY_MS
+        timeout: 1800
       });
     } else {
-      timeoutId = window.setTimeout(startInteractiveLayer, HERO_IDLE_DELAY_MS);
+      timeoutId = window.setTimeout(startInteractiveLayer, 1500);
     }
 
     return () => {

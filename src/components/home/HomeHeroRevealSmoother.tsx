@@ -1,18 +1,6 @@
 export function HomeHeroRevealSmoother() {
   return (
     <style>{`
-      @keyframes home-card-cold-reveal {
-        from {
-          opacity: 0;
-          transform: translate3d(0, 42px, 0) scale(0.965);
-        }
-
-        to {
-          opacity: 1;
-          transform: translate3d(0, 0, 0) scale(1);
-        }
-      }
-
       .home-hero-mode-host {
         opacity: 0;
         transform: translate3d(0, 46px, 0) scale(0.962);
@@ -32,53 +20,9 @@ export function HomeHeroRevealSmoother() {
       }
 
       @media (min-width: 1280px) {
-        .home-presentation-track > .sticky > section:first-of-type {
+        .home-presentation-track > .sticky > section {
           filter: none !important;
           will-change: opacity, transform !important;
-        }
-
-        .home-presentation-only .tiny-hero-card {
-          position: absolute;
-          right: clamp(1.75rem, 4.2vw, 5.25rem);
-          bottom: clamp(7.75rem, 11vh, 9.75rem);
-          z-index: 18;
-          display: block !important;
-          width: min(34vw, 31rem);
-          max-width: none;
-          margin-top: 0;
-          padding: 1.18rem;
-          border-radius: 1.45rem;
-          border-color: rgba(255, 255, 255, 0.11);
-          background:
-            radial-gradient(circle at 82% 12%, rgba(41, 214, 255, 0.12), transparent 15rem),
-            radial-gradient(circle at 14% 94%, rgba(124, 92, 255, 0.15), transparent 17rem),
-            rgba(8, 10, 15, 0.94);
-          box-shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
-          opacity: 0;
-          transform-origin: 50% 58%;
-          animation: home-card-cold-reveal 980ms cubic-bezier(0.16, 1, 0.3, 1) 520ms both;
-          contain: layout paint style;
-          will-change: opacity, transform;
-        }
-
-        html[data-home-hero-interactive="true"] .home-presentation-only .tiny-hero-card {
-          opacity: 0;
-          visibility: hidden;
-          pointer-events: none;
-          transform: translate3d(0, 12px, 0) scale(0.985);
-          transition:
-            opacity 360ms ease,
-            visibility 360ms ease,
-            transform 360ms ease;
-        }
-      }
-
-      @media (min-width: 1280px) and (max-height: 800px) {
-        .home-presentation-only .tiny-hero-card {
-          right: 2rem;
-          bottom: 6.9rem;
-          width: min(31vw, 28rem);
-          padding: 0.95rem;
         }
       }
 
@@ -95,10 +39,6 @@ export function HomeHeroRevealSmoother() {
           transform: none;
           transition: none !important;
           will-change: auto;
-        }
-
-        .home-presentation-only .tiny-hero-card {
-          animation: none !important;
         }
       }
     `}</style>

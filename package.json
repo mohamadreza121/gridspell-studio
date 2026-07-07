@@ -32,19 +32,6 @@
     "quality:phase8": "npm run check && npm run performance:assets && npm run test:keyboard && npm run test:accessibility && npm run test:responsive && npm run test:reduced-motion && npm run test:performance",
     "performance:assets": "node scripts/check-asset-budget.mjs"
   },
-  "browserslist": {
-    "production": [
-      "Chrome >= 111",
-      "Edge >= 111",
-      "Firefox >= 111",
-      "Safari >= 16.4"
-    ],
-    "development": [
-      "last 1 Chrome version",
-      "last 1 Firefox version",
-      "last 1 Safari version"
-    ]
-  },
   "dependencies": {
     "@sentry/nextjs": "^10.62.0",
     "@supabase/ssr": "0.12.0",
