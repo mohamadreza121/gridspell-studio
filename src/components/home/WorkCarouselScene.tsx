@@ -18,10 +18,16 @@ import {
   usePrefersReducedMotion
 } from "@/hooks/useMediaQuery";
 
-function BrowserPreview({ project }: { project: FeaturedProject }) {
+function BrowserPreview({
+  project,
+  enableVideo = false
+}: {
+  project: FeaturedProject;
+  enableVideo?: boolean;
+}) {
   const hydrated = useHydrated();
   const reduceMotion = usePrefersReducedMotion();
-  const previewVideo = hydrated && !reduceMotion ? project.previewVideo : undefined;
+  const previewVideo = hydrated && !reduceMotion && enableVideo ? project.previewVideo : undefined;
   const hostname = project.liveUrl
     ? new URL(project.liveUrl).hostname.replace(/^www\./, "")
     : `${project.slug}.gridspell.preview`;
@@ -76,7 +82,7 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
             fill
             sizes="(min-width: 1440px) 48vw, (min-width: 900px) 54vw, 92vw"
             className="object-cover object-top"
-            priority={project.slug === "desa-foam-insulation"}
+            priority={false}
           />
         ) : (
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(41,214,255,.16),transparent_28rem),linear-gradient(145deg,#0b0d13,#11182a)] p-8">
@@ -113,11 +119,13 @@ function BrowserPreview({ project }: { project: FeaturedProject }) {
 function ProjectPanel({
   project,
   index,
-  progress
+  progress,
+  enableVideo
 }: {
   project: FeaturedProject;
   index: number;
   progress: MotionValue<number>;
+  enableVideo: boolean;
 }) {
   const lastIndex = Math.max(1, featuredProjects.length - 1);
   const center = index === 0 ? 0.035 : 0.18 + (index / lastIndex) * 0.62;
@@ -141,7 +149,7 @@ function ProjectPanel({
           className="block h-[min(58dvh,620px)] min-h-[390px]"
           aria-label={`View ${project.title} case study`}
         >
-          <BrowserPreview project={project} />
+          <BrowserPreview project={project} enableVideo={enableVideo} />
         </Link>
 
         <div className="mt-5 grid gap-4 border-t border-white/[0.08] pt-5 xl:grid-cols-[1fr_auto] xl:items-end">
@@ -186,6 +194,7 @@ export function WorkCarouselScene({ progress }: { progress: MotionValue<number> 
   const stripRef = useRef<HTMLDivElement>(null);
   const [travel, setTravel] = useState(0);
   const [activeProject, setActiveProject] = useState(0);
+  const [sceneReached, setSceneReached] = useState(false);
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -215,6 +224,10 @@ export function WorkCarouselScene({ progress }: { progress: MotionValue<number> 
       Math.max(0, Math.round(value * (featuredProjects.length - 1)))
     );
     setActiveProject((current) => (current === next ? current : next));
+
+    if (value > 0.02) {
+      setSceneReached(true);
+    }
   });
 
   const targetX = useTransform(progress, [0, 1], [0, -travel]);
@@ -265,6 +278,7 @@ export function WorkCarouselScene({ progress }: { progress: MotionValue<number> 
             project={project}
             index={index}
             progress={progress}
+            enableVideo={sceneReached && index === activeProject}
           />
         ))}
 
