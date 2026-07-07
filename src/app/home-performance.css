@@ -1,0 +1,276 @@
+/*
+ * Homepage performance layer.
+ * Static CSS is parsed before hydration, so mobile background and tiny-phone
+ * recovery styles no longer wait for a client-injected <style> tag.
+ */
+
+.home-mobile-g-background {
+  display: none;
+}
+
+@media (max-width: 1279px) {
+  .home-mobile-g-background {
+    pointer-events: none;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    display: block !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    min-height: 100svh !important;
+    overflow: hidden !important;
+    background: #07080c !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .home-mobile-g-background::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/images/gridspell-mobile-g-bg.svg");
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 1;
+    transform: translateZ(0);
+  }
+
+  .home-mobile-g-background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(7, 8, 12, 0.01), rgba(7, 8, 12, 0.1) 45%, rgba(7, 8, 12, 0.28));
+  }
+
+  #main-content {
+    position: relative !important;
+    z-index: 1 !important;
+    isolation: isolate !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  #main-content > *:not(.home-mobile-g-background) {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .home-experience,
+  .home-static-only,
+  .home-static-layout,
+  .home-static-layout > section,
+  .home-static-layout > section > div,
+  .home-static-layout .home-static-scene,
+  .home-static-layout .home-static-scene > div,
+  .home-proof-sections,
+  .home-proof-sections > section,
+  .home-proof-sections > section > div,
+  .home-faq-section,
+  .home-faq-section > div,
+  .small-phone-home-pricing-only,
+  .small-phone-home-pricing {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  .home-experience,
+  .home-static-only,
+  .home-static-layout,
+  .home-proof-sections,
+  .home-faq-section,
+  .small-phone-home-pricing-only,
+  .small-phone-home-pricing {
+    position: relative !important;
+    z-index: 20 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .home-static-layout > section,
+  .home-proof-sections > section,
+  .home-faq-section,
+  .small-phone-home-pricing {
+    position: relative !important;
+    z-index: 21 !important;
+    isolation: isolate;
+  }
+
+  .home-static-layout > section > *,
+  .home-proof-sections > section > *,
+  .home-faq-section > *,
+  .small-phone-home-pricing > * {
+    position: relative !important;
+    z-index: 22 !important;
+  }
+
+  .home-static-layout > .page-grid,
+  .home-proof-sections > .page-grid,
+  .home-faq-section > .page-grid {
+    opacity: 0.12 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-presentation-only {
+    display: none !important;
+  }
+
+  .home-static-only {
+    display: block !important;
+  }
+
+  .home-static-layout {
+    display: block !important;
+    position: relative !important;
+    z-index: 20 !important;
+    padding-top: 0 !important;
+  }
+
+  .home-static-layout > section:first-of-type {
+    display: block !important;
+    min-height: 100svh !important;
+  }
+
+  .home-static-layout > section:first-of-type > div {
+    display: flex !important;
+    min-height: 100svh !important;
+    justify-content: flex-start !important;
+    padding-top: 6.35rem !important;
+    padding-bottom: 3.25rem !important;
+  }
+
+  .home-static-layout .home-static-scene {
+    padding-block: 3.5rem !important;
+  }
+
+  .home-static-layout .home-hero-mode-host {
+    display: block !important;
+    position: relative !important;
+    z-index: 30 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 1.2rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .home-static-layout .home-hero-mode-card {
+    display: block !important;
+    border-color: rgba(255, 255, 255, 0.13) !important;
+    border-radius: 1.15rem !important;
+    box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .home-static-layout .home-hero-mode-card > div:last-child {
+    padding: 0.85rem !important;
+  }
+
+  .home-static-layout .home-hero-mode-card .page-grid {
+    opacity: 0.12 !important;
+  }
+
+  .home-static-layout .bg-clip-text,
+  .home-static-layout .bg-gradient-to-r.bg-clip-text,
+  .home-static-layout span.bg-clip-text {
+    background-image: linear-gradient(90deg, #a99aff, #7eb3ff, #8be9ff) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+
+  .glass-panel,
+  .tiny-hero-card,
+  .home-proof-sections article,
+  .home-faq-section details {
+    box-shadow: 0 18px 54px rgba(0, 0, 0, 0.24) !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+@media (max-width: 379px) {
+  .mobile-marketing-g-background {
+    display: none !important;
+  }
+
+  #main-content,
+  #main-content > *,
+  main,
+  main section,
+  main article,
+  .tiny-viewport-content,
+  .tiny-viewport-content main,
+  .tiny-viewport-content section,
+  .tiny-viewport-content article,
+  .tiny-viewport-content div {
+    visibility: visible !important;
+  }
+
+  main,
+  main > section,
+  main section {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  main::before,
+  main::after,
+  main > section::before,
+  main > section::after,
+  main section::before,
+  main section::after,
+  .home-static-layout::before,
+  .home-static-layout::after,
+  .home-static-layout .home-static-scene::before,
+  .home-static-layout .home-static-scene::after,
+  .home-static-layout > section::before,
+  .home-static-layout > section::after,
+  .home-proof-sections::before,
+  .home-proof-sections::after,
+  .home-proof-sections > section::before,
+  .home-proof-sections > section::after,
+  .home-faq-section::before,
+  .home-faq-section::after,
+  .small-phone-home-pricing::before,
+  .small-phone-home-pricing::after {
+    content: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    opacity: 0 !important;
+  }
+
+  main [style],
+  .tiny-viewport-content [style] {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  main [style*="translate"],
+  main [style*="blur"],
+  main [style*="opacity: 0"],
+  main [style*="opacity:0"],
+  .tiny-viewport-content [style*="translate"],
+  .tiny-viewport-content [style*="blur"],
+  .tiny-viewport-content [style*="opacity: 0"],
+  .tiny-viewport-content [style*="opacity:0"] {
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .tiny-hero-card {
+    display: block !important;
+    min-height: 19rem;
+  }
+
+  .home-hero-mode-host {
+    display: none !important;
+  }
+}
