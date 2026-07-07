@@ -283,9 +283,12 @@ export function HomeHeroModeShowcaseClient() {
       });
     });
 
-    setHosts(createdHosts);
+    const hostFrameId = window.requestAnimationFrame(() => {
+      setHosts(createdHosts);
+    });
 
     return () => {
+      window.cancelAnimationFrame(hostFrameId);
       cleanups.forEach((cleanup) => cleanup());
       setHosts([]);
     };
@@ -302,7 +305,6 @@ export function HomeHeroModeShowcaseClient() {
   useEffect(() => {
     if (hosts.length === 0) return;
 
-    let firstFrameId: number | undefined;
     let secondFrameId: number | undefined;
     let timeoutId: number | undefined;
 
@@ -310,7 +312,7 @@ export function HomeHeroModeShowcaseClient() {
       delete host.dataset.heroModeReady;
     });
 
-    firstFrameId = window.requestAnimationFrame(() => {
+    const firstFrameId = window.requestAnimationFrame(() => {
       secondFrameId = window.requestAnimationFrame(() => {
         timeoutId = window.setTimeout(() => {
           hosts.forEach((host) => {
@@ -321,9 +323,7 @@ export function HomeHeroModeShowcaseClient() {
     });
 
     return () => {
-      if (firstFrameId !== undefined) {
-        window.cancelAnimationFrame(firstFrameId);
-      }
+      window.cancelAnimationFrame(firstFrameId);
 
       if (secondFrameId !== undefined) {
         window.cancelAnimationFrame(secondFrameId);
