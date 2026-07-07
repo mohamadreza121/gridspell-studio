@@ -8,6 +8,10 @@
   display: none;
 }
 
+.tiny-hero-card {
+  display: none;
+}
+
 .home-hero-mode-tabs {
   position: relative;
   z-index: 20;
@@ -55,8 +59,7 @@
 }
 
 @media (min-width: 1280px) {
-  .home-presentation-only .home-hero-mode-host,
-  .home-presentation-only .tiny-hero-card {
+  .home-presentation-only .home-hero-mode-host {
     position: absolute;
     right: clamp(1.75rem, 4.2vw, 5.25rem);
     bottom: clamp(4.5rem, 7.5vh, 6.5rem);
@@ -66,30 +69,19 @@
     z-index: 20;
   }
 
-  .home-presentation-only .tiny-hero-card {
-    display: block;
-    min-height: 20rem;
-  }
-
   .home-presentation-only .home-hero-mode-tabs {
     max-width: 34rem;
-  }
-
-  .home-presentation-only .home-hero-mode-host + .tiny-hero-card {
-    display: none !important;
   }
 }
 
 @media (min-width: 1280px) and (max-height: 800px) {
-  .home-presentation-only .home-hero-mode-host,
-  .home-presentation-only .tiny-hero-card {
+  .home-presentation-only .home-hero-mode-host {
     right: 2rem;
     bottom: 3.8rem;
     width: min(31vw, 28rem);
   }
 
-  .home-presentation-only .home-hero-mode-card > div:last-child,
-  .home-presentation-only .tiny-hero-card {
+  .home-presentation-only .home-hero-mode-card > div:last-child {
     padding: 0.85rem;
   }
 }
