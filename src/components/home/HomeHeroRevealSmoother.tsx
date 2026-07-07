@@ -19,6 +19,13 @@ export function HomeHeroRevealSmoother() {
         transform-origin: 50% 58%;
       }
 
+      @media (min-width: 1280px) {
+        .home-presentation-track > .sticky > section {
+          filter: none !important;
+          will-change: opacity, transform !important;
+        }
+      }
+
       @media (max-width: 480px) {
         .home-static-layout .home-hero-mode-host {
           transform: none !important;
