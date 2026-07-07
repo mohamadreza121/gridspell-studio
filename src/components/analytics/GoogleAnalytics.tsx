@@ -11,11 +11,51 @@ declare global {
   }
 }
 
+const ANALYTICS_INTERACTION_EVENTS = [
+  "pointerdown",
+  "keydown",
+  "touchstart",
+  "wheel"
+] as const;
+
 export function GoogleAnalytics() {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [shouldLoad, setShouldLoad] = useState(false);
   const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!measurementId || shouldLoad) return;
+
+    let cancelled = false;
+    let timeoutId: number | undefined;
+
+    const loadAnalytics = () => {
+      if (cancelled) return;
+      setShouldLoad(true);
+    };
+
+    ANALYTICS_INTERACTION_EVENTS.forEach((eventName) => {
+      window.addEventListener(eventName, loadAnalytics, {
+        once: true,
+        passive: true
+      });
+    });
+
+    timeoutId = window.setTimeout(loadAnalytics, 5200);
+
+    return () => {
+      cancelled = true;
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+
+      ANALYTICS_INTERACTION_EVENTS.forEach((eventName) => {
+        window.removeEventListener(eventName, loadAnalytics);
+      });
+    };
+  }, [measurementId, shouldLoad]);
 
   useEffect(() => {
     if (!measurementId || !ready || !window.gtag) return;
@@ -30,7 +70,7 @@ export function GoogleAnalytics() {
     });
   }, [measurementId, pathname, ready, searchParams]);
 
-  if (!measurementId) return null;
+  if (!measurementId || !shouldLoad) return null;
 
   return (
     <>
