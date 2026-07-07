@@ -22,7 +22,7 @@
       <stop offset="1" stop-color="#29D6FF" stop-opacity="0"/>
     </radialGradient>
     <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse">
-      <path d="M52 0H0V52" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
+      <path d="M52 0H0V52" fill="none" stroke="#FFFFFF" stroke-opacity="0.035" stroke-width="1"/>
     </pattern>
   </defs>
 
@@ -41,6 +41,5 @@
     <path d="M580 560H792" fill="none" stroke="url(#g-main)" stroke-width="124" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
-  <rect width="720" height="1280" fill="url(#fade)" opacity="0"/>
-  <rect width="720" height="1280" fill="rgba(7,8,12,0.08)"/>
+  <rect width="720" height="1280" fill="#07080C" opacity="0.08"/>
 </svg>
