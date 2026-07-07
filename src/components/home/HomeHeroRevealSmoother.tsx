@@ -1,14 +1,12 @@
-"use client";
-
 export function HomeHeroRevealSmoother() {
   return (
     <style>{`
       .home-hero-mode-host {
         opacity: 0;
-        transform: translate3d(0, 42px, 0) scale(0.965);
+        transform: translate3d(0, 46px, 0) scale(0.962);
         transition:
-          opacity 1180ms cubic-bezier(0.16, 1, 0.3, 1) 140ms,
-          transform 1180ms cubic-bezier(0.16, 1, 0.3, 1) 140ms !important;
+          opacity 1320ms cubic-bezier(0.16, 1, 0.3, 1) 180ms,
+          transform 1320ms cubic-bezier(0.16, 1, 0.3, 1) 180ms !important;
         will-change: opacity, transform;
       }
 
