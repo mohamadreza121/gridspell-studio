@@ -11,6 +11,11 @@
 }
 
 @media (min-width: 1280px) {
+  .home-presentation-track > .sticky > section:first-of-type {
+    filter: none !important;
+    will-change: opacity, transform !important;
+  }
+
   .home-presentation-only .tiny-hero-card {
     position: absolute;
     right: clamp(1.75rem, 4.2vw, 5.25rem);
