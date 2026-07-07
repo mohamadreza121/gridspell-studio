@@ -36,11 +36,11 @@ export function GoogleAnalytics() {
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
       <Script
         id="gridspell-ga4"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         onReady={() => setReady(true)}
       >
         {`
