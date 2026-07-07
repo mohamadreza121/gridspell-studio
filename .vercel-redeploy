@@ -1,2 +1,2 @@
-Redeploy requested: 2026-07-07T21:00:00Z
-Reason: Vercel deployment queue was stuck after the idle callback type-check fix.
+Redeploy requested: 2026-07-07T21:09:30Z
+Reason: Triggering a new production deployment from main.
