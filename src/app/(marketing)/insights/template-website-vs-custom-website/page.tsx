@@ -4,16 +4,16 @@ import { TemplateVsCustomArticle } from "@/components/insights/TemplateVsCustomA
 import { createPageMetadata } from "@/lib/metadata";
 import { siteConfig } from "@/config/site";
 
-const title = "Template Website vs Custom Website: Which One Should Your Business Choose?";
+const title = "Template vs Custom Website Guide";
 const description =
-  "A clear guide for business owners comparing template websites and custom websites, including cost, SEO, design flexibility, scalability, integrations, and when each option makes sense.";
+  "Compare template and custom websites by cost, SEO, design control, integrations, scalability, and when each option fits your business.";
 const path = "/insights/template-website-vs-custom-website";
 
 export const metadata: Metadata = createPageMetadata({
   title,
   description,
   path,
-  imageAlt: "Template website vs custom website — GridSpell Insights"
+  imageAlt: "Template vs custom website guide — GridSpell Insights"
 });
 
 export default function TemplateWebsiteVsCustomWebsitePage() {
