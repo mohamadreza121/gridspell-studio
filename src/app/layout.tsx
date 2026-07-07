@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import "@/app/globals.css";
 import "@/app/mobile-fixes.css";
 import "@/app/home-performance.css";
-import "@/app/home-desktop-performance.css";
 import "@/app/services-scene-fixes.css";
 
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
