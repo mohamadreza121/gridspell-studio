@@ -8,14 +8,13 @@ type IdleDeadlineLike = {
   timeRemaining: () => number;
 };
 
-type IdleWindow = Window &
-  typeof globalThis & {
-    requestIdleCallback?: (
-      callback: (deadline: IdleDeadlineLike) => void,
-      options?: { timeout?: number }
-    ) => number;
-    cancelIdleCallback?: (handle: number) => void;
-  };
+type OptionalIdleWindow = {
+  requestIdleCallback?: (
+    callback: (deadline: IdleDeadlineLike) => void,
+    options?: { timeout?: number }
+  ) => number;
+  cancelIdleCallback?: (handle: number) => void;
+};
 
 const HERO_INTERACTION_EVENTS = [
   "pointerdown",
@@ -44,7 +43,10 @@ export function HomeHeroModeHydrator() {
     let timeoutId: number | undefined;
     let idleId: number | undefined;
 
-    const idleWindow = window as IdleWindow;
+    const idleWindow = window as OptionalIdleWindow;
+    const hasIdleCallback =
+      typeof idleWindow.requestIdleCallback === "function" &&
+      typeof idleWindow.cancelIdleCallback === "function";
 
     const cleanupListeners = () => {
       HERO_INTERACTION_EVENTS.forEach((eventName) => {
@@ -55,7 +57,7 @@ export function HomeHeroModeHydrator() {
         window.clearTimeout(timeoutId);
       }
 
-      if (idleId !== undefined) {
+      if (idleId !== undefined && hasIdleCallback) {
         idleWindow.cancelIdleCallback?.(idleId);
       }
     };
@@ -75,8 +77,8 @@ export function HomeHeroModeHydrator() {
       });
     });
 
-    if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
-      idleId = idleWindow.requestIdleCallback(startInteractiveLayer, {
+    if (hasIdleCallback) {
+      idleId = idleWindow.requestIdleCallback?.(startInteractiveLayer, {
         timeout: 1800
       });
     } else {
