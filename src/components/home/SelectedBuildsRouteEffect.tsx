@@ -128,6 +128,10 @@ export function SelectedBuildsRouteEffect() {
             z-index: 2;
           }
 
+          .home-proof-route-shell .selected-builds-route-effect {
+            z-index: 1;
+          }
+
           .home-proof-selected-section > div {
             opacity: 0;
             transform: translate3d(0, 34px, 0);
@@ -152,7 +156,6 @@ export function SelectedBuildsRouteEffect() {
             left: 0;
             right: 0;
             top: var(--selected-builds-route-top);
-            z-index: 1;
             display: block;
             height: var(--selected-builds-route-height);
             overflow: hidden;
