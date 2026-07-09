@@ -126,7 +126,7 @@ export const workCaseStudies: WorkCaseStudy[] = [
       "The landing page gallery gives prospects a faster way to understand what GridSpell can build, compare styles, and choose a starting point before submitting a project brief.",
     overview:
       "Instead of selling landing pages with only words, the gallery presents visual concepts by industry, style, and goal. Each card is designed to help a client say, 'I want something like this,' while keeping the final project custom to their brand.",
-    liveUrl: "https://gridspellstudio.com/landing-pages",
+    liveUrl: "/landing-pages",
     devices: []
   },
   {
