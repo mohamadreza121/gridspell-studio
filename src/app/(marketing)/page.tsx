@@ -76,10 +76,12 @@ export default function HomePage() {
     <>
       <HomeBackgroundBoundary />
       <HomeExperience />
-      <HomeProofSections />
+      <div className="home-proof-route-shell">
+        <SelectedBuildsRouteEffect />
+        <HomeProofSections />
+        <HomeFAQSection />
+      </div>
       <HomeHeroModeShowcase />
-      <HomeFAQSection />
-      <SelectedBuildsRouteEffect />
       <HomeHeroActionsPlacement />
     </>
   );
