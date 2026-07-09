@@ -94,7 +94,7 @@ export const featuredProjects: FeaturedProject[] = [
     accent: "violet",
     previewAlt: "GridSpell landing page gallery preview",
 
-    liveUrl: "/landing-pages",
+    liveUrl: "https://gridspellstudio.com/landing-pages",
 
     proof: {
       problem:
