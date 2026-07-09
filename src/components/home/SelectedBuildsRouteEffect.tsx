@@ -35,10 +35,7 @@ export function SelectedBuildsRouteEffect() {
     const prepareObserver = () => {
       cleanupObserver();
 
-      if (!mediaQuery.matches) {
-        setShouldLoad(false);
-        return;
-      }
+      if (!mediaQuery.matches) return;
 
       observer = new IntersectionObserver(
         ([entry]) => {
