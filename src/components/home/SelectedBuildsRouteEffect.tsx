@@ -30,6 +30,7 @@ export function SelectedBuildsRouteEffect() {
     const updateRoute = () => {
       frameId = 0;
 
+      const shellRect = root.getBoundingClientRect();
       const selectedRect = selectedSection.getBoundingClientRect();
       const faqRect = faqSection.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
@@ -43,6 +44,8 @@ export function SelectedBuildsRouteEffect() {
       effect.style.setProperty("--selected-builds-route-progress", progress.toFixed(4));
       effect.style.setProperty("--selected-builds-route-dot-x", `${point.x}%`);
       effect.style.setProperty("--selected-builds-route-dot-y", `${point.y}%`);
+      effect.style.setProperty("--selected-builds-route-top", `${-shellRect.top}px`);
+      effect.style.setProperty("--selected-builds-route-height", `${viewportHeight}px`);
       effect.dataset.routeActive = String(isActive);
     };
 
@@ -148,11 +151,16 @@ export function SelectedBuildsRouteEffect() {
             --selected-builds-route-progress: 0;
             --selected-builds-route-dot-x: 84%;
             --selected-builds-route-dot-y: 10%;
+            --selected-builds-route-top: 0px;
+            --selected-builds-route-height: 100svh;
             pointer-events: none;
-            position: fixed;
-            inset: 0;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: var(--selected-builds-route-top);
             z-index: 1;
             display: block;
+            height: var(--selected-builds-route-height);
             overflow: hidden;
             opacity: 0;
             transition: opacity 420ms ease;
