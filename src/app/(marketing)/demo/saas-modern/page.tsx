@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, BarChart3, CheckCircle2, Layers3, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, CheckCircle2, Layers, ShieldCheck, Sparkles, Zap } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 import { getLandingPageConcept } from "@/config/landing-pages";
@@ -17,7 +17,7 @@ export const metadata: Metadata = createPageMetadata({
 
 const features = [
   [Zap, "Fast onboarding", "Guide users from first visit to product value with a sharp, focused flow."],
-  [Layers3, "Feature clarity", "Explain product benefits without turning the page into a wall of text."],
+  [Layers, "Feature clarity", "Explain product benefits without turning the page into a wall of text."],
   [ShieldCheck, "Trust-ready", "Add security, integrations, testimonials, and credibility blocks."],
   [BarChart3, "Conversion path", "Move visitors toward trials, demos, pricing, or waitlist signups."]
 ] as const;
@@ -48,7 +48,7 @@ export default function SaasModernDemoPage() {
             <div className="hidden items-center gap-6 text-sm font-semibold text-white/45 md:flex">
               <a href="#features">Features</a>
               <a href="#pricing">Pricing</a>
-              <a href="#workflow">Workflow</a>
+              <a href="#features">Workflow</a>
             </div>
             <Link href={startHref()} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-bold text-[#020617] transition hover:-translate-y-0.5">
               Start with this design
