@@ -1,0 +1,46 @@
+/* Speed Index pass: keep the first viewport visible immediately. */
+body > header,
+.home-experience :where(h1, [role="heading"][aria-level="1"]),
+.home-experience :where(h1, [role="heading"][aria-level="1"]) + div,
+.home-experience :where(h1, [role="heading"][aria-level="1"]) + div + div {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.home-deferred-placeholder {
+  display: block;
+  min-height: 1px;
+  contain: layout paint style;
+}
+
+.home-proof-sections {
+  contain: layout paint style;
+  content-visibility: auto;
+  contain-intrinsic-size: 1800px;
+}
+
+.home-faq-section {
+  contain: layout paint style;
+  content-visibility: auto;
+  contain-intrinsic-size: 1100px;
+}
+
+.home-static-layout .home-static-scene {
+  contain: layout paint style;
+  content-visibility: auto;
+  contain-intrinsic-size: 760px;
+}
+
+@media (min-width: 1280px) {
+  .home-presentation-track > .sticky > section:first-of-type {
+    filter: none !important;
+    will-change: opacity, transform !important;
+  }
+}
+
+@media (max-width: 1279px) {
+  .home-deferred-placeholder {
+    background: transparent !important;
+  }
+}
