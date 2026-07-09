@@ -230,7 +230,7 @@ export function SelectedBuildsRouteEffect() {
 
         @media (max-width: 767px) {
           .home-proof-route-shell {
-            display: contents;
+            display: contents !important;
           }
 
           .home-proof-selected-section > div {
