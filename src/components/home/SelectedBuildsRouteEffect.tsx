@@ -242,11 +242,14 @@ export function SelectedBuildsRouteEffect() {
           }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-          .home-proof-route-shell {
-            display: contents !important;
+        @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+          .home-proof-route-shell .home-proof-sections,
+          .home-proof-route-shell .home-faq-section {
+            background: #07080c !important;
           }
+        }
 
+        @media (prefers-reduced-motion: reduce) {
           .selected-builds-route-effect {
             display: none !important;
           }
