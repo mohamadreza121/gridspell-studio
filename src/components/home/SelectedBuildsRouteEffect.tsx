@@ -243,6 +243,10 @@ export function SelectedBuildsRouteEffect() {
         }
 
         @media (prefers-reduced-motion: reduce) {
+          .home-proof-route-shell {
+            display: contents !important;
+          }
+
           .selected-builds-route-effect {
             display: none !important;
           }
