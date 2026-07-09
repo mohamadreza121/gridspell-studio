@@ -140,7 +140,7 @@ function ConceptPreview({
     <div
       className={
         isMobile
-          ? "mx-auto aspect-[0.52] w-[62%] min-w-[11rem] overflow-hidden rounded-[2rem] border border-white/[0.12] bg-[#05060a] p-3 shadow-[0_24px_80px_rgba(0,0,0,0.35)]"
+          ? "relative mx-auto aspect-[0.52] w-[62%] min-w-[11rem] overflow-hidden rounded-[2rem] border border-white/[0.12] bg-[#05060a] p-3 shadow-[0_24px_80px_rgba(0,0,0,0.35)]"
           : "relative aspect-[1.22] overflow-hidden rounded-[1.35rem] border border-white/[0.08] bg-[#05060a] p-4"
       }
     >
