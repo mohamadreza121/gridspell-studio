@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -14,13 +15,17 @@ const homepageFaqs = [
   ["Do you offer support after launch?", "Yes. Care plans can cover updates, fixes, content changes, monitoring, analytics review, new sections, and ongoing growth work."]
 ] as const;
 
+function storyDelay(index: number) {
+  return { "--story-reveal-delay": `${index * 58}ms` } as CSSProperties;
+}
+
 export function HomeFAQSection() {
   return (
-    <section className="home-faq-section relative z-[3] isolate overflow-hidden border-t border-white/[0.06] bg-[#07080c] py-24 text-white max-xl:bg-transparent sm:py-32">
+    <section className="home-faq-section home-story-section home-story-reveal relative z-[3] isolate overflow-hidden border-t border-white/[0.06] bg-[#07080c] py-24 text-white max-xl:bg-transparent sm:py-32">
       <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-24" />
       <Container className="relative">
         <div className="grid gap-12 xl:grid-cols-[0.78fr_1.22fr] xl:items-start">
-          <div>
+          <div className="home-story-reveal-item">
             <p className="text-[0.66rem] font-semibold uppercase tracking-[0.42em] text-[#8be9ff]">FAQ</p>
             <h2 className="mt-6 max-w-[11ch] text-balance font-display text-[clamp(3.2rem,7vw,7.2rem)] font-semibold leading-[0.84] tracking-[-0.075em]">
               Questions before we build.
@@ -35,7 +40,12 @@ export function HomeFAQSection() {
           </div>
           <div className="grid gap-3">
             {homepageFaqs.map(([question, answer], index) => (
-              <details key={question} className="group rounded-[1.45rem] border border-white/[0.08] bg-white/[0.025] p-5 transition open:border-[#8be9ff]/20 open:bg-[#8be9ff]/[0.045] sm:p-6" open={index === 0}>
+              <details
+                key={question}
+                style={storyDelay(index + 1)}
+                className="home-story-card home-story-faq-card home-story-reveal-item group rounded-[1.45rem] border border-white/[0.08] bg-white/[0.025] p-5 transition open:border-[#8be9ff]/20 open:bg-[#8be9ff]/[0.045] sm:p-6"
+                open={index === 0}
+              >
                 <summary className="flex cursor-pointer list-none items-start justify-between gap-5 [&::-webkit-details-marker]:hidden">
                   <span>
                     <span className="font-mono text-[0.56rem] tracking-[0.2em] text-[#8be9ff]">{String(index + 1).padStart(2, "0")}</span>
