@@ -1,51 +1,37 @@
-/* Homepage story band polish: static depth + lightweight desktop reveal. */
-.home-story-band,
+/* Simple static gradients for the homepage below-fold sections. No animations. */
+.home-story-band {
+  background: #07080c;
+}
+
+.home-story-band > .home-story-section:first-of-type {
+  background:
+    radial-gradient(circle at 86% 4%, rgba(124, 92, 255, 0.13), transparent 30rem),
+    radial-gradient(circle at 8% 92%, rgba(41, 214, 255, 0.08), transparent 28rem),
+    linear-gradient(180deg, #07080c 0%, #090a12 100%);
+}
+
+.home-story-band > .home-story-section:nth-of-type(2) {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(41, 214, 255, 0.1), transparent 30rem),
+    radial-gradient(circle at 88% 78%, rgba(124, 92, 255, 0.1), transparent 30rem),
+    linear-gradient(180deg, #090a12 0%, #071018 100%);
+}
+
 .home-faq-section {
   background:
-    radial-gradient(circle at 84% 5%, rgba(124, 92, 255, 0.18), transparent 34rem),
-    radial-gradient(circle at 8% 45%, rgba(41, 214, 255, 0.1), transparent 36rem),
-    linear-gradient(180deg, #07080c 0%, #090b13 42%, #061018 100%);
+    radial-gradient(circle at 84% 12%, rgba(124, 92, 255, 0.12), transparent 28rem),
+    radial-gradient(circle at 18% 88%, rgba(41, 214, 255, 0.08), transparent 28rem),
+    linear-gradient(180deg, #071018 0%, #07080c 100%) !important;
 }
 
-.home-story-band::before,
+.home-story-section,
+.home-faq-section {
+  position: relative;
+  isolation: isolate;
+}
+
+.home-story-section::before,
 .home-faq-section::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    linear-gradient(90deg, transparent, rgba(139, 233, 255, 0.08), transparent),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.04), transparent 28rem);
-  opacity: 0.7;
-}
-
-.home-story-band::after,
-.home-faq-section::after {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
-  background-size: 88px 88px;
-  mask-image: linear-gradient(180deg, transparent, black 16%, black 72%, transparent);
-  opacity: 0.24;
-}
-
-.home-story-band > *,
-.home-faq-section > * {
-  position: relative;
-  z-index: 1;
-}
-
-.home-story-section {
-  position: relative;
-}
-
-.home-story-section::before {
   content: "";
   pointer-events: none;
   position: absolute;
@@ -53,125 +39,46 @@
   right: max(1.5rem, calc((100vw - 76rem) / 2));
   top: -1px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(139, 233, 255, 0.24), rgba(124, 92, 255, 0.24), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139, 233, 255, 0.16), rgba(124, 92, 255, 0.12), transparent);
   opacity: 0.75;
+}
+
+.home-story-section > *,
+.home-faq-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home-story-glow {
-  mix-blend-mode: screen;
+  display: none !important;
 }
 
-.home-story-card {
-  position: relative;
-  overflow: hidden;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02) 48%, rgba(139, 233, 255, 0.028)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.055),
-    0 24px 70px rgba(0, 0, 0, 0.18);
-}
-
-.home-story-card::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at 86% 10%, rgba(139, 233, 255, 0.12), transparent 13rem),
-    linear-gradient(135deg, rgba(139, 233, 255, 0.1), transparent 24%, transparent 72%, rgba(124, 92, 255, 0.12));
-  opacity: 0.4;
-  transition: opacity 260ms ease;
-}
-
-.home-story-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.home-story-preview {
-  background:
-    radial-gradient(circle at 84% 0%, rgba(124, 92, 255, 0.18), transparent 12rem),
-    linear-gradient(145deg, #07080c, #0a0d15) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
+.home-story-card,
+.home-story-preview,
 .home-story-facts,
 .home-story-cta {
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 28px 80px rgba(0, 0, 0, 0.2);
+  box-shadow: none !important;
 }
 
+.home-story-card::before,
 .home-story-facts::before,
 .home-story-cta::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 86% 0%, rgba(139, 233, 255, 0.16), transparent 18rem);
-  opacity: 0.75;
+  content: none !important;
 }
 
-.home-story-facts > *,
-.home-story-cta > * {
-  position: relative;
-  z-index: 1;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .home-story-card:hover {
-    border-color: rgba(139, 233, 255, 0.24) !important;
-    background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.058), rgba(255, 255, 255, 0.026) 48%, rgba(139, 233, 255, 0.04)) !important;
-  }
-
-  .home-story-card:hover::before {
-    opacity: 0.76;
-  }
-}
-
-@media (min-width: 1280px) and (prefers-reduced-motion: no-preference) {
-  .home-story-reveal[data-story-observed="true"] .home-story-reveal-item {
-    opacity: 0.01;
-    transform: translate3d(0, 22px, 0);
-    transition:
-      opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 260ms ease,
-      background-color 260ms ease,
-      box-shadow 260ms ease;
-    transition-delay: var(--story-reveal-delay, 0ms);
-    will-change: opacity, transform;
-  }
-
-  .home-story-reveal[data-story-visible="true"] .home-story-reveal-item {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
+.home-story-reveal-item {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  will-change: auto !important;
 }
 
 @media (max-width: 1279px) {
-  .home-story-band,
+  .home-story-band > .home-story-section:first-of-type,
+  .home-story-band > .home-story-section:nth-of-type(2),
   .home-faq-section {
     background:
-      radial-gradient(circle at 85% 0%, rgba(124, 92, 255, 0.12), transparent 22rem),
-      radial-gradient(circle at 8% 35%, rgba(41, 214, 255, 0.08), transparent 24rem),
-      linear-gradient(180deg, transparent, rgba(7, 8, 12, 0.18)) !important;
-  }
-
-  .home-story-card {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-story-reveal-item {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-    will-change: auto !important;
+      radial-gradient(circle at 88% 0%, rgba(124, 92, 255, 0.08), transparent 20rem),
+      linear-gradient(180deg, transparent, rgba(7, 8, 12, 0.12)) !important;
   }
 }
