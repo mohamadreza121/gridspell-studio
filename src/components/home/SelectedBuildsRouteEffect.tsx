@@ -28,6 +28,11 @@ export function SelectedBuildsRouteEffect() {
     const updateRoute = () => {
       frameId = 0;
 
+      if (window.innerWidth < 1280) {
+        effect.dataset.routeActive = "false";
+        return;
+      }
+
       const rootRect = root.getBoundingClientRect();
       const selectedRect = selectedSection.getBoundingClientRect();
       const scrollY = window.scrollY;
@@ -79,7 +84,7 @@ export function SelectedBuildsRouteEffect() {
           display: none;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 1280px) {
           .home-proof-sections {
             --selected-builds-orb-progress: 0;
             --selected-builds-orb-x: 82%;
@@ -160,7 +165,7 @@ export function SelectedBuildsRouteEffect() {
           }
         }
 
-        @media (max-width: 767px), (prefers-reduced-motion: reduce) {
+        @media (max-width: 1279px), (prefers-reduced-motion: reduce) {
           .selected-builds-route-effect {
             display: none !important;
           }
