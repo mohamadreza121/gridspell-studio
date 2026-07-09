@@ -7,7 +7,6 @@ import { HomeExperience } from "@/components/home/HomeExperience";
 import { HomeHeroActionsPlacement } from "@/components/home/HomeHeroActionsPlacement";
 import { HomeHeroModeShowcase } from "@/components/home/HomeHeroModeShowcase";
 import { HomeProofSections } from "@/components/home/HomeProofSections";
-import { SelectedBuildsRouteEffect } from "@/components/home/SelectedBuildsRouteEffect";
 import { Container } from "@/components/ui/Container";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -76,12 +75,9 @@ export default function HomePage() {
     <>
       <HomeBackgroundBoundary />
       <HomeExperience />
-      <div className="home-proof-route-shell">
-        <SelectedBuildsRouteEffect />
-        <HomeProofSections />
-        <HomeFAQSection />
-      </div>
+      <HomeProofSections />
       <HomeHeroModeShowcase />
+      <HomeFAQSection />
       <HomeHeroActionsPlacement />
     </>
   );
