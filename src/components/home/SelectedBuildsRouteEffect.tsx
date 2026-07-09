@@ -3,42 +3,47 @@
 import { useEffect, useRef } from "react";
 
 const ROUTE_PATH =
-  "M 6 90 C 7 80 12 78 17 75 C 24 71 24 68 31 66 C 39 64 46 61 55 59 C 64 57 70 54 76 50 C 84 44 87 35 88 24 C 88.5 16 88 10 89 6";
+  "M 10 86 C 12 74 18 68 29 64 C 42 60 53 58 63 53 C 74 47 81 41 85 31 C 88 23 88 15 88 8";
 
 function clamp(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
 export function SelectedBuildsRouteEffect() {
+  const effectRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
 
   useEffect(() => {
+    const effect = effectRef.current;
+    const path = pathRef.current;
     const root = document.querySelector<HTMLElement>(".home-proof-sections");
     const selectedSection = document.querySelector<HTMLElement>(
       ".home-proof-selected-section"
     );
-    const path = pathRef.current;
+    const faqSection = document.querySelector<HTMLElement>(".home-faq-section");
 
-    if (!root || !selectedSection || !path) return;
+    if (!effect || !path || !root || !selectedSection || !faqSection) return;
 
     let frameId = 0;
 
     const updateRoute = () => {
       frameId = 0;
 
-      const rootRect = root.getBoundingClientRect();
       const selectedRect = selectedSection.getBoundingClientRect();
+      const faqRect = faqSection.getBoundingClientRect();
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
-      const routeStart = scrollY + selectedRect.top - viewportHeight * 0.26;
-      const routeEnd = scrollY + rootRect.bottom - viewportHeight * 0.82;
+      const routeStart = scrollY + selectedRect.top - viewportHeight * 0.18;
+      const routeEnd = scrollY + faqRect.bottom - viewportHeight * 0.9;
       const progress = clamp((scrollY - routeStart) / Math.max(1, routeEnd - routeStart));
+      const isActive = scrollY >= routeStart - viewportHeight * 0.2 && scrollY <= routeEnd + viewportHeight * 0.18;
       const pathLength = path.getTotalLength();
       const point = path.getPointAtLength(pathLength * progress);
 
-      root.style.setProperty("--selected-builds-route-progress", progress.toFixed(4));
-      root.style.setProperty("--selected-builds-route-dot-x", `${point.x}%`);
-      root.style.setProperty("--selected-builds-route-dot-y", `${point.y}%`);
+      effect.style.setProperty("--selected-builds-route-progress", progress.toFixed(4));
+      effect.style.setProperty("--selected-builds-route-dot-x", `${point.x}%`);
+      effect.style.setProperty("--selected-builds-route-dot-y", `${point.y}%`);
+      effect.dataset.routeActive = String(isActive);
     };
 
     const scheduleUpdate = () => {
@@ -75,13 +80,13 @@ export function SelectedBuildsRouteEffect() {
   }, []);
 
   return (
-    <div className="selected-builds-route-effect" aria-hidden="true">
+    <div ref={effectRef} className="selected-builds-route-effect" aria-hidden="true">
       <svg
         className="selected-builds-route-effect__svg"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
       >
-        <path className="selected-builds-route-effect__ghost" d={ROUTE_PATH} pathLength={1} />
+        <path className="selected-builds-route-effect__track" d={ROUTE_PATH} pathLength={1} />
         <path
           ref={pathRef}
           className="selected-builds-route-effect__line"
@@ -89,7 +94,6 @@ export function SelectedBuildsRouteEffect() {
           pathLength={1}
         />
       </svg>
-      <span className="selected-builds-route-effect__start" />
       <span className="selected-builds-route-effect__dot" />
       <style jsx global>{`
         .selected-builds-route-effect {
@@ -99,13 +103,8 @@ export function SelectedBuildsRouteEffect() {
         @media (min-width: 768px) {
           .home-proof-sections {
             --selected-builds-route-progress: 0;
-            --selected-builds-route-dot-x: 6%;
-            --selected-builds-route-dot-y: 90%;
-          }
-
-          .home-proof-sections > section {
-            position: relative;
-            z-index: 2;
+            --selected-builds-route-dot-x: 10%;
+            --selected-builds-route-dot-y: 86%;
           }
 
           .home-proof-selected-section > div {
@@ -125,25 +124,33 @@ export function SelectedBuildsRouteEffect() {
           }
 
           .selected-builds-route-effect {
+            --selected-builds-route-progress: 0;
+            --selected-builds-route-dot-x: 10%;
+            --selected-builds-route-dot-y: 86%;
             pointer-events: none;
-            position: absolute;
+            position: fixed;
             inset: 0;
-            z-index: 1;
+            z-index: 4;
             display: block;
             overflow: hidden;
-            opacity: 0.95;
+            opacity: 0;
+            transition: opacity 420ms ease;
             contain: layout paint style;
+          }
+
+          .selected-builds-route-effect[data-route-active="true"] {
+            opacity: 1;
           }
 
           .selected-builds-route-effect__svg {
             position: absolute;
-            inset: 1.5% 0 3% 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             overflow: visible;
           }
 
-          .selected-builds-route-effect__ghost,
+          .selected-builds-route-effect__track,
           .selected-builds-route-effect__line {
             fill: none;
             stroke-linecap: round;
@@ -151,55 +158,46 @@ export function SelectedBuildsRouteEffect() {
             vector-effect: non-scaling-stroke;
           }
 
-          .selected-builds-route-effect__ghost {
-            stroke: rgba(255, 43, 118, 0.08);
-            stroke-width: 18;
+          .selected-builds-route-effect__track {
+            stroke: rgba(255, 43, 118, 0.12);
+            stroke-width: 10;
           }
 
           .selected-builds-route-effect__line {
-            stroke: rgba(255, 43, 118, 0.68);
-            stroke-width: 14;
+            stroke: rgba(255, 43, 118, 0.64);
+            stroke-width: 10;
             stroke-dasharray: var(--selected-builds-route-progress) 1;
-            filter: drop-shadow(0 0 18px rgba(255, 43, 118, 0.22));
+            filter: drop-shadow(0 0 16px rgba(255, 43, 118, 0.28));
           }
 
-          .selected-builds-route-effect__start,
           .selected-builds-route-effect__dot {
             position: absolute;
-            display: block;
-            border-radius: 999px;
-            background: rgba(255, 43, 118, 0.72);
-            box-shadow:
-              0 0 0 1px rgba(255, 43, 118, 0.22),
-              0 0 34px rgba(255, 43, 118, 0.35);
-          }
-
-          .selected-builds-route-effect__start {
-            left: 5.2%;
-            top: 88.5%;
-            width: clamp(2.3rem, 5vw, 4.8rem);
-            height: clamp(2.3rem, 5vw, 4.8rem);
-            opacity: calc(0.22 + (var(--selected-builds-route-progress) * 0.52));
-          }
-
-          .selected-builds-route-effect__dot {
             left: var(--selected-builds-route-dot-x);
             top: var(--selected-builds-route-dot-y);
-            width: clamp(2rem, 4.2vw, 4.1rem);
-            height: clamp(2rem, 4.2vw, 4.1rem);
-            opacity: calc(0.35 + (var(--selected-builds-route-progress) * 0.65));
+            display: block;
+            width: clamp(1.45rem, 2.9vw, 3.3rem);
+            height: clamp(1.45rem, 2.9vw, 3.3rem);
+            border-radius: 999px;
+            background: radial-gradient(circle at 38% 34%, #ff7aa9 0 18%, #ff2b76 42%, rgba(143, 0, 54, 0.92) 100%);
+            box-shadow:
+              0 0 0 1px rgba(255, 43, 118, 0.36),
+              0 0 24px rgba(255, 43, 118, 0.5),
+              0 0 58px rgba(255, 43, 118, 0.28);
             transform: translate(-50%, -50%);
+            transition:
+              left 80ms linear,
+              top 80ms linear;
           }
 
           .selected-builds-route-effect__dot::after {
             content: "";
             position: absolute;
-            left: 48%;
-            top: 48%;
-            width: 24%;
-            height: 24%;
-            border-radius: 0.18rem;
-            background: rgba(255, 96, 154, 0.82);
+            left: 50%;
+            top: 50%;
+            width: 34%;
+            height: 34%;
+            border-radius: 999px;
+            background: rgba(255, 169, 202, 0.92);
             transform: translate(-50%, -50%);
           }
         }
