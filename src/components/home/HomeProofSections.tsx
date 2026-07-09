@@ -121,7 +121,7 @@ export function HomeProofSections() {
       <div aria-hidden="true" className="pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px] max-[480px]:hidden" />
       <SelectedBuildsRouteEffect />
 
-      <section className="home-proof-selected-section relative z-[2] border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
+      <section className="home-proof-selected-section relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
         <Container>
           <div className="grid gap-10 xl:grid-cols-[0.68fr_1.32fr] xl:items-end">
             <div>
@@ -201,7 +201,7 @@ export function HomeProofSections() {
         </Container>
       </section>
 
-      <section className="relative z-[2] border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
+      <section className="relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
         <Container>
           <div className="grid gap-12 xl:grid-cols-[0.82fr_1.18fr] xl:items-start">
             <div>
