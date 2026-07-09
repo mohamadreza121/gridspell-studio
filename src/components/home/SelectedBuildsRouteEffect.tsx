@@ -232,20 +232,17 @@ export function SelectedBuildsRouteEffect() {
           .home-proof-route-shell {
             display: contents !important;
           }
-
-          .home-proof-selected-section > div {
-            opacity: 1 !important;
-            transform: none !important;
-          }
         }
 
-        @media (prefers-reduced-motion: reduce) {
+        @media (max-width: 767px), (prefers-reduced-motion: reduce) {
           .home-proof-selected-section > div {
             opacity: 1 !important;
             transform: none !important;
             transition: none !important;
           }
+        }
 
+        @media (prefers-reduced-motion: reduce) {
           .selected-builds-route-effect {
             display: none !important;
           }
