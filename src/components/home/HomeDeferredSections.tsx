@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
+import { HomeStoryReveal } from "@/components/home/HomeStoryReveal";
+
 const DeferredHomeProofSections = dynamic(
   () =>
     import("@/components/home/HomeProofSections").then(
@@ -58,6 +60,7 @@ export function HomeDeferredSections() {
       <DeferredHomeProofSections />
       <DeferredHomeFAQSection />
       <DeferredHomeHeroActionsPlacement />
+      <HomeStoryReveal />
     </>
   );
 }

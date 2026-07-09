@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -71,6 +72,10 @@ const projectPackageMap: Record<string, { id: string; low: number; high: number;
   "network-engineering-portfolio": { id: "launch", low: 1800, high: 2500, timeline: "3–4 weeks" }
 };
 
+function storyDelay(index: number) {
+  return { "--story-reveal-delay": `${index * 70}ms` } as CSSProperties;
+}
+
 function startProjectHref(project: FeaturedProject) {
   const packageInfo = projectPackageMap[project.slug] ?? projectPackageMap["desa-foam-insulation"];
   const params = new URLSearchParams({
@@ -86,7 +91,7 @@ function startProjectHref(project: FeaturedProject) {
 
 function MiniInterfacePreview({ project }: { project: FeaturedProject }) {
   return (
-    <div className="relative overflow-hidden rounded-[1.35rem] border border-white/[0.08] bg-[#07080c] p-4">
+    <div className="home-story-preview relative overflow-hidden rounded-[1.35rem] border border-white/[0.08] bg-[#07080c] p-4">
       <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
         <span className="h-2 w-2 rounded-full bg-white/20" />
         <span className="h-2 w-2 rounded-full bg-white/12" />
@@ -114,14 +119,14 @@ function MiniInterfacePreview({ project }: { project: FeaturedProject }) {
 
 export function HomeProofSections() {
   return (
-    <div className="home-proof-sections relative z-[3] isolate overflow-hidden bg-[#07080c] text-white max-[480px]:bg-transparent">
+    <div className="home-proof-sections home-story-band relative z-[3] isolate overflow-hidden bg-[#07080c] text-white max-[480px]:bg-transparent">
       <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-30 max-[480px]:opacity-10" />
-      <div aria-hidden="true" className="pointer-events-none absolute right-[-18rem] top-24 h-[34rem] w-[34rem] rounded-full bg-[#7c5cff]/12 blur-[150px] max-[480px]:hidden" />
-      <div aria-hidden="true" className="pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px] max-[480px]:hidden" />
+      <div aria-hidden="true" className="home-story-glow home-story-glow--purple pointer-events-none absolute right-[-18rem] top-24 h-[34rem] w-[34rem] rounded-full bg-[#7c5cff]/12 blur-[150px] max-[480px]:hidden" />
+      <div aria-hidden="true" className="home-story-glow home-story-glow--cyan pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px] max-[480px]:hidden" />
 
-      <section className="relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
-        <Container>
-          <div className="grid gap-10 xl:grid-cols-[0.68fr_1.32fr] xl:items-end">
+      <section className="home-story-section home-story-reveal relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
+        <Container className="relative">
+          <div className="home-story-reveal-item grid gap-10 xl:grid-cols-[0.68fr_1.32fr] xl:items-end">
             <div>
               <p className="text-[0.66rem] font-semibold uppercase tracking-[0.42em] text-[#8be9ff]">
                 Selected builds
@@ -142,7 +147,8 @@ export function HomeProofSections() {
             {featuredProjects.map((project, index) => (
               <article
                 key={project.slug}
-                className="group rounded-[1.8rem] border border-white/[0.09] bg-white/[0.028] p-4 transition duration-300 hover:border-[#8be9ff]/22 hover:bg-white/[0.042] sm:p-5"
+                style={storyDelay(index + 1)}
+                className="home-story-card home-story-project-card home-story-reveal-item group rounded-[1.8rem] border border-white/[0.09] bg-white/[0.028] p-4 transition duration-300 hover:border-[#8be9ff]/22 hover:bg-white/[0.042] sm:p-5"
               >
                 <MiniInterfacePreview project={project} />
 
@@ -199,10 +205,10 @@ export function HomeProofSections() {
         </Container>
       </section>
 
-      <section className="relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
-        <Container>
+      <section className="home-story-section home-story-reveal relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
+        <Container className="relative">
           <div className="grid gap-12 xl:grid-cols-[0.82fr_1.18fr] xl:items-start">
-            <div>
+            <div className="home-story-reveal-item">
               <p className="text-[0.66rem] font-semibold uppercase tracking-[0.42em] text-[#8be9ff]">
                 Proof in the build
               </p>
@@ -214,7 +220,7 @@ export function HomeProofSections() {
                 needs immediately after launch.
               </p>
 
-              <div className="mt-8 rounded-[1.8rem] border border-[#8be9ff]/18 bg-[#8be9ff]/6 p-5 sm:p-6">
+              <div className="home-story-facts mt-8 rounded-[1.8rem] border border-[#8be9ff]/18 bg-[#8be9ff]/6 p-5 sm:p-6">
                 <p className="text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-[#8be9ff]">
                   Real build facts
                 </p>
@@ -230,13 +236,14 @@ export function HomeProofSections() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              {systemProof.map((item) => {
+              {systemProof.map((item, index) => {
                 const Icon = item.icon;
 
                 return (
                   <article
                     key={item.title}
-                    className="rounded-[1.45rem] border border-white/[0.08] bg-white/[0.025] p-5"
+                    style={storyDelay(index + 1)}
+                    className="home-story-card home-story-system-card home-story-reveal-item rounded-[1.45rem] border border-white/[0.08] bg-white/[0.025] p-5"
                   >
                     <span className="grid h-11 w-11 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.035] text-[#8be9ff]">
                       <Icon className="h-5 w-5" />
@@ -253,7 +260,7 @@ export function HomeProofSections() {
             </div>
           </div>
 
-          <div className="mt-14 rounded-[2rem] border border-white/[0.09] bg-[radial-gradient(circle_at_82%_0%,rgba(41,214,255,0.12),transparent_20rem),rgba(255,255,255,0.03)] p-6 sm:p-8 lg:flex lg:items-center lg:justify-between lg:gap-10">
+          <div className="home-story-cta home-story-reveal-item mt-14 rounded-[2rem] border border-white/[0.09] bg-[radial-gradient(circle_at_82%_0%,rgba(41,214,255,0.12),transparent_20rem),rgba(255,255,255,0.03)] p-6 sm:p-8 lg:flex lg:items-center lg:justify-between lg:gap-10">
             <div>
               <p className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
                 Build with the same system
