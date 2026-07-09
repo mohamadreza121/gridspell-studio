@@ -109,19 +109,19 @@ function startProjectHref(project: FeaturedProject) {
 }
 
 function CaseStudyLiveButton({ project }: { project: FeaturedProject }) {
-  if (!project.liveUrl) return null;
-
   const className =
     "group inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/15 bg-[linear-gradient(135deg,#7c5cff_0%,#6477ff_48%,#29d6ff_100%)] px-6 text-sm font-semibold text-white shadow-[0_14px_44px_rgba(92,104,255,0.26)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_58px_rgba(92,104,255,0.36)]";
 
-  if (project.liveUrl.startsWith("/")) {
+  if (project.slug === "landing-page-gallery") {
     return (
-      <Link href={project.liveUrl} className={className}>
+      <Link href="/landing-pages" className={className}>
         Open gallery
         <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </Link>
     );
   }
+
+  if (!project.liveUrl) return null;
 
   return (
     <a href={project.liveUrl} target="_blank" rel="noreferrer" className={className}>
