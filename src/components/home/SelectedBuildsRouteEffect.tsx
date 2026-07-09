@@ -117,7 +117,6 @@ export function SelectedBuildsRouteEffect() {
           }
 
           .selected-builds-route-effect__orb {
-            --selected-builds-orb-glow: calc(0.48 + (var(--selected-builds-orb-progress) * 0.52));
             position: absolute;
             left: var(--selected-builds-orb-x);
             top: var(--selected-builds-orb-y);
