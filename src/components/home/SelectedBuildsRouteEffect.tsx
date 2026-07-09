@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 const ROUTE_PATH =
-  "M 10 86 C 12 74 18 68 29 64 C 42 60 53 58 63 53 C 74 47 81 41 85 31 C 88 23 88 15 88 8";
+  "M 84 10 C 82 24 76 34 66 41 C 55 49 43 52 32 60 C 21 68 14 78 10 91";
 
 function clamp(value: number) {
   return Math.min(1, Math.max(0, value));
@@ -16,13 +16,14 @@ export function SelectedBuildsRouteEffect() {
   useEffect(() => {
     const effect = effectRef.current;
     const path = pathRef.current;
-    const root = document.querySelector<HTMLElement>(".home-proof-sections");
+    const root = document.querySelector<HTMLElement>(".home-proof-route-shell");
+    const proofRoot = document.querySelector<HTMLElement>(".home-proof-sections");
     const selectedSection = document.querySelector<HTMLElement>(
       ".home-proof-selected-section"
     );
     const faqSection = document.querySelector<HTMLElement>(".home-faq-section");
 
-    if (!effect || !path || !root || !selectedSection || !faqSection) return;
+    if (!effect || !path || !root || !proofRoot || !selectedSection || !faqSection) return;
 
     let frameId = 0;
 
@@ -31,12 +32,11 @@ export function SelectedBuildsRouteEffect() {
 
       const selectedRect = selectedSection.getBoundingClientRect();
       const faqRect = faqSection.getBoundingClientRect();
-      const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
-      const routeStart = scrollY + selectedRect.top - viewportHeight * 0.18;
-      const routeEnd = scrollY + faqRect.bottom - viewportHeight * 0.9;
-      const progress = clamp((scrollY - routeStart) / Math.max(1, routeEnd - routeStart));
-      const isActive = scrollY >= routeStart - viewportHeight * 0.2 && scrollY <= routeEnd + viewportHeight * 0.18;
+      const routeStart = window.scrollY + selectedRect.top - viewportHeight * 0.62;
+      const routeEnd = window.scrollY + faqRect.bottom - viewportHeight * 0.86;
+      const progress = clamp((window.scrollY - routeStart) / Math.max(1, routeEnd - routeStart));
+      const isActive = selectedRect.top <= viewportHeight * 0.62 && faqRect.bottom >= viewportHeight * 0.22;
       const pathLength = path.getTotalLength();
       const point = path.getPointAtLength(pathLength * progress);
 
@@ -54,7 +54,7 @@ export function SelectedBuildsRouteEffect() {
     const revealObserver = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
-        root.dataset.selectedBuildsReveal = "true";
+        proofRoot.dataset.selectedBuildsReveal = "true";
         revealObserver.disconnect();
       },
       {
@@ -101,10 +101,31 @@ export function SelectedBuildsRouteEffect() {
         }
 
         @media (min-width: 768px) {
+          .home-proof-route-shell {
+            position: relative;
+            z-index: 3;
+            isolation: isolate;
+            overflow: hidden;
+            background: #07080c;
+          }
+
+          .home-proof-route-shell .home-proof-sections,
+          .home-proof-route-shell .home-faq-section {
+            background: transparent !important;
+          }
+
+          .home-proof-route-shell .home-proof-sections,
+          .home-proof-route-shell .home-faq-section,
+          .home-proof-route-shell .home-proof-sections > *,
+          .home-proof-route-shell .home-faq-section > * {
+            position: relative;
+            z-index: 2;
+          }
+
           .home-proof-sections {
             --selected-builds-route-progress: 0;
-            --selected-builds-route-dot-x: 10%;
-            --selected-builds-route-dot-y: 86%;
+            --selected-builds-route-dot-x: 84%;
+            --selected-builds-route-dot-y: 10%;
           }
 
           .home-proof-selected-section > div {
@@ -125,12 +146,12 @@ export function SelectedBuildsRouteEffect() {
 
           .selected-builds-route-effect {
             --selected-builds-route-progress: 0;
-            --selected-builds-route-dot-x: 10%;
-            --selected-builds-route-dot-y: 86%;
+            --selected-builds-route-dot-x: 84%;
+            --selected-builds-route-dot-y: 10%;
             pointer-events: none;
             position: fixed;
             inset: 0;
-            z-index: 4;
+            z-index: 1;
             display: block;
             overflow: hidden;
             opacity: 0;
@@ -159,15 +180,15 @@ export function SelectedBuildsRouteEffect() {
           }
 
           .selected-builds-route-effect__track {
-            stroke: rgba(255, 43, 118, 0.12);
-            stroke-width: 10;
+            stroke: rgba(255, 43, 118, 0.1);
+            stroke-width: 9;
           }
 
           .selected-builds-route-effect__line {
-            stroke: rgba(255, 43, 118, 0.64);
-            stroke-width: 10;
+            stroke: rgba(255, 43, 118, 0.56);
+            stroke-width: 9;
             stroke-dasharray: var(--selected-builds-route-progress) 1;
-            filter: drop-shadow(0 0 16px rgba(255, 43, 118, 0.28));
+            filter: drop-shadow(0 0 14px rgba(255, 43, 118, 0.24));
           }
 
           .selected-builds-route-effect__dot {
