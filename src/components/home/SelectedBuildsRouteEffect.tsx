@@ -229,6 +229,10 @@ export function SelectedBuildsRouteEffect() {
         }
 
         @media (max-width: 767px) {
+          .home-proof-route-shell {
+            display: contents;
+          }
+
           .home-proof-selected-section > div {
             opacity: 1 !important;
             transform: none !important;
