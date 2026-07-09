@@ -41,9 +41,9 @@ export function SelectedBuildsRouteEffect() {
       const pathLength = path.getTotalLength();
       const point = path.getPointAtLength(pathLength * progress);
 
-      effect.style.setProperty("--selected-builds-route-progress", progress.toFixed(4));
-      effect.style.setProperty("--selected-builds-route-dot-x", `${point.x}%`);
-      effect.style.setProperty("--selected-builds-route-dot-y", `${point.y}%`);
+      root.style.setProperty("--selected-builds-route-progress", progress.toFixed(4));
+      root.style.setProperty("--selected-builds-route-dot-x", `${point.x}%`);
+      root.style.setProperty("--selected-builds-route-dot-y", `${point.y}%`);
       effect.style.setProperty("--selected-builds-route-top", `${-shellRect.top}px`);
       effect.style.setProperty("--selected-builds-route-height", `${viewportHeight}px`);
       effect.dataset.routeActive = String(isActive);
@@ -105,6 +105,9 @@ export function SelectedBuildsRouteEffect() {
 
         @media (min-width: 768px) {
           .home-proof-route-shell {
+            --selected-builds-route-progress: 0;
+            --selected-builds-route-dot-x: 84%;
+            --selected-builds-route-dot-y: 10%;
             position: relative;
             z-index: 3;
             isolation: isolate;
@@ -125,12 +128,6 @@ export function SelectedBuildsRouteEffect() {
             z-index: 2;
           }
 
-          .home-proof-sections {
-            --selected-builds-route-progress: 0;
-            --selected-builds-route-dot-x: 84%;
-            --selected-builds-route-dot-y: 10%;
-          }
-
           .home-proof-selected-section > div {
             opacity: 0;
             transform: translate3d(0, 34px, 0);
@@ -148,9 +145,6 @@ export function SelectedBuildsRouteEffect() {
           }
 
           .selected-builds-route-effect {
-            --selected-builds-route-progress: 0;
-            --selected-builds-route-dot-x: 84%;
-            --selected-builds-route-dot-y: 10%;
             --selected-builds-route-top: 0px;
             --selected-builds-route-height: 100svh;
             pointer-events: none;
