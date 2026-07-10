@@ -103,7 +103,7 @@ const FRAGMENT_SHADER = `
     float upperSoftbox = exp(-pow((reflectionDirection.y - 0.48) * 3.5, 2.0));
     float sideSoftbox = exp(-pow((reflectionDirection.x + 0.52) * 5.0, 2.0)) * 0.72;
     float cyanStrip = exp(-pow((reflectionDirection.x - 0.68) * 8.0, 2.0)) * 0.48;
-    float lowerDark = smoothstep(0.12, -0.82, reflectionDirection.y);
+    float lowerDark = 1.0 - smoothstep(-0.82, 0.12, reflectionDirection.y);
 
     float brushed = sin((vWorldPosition.x * 67.0) + (vWorldPosition.y * 31.0) + uTime * 0.08);
     brushed += sin((vWorldPosition.x * 123.0) - (vWorldPosition.y * 19.0));
@@ -192,11 +192,10 @@ function ringPoint(
   depthHalf: number,
   profilePower: number
 ): Vec3 {
-  const profileExponent = 2 / profilePower;
-  const radial = radialHalf * signPower(Math.cos(v), profileExponent);
-  const depth = depthHalf * signPower(Math.sin(v), profileExponent);
+  const exponent = 2 / profilePower;
+  const radial = radialHalf * signPower(Math.cos(v), exponent);
+  const depth = depthHalf * signPower(Math.sin(v), exponent);
   const radius = majorRadius + radial;
-
   return [radius * Math.cos(u), radius * Math.sin(u), depth];
 }
 
@@ -232,14 +231,10 @@ function createRingGeometry({
       const point = ringPoint(u, v, majorRadius, radialHalf, depthHalf, profilePower);
       const pointU = ringPoint(u + epsilon, v, majorRadius, radialHalf, depthHalf, profilePower);
       const pointV = ringPoint(u, v + epsilon, majorRadius, radialHalf, depthHalf, profilePower);
-      const tangentU = subtract(pointU, point);
-      const tangentV = subtract(pointV, point);
-      let normal = normalize(cross(tangentU, tangentV));
+      let normal = normalize(cross(subtract(pointU, point), subtract(pointV, point)));
       const expected: Vec3 = [Math.cos(u) * Math.cos(v), Math.sin(u) * Math.cos(v), Math.sin(v)];
 
-      if (dot(normal, expected) < 0) {
-        normal = [-normal[0], -normal[1], -normal[2]];
-      }
+      if (dot(normal, expected) < 0) normal = [-normal[0], -normal[1], -normal[2]];
 
       positions.push(...point);
       normals.push(...normal);
@@ -271,18 +266,15 @@ function createSphereGeometry(radius = 1, widthSegments = 24, heightSegments = 1
   const indices: number[] = [];
 
   for (let yIndex = 0; yIndex <= heightSegments; yIndex += 1) {
-    const v = yIndex / heightSegments;
-    const phi = v * Math.PI;
+    const phi = (yIndex / heightSegments) * Math.PI;
 
     for (let xIndex = 0; xIndex <= widthSegments; xIndex += 1) {
-      const u = xIndex / widthSegments;
-      const theta = u * Math.PI * 2;
+      const theta = (xIndex / widthSegments) * Math.PI * 2;
       const normal: Vec3 = [
         -Math.cos(theta) * Math.sin(phi),
         Math.cos(phi),
         Math.sin(theta) * Math.sin(phi)
       ];
-
       positions.push(normal[0] * radius, normal[1] * radius, normal[2] * radius);
       normals.push(...normal);
     }
@@ -320,10 +312,10 @@ function multiplyMatrices(a: Mat4, b: Mat4): Mat4 {
   for (let column = 0; column < 4; column += 1) {
     for (let row = 0; row < 4; row += 1) {
       output[column * 4 + row] =
-        a[0 * 4 + row] * b[column * 4 + 0] +
-        a[1 * 4 + row] * b[column * 4 + 1] +
-        a[2 * 4 + row] * b[column * 4 + 2] +
-        a[3 * 4 + row] * b[column * 4 + 3];
+        a[row] * b[column * 4] +
+        a[4 + row] * b[column * 4 + 1] +
+        a[8 + row] * b[column * 4 + 2] +
+        a[12 + row] * b[column * 4 + 3];
     }
   }
 
@@ -382,7 +374,6 @@ function rotationZMatrix(angle: number): Mat4 {
 function perspectiveMatrix(fieldOfView: number, aspect: number, near: number, far: number): Mat4 {
   const f = 1 / Math.tan(fieldOfView / 2);
   const rangeInverse = 1 / (near - far);
-
   return new Float32Array([
     f / aspect, 0, 0, 0,
     0, f, 0, 0,
@@ -392,14 +383,14 @@ function perspectiveMatrix(fieldOfView: number, aspect: number, near: number, fa
 }
 
 function composeModel(rotation: Vec3, scale: number): Mat4 {
-  const xRotation = rotationXMatrix(rotation[0]);
-  const yRotation = rotationYMatrix(rotation[1]);
-  const zRotation = rotationZMatrix(rotation[2]);
-  const rotations = multiplyMatrices(zRotation, multiplyMatrices(yRotation, xRotation));
+  const rotations = multiplyMatrices(
+    rotationZMatrix(rotation[2]),
+    multiplyMatrices(rotationYMatrix(rotation[1]), rotationXMatrix(rotation[0]))
+  );
   return multiplyMatrices(rotations, scaleMatrix(scale, scale, scale));
 }
 
-function createShader(gl: WebGLRenderingContext | WebGL2RenderingContext, type: number, source: string) {
+function createShader(gl: WebGLRenderingContext, type: number, source: string) {
   const shader = gl.createShader(type);
   if (!shader) throw new Error("Unable to create WebGL shader.");
 
@@ -415,7 +406,7 @@ function createShader(gl: WebGLRenderingContext | WebGL2RenderingContext, type: 
   return shader;
 }
 
-function createProgram(gl: WebGLRenderingContext | WebGL2RenderingContext) {
+function createProgram(gl: WebGLRenderingContext) {
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
   const program = gl.createProgram();
@@ -437,28 +428,24 @@ function createProgram(gl: WebGLRenderingContext | WebGL2RenderingContext) {
   return program;
 }
 
-function uploadMesh(gl: WebGLRenderingContext | WebGL2RenderingContext, data: MeshData): GpuMesh {
+function uploadMesh(gl: WebGLRenderingContext, data: MeshData): GpuMesh {
   const position = gl.createBuffer();
   const normal = gl.createBuffer();
   const index = gl.createBuffer();
 
-  if (!position || !normal || !index) {
-    throw new Error("Unable to allocate WebGL buffers.");
-  }
+  if (!position || !normal || !index) throw new Error("Unable to allocate WebGL buffers.");
 
   gl.bindBuffer(gl.ARRAY_BUFFER, position);
   gl.bufferData(gl.ARRAY_BUFFER, data.positions, gl.STATIC_DRAW);
-
   gl.bindBuffer(gl.ARRAY_BUFFER, normal);
   gl.bufferData(gl.ARRAY_BUFFER, data.normals, gl.STATIC_DRAW);
-
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data.indices, gl.STATIC_DRAW);
 
   return { position, normal, index, count: data.indices.length };
 }
 
-function getUniform(gl: WebGLRenderingContext | WebGL2RenderingContext, program: WebGLProgram, name: string) {
+function getUniform(gl: WebGLRenderingContext, program: WebGLProgram, name: string) {
   const location = gl.getUniformLocation(program, name);
   if (location === null) throw new Error(`Missing WebGL uniform: ${name}`);
   return location;
@@ -471,7 +458,9 @@ function readScrollPose(): RingPose {
   const anchors = keys
     .map((key) => {
       const element = document.getElementById(key);
-      return element ? pageY + element.getBoundingClientRect().top + element.getBoundingClientRect().height * 0.5 : null;
+      if (!element) return null;
+      const bounds = element.getBoundingClientRect();
+      return pageY + bounds.top + bounds.height * 0.5;
     })
     .filter((value): value is number => value !== null);
 
@@ -500,26 +489,16 @@ function AuraRing3DCanvas() {
     const layer = layerRef.current;
     const product = layer?.closest<HTMLElement>("#aura-scroll-product");
 
-    if (!canvas || !layer || !product) return;
-
-    const desktop = window.matchMedia("(min-width: 1024px)");
-    if (!desktop.matches) return;
+    if (!canvas || !layer || !product || !window.matchMedia("(min-width: 1024px)").matches) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const gl = (canvas.getContext("webgl2", {
+    const gl = canvas.getContext("webgl", {
       alpha: true,
       antialias: true,
       depth: true,
       powerPreference: "high-performance",
       premultipliedAlpha: false
-    }) ||
-      canvas.getContext("webgl", {
-        alpha: true,
-        antialias: true,
-        depth: true,
-        powerPreference: "high-performance",
-        premultipliedAlpha: false
-      })) as WebGLRenderingContext | WebGL2RenderingContext | null;
+    });
 
     if (!gl) return;
 
@@ -531,6 +510,7 @@ function AuraRing3DCanvas() {
     let pointerTarget: [number, number] = [0, 0];
     let pointerCurrent: [number, number] = [0, 0];
     let hasRendered = false;
+    let renderFrame: (timestamp: number) => void = () => undefined;
 
     try {
       const program = createProgram(gl);
@@ -538,6 +518,8 @@ function AuraRing3DCanvas() {
 
       const positionLocation = gl.getAttribLocation(program, "aPosition");
       const normalLocation = gl.getAttribLocation(program, "aNormal");
+      if (positionLocation < 0 || normalLocation < 0) throw new Error("Missing AURA WebGL attributes.");
+
       const uniforms = {
         model: getUniform(gl, program, "uModel"),
         viewProjection: getUniform(gl, program, "uViewProjection"),
@@ -552,44 +534,36 @@ function AuraRing3DCanvas() {
         time: getUniform(gl, program, "uTime")
       };
 
-      const shell = uploadMesh(
-        gl,
-        createRingGeometry({
-          majorRadius: 2,
-          radialHalf: 0.50,
-          depthHalf: 0.29,
-          uSegments: 176,
-          vSegments: 44,
-          profilePower: 4.6
-        })
-      );
-      const innerChannel = uploadMesh(
-        gl,
-        createRingGeometry({
-          majorRadius: 2,
-          radialHalf: 0.515,
-          depthHalf: 0.215,
-          uSegments: 176,
-          vSegments: 18,
-          profilePower: 3.8,
-          vStart: Math.PI - 0.76,
-          vEnd: Math.PI + 0.76
-        })
-      );
-      const sensorRail = uploadMesh(
-        gl,
-        createRingGeometry({
-          majorRadius: 2,
-          radialHalf: 0.535,
-          depthHalf: 0.12,
-          uSegments: 176,
-          vSegments: 12,
-          profilePower: 3.4,
-          vStart: Math.PI - 0.48,
-          vEnd: Math.PI + 0.48
-        })
-      );
+      const shell = uploadMesh(gl, createRingGeometry({
+        majorRadius: 2,
+        radialHalf: 0.50,
+        depthHalf: 0.29,
+        uSegments: 176,
+        vSegments: 44,
+        profilePower: 4.6
+      }));
+      const innerChannel = uploadMesh(gl, createRingGeometry({
+        majorRadius: 2,
+        radialHalf: 0.515,
+        depthHalf: 0.215,
+        uSegments: 176,
+        vSegments: 18,
+        profilePower: 3.8,
+        vStart: Math.PI - 0.76,
+        vEnd: Math.PI + 0.76
+      }));
+      const sensorRail = uploadMesh(gl, createRingGeometry({
+        majorRadius: 2,
+        radialHalf: 0.535,
+        depthHalf: 0.12,
+        uSegments: 176,
+        vSegments: 12,
+        profilePower: 3.4,
+        vStart: Math.PI - 0.48,
+        vEnd: Math.PI + 0.48
+      }));
       const sphere = uploadMesh(gl, createSphereGeometry());
+      const meshes = [shell, innerChannel, sensorRail, sphere];
 
       const titanium: RingMaterial = {
         color: [0.78, 0.84, 0.89],
@@ -637,7 +611,6 @@ function AuraRing3DCanvas() {
         brush: 0.3
       };
 
-      const meshes = [shell, innerChannel, sensorRail, sphere];
       const cameraPosition: Vec3 = [0, 0, 7.6];
 
       gl.enable(gl.DEPTH_TEST);
@@ -652,11 +625,9 @@ function AuraRing3DCanvas() {
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.position);
         gl.enableVertexAttribArray(positionLocation);
         gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normal);
         gl.enableVertexAttribArray(normalLocation);
         gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
-
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.index);
       };
 
@@ -690,28 +661,8 @@ function AuraRing3DCanvas() {
         }
       };
 
-      const updatePose = () => {
-        targetPose = readScrollPose();
-      };
-
-      const handlePointerMove = (event: PointerEvent) => {
-        pointerTarget = [
-          clamp((event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1, -1, 1),
-          clamp((event.clientY / Math.max(window.innerHeight, 1)) * 2 - 1, -1, 1)
-        ];
-      };
-
-      const handleVisibility = () => {
-        visible = document.visibilityState === "visible";
-        if (visible && !reducedMotion) {
-          cancelAnimationFrame(frame);
-          frame = requestAnimationFrame(render);
-        }
-      };
-
       const render = (timestamp: number) => {
         if (disposed) return;
-
         resize();
 
         if (visible && !product.classList.contains("is-hidden")) {
@@ -722,19 +673,14 @@ function AuraRing3DCanvas() {
             mix(pointerCurrent[1], pointerTarget[1], reducedMotion ? 1 : 0.052)
           ];
 
-          const idleX = reducedMotion ? 0 : Math.sin(time * 0.34) * 0.022;
-          const idleY = reducedMotion ? 0 : Math.sin(time * 0.25 + 0.8) * 0.034;
-          const idleZ = reducedMotion ? 0 : Math.sin(time * 0.29 + 1.4) * 0.016;
           const rotation: Vec3 = [
-            currentPose.x - pointerCurrent[1] * 0.075 + idleX,
-            currentPose.y + pointerCurrent[0] * 0.10 + idleY,
-            currentPose.z - pointerCurrent[0] * 0.024 + idleZ
+            currentPose.x - pointerCurrent[1] * 0.075 + (reducedMotion ? 0 : Math.sin(time * 0.34) * 0.022),
+            currentPose.y + pointerCurrent[0] * 0.10 + (reducedMotion ? 0 : Math.sin(time * 0.25 + 0.8) * 0.034),
+            currentPose.z - pointerCurrent[0] * 0.024 + (reducedMotion ? 0 : Math.sin(time * 0.29 + 1.4) * 0.016)
           ];
           const parentModel = composeModel(rotation, currentPose.scale);
-          const aspect = canvas.width / Math.max(canvas.height, 1);
-          const projection = perspectiveMatrix(38 * (Math.PI / 180), aspect, 0.1, 40);
-          const view = translationMatrix(0, 0, -cameraPosition[2]);
-          const viewProjection = multiplyMatrices(projection, view);
+          const projection = perspectiveMatrix(38 * (Math.PI / 180), canvas.width / Math.max(canvas.height, 1), 0.1, 40);
+          const viewProjection = multiplyMatrices(projection, translationMatrix(0, 0, -cameraPosition[2]));
 
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
           gl.useProgram(program);
@@ -748,14 +694,17 @@ function AuraRing3DCanvas() {
 
           const sensorAngles = [-2.18, -1.78, -1.36, -0.98, 2.76];
           sensorAngles.forEach((angle, index) => {
-            const radius = 1.43;
-            const z = index % 2 === 0 ? -0.015 : 0.035;
+            const size = index === 4 ? 0.085 : 0.105;
             const local = multiplyMatrices(
-              translationMatrix(Math.cos(angle) * radius, Math.sin(angle) * radius, z),
-              scaleMatrix(index === 4 ? 0.085 : 0.105, index === 4 ? 0.085 : 0.105, index === 4 ? 0.085 : 0.105)
+              translationMatrix(Math.cos(angle) * 1.43, Math.sin(angle) * 1.43, index % 2 === 0 ? -0.015 : 0.035),
+              scaleMatrix(size, size, size)
             );
-            const model = multiplyMatrices(parentModel, local);
-            drawMesh(sphere, model, index === 1 || index === 2 ? sensorGlass : contactMaterial, currentPose.sensors);
+            drawMesh(
+              sphere,
+              multiplyMatrices(parentModel, local),
+              index === 1 || index === 2 ? sensorGlass : contactMaterial,
+              currentPose.sensors
+            );
           });
 
           if (!hasRendered) {
@@ -765,36 +714,58 @@ function AuraRing3DCanvas() {
           }
         }
 
-        if (!reducedMotion) {
-          frame = requestAnimationFrame(render);
+        if (!reducedMotion) frame = requestAnimationFrame(renderFrame);
+      };
+
+      renderFrame = render;
+
+      const requestStaticRender = () => {
+        targetPose = readScrollPose();
+        if (reducedMotion) requestAnimationFrame(renderFrame);
+      };
+      const handlePointerMove = (event: PointerEvent) => {
+        pointerTarget = [
+          clamp((event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1, -1, 1),
+          clamp((event.clientY / Math.max(window.innerHeight, 1)) * 2 - 1, -1, 1)
+        ];
+      };
+      const handleVisibility = () => {
+        visible = document.visibilityState === "visible";
+        if (visible && !reducedMotion) {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(renderFrame);
         }
+      };
+      const handleContextLost = (event: Event) => {
+        event.preventDefault();
+        product.classList.remove("aura-ring-webgl-ready");
+        setReady(false);
       };
 
       const resizeObserver = new ResizeObserver(() => {
         resize();
-        if (reducedMotion) render(performance.now());
+        if (reducedMotion) requestAnimationFrame(renderFrame);
       });
       resizeObserver.observe(layer);
 
-      window.addEventListener("scroll", updatePose, { passive: true });
-      window.addEventListener("resize", updatePose);
+      window.addEventListener("scroll", requestStaticRender, { passive: true });
+      window.addEventListener("resize", requestStaticRender);
       document.addEventListener("visibilitychange", handleVisibility);
+      canvas.addEventListener("webglcontextlost", handleContextLost);
+      if (!reducedMotion) window.addEventListener("pointermove", handlePointerMove, { passive: true });
 
-      if (!reducedMotion) {
-        window.addEventListener("pointermove", handlePointerMove, { passive: true });
-      }
-
-      updatePose();
+      requestStaticRender();
       resize();
-      frame = requestAnimationFrame(render);
+      frame = requestAnimationFrame(renderFrame);
 
       return () => {
         disposed = true;
         cancelAnimationFrame(frame);
         resizeObserver.disconnect();
-        window.removeEventListener("scroll", updatePose);
-        window.removeEventListener("resize", updatePose);
+        window.removeEventListener("scroll", requestStaticRender);
+        window.removeEventListener("resize", requestStaticRender);
         document.removeEventListener("visibilitychange", handleVisibility);
+        canvas.removeEventListener("webglcontextlost", handleContextLost);
         window.removeEventListener("pointermove", handlePointerMove);
         product.classList.remove("aura-ring-webgl-ready");
         meshes.forEach((mesh) => {
@@ -819,46 +790,46 @@ function AuraRing3DCanvas() {
       <canvas ref={canvasRef} className="aura-ring-webgl-canvas" />
       <style>{`
         .aura-ring-webgl-layer {
-          position: absolute;
-          inset: -2%;
-          z-index: 3;
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 520ms cubic-bezier(.2,.85,.2,1);
+          position:absolute;
+          inset:-2%;
+          z-index:3;
+          pointer-events:none;
+          opacity:0;
+          transition:opacity 520ms cubic-bezier(.2,.85,.2,1);
         }
-        .aura-ring-webgl-layer.is-ready { opacity: 1; }
+        .aura-ring-webgl-layer.is-ready { opacity:1; }
         .aura-ring-webgl-canvas {
-          position: absolute;
-          inset: 0;
-          height: 100%;
-          width: 100%;
-          filter: drop-shadow(0 38px 70px rgba(2,6,23,.34));
+          position:absolute;
+          inset:0;
+          height:100%;
+          width:100%;
+          filter:drop-shadow(0 38px 70px rgba(2,6,23,.34));
         }
         .aura-ring-webgl-glow {
-          position: absolute;
-          inset: 15%;
-          border-radius: 999px;
-          background: radial-gradient(circle, rgba(103,232,249,.24), rgba(56,189,248,.07) 44%, transparent 72%);
-          filter: blur(38px);
-          opacity: .78;
+          position:absolute;
+          inset:15%;
+          border-radius:999px;
+          background:radial-gradient(circle,rgba(103,232,249,.24),rgba(56,189,248,.07) 44%,transparent 72%);
+          filter:blur(38px);
+          opacity:.78;
         }
         .aura-ring-webgl-shadow {
-          position: absolute;
-          left: 19%;
-          right: 19%;
-          bottom: 11%;
-          height: 9%;
-          border-radius: 50%;
-          background: rgba(2,6,23,.44);
-          filter: blur(19px);
-          transform: scaleX(.92);
+          position:absolute;
+          left:19%;
+          right:19%;
+          bottom:11%;
+          height:9%;
+          border-radius:50%;
+          background:rgba(2,6,23,.44);
+          filter:blur(19px);
+          transform:scaleX(.92);
         }
         #aura-scroll-product .aura-scroll-product-inner {
-          transition: opacity 460ms cubic-bezier(.2,.85,.2,1), filter 460ms cubic-bezier(.2,.85,.2,1);
+          transition:opacity 460ms cubic-bezier(.2,.85,.2,1),filter 460ms cubic-bezier(.2,.85,.2,1);
         }
         #aura-scroll-product.aura-ring-webgl-ready .aura-scroll-product-inner {
-          opacity: 0;
-          filter: blur(5px);
+          opacity:0;
+          filter:blur(5px);
         }
         @media (max-width:1023px) {
           .aura-ring-webgl-layer { display:none; }
