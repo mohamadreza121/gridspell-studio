@@ -150,8 +150,8 @@ function AuraStyles() {
       }
 
       @keyframes aura-text-rise {
-        0% { opacity: 0; transform: translateY(30px); filter: blur(10px); }
-        100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
       }
 
       @keyframes aura-metal-float {
@@ -167,8 +167,8 @@ function AuraStyles() {
       }
 
       @keyframes aura-section-in {
-        0% { opacity: 0; transform: translateY(58px) scale(0.98); filter: blur(10px); }
-        100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        0% { opacity: 0; transform: translateY(42px) scale(0.985); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
       }
 
       .aura-impact { animation: aura-hero-impact 1.65s cubic-bezier(.2,.85,.2,1) both; }
@@ -203,7 +203,7 @@ function AuraStyles() {
         .aura-view,
         .aura-story-card {
           opacity: 0;
-          transform: translateY(58px) scale(0.98);
+          transform: translateY(42px) scale(0.985);
           animation: aura-section-in linear both;
           animation-timeline: view();
           animation-range: entry 8% cover 32%;
@@ -247,7 +247,8 @@ function AuraScrollScript() {
         const page = document.getElementById('aura-page');
         const product = document.getElementById('aura-scroll-product');
         const story = document.getElementById('aura-story');
-        if (!page || !product || !story) return;
+        const specs = document.getElementById('specs');
+        if (!page || !product || !story || !specs) return;
 
         const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
         const mix = (from, to, progress) => from + (to - from) * progress;
@@ -258,9 +259,7 @@ function AuraScrollScript() {
           const y = window.scrollY || window.pageYOffset || 0;
           const vh = window.innerHeight || 1;
           const width = window.innerWidth || 1440;
-          const storyRect = story.getBoundingClientRect();
-          const storyTop = y + storyRect.top;
-          const storyBottom = storyTop + story.offsetHeight;
+          const specsTop = y + specs.getBoundingClientRect().top;
 
           const heroProgress = clamp(y / (vh * 1.08), 0, 1);
           const leftTarget = width >= 1280 ? 27 : width >= 1024 ? 31 : 50;
@@ -272,14 +271,20 @@ function AuraScrollScript() {
           let scale = mix(1, scaleTarget, heroProgress);
           let opacity = 1;
 
-          if (y > storyBottom - vh * 0.75) {
-            opacity = clamp(1 - (y - (storyBottom - vh * 0.75)) / (vh * 0.42), 0, 1);
+          const fadeStart = specsTop - vh * 1.08;
+          const fadeEnd = specsTop - vh * 0.68;
+          if (y > fadeStart) {
+            opacity = clamp(1 - (y - fadeStart) / Math.max(fadeEnd - fadeStart, 1), 0, 1);
+            left = leftTarget;
+            top = topTarget;
+            scale = scaleTarget;
           }
 
           page.style.setProperty('--aura-left', left.toFixed(2) + 'vw');
           page.style.setProperty('--aura-top', top.toFixed(2) + 'vh');
           page.style.setProperty('--aura-scale', scale.toFixed(3));
           page.style.setProperty('--aura-opacity', opacity.toFixed(3));
+          product.style.visibility = opacity <= 0.015 ? 'hidden' : 'visible';
         };
 
         const requestUpdate = () => {
@@ -360,7 +365,7 @@ function GlassButton({ href, children, variant = "primary" }: { href: string; ch
       className={
         variant === "primary"
           ? "group inline-flex min-h-[3.25rem] items-center gap-2 rounded-full border border-white/40 bg-white/70 px-6 text-sm font-black text-[#070a0f] shadow-[0_20px_55px_rgba(255,255,255,0.18),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_26px_80px_rgba(103,232,249,0.26)]"
-          : "group inline-flex min-h-[3.25rem] items-center gap-2 rounded-full border border-white/20 bg-white/[0.10] px-6 text-sm font-black text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.15] hover:text-white"
+          : "group inline-flex min-h-[3.25rem] items-center gap-2 rounded-full border border-white/20 bg-white/[0.10] px-6 text-sm font-black text-white/[0.80] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.15] hover:text-white"
       }
     >
       {children}
@@ -453,7 +458,10 @@ export default function Product3DLaunchDemoPage() {
         <div aria-hidden="true" className="absolute left-1/2 top-[58.4%] h-px w-[90vw] -translate-x-1/2 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.88),transparent)] shadow-[0_0_32px_rgba(255,255,255,0.38)]" />
 
         <Container className="relative flex min-h-[calc(100svh-2rem)] flex-col items-center justify-center py-24 text-center">
-          <h1 className="aura-rise pointer-events-none absolute left-1/2 top-[51%] z-0 w-[105vw] -translate-x-1/2 -translate-y-1/2 font-display text-[clamp(4.8rem,14vw,14.5rem)] font-semibold leading-[0.72] tracking-[-0.11em] text-white/92 drop-shadow-[0_35px_90px_rgba(0,0,0,0.55)]">
+          <h1
+            className="aura-rise pointer-events-none absolute left-1/2 top-[48%] z-[12] w-[108vw] -translate-x-1/2 -translate-y-1/2 font-display text-[clamp(5rem,13.5vw,14rem)] font-semibold leading-[0.72] tracking-[-0.11em] text-white/90"
+            style={{ textShadow: "0 34px 95px rgba(0,0,0,0.72), 0 0 42px rgba(103,232,249,0.18)" }}
+          >
             Future on your finger.
           </h1>
 
