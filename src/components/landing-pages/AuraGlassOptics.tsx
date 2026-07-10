@@ -97,6 +97,43 @@ function OpticalFrame({
   );
 }
 
+function AuraRing3DFramingFixes() {
+  return (
+    <style>{`
+      #aura-scroll-product .aura-ring-webgl-layer {
+        overflow: visible;
+      }
+
+      #aura-scroll-product .aura-ring-webgl-canvas {
+        transform: scale(0.74);
+        transform-origin: 50% 50%;
+      }
+
+      #aura-scroll-product .aura-ring-webgl-glow {
+        inset: 23%;
+        opacity: 0.66;
+      }
+
+      #aura-scroll-product .aura-ring-webgl-shadow {
+        left: 28%;
+        right: 28%;
+        bottom: 15%;
+        height: 7%;
+      }
+
+      #aura-scroll-product.aura-ring-webgl-ready .aura-scroll-product-inner {
+        display: none !important;
+      }
+
+      @media (min-width: 1024px) and (max-width: 1279px) {
+        #aura-scroll-product .aura-ring-webgl-canvas {
+          transform: scale(0.68);
+        }
+      }
+    `}</style>
+  );
+}
+
 export function MaterialGlassOptics({ className = "" }: OpticsProps) {
   return (
     <>
@@ -112,6 +149,7 @@ export function MaterialGlassOptics({ className = "" }: OpticsProps) {
         noiseSeed={11}
       />
       <AuraRing3DPortal />
+      <AuraRing3DFramingFixes />
     </>
   );
 }
