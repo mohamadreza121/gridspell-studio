@@ -98,7 +98,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Luxury", "Listings", "Inquiry", "Map"],
     palette: ["#d6b36a", "#111827", "#f8fafc"],
     sections: ["Hero listing", "Property cards", "Agent proof", "Neighborhood", "Contact", "FAQ"],
-    recommendedFor: ["Luxury listings", "Realtors", "Property launches"]
+    recommendedFor: ["Luxury listings", "Realtors", "Property launches"],
+    demoHref: "/demo/luxury-real-estate"
   },
   {
     slug: "dental-trust",
@@ -114,7 +115,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Booking", "Reviews", "Services", "Trust"],
     palette: ["#38bdf8", "#0f172a", "#ecfeff"],
     sections: ["Hero booking", "Services", "Doctor profile", "Reviews", "Insurance", "FAQ"],
-    recommendedFor: ["Dental clinics", "Med spas", "Health practices"]
+    recommendedFor: ["Dental clinics", "Med spas", "Health practices"],
+    demoHref: "/demo/dental-trust"
   },
   {
     slug: "fitness-coach",
@@ -130,7 +132,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Programs", "Schedule", "Results", "Apply CTA"],
     palette: ["#ef4444", "#111827", "#facc15"],
     sections: ["Hero", "Programs", "Results", "Coach story", "Pricing", "Application"],
-    recommendedFor: ["Gyms", "Personal trainers", "Fitness offers"]
+    recommendedFor: ["Gyms", "Personal trainers", "Fitness offers"],
+    demoHref: "/demo/fitness-coach"
   },
   {
     slug: "law-firm-classic",
@@ -146,7 +149,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Consultation", "Authority", "Practice areas", "FAQ"],
     palette: ["#1e3a8a", "#020617", "#f8fafc"],
     sections: ["Hero", "Practice areas", "Process", "Trust", "Consultation", "FAQ"],
-    recommendedFor: ["Law firms", "Accountants", "Consultants"]
+    recommendedFor: ["Law firms", "Accountants", "Consultants"],
+    demoHref: "/demo/law-firm-classic"
   },
   {
     slug: "beauty-booking",
@@ -162,7 +166,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Booking", "Pricing", "Gallery", "Reviews"],
     palette: ["#f0abfc", "#3b0764", "#fff1f2"],
     sections: ["Hero", "Services", "Pricing", "Gallery", "Reviews", "Booking"],
-    recommendedFor: ["Beauty salons", "Barbers", "Spa studios"]
+    recommendedFor: ["Beauty salons", "Barbers", "Spa studios"],
+    demoHref: "/demo/beauty-booking"
   },
   {
     slug: "creator-brand",
@@ -178,7 +183,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Newsletter", "Offer", "Social proof", "Content"],
     palette: ["#a78bfa", "#111827", "#f5f3ff"],
     sections: ["Hero", "Offer", "Proof", "Content", "Newsletter", "CTA"],
-    recommendedFor: ["Creators", "Consultants", "Educators"]
+    recommendedFor: ["Creators", "Consultants", "Educators"],
+    demoHref: "/demo/creator-brand"
   },
   {
     slug: "ecommerce-drop",
@@ -194,7 +200,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Product", "Reviews", "Comparison", "Buy CTA"],
     palette: ["#14b8a6", "#042f2e", "#f0fdfa"],
     sections: ["Hero", "Benefits", "Product details", "Reviews", "Comparison", "Buy section"],
-    recommendedFor: ["Single products", "Ecommerce drops", "Brand campaigns"]
+    recommendedFor: ["Single products", "Ecommerce drops", "Brand campaigns"],
+    demoHref: "/demo/ecommerce-drop"
   },
   {
     slug: "event-launch",
@@ -210,7 +217,8 @@ export const landingPageConcepts: LandingPageConcept[] = [
     tags: ["Tickets", "Schedule", "Speakers", "Registration"],
     palette: ["#fb7185", "#312e81", "#fff1f2"],
     sections: ["Hero", "Speakers", "Schedule", "Tickets", "Venue", "Register"],
-    recommendedFor: ["Workshops", "Conferences", "Local events"]
+    recommendedFor: ["Workshops", "Conferences", "Local events"],
+    demoHref: "/demo/event-launch"
   }
 ];
 
