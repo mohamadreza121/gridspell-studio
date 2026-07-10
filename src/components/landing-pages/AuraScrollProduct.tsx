@@ -4,6 +4,12 @@ import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import {
+  IntelligenceGlassOptics,
+  MaterialGlassOptics,
+  MotionGlassOptics,
+  SensorGlassOptics
+} from "@/components/landing-pages/AuraGlassOptics";
+import {
   IntelligenceGlassArtwork,
   MotionStoryGlassArtwork,
   SensorArrayGlassArtwork
@@ -105,25 +111,21 @@ type ArtKey = "material" | "sensor" | "motion" | "intelligence";
 type ArtTargets = Record<ArtKey, Element | null>;
 type MotionFactor = readonly [number, number, number, number];
 
-const artConfigs: Record<ArtKey, { selector: string; fragmentCount: number; factors: readonly MotionFactor[] }> = {
+const artConfigs: Record<ArtKey, { selector: string; factors: readonly MotionFactor[] }> = {
   material: {
     selector: "#design > div",
-    fragmentCount: 8,
     factors: [[-0.45, -0.50, -2, 2], [-0.30, -0.70, 1, -2], [0.35, -0.60, -1, 2.5], [0.62, -0.18, 2, -2], [0.58, 0.45, -2, 2], [0.28, 0.68, 1, 2], [-0.28, 0.65, -1, -2], [-0.62, 0.28, 2, 2]]
   },
   sensor: {
     selector: "#sensors > div",
-    fragmentCount: 5,
     factors: [[-0.42, -0.42, -1, 1], [-0.18, -0.64, 0, -1], [0.42, -0.50, 1, 1.5], [0.58, 0.22, -1, 1], [0.20, 0.62, 0, -1]]
   },
   motion: {
     selector: "#motion > div",
-    fragmentCount: 6,
     factors: [[-0.66, -0.24, -3, 4], [-0.30, -0.62, -1, 3], [0.48, -0.55, 2, 4], [0.70, 0.05, -2, 5], [0.52, 0.58, 1, 4], [-0.56, 0.46, -2, 3]]
   },
   intelligence: {
     selector: "#intelligence > div",
-    fragmentCount: 6,
     factors: [[-0.42, -0.45, -1, 1.5], [-0.22, -0.62, 1, -1], [0.40, -0.54, -1, 1.5], [0.58, 0.10, 1, -1.5], [0.30, 0.62, -1, 1], [-0.55, 0.34, 1, -1]]
   }
 };
@@ -146,7 +148,6 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
     const product = document.getElementById("aura-scroll-product");
     const story = document.getElementById("aura-story");
     const afterStory = document.getElementById("aura-after-story");
-
     const hosts = Object.fromEntries(
       Object.entries(artConfigs).map(([key, config]) => [key, document.querySelector<HTMLElement>(config.selector)])
     ) as Record<ArtKey, HTMLElement | null>;
@@ -197,6 +198,8 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         const mainY = key === "sensor" ? (progress - 0.5) * -5 : (progress - 0.5) * -8;
         host.style.setProperty(`--${key}-main-x`, `${mainX.toFixed(2)}px`);
         host.style.setProperty(`--${key}-main-y`, `${mainY.toFixed(2)}px`);
+        host.style.setProperty(`--${key}-optic-y`, `${((progress - 0.5) * -12).toFixed(2)}px`);
+        host.style.setProperty(`--${key}-optic-opacity`, `${(0.58 + Math.sin(progress * Math.PI) * 0.34).toFixed(3)}`);
         setArtFragmentVars(host, key, 0, 0, progress);
       });
 
@@ -224,6 +227,8 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         host.style.setProperty(`--${key}-ry`, `${(nx * tilt).toFixed(2)}deg`);
         host.style.setProperty(`--${key}-px`, `${(nx * (key === "motion" ? 14 : 10)).toFixed(2)}px`);
         host.style.setProperty(`--${key}-py`, `${(ny * 8).toFixed(2)}px`);
+        host.style.setProperty(`--${key}-optic-x`, `${(nx * 12).toFixed(2)}px`);
+        host.style.setProperty(`--${key}-optic-r`, `${(nx * 1.8).toFixed(2)}deg`);
         setArtFragmentVars(host, key, nx, ny, 0.5);
       };
 
@@ -232,6 +237,8 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         host.style.setProperty(`--${key}-ry`, "0deg");
         host.style.setProperty(`--${key}-px`, "0px");
         host.style.setProperty(`--${key}-py`, "0px");
+        host.style.setProperty(`--${key}-optic-x`, "0px");
+        host.style.setProperty(`--${key}-optic-r`, "0deg");
         setArtFragmentVars(host, key, 0, 0, 0.5);
       };
 
@@ -260,14 +267,13 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         #design > div, #sensors > div, #motion > div, #intelligence > div {
           isolation: isolate;
           perspective: 1200px;
+          contain: layout style;
         }
 
         #design .aura-shatter-dust, #design .aura-crack-overlay, #design .aura-glass-chip,
         #sensors .aura-shatter-dust, #sensors .aura-crack-overlay, #sensors .aura-glass-chip,
         #motion .aura-shatter-dust, #motion .aura-crack-overlay, #motion .aura-glass-chip,
-        #intelligence .aura-shatter-dust, #intelligence .aura-crack-overlay, #intelligence .aura-glass-chip {
-          display: none !important;
-        }
+        #intelligence .aura-shatter-dust, #intelligence .aura-crack-overlay, #intelligence .aura-glass-chip { display: none !important; }
 
         #design .aura-shatter-panel, #sensors .aura-shatter-panel,
         #motion .aura-shatter-panel, #intelligence .aura-shatter-panel {
@@ -282,9 +288,7 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         #design .aura-shatter-panel::before, #design .aura-shatter-panel::after,
         #sensors .aura-shatter-panel::before, #sensors .aura-shatter-panel::after,
         #motion .aura-shatter-panel::before, #motion .aura-shatter-panel::after,
-        #intelligence .aura-shatter-panel::before, #intelligence .aura-shatter-panel::after {
-          display: none !important;
-        }
+        #intelligence .aura-shatter-panel::before, #intelligence .aura-shatter-panel::after { display: none !important; }
 
         @keyframes aura-art-enter {
           0% { opacity: 0; transform: translate3d(0,42px,0) scale(.94) rotateX(5deg); filter: blur(9px) drop-shadow(0 12px 30px rgba(0,0,0,.18)); }
@@ -303,21 +307,72 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         @keyframes intelligence-orbit { to { transform: rotate(360deg); } }
         @keyframes intelligence-core-pulse { 0%,100% { opacity: .50; transform: scale(.98); } 50% { opacity: .82; transform: scale(1.04); } }
 
-        .aura-material-art, .aura-story-art {
+        @keyframes optics-volume-drift {
+          0%,100% { transform: translate3d(-10px,8px,0) scale(.98); opacity: .48; }
+          50% { transform: translate3d(14px,-11px,0) scale(1.045); opacity: .88; }
+        }
+        @keyframes optics-scratch-shimmer {
+          0%,100% { opacity: .16; transform: translateX(-3px); }
+          50% { opacity: .48; transform: translateX(5px); }
+        }
+        @keyframes optics-spectral-run {
+          0% { stroke-dashoffset: 470; opacity: 0; }
+          18% { opacity: .22; }
+          52% { opacity: .48; }
+          82%,100% { stroke-dashoffset: -390; opacity: 0; }
+        }
+        @keyframes optics-edge-breathe {
+          0%,100% { opacity: .22; }
+          50% { opacity: .55; }
+        }
+        @keyframes optics-glint-drift {
+          0%,100% { transform: translate3d(-4px,3px,0); opacity: .32; }
+          50% { transform: translate3d(7px,-6px,0); opacity: .72; }
+        }
+
+        .aura-material-art, .aura-story-art, .aura-optics {
           position: absolute;
           inset: -16% -19% -18% -17%;
-          z-index: 0;
           pointer-events: none;
           transform-style: preserve-3d;
-          transition: transform 180ms cubic-bezier(.2,.8,.2,1);
+          transition: transform 180ms cubic-bezier(.2,.8,.2,1), opacity 240ms ease;
+          will-change: transform, opacity;
+        }
+
+        .aura-material-art, .aura-story-art {
+          z-index: 0;
           animation: aura-art-enter 1.05s cubic-bezier(.2,.85,.2,1) both;
           filter: drop-shadow(0 34px 72px rgba(0,0,0,.30));
+        }
+
+        .aura-optics {
+          z-index: 1;
+          opacity: var(--material-optic-opacity, .72);
+          mix-blend-mode: screen;
+          filter: saturate(1.08);
         }
 
         .aura-material-art { transform: translate3d(var(--material-px,0px),var(--material-py,0px),0) rotateX(var(--material-rx,0deg)) rotateY(var(--material-ry,0deg)); }
         .aura-sensor-art { transform: translate3d(var(--sensor-px,0px),var(--sensor-py,0px),0) rotateX(var(--sensor-rx,0deg)) rotateY(var(--sensor-ry,0deg)); }
         .aura-motion-art { transform: translate3d(var(--motion-px,0px),var(--motion-py,0px),0) rotateX(var(--motion-rx,0deg)) rotateY(var(--motion-ry,0deg)); }
         .aura-intelligence-art { transform: translate3d(var(--intelligence-px,0px),var(--intelligence-py,0px),0) rotateX(var(--intelligence-rx,0deg)) rotateY(var(--intelligence-ry,0deg)); }
+
+        .aura-material-optics { opacity: var(--material-optic-opacity,.72); transform: translate3d(var(--material-optic-x,0px),var(--material-optic-y,0px),12px) rotate(var(--material-optic-r,0deg)); }
+        .aura-sensor-optics { opacity: var(--sensor-optic-opacity,.72); transform: translate3d(var(--sensor-optic-x,0px),var(--sensor-optic-y,0px),12px) rotate(var(--sensor-optic-r,0deg)); }
+        .aura-motion-optics { opacity: var(--motion-optic-opacity,.78); transform: translate3d(var(--motion-optic-x,0px),var(--motion-optic-y,0px),16px) rotate(var(--motion-optic-r,0deg)); }
+        .aura-intelligence-optics { opacity: var(--intelligence-optic-opacity,.76); transform: translate3d(var(--intelligence-optic-x,0px),var(--intelligence-optic-y,0px),14px) rotate(var(--intelligence-optic-r,0deg)); }
+
+        .aura-optics-volume { transform-box: fill-box; transform-origin: center; animation: optics-volume-drift 9.6s ease-in-out infinite; }
+        .aura-motion-optics .aura-optics-volume { animation-duration: 6.4s; }
+        .aura-intelligence-optics .aura-optics-volume { animation-duration: 12.5s; }
+        .aura-optics-scratches { transform-box: fill-box; transform-origin: center; animation: optics-scratch-shimmer 8.8s ease-in-out infinite; }
+        .aura-optics-spectral-pass { stroke-dasharray: 180 290; animation: optics-spectral-run 7.8s cubic-bezier(.4,0,.2,1) infinite; }
+        .aura-motion-optics .aura-optics-spectral-pass { animation-duration: 5.9s; }
+        .aura-intelligence-optics .aura-optics-spectral-pass { animation-duration: 10.8s; }
+        .aura-optics-edge-bloom { animation: optics-edge-breathe 6.6s ease-in-out infinite; }
+        .aura-optics-glints { transform-box: fill-box; transform-origin: center; animation: optics-glint-drift 5.7s ease-in-out infinite; }
+        .aura-optics-refraction { opacity: .52; }
+        .aura-optics-edge-cyan, .aura-optics-edge-prism { opacity: .68; }
 
         .aura-material-main, .aura-sensor-main, .aura-motion-main, .aura-intelligence-main { transform-box: fill-box; transform-origin: center; transition: transform 220ms ease-out; }
         .aura-material-main { transform: translate3d(var(--material-main-x,0px),var(--material-main-y,0px),0); }
@@ -345,15 +400,27 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         ${Array.from({ length: 6 }, (_, index) => `.aura-intelligence-fragment-${index + 1}{transform:translate3d(var(--intelligence-f${index + 1}-x,0px),var(--intelligence-f${index + 1}-y,0px),0) rotate(var(--intelligence-f${index + 1}-r,0deg));}`).join("")}
 
         @media (max-width:1023px) {
-          .aura-material-art, .aura-story-art { inset: -8% -6% -10%; opacity:.92; transform:none; }
+          .aura-material-art, .aura-story-art, .aura-optics { inset: -8% -6% -10%; transform:none !important; }
+          .aura-material-art, .aura-story-art { opacity:.92; }
+          .aura-optics { opacity:.42 !important; mix-blend-mode:normal; filter:none; }
+          .aura-optics-refraction, .aura-optics-scratches, .aura-optics-edge-prism { display:none; }
+          .aura-optics-volume { opacity:.54; }
+        }
+
+        @media (max-width:639px) {
+          .aura-optics { opacity:.30 !important; }
+          .aura-optics-edge-bloom { opacity:.18; }
+          .aura-optics-glints { display:none; }
         }
 
         @media (prefers-reduced-motion:reduce) {
-          .aura-material-art, .aura-story-art,
+          .aura-material-art, .aura-story-art, .aura-optics,
           .aura-material-dust-field, .aura-material-particles, .aura-material-sheen,
           .aura-sensor-aura, .aura-sensor-pulses, .aura-sensor-sheen,
           .aura-motion-aura, .aura-motion-trails, .aura-motion-sheen,
-          .aura-intelligence-core, .aura-intelligence-orbit, .aura-intelligence-sheen {
+          .aura-intelligence-core, .aura-intelligence-orbit, .aura-intelligence-sheen,
+          .aura-optics-volume, .aura-optics-scratches, .aura-optics-spectral-pass,
+          .aura-optics-edge-bloom, .aura-optics-glints {
             animation:none !important;
             transform:none !important;
           }
@@ -365,10 +432,10 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
         <div className="aura-scroll-product-inner">{children}</div>
       </div>
 
-      {targets.material ? createPortal(<MaterialGlassArtwork />, targets.material) : null}
-      {targets.sensor ? createPortal(<SensorArrayGlassArtwork />, targets.sensor) : null}
-      {targets.motion ? createPortal(<MotionStoryGlassArtwork />, targets.motion) : null}
-      {targets.intelligence ? createPortal(<IntelligenceGlassArtwork />, targets.intelligence) : null}
+      {targets.material ? createPortal(<><MaterialGlassArtwork /><MaterialGlassOptics /></>, targets.material) : null}
+      {targets.sensor ? createPortal(<><SensorArrayGlassArtwork /><SensorGlassOptics /></>, targets.sensor) : null}
+      {targets.motion ? createPortal(<><MotionStoryGlassArtwork /><MotionGlassOptics /></>, targets.motion) : null}
+      {targets.intelligence ? createPortal(<><IntelligenceGlassArtwork /><IntelligenceGlassOptics /></>, targets.intelligence) : null}
     </>
   );
 }
