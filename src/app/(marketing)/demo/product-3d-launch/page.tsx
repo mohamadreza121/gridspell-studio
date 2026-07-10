@@ -45,6 +45,8 @@ type SpecRow = {
   value: string;
 };
 
+type ShatterVariant = "a" | "b" | "c" | "d";
+
 const heroStats = [
   ["6 days", "battery life"],
   ["100m", "water resistant"],
@@ -204,93 +206,143 @@ function AuraStyles() {
         transform: none;
       }
 
-      .aura-shard-dust {
+      .aura-shatter-dust {
         background:
-          radial-gradient(circle at 12% 24%, rgba(255,255,255,0.28) 0 1.5px, transparent 2px),
-          radial-gradient(circle at 78% 18%, rgba(103,232,249,0.26) 0 1.4px, transparent 2px),
-          radial-gradient(circle at 66% 74%, rgba(255,255,255,0.18) 0 1.2px, transparent 1.8px),
-          radial-gradient(circle at 30% 86%, rgba(148,163,184,0.24) 0 1.5px, transparent 2px),
-          radial-gradient(circle at 50% 45%, rgba(103,232,249,0.18), transparent 46%),
-          linear-gradient(135deg, rgba(255,255,255,0.13), rgba(148,163,184,0.06) 48%, rgba(255,255,255,0.04));
-        opacity: 0.9;
+          radial-gradient(circle at 18% 18%, rgba(255,255,255,0.30) 0 1.4px, transparent 2px),
+          radial-gradient(circle at 72% 16%, rgba(103,232,249,0.30) 0 1.2px, transparent 2px),
+          radial-gradient(circle at 84% 76%, rgba(255,255,255,0.20) 0 1.1px, transparent 1.8px),
+          radial-gradient(circle at 24% 84%, rgba(148,163,184,0.25) 0 1.4px, transparent 2px),
+          radial-gradient(circle at 54% 44%, rgba(103,232,249,0.22), transparent 45%),
+          linear-gradient(135deg, rgba(255,255,255,0.15), rgba(148,163,184,0.07) 46%, rgba(255,255,255,0.04));
+        opacity: 0.95;
       }
 
-      .aura-shard-panel {
+      .aura-shatter-panel {
         position: relative;
         overflow: hidden;
-        clip-path: polygon(0 9%, 10% 0, 71% 0, 100% 19%, 95% 100%, 18% 100%, 0 84%);
-        border: 1px solid rgba(255,255,255,0.16);
+        clip-path: polygon(0 12%, 8% 0, 31% 2%, 42% 0, 75% 0, 100% 24%, 96% 62%, 100% 82%, 86% 100%, 41% 96%, 28% 100%, 5% 86%);
+        border: 1px solid rgba(255,255,255,0.18);
         background:
-          linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.055) 42%, rgba(255,255,255,0.02) 100%),
-          radial-gradient(circle at 74% 18%, rgba(103,232,249,0.13), transparent 28%);
+          radial-gradient(circle at var(--impact-x, 30%) var(--impact-y, 28%), rgba(255,255,255,0.20), transparent 18%),
+          radial-gradient(circle at 75% 18%, rgba(103,232,249,0.12), transparent 32%),
+          linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.055) 42%, rgba(255,255,255,0.025) 100%);
         box-shadow:
-          0 34px 120px rgba(0,0,0,0.38),
-          inset 0 1px 0 rgba(255,255,255,0.18),
-          inset 0 -1px 0 rgba(255,255,255,0.06);
-        backdrop-filter: blur(28px);
+          0 42px 140px rgba(0,0,0,0.42),
+          inset 0 1px 0 rgba(255,255,255,0.22),
+          inset 0 -1px 0 rgba(255,255,255,0.07);
+        backdrop-filter: blur(30px);
       }
 
-      .aura-shard-panel::before {
+      .aura-shatter-panel::before {
         content: "";
         position: absolute;
         inset: 0;
         background:
+          radial-gradient(circle at var(--impact-x, 30%) var(--impact-y, 28%), rgba(255,255,255,0.35) 0 0.45rem, rgba(103,232,249,0.22) 0.48rem, transparent 1.25rem),
           linear-gradient(112deg, rgba(255,255,255,0.22), transparent 18%),
-          linear-gradient(289deg, rgba(103,232,249,0.14), transparent 36%),
-          linear-gradient(36deg, transparent 47%, rgba(255,255,255,0.12) 48%, transparent 50%);
+          linear-gradient(292deg, rgba(103,232,249,0.13), transparent 36%),
+          linear-gradient(34deg, transparent 48%, rgba(255,255,255,0.14) 49%, transparent 50.2%);
         pointer-events: none;
       }
 
-      .aura-shard-panel::after {
+      .aura-shatter-panel::after {
         content: "";
         position: absolute;
         inset: 1px;
-        clip-path: polygon(0 9%, 10% 0, 71% 0, 100% 19%, 95% 100%, 18% 100%, 0 84%);
-        border: 1px solid rgba(255,255,255,0.06);
+        clip-path: inherit;
+        border: 1px solid rgba(255,255,255,0.065);
         pointer-events: none;
       }
 
-      .aura-shard-panel-alt {
-        clip-path: polygon(0 0, 86% 0, 100% 17%, 100% 78%, 88% 100%, 8% 94%, 0 64%);
+      .aura-shatter-panel-b {
+        --impact-x: 72%;
+        --impact-y: 22%;
+        clip-path: polygon(0 0, 62% 0, 76% 4%, 91% 0, 100% 16%, 96% 49%, 100% 68%, 90% 100%, 57% 96%, 42% 100%, 8% 92%, 0 61%);
       }
 
-      .aura-shard-panel-alt::after {
-        clip-path: polygon(0 0, 86% 0, 100% 17%, 100% 78%, 88% 100%, 8% 94%, 0 64%);
+      .aura-shatter-panel-c {
+        --impact-x: 22%;
+        --impact-y: 70%;
+        clip-path: polygon(4% 0, 42% 0, 55% 4%, 82% 0, 100% 18%, 95% 42%, 100% 76%, 82% 100%, 46% 96%, 30% 100%, 0 82%, 4% 48%);
       }
 
-      .aura-shard-mini {
+      .aura-shatter-panel-d {
+        --impact-x: 80%;
+        --impact-y: 66%;
+        clip-path: polygon(0 18%, 18% 0, 48% 4%, 66% 0, 100% 13%, 94% 44%, 100% 70%, 84% 100%, 53% 94%, 32% 100%, 0 88%);
+      }
+
+      .aura-crack-overlay {
+        position: absolute;
+        inset: -2%;
+        z-index: 1;
+        opacity: 0.62;
+        pointer-events: none;
+        mix-blend-mode: screen;
+      }
+
+      .aura-crack-line {
+        stroke: rgba(230,252,255,0.64);
+        stroke-width: 1.2;
+        vector-effect: non-scaling-stroke;
+        filter: drop-shadow(0 0 7px rgba(103,232,249,0.20));
+      }
+
+      .aura-crack-edge {
+        stroke: rgba(255,255,255,0.35);
+        stroke-width: 0.8;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .aura-glass-chip {
+        position: absolute;
+        z-index: 2;
+        border: 1px solid rgba(255,255,255,0.18);
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04) 54%, rgba(103,232,249,0.08)),
+          radial-gradient(circle at 18% 20%, rgba(255,255,255,0.22), transparent 36%);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.22),
+          inset 0 -1px 0 rgba(255,255,255,0.06),
+          0 20px 56px rgba(0,0,0,0.30);
+        backdrop-filter: blur(20px);
+      }
+
+      .aura-shatter-mini {
         position: relative;
         overflow: hidden;
-        clip-path: polygon(0 16%, 16% 0, 84% 0, 100% 22%, 90% 100%, 10% 100%, 0 72%);
-        border: 1px solid rgba(255,255,255,0.12);
+        clip-path: polygon(0 18%, 18% 0, 72% 0, 100% 27%, 87% 100%, 24% 94%, 0 74%);
+        border: 1px solid rgba(255,255,255,0.14);
         background:
-          linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.02)),
-          radial-gradient(circle at 80% 18%, rgba(103,232,249,0.14), transparent 26%);
+          radial-gradient(circle at 82% 22%, rgba(103,232,249,0.16), transparent 28%),
+          linear-gradient(135deg, rgba(255,255,255,0.13), rgba(255,255,255,0.045) 45%, rgba(255,255,255,0.02));
         box-shadow:
-          inset 0 1px 0 rgba(255,255,255,0.14),
-          0 18px 52px rgba(0,0,0,0.24);
-        backdrop-filter: blur(18px);
+          inset 0 1px 0 rgba(255,255,255,0.16),
+          0 20px 60px rgba(0,0,0,0.26);
+        backdrop-filter: blur(20px);
         transition: transform .35s ease, border-color .35s ease, background .35s ease, box-shadow .35s ease;
       }
 
-      .aura-shard-mini:hover {
-        transform: translateY(-7px) rotate(-1deg);
-        border-color: rgba(103,232,249,0.34);
+      .aura-shatter-mini::before {
+        content: "";
+        position: absolute;
+        inset: 0;
         background:
-          linear-gradient(135deg, rgba(103,232,249,0.13), rgba(255,255,255,0.07) 46%, rgba(255,255,255,0.03)),
-          radial-gradient(circle at 80% 18%, rgba(103,232,249,0.22), transparent 30%);
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,0.18),
-          0 24px 70px rgba(103,232,249,0.10),
-          0 20px 55px rgba(0,0,0,0.25);
+          linear-gradient(116deg, rgba(255,255,255,0.18), transparent 24%),
+          linear-gradient(42deg, transparent 52%, rgba(255,255,255,0.15) 53%, transparent 55%);
+        pointer-events: none;
       }
 
-      .aura-shard-fragment {
-        position: absolute;
-        border: 1px solid rgba(255,255,255,0.16);
-        background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.035));
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 18px 42px rgba(0,0,0,0.22);
-        backdrop-filter: blur(18px);
+      .aura-shatter-mini:hover {
+        transform: translateY(-8px) rotate(-1.25deg);
+        border-color: rgba(103,232,249,0.38);
+        background:
+          radial-gradient(circle at 82% 22%, rgba(103,232,249,0.25), transparent 32%),
+          linear-gradient(135deg, rgba(103,232,249,0.13), rgba(255,255,255,0.07) 46%, rgba(255,255,255,0.03));
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.22),
+          0 26px 72px rgba(103,232,249,0.12),
+          0 20px 60px rgba(0,0,0,0.28);
       }
 
       @supports (animation-timeline: view()) {
@@ -314,11 +366,11 @@ function AuraStyles() {
           transform: translate(-50%, -50%) scale(0.92);
         }
 
-        .aura-shard-panel,
-        .aura-shard-panel-alt,
-        .aura-shard-panel::after,
-        .aura-shard-panel-alt::after,
-        .aura-shard-mini {
+        .aura-shatter-panel,
+        .aura-shatter-panel-b,
+        .aura-shatter-panel-c,
+        .aura-shatter-panel-d,
+        .aura-shatter-mini {
           clip-path: polygon(0 0, 100% 0, 100% 94%, 92% 100%, 0 100%);
         }
       }
@@ -440,108 +492,142 @@ function LaunchNavbar() {
   );
 }
 
-function FloatingShardFragments({ variant = "a" }: { variant?: "a" | "b" | "c" }) {
-  const fragments =
-    variant === "b"
-      ? [
-          "-left-8 top-7 h-14 w-24 rotate-[18deg] [clip-path:polygon(0_0,100%_18%,72%_100%,10%_82%)]",
-          "right-4 -top-9 h-20 w-12 rotate-[-24deg] [clip-path:polygon(28%_0,100%_26%,72%_100%,0_64%)]",
-          "-right-10 bottom-12 h-16 w-28 rotate-[10deg] [clip-path:polygon(0_28%,88%_0,100%_72%,22%_100%)]"
-        ]
-      : variant === "c"
-        ? [
-            "left-5 -top-10 h-12 w-28 rotate-[-8deg] [clip-path:polygon(0_0,86%_0,100%_64%,12%_100%)]",
-            "-right-7 top-24 h-24 w-14 rotate-[18deg] [clip-path:polygon(24%_0,100%_10%,84%_100%,0_74%)]",
-            "-left-10 bottom-8 h-16 w-20 rotate-[-22deg] [clip-path:polygon(0_18%,72%_0,100%_100%,16%_74%)]"
-          ]
-        : [
-            "-left-9 top-12 h-16 w-24 rotate-[-18deg] [clip-path:polygon(0_0,82%_12%,100%_100%,12%_74%)]",
-            "right-10 -top-8 h-14 w-28 rotate-[12deg] [clip-path:polygon(8%_0,100%_18%,76%_100%,0_66%)]",
-            "-right-8 bottom-10 h-20 w-16 rotate-[26deg] [clip-path:polygon(20%_0,100%_22%,74%_100%,0_80%)]"
-          ];
+function getPanelVariant(id: string): ShatterVariant {
+  if (id === "sensors") return "b";
+  if (id === "motion") return "c";
+  if (id === "intelligence") return "d";
+  return "a";
+}
+
+function FloatingGlassFragments({ variant }: { variant: ShatterVariant }) {
+  const fragments: Record<ShatterVariant, string[]> = {
+    a: [
+      "-left-14 top-14 h-24 w-12 rotate-[-28deg] [clip-path:polygon(30%_0,100%_18%,70%_100%,0_78%)]",
+      "left-10 -top-12 h-12 w-36 rotate-[13deg] [clip-path:polygon(0_0,88%_8%,100%_64%,14%_100%)]",
+      "-right-14 bottom-12 h-20 w-24 rotate-[31deg] [clip-path:polygon(22%_0,100%_30%,76%_100%,0_80%)]",
+      "right-28 -bottom-10 h-14 w-32 rotate-[-9deg] [clip-path:polygon(0_34%,78%_0,100%_74%,18%_100%)]"
+    ],
+    b: [
+      "-left-12 top-7 h-16 w-32 rotate-[18deg] [clip-path:polygon(0_0,100%_18%,72%_100%,10%_82%)]",
+      "right-4 -top-14 h-28 w-14 rotate-[-25deg] [clip-path:polygon(28%_0,100%_26%,72%_100%,0_64%)]",
+      "-right-12 bottom-14 h-18 w-36 rotate-[10deg] [clip-path:polygon(0_28%,88%_0,100%_72%,22%_100%)]",
+      "left-28 bottom-[-2rem] h-16 w-24 rotate-[25deg] [clip-path:polygon(0_8%,74%_0,100%_86%,18%_100%)]"
+    ],
+    c: [
+      "left-5 -top-14 h-14 w-36 rotate-[-8deg] [clip-path:polygon(0_0,86%_0,100%_64%,12%_100%)]",
+      "-right-9 top-24 h-28 w-16 rotate-[18deg] [clip-path:polygon(24%_0,100%_10%,84%_100%,0_74%)]",
+      "-left-14 bottom-8 h-20 w-24 rotate-[-22deg] [clip-path:polygon(0_18%,72%_0,100%_100%,16%_74%)]",
+      "right-24 bottom-[-2.25rem] h-12 w-40 rotate-[4deg] [clip-path:polygon(0_40%,84%_0,100%_100%,12%_82%)]"
+    ],
+    d: [
+      "-left-10 top-28 h-24 w-14 rotate-[25deg] [clip-path:polygon(18%_0,100%_16%,76%_100%,0_70%)]",
+      "right-16 -top-14 h-14 w-40 rotate-[-11deg] [clip-path:polygon(0_0,92%_8%,100%_78%,10%_100%)]",
+      "-right-12 bottom-16 h-24 w-20 rotate-[-28deg] [clip-path:polygon(22%_0,100%_22%,74%_100%,0_78%)]",
+      "left-40 -bottom-12 h-14 w-28 rotate-[15deg] [clip-path:polygon(0_26%,78%_0,100%_74%,18%_100%)]"
+    ]
+  };
 
   return (
     <>
-      {fragments.map((fragment) => (
-        <span key={fragment} aria-hidden="true" className={`aura-shard-fragment hidden lg:block ${fragment}`} />
+      {fragments[variant].map((fragment) => (
+        <span key={fragment} aria-hidden="true" className={`aura-glass-chip hidden lg:block ${fragment}`} />
       ))}
     </>
   );
 }
 
+function CrackOverlay({ variant }: { variant: ShatterVariant }) {
+  const centers: Record<ShatterVariant, { cx: number; cy: number }> = {
+    a: { cx: 33, cy: 27 },
+    b: { cx: 72, cy: 23 },
+    c: { cx: 24, cy: 70 },
+    d: { cx: 80, cy: 66 }
+  };
+  const { cx, cy } = centers[variant];
+
+  const rayEnds: Record<ShatterVariant, [number, number][]> = {
+    a: [[4, 8], [18, 0], [52, 0], [86, 0], [100, 22], [96, 54], [100, 86], [72, 100], [42, 96], [16, 100], [0, 72], [0, 34]],
+    b: [[0, 0], [36, 0], [74, 0], [100, 14], [98, 44], [100, 72], [84, 100], [52, 96], [18, 100], [0, 58], [0, 24], [14, 0]],
+    c: [[0, 8], [24, 0], [58, 0], [92, 0], [100, 24], [96, 52], [100, 84], [74, 100], [42, 94], [8, 100], [0, 78], [0, 42]],
+    d: [[0, 18], [20, 0], [50, 4], [76, 0], [100, 12], [96, 42], [100, 72], [82, 100], [54, 94], [30, 100], [0, 88], [2, 48]]
+  };
+
+  const innerEdges: [number, number, number, number][] = [
+    [cx, cy, cx - 14, cy + 9],
+    [cx, cy, cx + 18, cy - 5],
+    [cx, cy, cx + 11, cy + 16],
+    [cx - 14, cy + 9, cx - 3, cy + 28],
+    [cx + 18, cy - 5, cx + 30, cy + 9],
+    [cx + 11, cy + 16, cx + 34, cy + 25],
+    [cx - 4, cy - 18, cx + 12, cy - 30],
+    [cx - 22, cy - 4, cx - 38, cy - 18]
+  ];
+
+  return (
+    <svg className="aura-crack-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      {rayEnds[variant].map(([x, y], index) => (
+        <line key={`ray-${index}`} x1={cx} y1={cy} x2={x} y2={y} className="aura-crack-line" />
+      ))}
+      {innerEdges.map(([x1, y1, x2, y2], index) => (
+        <line key={`edge-${index}`} x1={x1} y1={y1} x2={x2} y2={y2} className="aura-crack-edge" />
+      ))}
+      <circle cx={cx} cy={cy} r="1.9" fill="rgba(230,252,255,0.86)" />
+      <circle cx={cx} cy={cy} r="5.5" fill="none" stroke="rgba(103,232,249,0.24)" strokeWidth="0.9" />
+    </svg>
+  );
+}
+
 function StoryPanelCard({ panel }: { panel: StoryPanel }) {
   const Icon = panel.icon;
-  const useShardStyle = panel.id === "design" || panel.id === "sensors" || panel.id === "motion";
-  const variant = panel.id === "sensors" ? "b" : panel.id === "motion" ? "c" : "a";
-  const panelShape = variant === "b" ? "aura-shard-panel aura-shard-panel-alt" : "aura-shard-panel";
+  const variant = getPanelVariant(panel.id);
+  const panelShape = `aura-shatter-panel aura-shatter-panel-${variant}`;
 
   return (
     <article id={panel.id} className="aura-story-card flex min-h-[88svh] items-center py-16 lg:pl-[44%]">
-      {useShardStyle ? (
-        <div className="relative w-full lg:max-w-2xl">
-          <div aria-hidden="true" className="aura-shard-dust absolute -inset-12 rounded-[3rem] blur-2xl" />
-          <FloatingShardFragments variant={variant} />
+      <div className="relative w-full lg:max-w-2xl">
+        <div aria-hidden="true" className="aura-shatter-dust absolute -inset-14 rounded-[3rem] blur-2xl" />
+        <FloatingGlassFragments variant={variant} />
 
-          <div className={`${panelShape} p-6 sm:p-8 lg:p-9`}>
-            <div className="relative grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-              <div className="space-y-5 lg:pt-3">
-                <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200/[0.20] bg-cyan-200/[0.10] px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-cyan-100">
-                  <Icon className="h-4 w-4" />
-                  {panel.eyebrow}
-                </p>
+        <div className={`${panelShape} p-6 sm:p-8 lg:p-9`}>
+          <CrackOverlay variant={variant} />
 
-                <div className="h-px w-full bg-[linear-gradient(90deg,rgba(103,232,249,0.45),transparent)]" />
+          <div className="relative z-10 grid gap-8 lg:grid-cols-[0.62fr_1.38fr] lg:items-start">
+            <div className="space-y-5 lg:pt-3">
+              <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200/[0.20] bg-cyan-200/[0.10] px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-cyan-100">
+                <Icon className="h-4 w-4" />
+                {panel.eyebrow}
+              </p>
 
-                <p className="text-xs font-black uppercase tracking-[0.28em] text-white/34">
-                  AURA / shard panel
-                </p>
-              </div>
+              <div className="h-px w-full bg-[linear-gradient(90deg,rgba(103,232,249,0.55),transparent)]" />
 
-              <div>
-                <h2 className="font-display text-[clamp(3.6rem,7vw,7.5rem)] font-semibold leading-[0.78] tracking-[-0.09em] text-white drop-shadow-[0_28px_70px_rgba(0,0,0,0.42)]">
-                  {panel.title}
-                </h2>
-                <p className="mt-7 max-w-xl text-lg leading-8 text-white/58">
-                  {panel.copy}
-                </p>
-              </div>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-white/[0.36]">
+                Impact fractured glass
+              </p>
             </div>
 
-            <div className="relative mt-9 grid gap-3 sm:grid-cols-3">
-              {panel.points.map((point, index) => (
-                <div
-                  key={point}
-                  className={index === 1 ? "aura-shard-mini p-4 sm:translate-y-5" : "aura-shard-mini p-4"}
-                >
-                  <CheckCircle2 className="h-5 w-5 text-cyan-200" />
-                  <p className="mt-3 text-sm font-semibold leading-6 text-white/66">{point}</p>
-                </div>
-              ))}
+            <div>
+              <h2 className="font-display text-[clamp(3.55rem,7vw,7.45rem)] font-semibold leading-[0.78] tracking-[-0.09em] text-white drop-shadow-[0_30px_78px_rgba(0,0,0,0.46)]">
+                {panel.title}
+              </h2>
+              <p className="mt-7 max-w-xl text-lg leading-8 text-white/[0.60]">
+                {panel.copy}
+              </p>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="w-full rounded-[2.25rem] border border-white/12 bg-white/[0.08] p-6 shadow-[0_30px_110px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl sm:p-8 lg:max-w-2xl">
-          <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200/[0.18] bg-cyan-200/[0.08] px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-cyan-100">
-            <Icon className="h-4 w-4" />
-            {panel.eyebrow}
-          </p>
-          <h2 className="mt-7 font-display text-[clamp(3.6rem,7vw,7.5rem)] font-semibold leading-[0.78] tracking-[-0.09em] text-white">
-            {panel.title}
-          </h2>
-          <p className="mt-7 max-w-xl text-lg leading-8 text-white/55">
-            {panel.copy}
-          </p>
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            {panel.points.map((point) => (
-              <div key={point} className="rounded-[1.25rem] border border-white/10 bg-white/[0.07] p-4 transition hover:-translate-y-1 hover:border-cyan-200/25 hover:bg-cyan-200/[0.08]">
-                <CheckCircle2 className="h-5 w-5 text-cyan-200" />
-                <p className="mt-3 text-sm font-semibold leading-6 text-white/60">{point}</p>
+
+          <div className="relative z-10 mt-9 grid gap-3 sm:grid-cols-3">
+            {panel.points.map((point, index) => (
+              <div
+                key={point}
+                className={index === 1 ? "aura-shatter-mini p-4 sm:translate-y-5" : "aura-shatter-mini p-4"}
+              >
+                <CheckCircle2 className="relative z-10 h-5 w-5 text-cyan-200" />
+                <p className="relative z-10 mt-3 text-sm font-semibold leading-6 text-white/[0.68]">{point}</p>
               </div>
             ))}
           </div>
         </div>
-      )}
+      </div>
     </article>
   );
 }
