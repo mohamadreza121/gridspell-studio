@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
 import type { ReactNode } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
-  BatteryCharging,
   Box,
   CheckCircle2,
   ChevronRight,
@@ -14,12 +12,12 @@ import {
   Play,
   Radar,
   Rocket,
-  ShieldCheck,
   Sparkles,
   Zap,
   type LucideIcon
 } from "lucide-react";
 
+import { AuraScrollProduct } from "@/components/landing-pages/AuraScrollProduct";
 import { Container } from "@/components/ui/Container";
 import { getLandingPageConcept } from "@/config/landing-pages";
 import { createPageMetadata } from "@/lib/metadata";
@@ -139,9 +137,9 @@ function AuraStyles() {
       }
 
       @keyframes aura-ring-intro {
-        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.78); filter: blur(14px); }
+        0% { opacity: 0; transform: scale(0.78); filter: blur(14px); }
         68% { opacity: 1; filter: blur(0); }
-        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+        100% { opacity: 1; transform: scale(1); filter: blur(0); }
       }
 
       @keyframes aura-nav-drop {
@@ -167,7 +165,7 @@ function AuraStyles() {
       }
 
       @keyframes aura-section-in {
-        0% { opacity: 0; transform: translateY(42px) scale(0.985); }
+        0% { opacity: 0; transform: translateY(36px) scale(0.99); }
         100% { opacity: 1; transform: translateY(0) scale(1); }
       }
 
@@ -177,7 +175,6 @@ function AuraStyles() {
       .aura-rise-late { opacity: 0; animation: aura-text-rise .78s cubic-bezier(.2,.85,.2,1) 1.25s both; }
       .aura-float { animation: aura-metal-float 6.8s ease-in-out infinite; }
       .aura-shine { animation: aura-shine-pass 4.6s ease-in-out infinite; }
-      .aura-view { opacity: 1; transform: none; }
 
       .aura-scroll-product {
         position: fixed;
@@ -191,9 +188,19 @@ function AuraStyles() {
         transform: translate(-50%, -50%) scale(var(--aura-scale));
         transform-origin: center;
         will-change: left, top, transform, opacity;
+      }
+
+      .aura-scroll-product.is-hidden {
+        display: none;
+      }
+
+      .aura-scroll-product-inner {
+        height: 100%;
+        width: 100%;
         animation: aura-ring-intro 1.05s cubic-bezier(.2,.85,.2,1) .12s both;
       }
 
+      .aura-view,
       .aura-story-card {
         opacity: 1;
         transform: none;
@@ -203,10 +210,10 @@ function AuraStyles() {
         .aura-view,
         .aura-story-card {
           opacity: 0;
-          transform: translateY(42px) scale(0.985);
+          transform: translateY(36px) scale(0.99);
           animation: aura-section-in linear both;
           animation-timeline: view();
-          animation-range: entry 8% cover 32%;
+          animation-range: entry 8% cover 28%;
         }
       }
 
@@ -230,74 +237,13 @@ function AuraStyles() {
         .aura-shine,
         .aura-view,
         .aura-story-card,
-        .aura-scroll-product {
+        .aura-scroll-product-inner {
           animation: none !important;
           opacity: 1 !important;
           filter: none !important;
         }
       }
     `}</style>
-  );
-}
-
-function AuraScrollScript() {
-  return (
-    <Script id="aura-product-scroll" strategy="afterInteractive">{`
-      (() => {
-        const page = document.getElementById('aura-page');
-        const product = document.getElementById('aura-scroll-product');
-        const story = document.getElementById('aura-story');
-        const specs = document.getElementById('specs');
-        if (!page || !product || !story || !specs) return;
-
-        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-        const mix = (from, to, progress) => from + (to - from) * progress;
-        let ticking = false;
-
-        const update = () => {
-          ticking = false;
-          const y = window.scrollY || window.pageYOffset || 0;
-          const vh = window.innerHeight || 1;
-          const width = window.innerWidth || 1440;
-          const specsTop = y + specs.getBoundingClientRect().top;
-
-          const heroProgress = clamp(y / (vh * 1.08), 0, 1);
-          const leftTarget = width >= 1280 ? 27 : width >= 1024 ? 31 : 50;
-          const topTarget = width >= 1024 ? 52 : 42;
-          const scaleTarget = width >= 1280 ? 0.58 : width >= 1024 ? 0.66 : 0.92;
-
-          let left = mix(50, leftTarget, heroProgress);
-          let top = mix(45, topTarget, heroProgress);
-          let scale = mix(1, scaleTarget, heroProgress);
-          let opacity = 1;
-
-          const fadeStart = specsTop - vh * 1.08;
-          const fadeEnd = specsTop - vh * 0.68;
-          if (y > fadeStart) {
-            opacity = clamp(1 - (y - fadeStart) / Math.max(fadeEnd - fadeStart, 1), 0, 1);
-            left = leftTarget;
-            top = topTarget;
-            scale = scaleTarget;
-          }
-
-          page.style.setProperty('--aura-left', left.toFixed(2) + 'vw');
-          page.style.setProperty('--aura-top', top.toFixed(2) + 'vh');
-          page.style.setProperty('--aura-scale', scale.toFixed(3));
-          page.style.setProperty('--aura-opacity', opacity.toFixed(3));
-          product.style.visibility = opacity <= 0.015 ? 'hidden' : 'visible';
-        };
-
-        const requestUpdate = () => {
-          if (ticking) return;
-          ticking = true;
-          window.requestAnimationFrame(update);
-        };
-
-        update();
-        window.addEventListener('scroll', requestUpdate, { passive: true });
-        window.addEventListener('resize', requestUpdate);
-      })();
-    `}</Script>
   );
 }
 
@@ -445,12 +391,11 @@ export default function Product3DLaunchDemoPage() {
   return (
     <main id="aura-page" className="overflow-hidden bg-[#05070a] text-white">
       <AuraStyles />
-      <AuraScrollScript />
       <LaunchNavbar />
 
-      <div id="aura-scroll-product" className="aura-scroll-product">
+      <AuraScrollProduct>
         <AuraRing id="scroll" className="h-full w-full" />
-      </div>
+      </AuraScrollProduct>
 
       <section id="aura-hero" className="aura-impact relative min-h-svh overflow-hidden bg-[#05070a] pt-8">
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(103,232,249,0.26),transparent_24rem),radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.16),transparent_34rem),linear-gradient(180deg,#05070a_0%,#0b1017_58%,#e8edf3_58.4%,#f8fafc_100%)]" />
@@ -507,7 +452,7 @@ export default function Product3DLaunchDemoPage() {
         </Container>
       </section>
 
-      <section className="relative bg-[#f5f7fa] px-3 py-12 text-[#0b0f14] sm:px-5 sm:py-20">
+      <section id="aura-after-story" className="relative bg-[#f5f7fa] px-3 py-12 text-[#0b0f14] sm:px-5 sm:py-20">
         <Container>
           <div className="aura-view overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-5 shadow-[0_38px_120px_rgba(15,23,42,0.12)] sm:p-8 lg:p-12">
             <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
