@@ -1,3 +1,4 @@
+import { AuraEngineeringVaultPortal } from "@/components/landing-pages/AuraEngineeringVaultPortal";
 import { AuraRing3DPortal } from "@/components/landing-pages/AuraRing3D";
 import { AuraRingOrbitsPortal } from "@/components/landing-pages/AuraRingOrbits";
 import { AuraSensorLabPortal } from "@/components/landing-pages/AuraSensorLabPortal";
@@ -164,6 +165,7 @@ export function MaterialGlassOptics({ className = "" }: OpticsProps) {
       <AuraRingOrbitsPortal />
       <AuraShatterNavbarPortal />
       <AuraSensorLabPortal />
+      <AuraEngineeringVaultPortal />
       <AuraRing3DFramingFixes />
     </>
   );
