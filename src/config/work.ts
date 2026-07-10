@@ -84,6 +84,34 @@ export const featuredProjects: FeaturedProject[] = [
     }
   },
   {
+    slug: "landing-page-gallery",
+    title: "Landing Page Gallery",
+    category: "Landing pages · Design showroom",
+    description:
+      "A browsable showroom of landing page concepts for different industries, styles, and business goals so clients can pick a direction faster.",
+    result:
+      "A stronger sales asset for landing page jobs, with live demo concepts, clear categories, and project-ready starting points.",
+    accent: "violet",
+    previewAlt: "GridSpell landing page gallery preview",
+
+    liveUrl: "https://gridspellstudio.com/landing-pages",
+
+    proof: {
+      problem:
+        "Landing page clients need examples before they can confidently choose a direction, especially when they do not already know what style fits their business.",
+      built:
+        "A concept gallery with 12 landing page cards, industry tags, style categories, live demo routes, and start-project CTAs tied to each design direction.",
+      result:
+        "Prospects can browse styles like a showroom, choose a starting point, and contact GridSpell with a much clearer project direction.",
+      features: [
+        "12 landing page concepts",
+        "4 live demo experiences",
+        "Industry and style tags",
+        "Design-specific project CTAs"
+      ]
+    }
+  },
+  {
     slug: "network-engineering-portfolio",
     title: "Network Engineering Portfolio",
     category: "Personal portfolio · Technical credibility",

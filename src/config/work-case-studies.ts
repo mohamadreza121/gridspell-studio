@@ -118,6 +118,18 @@ export const workCaseStudies: WorkCaseStudy[] = [
     ]
   },
   {
+    slug: "landing-page-gallery",
+    client: "GridSpell Landing Page Gallery",
+    category: "Landing pages · Design showroom",
+    headline: "A showroom that turns landing page styles into project-ready choices.",
+    summary:
+      "The landing page gallery gives prospects a faster way to understand what GridSpell can build, compare styles, and choose a starting point before submitting a project brief.",
+    overview:
+      "Instead of selling landing pages with only words, the gallery presents visual concepts by industry, style, and goal. Each card is designed to help a client say, 'I want something like this,' while keeping the final project custom to their brand.",
+    liveUrl: "/landing-pages",
+    devices: []
+  },
+  {
     slug: "network-engineering-portfolio",
     client: "Network Engineering Portfolio",
     category: "Personal portfolio · Technical credibility",

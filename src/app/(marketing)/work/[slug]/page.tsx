@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, ExternalLink } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
+import { LandingGalleryCaseStudyShowcase } from "@/components/work/LandingGalleryCaseStudyShowcase";
 import { DeviceShowcase } from "@/components/work/DeviceShowcase";
 import { SmallPhoneDeviceShowcase } from "@/components/work/SmallPhoneDeviceShowcase";
-import { featuredProjects } from "@/config/work";
+import { featuredProjects, type FeaturedProject } from "@/config/work";
 import { workCaseStudies, type WorkCaseStudy } from "@/config/work-case-studies";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -63,6 +64,20 @@ const caseStudyProof: Record<string, {
       "Responsive small-phone support"
     ]
   },
+  "landing-page-gallery": {
+    challenge:
+      "GridSpell needed a way to sell landing pages with visual proof, not only descriptions, so clients could choose a direction faster.",
+    built:
+      "A showroom-style gallery with 12 concepts, four live demo routes, filterable categories, pricing labels, recommended-for sections, preview toggles, and a style quiz.",
+    outcome:
+      "The work page now leads prospects into a real gallery experience, helping them compare landing page directions before starting a project.",
+    highlights: [
+      "12 concept cards",
+      "4 live demo routes",
+      "Interactive filtering and preview toggle",
+      "Style quiz and design-specific CTAs"
+    ]
+  },
   "network-engineering-portfolio": {
     challenge:
       "The portfolio needed to communicate practical technical ability without relying on a plain resume layout.",
@@ -82,6 +97,38 @@ const caseStudyProof: Record<string, {
 function getCaseStudy(slug: string) {
   return workCaseStudies.find((item) => item.slug === slug) ??
     (slug === "gridspell-studio" ? gridspellCaseStudy : null);
+}
+
+function startProjectHref(project: FeaturedProject) {
+  const params = new URLSearchParams({
+    package: project.slug === "landing-page-gallery" ? "landing-page" : "custom",
+    source: project.slug
+  });
+
+  return `/start-project?${params.toString()}`;
+}
+
+function CaseStudyLiveButton({ project }: { project: FeaturedProject }) {
+  const className =
+    "group inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/15 bg-[linear-gradient(135deg,#7c5cff_0%,#6477ff_48%,#29d6ff_100%)] px-6 text-sm font-semibold text-white shadow-[0_14px_44px_rgba(92,104,255,0.26)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_58px_rgba(92,104,255,0.36)]";
+
+  if (project.slug === "landing-page-gallery") {
+    return (
+      <Link href="/landing-pages" className={className}>
+        Open gallery
+        <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </Link>
+    );
+  }
+
+  if (!project.liveUrl) return null;
+
+  return (
+    <a href={project.liveUrl} target="_blank" rel="noreferrer" className={className}>
+      Visit live site
+      <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+    </a>
+  );
 }
 
 export function generateStaticParams() {
@@ -118,6 +165,7 @@ export default async function Page({ params }: Props) {
 
   const proof = caseStudyProof[project.slug];
   const hasDeviceShowcase = caseStudy.devices.length > 0;
+  const isLandingGallery = project.slug === "landing-page-gallery";
 
   return (
     <main className="overflow-hidden bg-[#07080c] text-white">
@@ -168,20 +216,20 @@ export default async function Page({ params }: Props) {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                {project.liveUrl ? (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/15 bg-[linear-gradient(135deg,#7c5cff_0%,#6477ff_48%,#29d6ff_100%)] px-6 text-sm font-semibold text-white shadow-[0_14px_44px_rgba(92,104,255,0.26)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_58px_rgba(92,104,255,0.36)]"
+                <CaseStudyLiveButton project={project} />
+
+                {isLandingGallery ? (
+                  <Link
+                    href="#landing-page-live-demos"
+                    className="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-[#8be9ff]/18 bg-[#8be9ff]/8 px-6 text-sm font-semibold text-[#8be9ff] transition duration-300 hover:border-[#8be9ff]/35 hover:bg-[#8be9ff]/12 hover:text-white"
                   >
-                    Visit live site
-                    <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </a>
+                    See demo buttons
+                    <ExternalLink className="h-4 w-4" />
+                  </Link>
                 ) : null}
 
                 <Link
-                  href="/start-project"
+                  href={startProjectHref(project)}
                   className="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.035] px-6 text-sm font-semibold text-white transition duration-300 hover:border-white/20 hover:bg-white/[0.07]"
                 >
                   Start a project
@@ -206,7 +254,7 @@ export default async function Page({ params }: Props) {
                 Focus
               </p>
               <p className="mt-2 text-sm text-white/65">
-                Responsive digital experience
+                {isLandingGallery ? "Landing page showroom" : "Responsive digital experience"}
               </p>
             </div>
 
@@ -221,6 +269,8 @@ export default async function Page({ params }: Props) {
           </div>
         </Container>
       </section>
+
+      {isLandingGallery ? <LandingGalleryCaseStudyShowcase /> : null}
 
       {proof ? (
         <section className="relative border-b border-white/[0.06] py-24 sm:py-32">
@@ -288,7 +338,7 @@ export default async function Page({ params }: Props) {
             </p>
 
             <h2 className="mt-6 max-w-[12ch] font-display text-[clamp(2.8rem,5vw,5.6rem)] font-semibold leading-[0.88] tracking-[-0.065em]">
-              One identity across every screen.
+              {isLandingGallery ? "A showroom clients can choose from." : "One identity across every screen."}
             </h2>
           </div>
 
@@ -308,17 +358,7 @@ export default async function Page({ params }: Props) {
             </div>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              {project.liveUrl ? (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/[0.14] bg-white px-6 text-sm font-semibold text-[#08090d] transition hover:-translate-y-0.5"
-                >
-                  Open live website
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              ) : null}
+              <CaseStudyLiveButton project={project} />
 
               <Link
                 href="/work"
