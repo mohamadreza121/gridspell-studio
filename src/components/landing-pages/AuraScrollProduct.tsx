@@ -3,6 +3,12 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
+import {
+  IntelligenceGlassArtwork,
+  MotionStoryGlassArtwork,
+  SensorArrayGlassArtwork
+} from "@/components/landing-pages/AuraStoryGlassArt";
+
 function MaterialGlassArtwork() {
   return (
     <div className="aura-material-art" aria-hidden="true">
@@ -95,37 +101,62 @@ function MaterialGlassArtwork() {
   );
 }
 
-const shardFactors = [
-  [-0.45, -0.50, -2, 2], [-0.30, -0.70, 1, -2], [0.35, -0.60, -1, 2.5], [0.62, -0.18, 2, -2],
-  [0.58, 0.45, -2, 2], [0.28, 0.68, 1, 2], [-0.28, 0.65, -1, -2], [-0.62, 0.28, 2, 2]
-] as const;
+type ArtKey = "material" | "sensor" | "motion" | "intelligence";
+type ArtTargets = Record<ArtKey, Element | null>;
+type MotionFactor = readonly [number, number, number, number];
+
+const artConfigs: Record<ArtKey, { selector: string; fragmentCount: number; factors: readonly MotionFactor[] }> = {
+  material: {
+    selector: "#design > div",
+    fragmentCount: 8,
+    factors: [[-0.45, -0.50, -2, 2], [-0.30, -0.70, 1, -2], [0.35, -0.60, -1, 2.5], [0.62, -0.18, 2, -2], [0.58, 0.45, -2, 2], [0.28, 0.68, 1, 2], [-0.28, 0.65, -1, -2], [-0.62, 0.28, 2, 2]]
+  },
+  sensor: {
+    selector: "#sensors > div",
+    fragmentCount: 5,
+    factors: [[-0.42, -0.42, -1, 1], [-0.18, -0.64, 0, -1], [0.42, -0.50, 1, 1.5], [0.58, 0.22, -1, 1], [0.20, 0.62, 0, -1]]
+  },
+  motion: {
+    selector: "#motion > div",
+    fragmentCount: 6,
+    factors: [[-0.66, -0.24, -3, 4], [-0.30, -0.62, -1, 3], [0.48, -0.55, 2, 4], [0.70, 0.05, -2, 5], [0.52, 0.58, 1, 4], [-0.56, 0.46, -2, 3]]
+  },
+  intelligence: {
+    selector: "#intelligence > div",
+    fragmentCount: 6,
+    factors: [[-0.42, -0.45, -1, 1.5], [-0.22, -0.62, 1, -1], [0.40, -0.54, -1, 1.5], [0.58, 0.10, 1, -1.5], [0.30, 0.62, -1, 1], [-0.55, 0.34, 1, -1]]
+  }
+};
+
+function setArtFragmentVars(host: HTMLElement, key: ArtKey, nx: number, ny: number, progress: number) {
+  artConfigs[key].factors.forEach(([fx, fy, baseRotation, scrollRotation], index) => {
+    const fragment = index + 1;
+    const distance = key === "motion" ? 18 : key === "sensor" ? 7 : key === "intelligence" ? 9 : 10;
+    host.style.setProperty(`--${key}-f${fragment}-x`, `${(nx * distance * fx).toFixed(2)}px`);
+    host.style.setProperty(`--${key}-f${fragment}-y`, `${(ny * distance * fy).toFixed(2)}px`);
+    host.style.setProperty(`--${key}-f${fragment}-r`, `${(baseRotation + progress * scrollRotation).toFixed(2)}deg`);
+  });
+}
 
 export function AuraScrollProduct({ children }: { children: ReactNode }) {
-  const [materialTarget, setMaterialTarget] = useState<Element | null>(null);
+  const [targets, setTargets] = useState<ArtTargets>({ material: null, sensor: null, motion: null, intelligence: null });
 
   useEffect(() => {
     const page = document.getElementById("aura-page");
     const product = document.getElementById("aura-scroll-product");
     const story = document.getElementById("aura-story");
     const afterStory = document.getElementById("aura-after-story");
-    const materialHost = document.querySelector<HTMLElement>("#design > div");
 
-    if (materialHost) setMaterialTarget(materialHost);
+    const hosts = Object.fromEntries(
+      Object.entries(artConfigs).map(([key, config]) => [key, document.querySelector<HTMLElement>(config.selector)])
+    ) as Record<ArtKey, HTMLElement | null>;
+
+    setTargets(hosts);
     if (!page || !product || !story || !afterStory) return;
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
     const mix = (from: number, to: number, progress: number) => from + (to - from) * progress;
     let ticking = false;
-
-    const setShardVars = (nx: number, ny: number, progress: number) => {
-      if (!materialHost) return;
-      shardFactors.forEach(([fx, fy, baseRotation, scrollRotation], index) => {
-        const shard = index + 1;
-        materialHost.style.setProperty(`--material-s${shard}-x`, `${(nx * 10 * fx).toFixed(2)}px`);
-        materialHost.style.setProperty(`--material-s${shard}-y`, `${(ny * 8 * fy).toFixed(2)}px`);
-        materialHost.style.setProperty(`--material-s${shard}-r`, `${(baseRotation + progress * scrollRotation).toFixed(2)}deg`);
-      });
-    };
 
     const update = () => {
       ticking = false;
@@ -147,7 +178,9 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
 
       if (y > fadeStart) {
         opacity = clamp(1 - (y - fadeStart) / Math.max(fadeEnd - fadeStart, 1), 0, 1);
-        left = leftTarget; top = topTarget; scale = scaleTarget;
+        left = leftTarget;
+        top = topTarget;
+        scale = scaleTarget;
       }
 
       page.style.setProperty("--aura-left", `${left.toFixed(2)}vw`);
@@ -155,13 +188,17 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
       page.style.setProperty("--aura-scale", scale.toFixed(3));
       page.style.setProperty("--aura-opacity", opacity.toFixed(3));
 
-      if (materialHost) {
-        const rect = materialHost.getBoundingClientRect();
+      (Object.keys(hosts) as ArtKey[]).forEach((key) => {
+        const host = hosts[key];
+        if (!host) return;
+        const rect = host.getBoundingClientRect();
         const progress = clamp((vh - rect.top) / Math.max(vh + rect.height, 1), 0, 1);
-        materialHost.style.setProperty("--material-main-x", `${((progress - 0.5) * 5).toFixed(2)}px`);
-        materialHost.style.setProperty("--material-main-y", `${((progress - 0.5) * -8).toFixed(2)}px`);
-        setShardVars(0, 0, progress);
-      }
+        const mainX = key === "motion" ? (progress - 0.5) * 13 : (progress - 0.5) * 5;
+        const mainY = key === "sensor" ? (progress - 0.5) * -5 : (progress - 0.5) * -8;
+        host.style.setProperty(`--${key}-main-x`, `${mainX.toFixed(2)}px`);
+        host.style.setProperty(`--${key}-main-y`, `${mainY.toFixed(2)}px`);
+        setArtFragmentVars(host, key, 0, 0, progress);
+      });
 
       if (y >= fadeEnd || opacity <= 0.02) product.classList.add("is-hidden");
       else product.classList.remove("is-hidden");
@@ -173,106 +210,165 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
       window.requestAnimationFrame(update);
     };
 
-    const handlePointerMove = (event: PointerEvent) => {
-      if (!materialHost || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const rect = materialHost.getBoundingClientRect();
-      const nx = clamp((event.clientX - rect.left) / Math.max(rect.width, 1), 0, 1) - 0.5;
-      const ny = clamp((event.clientY - rect.top) / Math.max(rect.height, 1), 0, 1) - 0.5;
-      materialHost.style.setProperty("--material-rx", `${(-ny * 4.2).toFixed(2)}deg`);
-      materialHost.style.setProperty("--material-ry", `${(nx * 5.4).toFixed(2)}deg`);
-      materialHost.style.setProperty("--material-px", `${(nx * 10).toFixed(2)}px`);
-      materialHost.style.setProperty("--material-py", `${(ny * 8).toFixed(2)}px`);
-      setShardVars(nx, ny, 0.5);
-    };
+    const pointerCleanups = (Object.keys(hosts) as ArtKey[]).map((key) => {
+      const host = hosts[key];
+      if (!host) return () => undefined;
 
-    const resetPointer = () => {
-      if (!materialHost) return;
-      materialHost.style.setProperty("--material-rx", "0deg");
-      materialHost.style.setProperty("--material-ry", "0deg");
-      materialHost.style.setProperty("--material-px", "0px");
-      materialHost.style.setProperty("--material-py", "0px");
-      setShardVars(0, 0, 0.5);
-    };
+      const handlePointerMove = (event: PointerEvent) => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const rect = host.getBoundingClientRect();
+        const nx = clamp((event.clientX - rect.left) / Math.max(rect.width, 1), 0, 1) - 0.5;
+        const ny = clamp((event.clientY - rect.top) / Math.max(rect.height, 1), 0, 1) - 0.5;
+        const tilt = key === "motion" ? 6.4 : key === "intelligence" ? 4.2 : 5.2;
+        host.style.setProperty(`--${key}-rx`, `${(-ny * tilt).toFixed(2)}deg`);
+        host.style.setProperty(`--${key}-ry`, `${(nx * tilt).toFixed(2)}deg`);
+        host.style.setProperty(`--${key}-px`, `${(nx * (key === "motion" ? 14 : 10)).toFixed(2)}px`);
+        host.style.setProperty(`--${key}-py`, `${(ny * 8).toFixed(2)}px`);
+        setArtFragmentVars(host, key, nx, ny, 0.5);
+      };
+
+      const resetPointer = () => {
+        host.style.setProperty(`--${key}-rx`, "0deg");
+        host.style.setProperty(`--${key}-ry`, "0deg");
+        host.style.setProperty(`--${key}-px`, "0px");
+        host.style.setProperty(`--${key}-py`, "0px");
+        setArtFragmentVars(host, key, 0, 0, 0.5);
+      };
+
+      host.addEventListener("pointermove", handlePointerMove);
+      host.addEventListener("pointerleave", resetPointer);
+      return () => {
+        host.removeEventListener("pointermove", handlePointerMove);
+        host.removeEventListener("pointerleave", resetPointer);
+      };
+    });
 
     update();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
-    materialHost?.addEventListener("pointermove", handlePointerMove);
-    materialHost?.addEventListener("pointerleave", resetPointer);
 
     return () => {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
-      materialHost?.removeEventListener("pointermove", handlePointerMove);
-      materialHost?.removeEventListener("pointerleave", resetPointer);
+      pointerCleanups.forEach((cleanup) => cleanup());
     };
   }, []);
 
   return (
     <>
       <style>{`
-        #design > div {
-          --material-rx: 0deg; --material-ry: 0deg; --material-px: 0px; --material-py: 0px;
-          --material-main-x: 0px; --material-main-y: 0px;
-          isolation: isolate; perspective: 1200px;
+        #design > div, #sensors > div, #motion > div, #intelligence > div {
+          isolation: isolate;
+          perspective: 1200px;
         }
-        #design .aura-shatter-dust, #design .aura-crack-overlay, #design .aura-glass-chip { display: none !important; }
-        #design .aura-shatter-panel, #design .aura-shatter-panel-a {
-          overflow: visible !important; clip-path: none !important; border: 0 !important; background: transparent !important;
-          box-shadow: none !important; backdrop-filter: none !important;
-        }
-        #design .aura-shatter-panel::before, #design .aura-shatter-panel::after { display: none !important; }
-        #design .aura-shatter-panel > *:not(.aura-material-art) { position: relative; z-index: 4; }
 
-        @keyframes material-art-enter {
+        #design .aura-shatter-dust, #design .aura-crack-overlay, #design .aura-glass-chip,
+        #sensors .aura-shatter-dust, #sensors .aura-crack-overlay, #sensors .aura-glass-chip,
+        #motion .aura-shatter-dust, #motion .aura-crack-overlay, #motion .aura-glass-chip,
+        #intelligence .aura-shatter-dust, #intelligence .aura-crack-overlay, #intelligence .aura-glass-chip {
+          display: none !important;
+        }
+
+        #design .aura-shatter-panel, #sensors .aura-shatter-panel,
+        #motion .aura-shatter-panel, #intelligence .aura-shatter-panel {
+          overflow: visible !important;
+          clip-path: none !important;
+          border: 0 !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+        }
+
+        #design .aura-shatter-panel::before, #design .aura-shatter-panel::after,
+        #sensors .aura-shatter-panel::before, #sensors .aura-shatter-panel::after,
+        #motion .aura-shatter-panel::before, #motion .aura-shatter-panel::after,
+        #intelligence .aura-shatter-panel::before, #intelligence .aura-shatter-panel::after {
+          display: none !important;
+        }
+
+        @keyframes aura-art-enter {
           0% { opacity: 0; transform: translate3d(0,42px,0) scale(.94) rotateX(5deg); filter: blur(9px) drop-shadow(0 12px 30px rgba(0,0,0,.18)); }
           100% { opacity: 1; transform: translate3d(0,0,0) scale(1) rotateX(0); filter: blur(0) drop-shadow(0 34px 72px rgba(0,0,0,.30)); }
         }
-        @keyframes material-sheen-pass {
-          0%,18% { transform: translateX(-240px) rotate(18deg); opacity: 0; }
-          34% { opacity: .46; } 58% { opacity: .18; }
-          76%,100% { transform: translateX(1260px) rotate(18deg); opacity: 0; }
-        }
-        @keyframes material-dust-drift {
-          0%,100% { transform: translate3d(-4px,3px,0) scale(.99); opacity: .24; }
-          50% { transform: translate3d(7px,-8px,0) scale(1.035); opacity: .35; }
-        }
-        @keyframes material-particle-drift {
-          0%,100% { transform: translate3d(0,0,0); opacity: .58; }
-          50% { transform: translate3d(5px,-7px,0); opacity: .9; }
-        }
+        @keyframes material-sheen-pass { 0%,18% { transform: translateX(-240px) rotate(18deg); opacity: 0; } 34% { opacity: .46; } 58% { opacity: .18; } 76%,100% { transform: translateX(1260px) rotate(18deg); opacity: 0; } }
+        @keyframes material-dust-drift { 0%,100% { transform: translate3d(-4px,3px,0) scale(.99); opacity: .24; } 50% { transform: translate3d(7px,-8px,0) scale(1.035); opacity: .35; } }
+        @keyframes material-particle-drift { 0%,100% { transform: translate3d(0,0,0); opacity: .58; } 50% { transform: translate3d(5px,-7px,0); opacity: .9; } }
+        @keyframes sensor-sheen-pass { 0%,25% { transform: translateX(-260px) rotate(12deg); opacity: 0; } 40% { opacity: .52; } 62% { opacity: .14; } 82%,100% { transform: translateX(1280px) rotate(12deg); opacity: 0; } }
+        @keyframes sensor-pulse { 0%,100% { opacity: .45; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.08); } }
+        @keyframes sensor-aura-breathe { 0%,100% { opacity: .42; transform: scale(.98); } 50% { opacity: .72; transform: scale(1.035); } }
+        @keyframes motion-sheen-pass { 0%,12% { transform: translateX(-330px) rotate(9deg); opacity: 0; } 30% { opacity: .42; } 52% { opacity: .12; } 68%,100% { transform: translateX(1340px) rotate(9deg); opacity: 0; } }
+        @keyframes motion-trail-flow { 0%,100% { transform: translateX(-16px); opacity: .28; } 50% { transform: translateX(22px); opacity: .72; } }
+        @keyframes motion-aura-drift { 0%,100% { transform: translate3d(-10px,5px,0) scale(.98); } 50% { transform: translate3d(14px,-8px,0) scale(1.05); } }
+        @keyframes intelligence-sheen-pass { 0%,24% { transform: translateX(-250px) rotate(16deg); opacity: 0; } 42% { opacity: .50; } 64% { opacity: .16; } 84%,100% { transform: translateX(1290px) rotate(16deg); opacity: 0; } }
+        @keyframes intelligence-orbit { to { transform: rotate(360deg); } }
+        @keyframes intelligence-core-pulse { 0%,100% { opacity: .50; transform: scale(.98); } 50% { opacity: .82; transform: scale(1.04); } }
 
-        .aura-material-art {
-          position: absolute; inset: -16% -19% -18% -17%; z-index: 0; pointer-events: none;
+        .aura-material-art, .aura-story-art {
+          position: absolute;
+          inset: -16% -19% -18% -17%;
+          z-index: 0;
+          pointer-events: none;
           transform-style: preserve-3d;
-          transform: translate3d(var(--material-px),var(--material-py),0) rotateX(var(--material-rx)) rotateY(var(--material-ry));
           transition: transform 180ms cubic-bezier(.2,.8,.2,1);
-          animation: material-art-enter 1.05s cubic-bezier(.2,.85,.2,1) both;
+          animation: aura-art-enter 1.05s cubic-bezier(.2,.85,.2,1) both;
           filter: drop-shadow(0 34px 72px rgba(0,0,0,.30));
         }
-        .aura-material-main { transform-box: fill-box; transform-origin: center; transform: translate3d(var(--material-main-x),var(--material-main-y),0); transition: transform 220ms ease-out; }
+
+        .aura-material-art { transform: translate3d(var(--material-px,0px),var(--material-py,0px),0) rotateX(var(--material-rx,0deg)) rotateY(var(--material-ry,0deg)); }
+        .aura-sensor-art { transform: translate3d(var(--sensor-px,0px),var(--sensor-py,0px),0) rotateX(var(--sensor-rx,0deg)) rotateY(var(--sensor-ry,0deg)); }
+        .aura-motion-art { transform: translate3d(var(--motion-px,0px),var(--motion-py,0px),0) rotateX(var(--motion-rx,0deg)) rotateY(var(--motion-ry,0deg)); }
+        .aura-intelligence-art { transform: translate3d(var(--intelligence-px,0px),var(--intelligence-py,0px),0) rotateX(var(--intelligence-rx,0deg)) rotateY(var(--intelligence-ry,0deg)); }
+
+        .aura-material-main, .aura-sensor-main, .aura-motion-main, .aura-intelligence-main { transform-box: fill-box; transform-origin: center; transition: transform 220ms ease-out; }
+        .aura-material-main { transform: translate3d(var(--material-main-x,0px),var(--material-main-y,0px),0); }
+        .aura-sensor-main { transform: translate3d(var(--sensor-main-x,0px),var(--sensor-main-y,0px),0); }
+        .aura-motion-main { transform: translate3d(var(--motion-main-x,0px),var(--motion-main-y,0px),0); }
+        .aura-intelligence-main { transform: translate3d(var(--intelligence-main-x,0px),var(--intelligence-main-y,0px),0); }
+
         .aura-material-dust-field { transform-box: fill-box; transform-origin: center; animation: material-dust-drift 7.6s ease-in-out infinite; }
         .aura-material-particles { animation: material-particle-drift 5.8s ease-in-out infinite; }
         .aura-material-sheen { transform-box: fill-box; transform-origin: center; animation: material-sheen-pass 6.8s cubic-bezier(.4,0,.2,1) 1.1s infinite; }
-        .aura-material-shard { transform-box: fill-box; transform-origin: center; transition: transform 220ms ease-out; }
-        .aura-material-shard-1 { transform: translate3d(var(--material-s1-x,0px),var(--material-s1-y,0px),0) rotate(var(--material-s1-r,-1deg)); }
-        .aura-material-shard-2 { transform: translate3d(var(--material-s2-x,0px),var(--material-s2-y,0px),0) rotate(var(--material-s2-r,0deg)); }
-        .aura-material-shard-3 { transform: translate3d(var(--material-s3-x,0px),var(--material-s3-y,0px),0) rotate(var(--material-s3-r,0deg)); }
-        .aura-material-shard-4 { transform: translate3d(var(--material-s4-x,0px),var(--material-s4-y,0px),0) rotate(var(--material-s4-r,1deg)); }
-        .aura-material-shard-5 { transform: translate3d(var(--material-s5-x,0px),var(--material-s5-y,0px),0) rotate(var(--material-s5-r,-1deg)); }
-        .aura-material-shard-6 { transform: translate3d(var(--material-s6-x,0px),var(--material-s6-y,0px),0) rotate(var(--material-s6-r,1deg)); }
-        .aura-material-shard-7 { transform: translate3d(var(--material-s7-x,0px),var(--material-s7-y,0px),0) rotate(var(--material-s7-r,-1deg)); }
-        .aura-material-shard-8 { transform: translate3d(var(--material-s8-x,0px),var(--material-s8-y,0px),0) rotate(var(--material-s8-r,1deg)); }
+        .aura-sensor-aura { transform-box: fill-box; transform-origin: center; animation: sensor-aura-breathe 5.8s ease-in-out infinite; }
+        .aura-sensor-pulses { transform-box: fill-box; transform-origin: center; animation: sensor-pulse 2.8s ease-in-out infinite; }
+        .aura-sensor-sheen { transform-box: fill-box; transform-origin: center; animation: sensor-sheen-pass 7.4s cubic-bezier(.4,0,.2,1) 1.4s infinite; }
+        .aura-motion-aura { transform-box: fill-box; transform-origin: center; animation: motion-aura-drift 6.2s ease-in-out infinite; }
+        .aura-motion-trails { animation: motion-trail-flow 3.8s ease-in-out infinite; }
+        .aura-motion-sheen { transform-box: fill-box; transform-origin: center; animation: motion-sheen-pass 5.9s cubic-bezier(.3,0,.2,1) .8s infinite; }
+        .aura-intelligence-core { transform-box: fill-box; transform-origin: center; animation: intelligence-core-pulse 5.4s ease-in-out infinite; }
+        .aura-intelligence-orbit { transform-box: fill-box; transform-origin: center; animation: intelligence-orbit 36s linear infinite; }
+        .aura-intelligence-sheen { transform-box: fill-box; transform-origin: center; animation: intelligence-sheen-pass 7.8s cubic-bezier(.4,0,.2,1) 1.8s infinite; }
 
-        @media (max-width:1023px) { .aura-material-art { inset: -8% -6% -10%; opacity:.92; transform:none; } }
+        .aura-material-shard, .aura-sensor-fragment, .aura-motion-fragment, .aura-intelligence-fragment { transform-box: fill-box; transform-origin: center; transition: transform 220ms ease-out; }
+        ${Array.from({ length: 8 }, (_, index) => `.aura-material-shard-${index + 1}{transform:translate3d(var(--material-f${index + 1}-x,0px),var(--material-f${index + 1}-y,0px),0) rotate(var(--material-f${index + 1}-r,0deg));}`).join("")}
+        ${Array.from({ length: 5 }, (_, index) => `.aura-sensor-fragment-${index + 1}{transform:translate3d(var(--sensor-f${index + 1}-x,0px),var(--sensor-f${index + 1}-y,0px),0) rotate(var(--sensor-f${index + 1}-r,0deg));}`).join("")}
+        ${Array.from({ length: 6 }, (_, index) => `.aura-motion-fragment-${index + 1}{transform:translate3d(var(--motion-f${index + 1}-x,0px),var(--motion-f${index + 1}-y,0px),0) rotate(var(--motion-f${index + 1}-r,0deg));}`).join("")}
+        ${Array.from({ length: 6 }, (_, index) => `.aura-intelligence-fragment-${index + 1}{transform:translate3d(var(--intelligence-f${index + 1}-x,0px),var(--intelligence-f${index + 1}-y,0px),0) rotate(var(--intelligence-f${index + 1}-r,0deg));}`).join("")}
+
+        @media (max-width:1023px) {
+          .aura-material-art, .aura-story-art { inset: -8% -6% -10%; opacity:.92; transform:none; }
+        }
+
         @media (prefers-reduced-motion:reduce) {
-          .aura-material-art,.aura-material-dust-field,.aura-material-particles,.aura-material-sheen { animation:none !important; transform:none !important; }
-          .aura-material-shard { transform:none !important; }
+          .aura-material-art, .aura-story-art,
+          .aura-material-dust-field, .aura-material-particles, .aura-material-sheen,
+          .aura-sensor-aura, .aura-sensor-pulses, .aura-sensor-sheen,
+          .aura-motion-aura, .aura-motion-trails, .aura-motion-sheen,
+          .aura-intelligence-core, .aura-intelligence-orbit, .aura-intelligence-sheen {
+            animation:none !important;
+            transform:none !important;
+          }
+          .aura-material-shard, .aura-sensor-fragment, .aura-motion-fragment, .aura-intelligence-fragment { transform:none !important; }
         }
       `}</style>
 
-      <div id="aura-scroll-product" className="aura-scroll-product"><div className="aura-scroll-product-inner">{children}</div></div>
-      {materialTarget ? createPortal(<MaterialGlassArtwork />, materialTarget) : null}
+      <div id="aura-scroll-product" className="aura-scroll-product">
+        <div className="aura-scroll-product-inner">{children}</div>
+      </div>
+
+      {targets.material ? createPortal(<MaterialGlassArtwork />, targets.material) : null}
+      {targets.sensor ? createPortal(<SensorArrayGlassArtwork />, targets.sensor) : null}
+      {targets.motion ? createPortal(<MotionStoryGlassArtwork />, targets.motion) : null}
+      {targets.intelligence ? createPortal(<IntelligenceGlassArtwork />, targets.intelligence) : null}
     </>
   );
 }
