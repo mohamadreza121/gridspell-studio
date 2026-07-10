@@ -15,7 +15,8 @@ import {
   Sparkles,
   Star,
   Terminal,
-  Zap
+  Zap,
+  type LucideIcon
 } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
@@ -31,6 +32,20 @@ export const metadata: Metadata = createPageMetadata({
   path: "/demo/saas-modern"
 });
 
+type FeatureCard = {
+  icon: LucideIcon;
+  title: string;
+  copy: string;
+};
+
+type PricingPlan = {
+  name: string;
+  price: string;
+  audience: string;
+  features: string[];
+  featured: boolean;
+};
+
 const proofStats = [
   ["18h", "saved per team weekly"],
   ["1,284", "tasks automated today"],
@@ -39,7 +54,7 @@ const proofStats = [
 
 const integrations = ["Slack", "Gmail", "HubSpot", "Stripe", "Notion", "Calendar", "GitHub", "Airtable"] as const;
 
-const featureCards = [
+const featureCards: FeatureCard[] = [
   {
     icon: Bot,
     title: "AI daily brief",
@@ -70,7 +85,7 @@ const featureCards = [
     title: "Human approval queue",
     copy: "Let AI draft actions while the team approves sensitive replies, deal changes, and customer-facing updates."
   }
-] as const;
+];
 
 const workflowSteps = [
   ["01", "Capture", "A lead, ticket, order, or internal request enters the workspace."],
@@ -79,12 +94,13 @@ const workflowSteps = [
   ["04", "Report", "The team gets a clean summary of what happened and what needs approval."]
 ] as const;
 
-const pricingPlans = [
+const pricingPlans: PricingPlan[] = [
   {
     name: "Starter",
     price: "$29",
     audience: "Solo founders",
-    features: ["1 workspace", "AI daily brief", "Basic automations", "Email support"]
+    features: ["1 workspace", "AI daily brief", "Basic automations", "Email support"],
+    featured: false
   },
   {
     name: "Growth",
@@ -97,9 +113,10 @@ const pricingPlans = [
     name: "Scale",
     price: "$149",
     audience: "Operators",
-    features: ["Unlimited workflows", "Team analytics", "Advanced permissions", "Priority support"]
+    features: ["Unlimited workflows", "Team analytics", "Advanced permissions", "Priority support"],
+    featured: false
   }
-] as const;
+];
 
 const testimonials = [
   ["FlowPilot replaced three weekly update meetings and gave our team one source of truth.", "Maya Chen", "Ops Lead, B2B SaaS"],
@@ -500,18 +517,18 @@ export default function SaasModernDemoPage() {
       </section>
 
       <section className="border-y border-white/[0.06] bg-[#030712] py-24 sm:py-32">
-        <Container className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+        <Container className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
           <div>
-            <p className="font-mono text-xs font-bold uppercase tracking-[0.28em] text-cyan-200">faq.md</p>
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.28em] text-cyan-200">faq.help()</p>
             <h2 className="mt-5 font-display text-5xl font-semibold leading-[0.9] tracking-[-0.06em]">
-              Questions a SaaS visitor might ask.
+              Questions a SaaS buyer would ask.
             </h2>
           </div>
           <div className="grid gap-4">
             {faqs.map(([question, answer]) => (
-              <article key={question} className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-5">
-                <h3 className="font-display text-2xl font-semibold tracking-[-0.045em]">{question}</h3>
-                <p className="mt-3 text-sm leading-7 text-white/45">{answer}</p>
+              <article key={question} className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-6">
+                <h3 className="font-display text-2xl font-semibold tracking-[-0.05em]">{question}</h3>
+                <p className="mt-4 text-sm leading-7 text-white/48">{answer}</p>
               </article>
             ))}
           </div>
@@ -519,44 +536,27 @@ export default function SaasModernDemoPage() {
       </section>
 
       <section id="start" className="relative py-24 sm:py-32">
-        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/10 blur-[140px]" />
-        <Container className="relative">
-          <div className="overflow-hidden rounded-[2rem] border border-white/[0.1] bg-white/[0.035] p-8 text-center sm:p-12">
-            <div className="mx-auto mb-8 flex w-fit items-center gap-2 rounded-2xl border border-white/[0.08] bg-[#020617] px-4 py-3 font-mono text-xs text-cyan-100/70">
-              <Sparkles className="h-4 w-4 text-cyan-200" />
-              deploy --template flowpilot-ai
-            </div>
-            <h2 className="mx-auto max-w-3xl font-display text-5xl font-semibold leading-[0.86] tracking-[-0.07em] sm:text-7xl">
-              Build your AI command center landing page.
-            </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/48">
-              Use this demo as a starting point for AI tools, SaaS products, dashboards, developer tools, automation platforms, or B2B startup launches.
-            </p>
-            <div className="mt-9 flex flex-wrap justify-center gap-3">
-              <Link href={startHref()} className="inline-flex min-h-13 items-center gap-2 rounded-full bg-white px-6 text-sm font-black text-[#020617] transition hover:-translate-y-0.5">
-                Start with this design
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-              <Link href="/landing-pages" className="inline-flex min-h-13 items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] px-6 text-sm font-black text-white/72 transition hover:bg-white/[0.07] hover:text-white">
-                Back to gallery
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
+        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/10 blur-[150px]" />
+        <Container className="relative rounded-[2rem] border border-cyan-300/16 bg-cyan-300/[0.055] p-8 text-center sm:p-12">
+          <p className="mx-auto inline-flex rounded-full border border-white/[0.1] bg-white/[0.04] px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.22em] text-cyan-100">
+            deploy.flowpilot.ai
+          </p>
+          <h2 className="mx-auto mt-6 max-w-3xl font-display text-5xl font-semibold leading-[0.88] tracking-[-0.065em] sm:text-7xl">
+            Build the SaaS page like the product is already real.
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/50">
+            Use this demo as the starting point for an AI tool, SaaS platform, dashboard product, or B2B startup launch page.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link href={startHref()} className="inline-flex min-h-13 items-center gap-2 rounded-full bg-white px-6 text-sm font-black text-[#020617] transition hover:-translate-y-0.5">
+              Start with this design
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link href="/landing-pages" className="inline-flex min-h-13 items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] px-6 text-sm font-black text-white/72 transition hover:bg-white/[0.07] hover:text-white">
+              Back to gallery
+              <Terminal className="h-4 w-4" />
+            </Link>
           </div>
-
-          <footer className="mt-10 grid gap-8 border-t border-white/[0.08] pt-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-            <div>
-              <p className="font-mono text-sm font-bold text-cyan-200">flowpilot.ai</p>
-              <p className="mt-3 max-w-xl text-sm leading-7 text-white/38">
-                A developer-inspired SaaS landing page demo for GridSpell clients who need a modern product launch, dashboard page, or AI platform website.
-              </p>
-            </div>
-            <div className="grid gap-3 rounded-[1.35rem] border border-white/[0.08] bg-white/[0.035] p-4 font-mono text-xs text-white/42 sm:grid-cols-3">
-              <p>status: online</p>
-              <p>agents: 24</p>
-              <p>latency: 42ms</p>
-            </div>
-          </footer>
         </Container>
       </section>
     </main>
