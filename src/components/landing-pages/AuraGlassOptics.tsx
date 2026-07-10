@@ -1,5 +1,6 @@
 import { AuraRing3DPortal } from "@/components/landing-pages/AuraRing3D";
 import { AuraRingOrbitsPortal } from "@/components/landing-pages/AuraRingOrbits";
+import { AuraSensorLabPortal } from "@/components/landing-pages/AuraSensorLabPortal";
 import { AuraShatterNavbarPortal } from "@/components/landing-pages/AuraShatterNavbar";
 
 type OpticsProps = {
@@ -162,6 +163,7 @@ export function MaterialGlassOptics({ className = "" }: OpticsProps) {
       <AuraRing3DPortal />
       <AuraRingOrbitsPortal />
       <AuraShatterNavbarPortal />
+      <AuraSensorLabPortal />
       <AuraRing3DFramingFixes />
     </>
   );
