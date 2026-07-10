@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { AuraSensorLab } from "@/components/landing-pages/AuraSensorLab";
+import { AuraSensorLabRingReuse } from "@/components/landing-pages/AuraSensorLabRingReuse";
 
 export function AuraSensorLabPortal() {
   const [target, setTarget] = useState<HTMLElement | null>(null);
@@ -29,6 +30,7 @@ export function AuraSensorLabPortal() {
   return (
     <>
       {target ? createPortal(<AuraSensorLab />, target) : null}
+      <AuraSensorLabRingReuse />
       <style>{`
         #aura-after-story.aura-sensor-lab-host {
           padding: 0 !important;
