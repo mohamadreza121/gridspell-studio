@@ -661,12 +661,32 @@ export default function Product3DLaunchDemoPage() {
         <div aria-hidden="true" className="absolute left-1/2 top-[58.4%] h-px w-[90vw] -translate-x-1/2 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.88),transparent)] shadow-[0_0_32px_rgba(255,255,255,0.38)]" />
 
         <Container className="relative flex min-h-[calc(100svh-2rem)] flex-col items-center justify-center py-24 text-center">
-          <h1
-            className="aura-rise pointer-events-none absolute left-1/2 top-[48%] z-[12] w-[108vw] -translate-x-1/2 -translate-y-1/2 font-display text-[clamp(5rem,13.5vw,14rem)] font-semibold leading-[0.72] tracking-[-0.11em] text-white/90"
-            style={{ textShadow: "0 34px 95px rgba(0,0,0,0.72), 0 0 42px rgba(103,232,249,0.18)" }}
-          >
-            Future on your finger.
-          </h1>
+          <div className="aura-rise pointer-events-none absolute left-1/2 top-[32%] z-[12] w-[96vw] max-w-[1720px] -translate-x-1/2 -translate-y-1/2 text-center">
+            <div className="relative">
+              {/* Text depth layer */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 translate-x-[8px] translate-y-[11px] whitespace-nowrap font-display text-[clamp(4.5rem,10.2vw,11.6rem)] font-medium leading-[0.78] tracking-[-0.095em] text-black/30 blur-[1.5px]"
+                style={{
+                  textShadow:
+                    "0 18px 30px rgba(0,0,0,0.34), 0 34px 75px rgba(0,0,0,0.42)",
+                }}
+              >
+                Future on your finger.
+              </span>
+
+              {/* Main headline */}
+              <h1
+                className="relative whitespace-nowrap font-display text-[clamp(4.5rem,10.2vw,11.6rem)] font-medium leading-[0.78] tracking-[-0.095em] text-white/95"
+                style={{
+                  textShadow:
+                    "0 1px 0 rgba(255,255,255,0.10), 0 8px 18px rgba(0,0,0,0.24), 0 24px 58px rgba(0,0,0,0.48), 0 0 32px rgba(103,232,249,0.12)",
+                }}
+              >
+                Future on your finger.
+              </h1>
+            </div>
+          </div>
 
           <div className="h-[25rem] w-[25rem] sm:h-[36rem] sm:w-[36rem] lg:h-[41rem] lg:w-[41rem]" aria-hidden="true" />
 
