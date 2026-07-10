@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import {
   ArrowLeft,
@@ -28,7 +29,7 @@ const concept = getLandingPageConcept("product-3d-launch");
 export const metadata: Metadata = createPageMetadata({
   title: "AURA X1 3D Product Launch Demo",
   description:
-    "A futuristic 3D product launch landing page demo for a titanium AI smart ring with a scroll-driven reveal, realistic ring visual, glass navigation, sensor callouts, specs, and preorder CTAs.",
+    "A futuristic 3D product launch landing page demo for a titanium AI smart ring with a scroll-driven product reveal, realistic ring visual, glass navigation, sensor callouts, specs, and preorder CTAs.",
   path: "/demo/product-3d-launch"
 });
 
@@ -76,7 +77,7 @@ const storyPanels: StoryPanel[] = [
     eyebrow: "Motion story",
     title: "One object, every moment.",
     copy:
-      "The scroll structure keeps bringing the same product back into view so the launch page feels like one cinematic reveal instead of stacked sections.",
+      "The same AURA X1 ring stays present while the story changes around it, making the page feel like one cinematic reveal instead of stacked content blocks.",
     icon: Zap,
     points: ["Morning readiness", "Training strain", "Deep-work windows"]
   },
@@ -122,6 +123,13 @@ function startHref() {
 function AuraStyles() {
   return (
     <style>{`
+      #aura-page {
+        --aura-left: 50vw;
+        --aura-top: 45vh;
+        --aura-scale: 1;
+        --aura-opacity: 1;
+      }
+
       @keyframes aura-hero-impact {
         0%, 74%, 100% { transform: translate3d(0, 0, 0); }
         79% { transform: translate3d(1px, -1px, 0); }
@@ -130,10 +138,10 @@ function AuraStyles() {
         94% { transform: translate3d(0, 0, 0); }
       }
 
-      @keyframes aura-hero-ring {
-        0% { opacity: 0; transform: translateY(44px) scale(0.82) rotate(-10deg); filter: blur(14px); }
-        70% { opacity: 1; filter: blur(0); }
-        100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); filter: blur(0); }
+      @keyframes aura-ring-intro {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.78); filter: blur(14px); }
+        68% { opacity: 1; filter: blur(0); }
+        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
       }
 
       @keyframes aura-nav-drop {
@@ -163,14 +171,7 @@ function AuraStyles() {
         100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
       }
 
-      @keyframes aura-product-travel {
-        0% { opacity: 0; transform: translate3d(40vw, -50%, 0) scale(1.18); filter: blur(6px); }
-        15% { opacity: 1; filter: blur(0); }
-        100% { opacity: 1; transform: translate3d(0, -50%, 0) scale(0.78); filter: blur(0); }
-      }
-
       .aura-impact { animation: aura-hero-impact 1.65s cubic-bezier(.2,.85,.2,1) both; }
-      .aura-hero-product { opacity: 0; animation: aura-hero-ring 1.12s cubic-bezier(.2,.85,.2,1) .12s both; }
       .aura-nav { opacity: 0; animation: aura-nav-drop .72s cubic-bezier(.2,.85,.2,1) 1.08s both; }
       .aura-rise { opacity: 0; animation: aura-text-rise .78s cubic-bezier(.2,.85,.2,1) 1.08s both; }
       .aura-rise-late { opacity: 0; animation: aura-text-rise .78s cubic-bezier(.2,.85,.2,1) 1.25s both; }
@@ -178,39 +179,120 @@ function AuraStyles() {
       .aura-shine { animation: aura-shine-pass 4.6s ease-in-out infinite; }
       .aura-view { opacity: 1; transform: none; }
 
+      .aura-scroll-product {
+        position: fixed;
+        left: var(--aura-left);
+        top: var(--aura-top);
+        z-index: 16;
+        width: min(41rem, 74vw);
+        height: min(41rem, 74vw);
+        opacity: var(--aura-opacity);
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(var(--aura-scale));
+        transform-origin: center;
+        will-change: left, top, transform, opacity;
+        animation: aura-ring-intro 1.05s cubic-bezier(.2,.85,.2,1) .12s both;
+      }
+
+      .aura-story-card {
+        opacity: 1;
+        transform: none;
+      }
+
       @supports (animation-timeline: view()) {
-        .aura-view {
+        .aura-view,
+        .aura-story-card {
           opacity: 0;
           transform: translateY(58px) scale(0.98);
           animation: aura-section-in linear both;
           animation-timeline: view();
           animation-range: entry 8% cover 32%;
         }
+      }
 
-        .aura-journey-product {
-          animation: aura-product-travel linear both;
-          animation-timeline: view();
-          animation-range: entry 0% cover 24%;
+      @media (max-width: 1023px) {
+        .aura-scroll-product {
+          position: absolute;
+          left: 50%;
+          top: 42rem;
+          width: min(34rem, 92vw);
+          height: min(34rem, 92vw);
+          transform: translate(-50%, -50%) scale(0.92);
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
         .aura-impact,
-        .aura-hero-product,
         .aura-nav,
         .aura-rise,
         .aura-rise-late,
         .aura-float,
         .aura-shine,
         .aura-view,
-        .aura-journey-product {
+        .aura-story-card,
+        .aura-scroll-product {
           animation: none !important;
           opacity: 1 !important;
-          transform: none !important;
           filter: none !important;
         }
       }
     `}</style>
+  );
+}
+
+function AuraScrollScript() {
+  return (
+    <Script id="aura-product-scroll" strategy="afterInteractive">{`
+      (() => {
+        const page = document.getElementById('aura-page');
+        const product = document.getElementById('aura-scroll-product');
+        const story = document.getElementById('aura-story');
+        if (!page || !product || !story) return;
+
+        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+        const mix = (from, to, progress) => from + (to - from) * progress;
+        let ticking = false;
+
+        const update = () => {
+          ticking = false;
+          const y = window.scrollY || window.pageYOffset || 0;
+          const vh = window.innerHeight || 1;
+          const width = window.innerWidth || 1440;
+          const storyRect = story.getBoundingClientRect();
+          const storyTop = y + storyRect.top;
+          const storyBottom = storyTop + story.offsetHeight;
+
+          const heroProgress = clamp(y / (vh * 1.08), 0, 1);
+          const leftTarget = width >= 1280 ? 27 : width >= 1024 ? 31 : 50;
+          const topTarget = width >= 1024 ? 52 : 42;
+          const scaleTarget = width >= 1280 ? 0.58 : width >= 1024 ? 0.66 : 0.92;
+
+          let left = mix(50, leftTarget, heroProgress);
+          let top = mix(45, topTarget, heroProgress);
+          let scale = mix(1, scaleTarget, heroProgress);
+          let opacity = 1;
+
+          if (y > storyBottom - vh * 0.75) {
+            opacity = clamp(1 - (y - (storyBottom - vh * 0.75)) / (vh * 0.42), 0, 1);
+          }
+
+          page.style.setProperty('--aura-left', left.toFixed(2) + 'vw');
+          page.style.setProperty('--aura-top', top.toFixed(2) + 'vh');
+          page.style.setProperty('--aura-scale', scale.toFixed(3));
+          page.style.setProperty('--aura-opacity', opacity.toFixed(3));
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(update);
+        };
+
+        update();
+        window.addEventListener('scroll', requestUpdate, { passive: true });
+        window.addEventListener('resize', requestUpdate);
+      })();
+    `}</Script>
   );
 }
 
@@ -278,7 +360,7 @@ function GlassButton({ href, children, variant = "primary" }: { href: string; ch
       className={
         variant === "primary"
           ? "group inline-flex min-h-[3.25rem] items-center gap-2 rounded-full border border-white/40 bg-white/70 px-6 text-sm font-black text-[#070a0f] shadow-[0_20px_55px_rgba(255,255,255,0.18),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_26px_80px_rgba(103,232,249,0.26)]"
-          : "group inline-flex min-h-[3.25rem] items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 text-sm font-black text-white/82 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/30 hover:bg-white/15 hover:text-white"
+          : "group inline-flex min-h-[3.25rem] items-center gap-2 rounded-full border border-white/20 bg-white/[0.10] px-6 text-sm font-black text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.15] hover:text-white"
       }
     >
       {children}
@@ -289,21 +371,21 @@ function GlassButton({ href, children, variant = "primary" }: { href: string; ch
 
 function LaunchNavbar() {
   return (
-    <nav className="aura-nav fixed left-3 right-3 top-24 z-40 mx-auto max-w-6xl rounded-full border border-white/18 bg-[#070a0f]/70 px-3 py-3 shadow-[0_22px_80px_rgba(0,0,0,0.30)] backdrop-blur-2xl sm:left-5 sm:right-5 lg:top-28">
+    <nav className="aura-nav fixed left-3 right-3 top-24 z-40 mx-auto max-w-6xl rounded-full border border-white/[0.18] bg-[#070a0f]/70 px-3 py-3 shadow-[0_22px_80px_rgba(0,0,0,0.30)] backdrop-blur-2xl sm:left-5 sm:right-5 lg:top-28">
       <div className="flex items-center justify-between gap-3">
-        <Link href="/landing-pages" className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/68 transition hover:text-white">
+        <Link href="/landing-pages" className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.08] px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/70 transition hover:text-white">
           <ArrowLeft className="h-4 w-4" />
           Gallery
         </Link>
 
-        <div className="hidden items-center gap-6 text-xs font-black uppercase tracking-[0.18em] text-white/48 lg:flex">
+        <div className="hidden items-center gap-6 text-xs font-black uppercase tracking-[0.18em] text-white/50 lg:flex">
           <a href="#design" className="transition hover:text-white">Design</a>
           <a href="#sensors" className="transition hover:text-white">Sensors</a>
           <a href="#motion" className="transition hover:text-white">Motion</a>
           <a href="#specs" className="transition hover:text-white">Specs</a>
         </div>
 
-        <Link href={startHref()} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-cyan-200/25 bg-cyan-200/10 px-4 text-xs font-black uppercase tracking-[0.16em] text-cyan-100 shadow-[0_0_34px_rgba(103,232,249,0.14)] transition hover:-translate-y-0.5 hover:bg-cyan-200/15">
+        <Link href={startHref()} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-cyan-200/25 bg-cyan-200/10 px-4 text-xs font-black uppercase tracking-[0.16em] text-cyan-100 shadow-[0_0_34px_rgba(103,232,249,0.14)] transition hover:-translate-y-0.5 hover:bg-cyan-200/[0.15]">
           Pre-order
           <ChevronRight className="h-4 w-4" />
         </Link>
@@ -316,9 +398,9 @@ function StoryPanelCard({ panel }: { panel: StoryPanel }) {
   const Icon = panel.icon;
 
   return (
-    <article id={panel.id} className="aura-view flex min-h-[88svh] items-center py-16 lg:pl-[44%]">
-      <div className="w-full rounded-[2.25rem] border border-white/12 bg-white/8 p-6 shadow-[0_30px_110px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl sm:p-8 lg:max-w-2xl">
-        <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200/18 bg-cyan-200/8 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-cyan-100">
+    <article id={panel.id} className="aura-story-card flex min-h-[88svh] items-center py-16 lg:pl-[44%]">
+      <div className="w-full rounded-[2.25rem] border border-white/12 bg-white/[0.08] p-6 shadow-[0_30px_110px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl sm:p-8 lg:max-w-2xl">
+        <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200/[0.18] bg-cyan-200/[0.08] px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-cyan-100">
           <Icon className="h-4 w-4" />
           {panel.eyebrow}
         </p>
@@ -330,9 +412,9 @@ function StoryPanelCard({ panel }: { panel: StoryPanel }) {
         </p>
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
           {panel.points.map((point) => (
-            <div key={point} className="rounded-[1.25rem] border border-white/10 bg-white/7 p-4 transition hover:-translate-y-1 hover:border-cyan-200/26 hover:bg-cyan-200/8">
+            <div key={point} className="rounded-[1.25rem] border border-white/10 bg-white/[0.07] p-4 transition hover:-translate-y-1 hover:border-cyan-200/25 hover:bg-cyan-200/[0.08]">
               <CheckCircle2 className="h-5 w-5 text-cyan-200" />
-              <p className="mt-3 text-sm font-semibold leading-6 text-white/62">{point}</p>
+              <p className="mt-3 text-sm font-semibold leading-6 text-white/60">{point}</p>
             </div>
           ))}
         </div>
@@ -345,7 +427,7 @@ function SensorOrbit() {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {sensorCallouts.map(([title, copy]) => (
-        <div key={title} className="group rounded-[1.5rem] border border-white/10 bg-white/6 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-cyan-200/8">
+        <div key={title} className="group rounded-[1.5rem] border border-white/10 bg-white/[0.06] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-cyan-200/[0.08]">
           <p className="font-display text-3xl font-semibold tracking-[-0.055em] text-white">{title}</p>
           <p className="mt-2 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-100/55">{copy}</p>
         </div>
@@ -356,11 +438,16 @@ function SensorOrbit() {
 
 export default function Product3DLaunchDemoPage() {
   return (
-    <main className="overflow-hidden bg-[#05070a] text-white">
+    <main id="aura-page" className="overflow-hidden bg-[#05070a] text-white">
       <AuraStyles />
+      <AuraScrollScript />
       <LaunchNavbar />
 
-      <section className="aura-impact relative min-h-svh overflow-hidden bg-[#05070a] pt-8">
+      <div id="aura-scroll-product" className="aura-scroll-product">
+        <AuraRing id="scroll" className="h-full w-full" />
+      </div>
+
+      <section id="aura-hero" className="aura-impact relative min-h-svh overflow-hidden bg-[#05070a] pt-8">
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(103,232,249,0.26),transparent_24rem),radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.16),transparent_34rem),linear-gradient(180deg,#05070a_0%,#0b1017_58%,#e8edf3_58.4%,#f8fafc_100%)]" />
         <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:70px_70px] opacity-35" />
         <div aria-hidden="true" className="absolute left-1/2 top-[58.4%] h-px w-[90vw] -translate-x-1/2 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.88),transparent)] shadow-[0_0_32px_rgba(255,255,255,0.38)]" />
@@ -370,12 +457,10 @@ export default function Product3DLaunchDemoPage() {
             Future on your finger.
           </h1>
 
-          <div className="aura-hero-product relative z-10 mt-8 h-[25rem] w-[25rem] sm:h-[36rem] sm:w-[36rem] lg:h-[41rem] lg:w-[41rem]">
-            <AuraRing id="hero" className="h-full w-full" />
-          </div>
+          <div className="h-[25rem] w-[25rem] sm:h-[36rem] sm:w-[36rem] lg:h-[41rem] lg:w-[41rem]" aria-hidden="true" />
 
           <div className="aura-rise-late relative z-20 -mt-20 max-w-2xl sm:-mt-28">
-            <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/18 bg-black/30 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
+            <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/[0.18] bg-black/30 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
               <Sparkles className="h-4 w-4" />
               AURA X1 titanium AI ring
             </p>
@@ -393,7 +478,7 @@ export default function Product3DLaunchDemoPage() {
 
             <div className="mt-9 grid gap-3 sm:grid-cols-3">
               {heroStats.map(([value, label]) => (
-                <div key={label} className="rounded-[1.35rem] border border-slate-950/8 bg-white/65 p-4 text-left shadow-[0_18px_48px_rgba(15,23,42,0.10)] backdrop-blur-xl">
+                <div key={label} className="rounded-[1.35rem] border border-slate-950/[0.08] bg-white/65 p-4 text-left shadow-[0_18px_48px_rgba(15,23,42,0.10)] backdrop-blur-xl">
                   <p className="font-display text-3xl font-semibold tracking-[-0.06em] text-slate-950">{value}</p>
                   <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-slate-500">{label}</p>
                 </div>
@@ -403,18 +488,11 @@ export default function Product3DLaunchDemoPage() {
         </Container>
       </section>
 
-      <section className="relative min-h-[430svh] overflow-clip bg-[#05070a] px-3 py-12 sm:px-5">
+      <section id="aura-story" className="relative min-h-[430svh] overflow-clip bg-[#05070a] px-3 py-12 sm:px-5">
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_26%_22%,rgba(103,232,249,0.16),transparent_28rem),radial-gradient(circle_at_76%_58%,rgba(148,163,184,0.12),transparent_34rem),linear-gradient(180deg,#05070a,#0b1017_52%,#05070a)]" />
         <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:72px_72px] opacity-32" />
 
-        <div
-          className="aura-journey-product pointer-events-none sticky top-[50%] z-10 hidden h-[34rem] w-[34rem] -translate-y-1/2 lg:block"
-          style={{ left: "max(1.25rem, calc((100vw - 76rem) / 2))" }}
-        >
-          <AuraRing id="journey" className="h-full w-full" />
-        </div>
-
-        <Container className="relative z-20 -mt-[34rem] lg:-mt-[34rem]">
+        <Container className="relative z-20">
           {storyPanels.map((panel) => (
             <StoryPanelCard key={panel.id} panel={panel} />
           ))}
@@ -433,15 +511,12 @@ export default function Product3DLaunchDemoPage() {
                 <h2 className="mt-7 max-w-[9ch] font-display text-[clamp(3.6rem,8vw,8rem)] font-semibold leading-[0.78] tracking-[-0.09em] text-[#0b0f14]">
                   The product explains itself.
                 </h2>
-                <p className="mt-7 max-w-xl text-lg leading-8 text-slate-500">
-                  After the scroll move, the page switches into a polished feature reveal with callouts, technical language, and a second product moment.
+                <p className="mt-6 max-w-lg text-base leading-8 text-slate-500">
+                  Use callouts to show what the object does while preserving a premium product-launch feel.
                 </p>
               </div>
 
-              <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-                <div className="rounded-[2.4rem] border border-slate-200 bg-[radial-gradient(circle_at_50%_34%,rgba(103,232,249,0.24),transparent_18rem),linear-gradient(135deg,#f8fafc,#dfe5eb)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-                  <AuraRing id="sensor" className="h-[22rem] w-full" glow="light" />
-                </div>
+              <div className="rounded-[2.4rem] border border-slate-200 bg-[#0b0f14] p-5 shadow-[0_30px_90px_rgba(15,23,42,0.22)]">
                 <SensorOrbit />
               </div>
             </div>
@@ -449,64 +524,50 @@ export default function Product3DLaunchDemoPage() {
         </Container>
       </section>
 
-      <section id="specs" className="relative bg-[#05070a] px-3 py-20 text-white sm:px-5 sm:py-28">
+      <section id="specs" className="relative bg-[#f5f7fa] px-3 py-12 text-[#0b0f14] sm:px-5 sm:py-20">
         <Container>
           <div className="aura-view grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
-            <div className="rounded-[2.5rem] border border-white/10 bg-white/7 p-7 shadow-[0_30px_100px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:p-10">
-              <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200/16 bg-cyan-200/8 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-cyan-100">
-                <HeartPulse className="h-4 w-4" />
+            <div className="rounded-[2.5rem] border border-slate-200 bg-white p-7 shadow-[0_30px_100px_rgba(15,23,42,0.10)] sm:p-10">
+              <p className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-slate-500">
+                <HeartPulse className="h-4 w-4 text-cyan-500" />
                 Technical sheet
               </p>
               <h2 className="mt-7 max-w-[8ch] font-display text-[clamp(3.4rem,7vw,7rem)] font-semibold leading-[0.78] tracking-[-0.085em]">
                 Luxury specs, launch-ready.
               </h2>
-              <p className="mt-6 text-base leading-8 text-white/48">
-                A product page like this needs a premium spec table, not a plain list of features. The dark panel makes the hardware feel precise and expensive.
+              <p className="mt-6 text-base leading-8 text-slate-500">
+                A product page like this needs a premium spec table, not a plain list of features.
               </p>
             </div>
 
-            <div className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035] shadow-[0_30px_100px_rgba(0,0,0,0.22)] backdrop-blur-xl">
-              {specRows.map((row) => (
-                <div key={row.label} className="grid gap-2 border-b border-white/10 px-6 py-5 last:border-b-0 sm:grid-cols-[0.36fr_1fr] sm:items-center">
-                  <p className="text-xs font-black uppercase tracking-[0.22em] text-white/36">{row.label}</p>
-                  <p className="font-display text-2xl font-semibold tracking-[-0.05em] text-white">{row.value}</p>
-                </div>
-              ))}
+            <div className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-[#0b0f14] p-3 text-white shadow-[0_30px_100px_rgba(15,23,42,0.20)]">
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 sm:p-7">
+                {specRows.map((row) => (
+                  <div key={row.label} className="grid gap-3 border-b border-white/10 py-5 last:border-b-0 sm:grid-cols-[0.42fr_1fr]">
+                    <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-100/45">{row.label}</p>
+                    <p className="font-display text-2xl font-semibold tracking-[-0.05em] text-white">{row.value}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Container>
       </section>
 
-      <section id="waitlist" className="relative overflow-hidden bg-[#f8fafc] px-3 py-20 text-[#0b0f14] sm:px-5 sm:py-28">
-        <div aria-hidden="true" className="absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/20 blur-[150px]" />
-        <Container>
-          <div className="aura-view relative overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-8 text-center shadow-[0_38px_120px_rgba(15,23,42,0.12)] sm:p-12">
-            <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(103,232,249,0.18),transparent_24rem)]" />
-            <div className="relative">
-              <Rocket className="mx-auto h-9 w-9 text-cyan-500" />
-              <h2 className="mx-auto mt-7 max-w-4xl font-display text-[clamp(3.6rem,8vw,8rem)] font-semibold leading-[0.78] tracking-[-0.09em]">
-                The next interface is not a screen.
-              </h2>
-              <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-500">
-                Use this direction for product drops, wearable tech, premium hardware launches, waitlists, and cinematic product storytelling.
-              </p>
-              <div className="mt-9 flex flex-wrap justify-center gap-3">
-                <Link href={startHref()} className="inline-flex min-h-[3.25rem] items-center gap-2 rounded-full bg-[#0b0f14] px-6 text-sm font-black text-white shadow-[0_20px_65px_rgba(15,23,42,0.22)] transition hover:-translate-y-1">
-                  Start with this design
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-                <Link href="/landing-pages" className="inline-flex min-h-[3.25rem] items-center gap-2 rounded-full border border-slate-200 bg-white px-6 text-sm font-black text-slate-900 transition hover:-translate-y-1">
-                  Back to gallery
-                </Link>
-              </div>
-              <div className="mt-9 flex flex-wrap justify-center gap-3 text-sm text-slate-500">
-                {["Hero reveal", "Scroll object", "Specs", "Preorder"].map((item) => (
-                  <span key={item} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2">
-                    <CheckCircle2 className="h-4 w-4 text-cyan-500" />
-                    {item}
-                  </span>
-                ))}
-              </div>
+      <section id="waitlist" className="relative overflow-hidden bg-[#05070a] px-3 py-24 sm:px-5 sm:py-32">
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(103,232,249,0.22),transparent_30rem),linear-gradient(180deg,#05070a,#0b1017)]" />
+        <Container className="relative">
+          <div className="aura-view rounded-[3rem] border border-white/[0.12] bg-white/[0.06] p-8 text-center shadow-[0_38px_130px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl sm:p-12">
+            <Rocket className="mx-auto h-8 w-8 text-cyan-200" />
+            <h2 className="mx-auto mt-7 max-w-3xl font-display text-[clamp(3.8rem,8vw,8.5rem)] font-semibold leading-[0.76] tracking-[-0.095em] text-white">
+              The next interface is not a screen.
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/52">
+              Use this direction for premium product drops, wearable tech, hardware launches, waitlists, and cinematic preorder pages.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <GlassButton href={startHref()}>Reserve AURA X1</GlassButton>
+              <GlassButton href="/landing-pages" variant="secondary">Back to gallery</GlassButton>
             </div>
           </div>
         </Container>
