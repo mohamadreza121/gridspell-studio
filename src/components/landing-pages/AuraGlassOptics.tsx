@@ -102,22 +102,23 @@ function AuraRing3DFramingFixes() {
     <style>{`
       #aura-scroll-product .aura-ring-webgl-layer {
         overflow: visible;
+        inset: -8% -16% -6% -16%;
       }
 
       #aura-scroll-product .aura-ring-webgl-canvas {
-        transform: scale(0.74);
+        transform: translateY(7%) scale(0.76);
         transform-origin: 50% 50%;
       }
 
       #aura-scroll-product .aura-ring-webgl-glow {
-        inset: 23%;
-        opacity: 0.66;
+        inset: 24% 18% 18% 18%;
+        opacity: 0.64;
       }
 
       #aura-scroll-product .aura-ring-webgl-shadow {
-        left: 28%;
-        right: 28%;
-        bottom: 15%;
+        left: 24%;
+        right: 24%;
+        bottom: 12%;
         height: 7%;
       }
 
@@ -125,9 +126,17 @@ function AuraRing3DFramingFixes() {
         display: none !important;
       }
 
+      #aura-scroll-product {
+        padding-top: 2rem;
+      }
+
       @media (min-width: 1024px) and (max-width: 1279px) {
+        #aura-scroll-product .aura-ring-webgl-layer {
+          inset: -10% -20% -8% -20%;
+        }
+
         #aura-scroll-product .aura-ring-webgl-canvas {
-          transform: scale(0.68);
+          transform: translateY(8%) scale(0.72);
         }
       }
     `}</style>

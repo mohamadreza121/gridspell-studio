@@ -134,11 +134,11 @@ const FRAGMENT_SHADER = `
 `;
 
 const POSES: Record<string, RingPose> = {
-  hero: { x: 0.72, y: -0.18, z: -0.16, scale: 1.08, sensors: 0.42 },
-  design: { x: 0.58, y: 0.20, z: -0.08, scale: 1.02, sensors: 0.38 },
-  sensors: { x: 1.04, y: -0.46, z: 0.16, scale: 1.04, sensors: 1.0 },
-  motion: { x: 0.72, y: 0.66, z: -0.24, scale: 1.02, sensors: 0.68 },
-  intelligence: { x: 0.50, y: -0.12, z: 0.10, scale: 1.04, sensors: 0.88 }
+  hero: { x: -0.52, y: -0.16, z: -0.10, scale: 1.02, sensors: 0.42 },
+  design: { x: -0.38, y: 0.12, z: -0.06, scale: 0.98, sensors: 0.38 },
+  sensors: { x: -0.74, y: -0.42, z: 0.12, scale: 1.00, sensors: 1.0 },
+  motion: { x: -0.44, y: 0.58, z: -0.18, scale: 0.98, sensors: 0.68 },
+  intelligence: { x: -0.28, y: -0.08, z: 0.08, scale: 1.00, sensors: 0.88 }
 };
 
 function mix(from: number, to: number, progress: number) {
@@ -679,7 +679,7 @@ function AuraRing3DCanvas() {
             currentPose.z - pointerCurrent[0] * 0.024 + (reducedMotion ? 0 : Math.sin(time * 0.29 + 1.4) * 0.016)
           ];
           const parentModel = composeModel(rotation, currentPose.scale);
-          const projection = perspectiveMatrix(38 * (Math.PI / 180), canvas.width / Math.max(canvas.height, 1), 0.1, 40);
+          const projection = perspectiveMatrix(43 * (Math.PI / 180), canvas.width / Math.max(canvas.height, 1), 0.1, 40);
           const viewProjection = multiplyMatrices(projection, translationMatrix(0, 0, -cameraPosition[2]));
 
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
