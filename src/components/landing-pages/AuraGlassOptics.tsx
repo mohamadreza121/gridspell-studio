@@ -1,3 +1,5 @@
+import { AuraRing3DPortal } from "@/components/landing-pages/AuraRing3D";
+
 type OpticsProps = {
   className?: string;
 };
@@ -97,17 +99,20 @@ function OpticalFrame({
 
 export function MaterialGlassOptics({ className = "" }: OpticsProps) {
   return (
-    <OpticalFrame
-      id="material"
-      className={`aura-material-optics ${className}`}
-      path="M112 103 L238 46 L424 62 L548 35 L772 104 L838 224 L814 354 L850 455 L728 566 L539 548 L407 584 L225 542 L91 431 L112 306 L66 210 Z"
-      beam="M-72 401 L236 -38 L427 -38 L92 519 Z"
-      secondaryBeam="M492 -55 L856 118 L946 287 L596 121 Z"
-      scratchPath="M96 151 C292 111 559 117 824 207"
-      prismColor="rgba(196,181,253,0.13)"
-      accentColor="rgba(103,232,249,0.16)"
-      noiseSeed={11}
-    />
+    <>
+      <OpticalFrame
+        id="material"
+        className={`aura-material-optics ${className}`}
+        path="M112 103 L238 46 L424 62 L548 35 L772 104 L838 224 L814 354 L850 455 L728 566 L539 548 L407 584 L225 542 L91 431 L112 306 L66 210 Z"
+        beam="M-72 401 L236 -38 L427 -38 L92 519 Z"
+        secondaryBeam="M492 -55 L856 118 L946 287 L596 121 Z"
+        scratchPath="M96 151 C292 111 559 117 824 207"
+        prismColor="rgba(196,181,253,0.13)"
+        accentColor="rgba(103,232,249,0.16)"
+        noiseSeed={11}
+      />
+      <AuraRing3DPortal />
+    </>
   );
 }
 
