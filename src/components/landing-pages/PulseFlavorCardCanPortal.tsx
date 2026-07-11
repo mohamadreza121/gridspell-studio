@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { pulseFlavors } from "@/components/landing-pages/PulseCan3D";
-import { PulseCan3DStaticPreview } from "@/components/landing-pages/PulseCan3DStaticPreview";
+import { PulseCan3DStaticFrontPreview } from "@/components/landing-pages/PulseCan3DStaticFrontPreview";
 
 export function PulseFlavorCardCanPortal() {
   const [targets, setTargets] = useState<HTMLElement[]>([]);
@@ -50,7 +50,12 @@ export function PulseFlavorCardCanPortal() {
           background: transparent !important;
           box-shadow: none !important;
           transform: none !important;
+          translate: none !important;
+          rotate: none !important;
+          scale: none !important;
+          animation: none !important;
           transition: none !important;
+          will-change: auto !important;
         }
 
         #flavors .pulse-static-can-host > :not(.pulse-card-can-model) {
@@ -58,8 +63,24 @@ export function PulseFlavorCardCanPortal() {
         }
 
         #flavors article:hover .pulse-static-can-host,
-        #flavors article:focus-within .pulse-static-can-host {
+        #flavors article:focus-within .pulse-static-can-host,
+        #flavors .group:hover .pulse-static-can-host {
           transform: none !important;
+          translate: none !important;
+          rotate: none !important;
+          scale: none !important;
+          animation: none !important;
+        }
+
+        #flavors .pulse-card-can-model,
+        #flavors .pulse-card-can-model canvas {
+          transform: none !important;
+          translate: none !important;
+          rotate: none !important;
+          scale: none !important;
+          animation: none !important;
+          transition: none !important;
+          pointer-events: none !important;
         }
 
         @media (max-width: 640px) {
@@ -72,7 +93,7 @@ export function PulseFlavorCardCanPortal() {
 
       {targets.map((target, index) =>
         createPortal(
-          <PulseCan3DStaticPreview key={pulseFlavors[index].key} flavor={pulseFlavors[index]} />,
+          <PulseCan3DStaticFrontPreview key={pulseFlavors[index].key} flavor={pulseFlavors[index]} />,
           target
         )
       )}
