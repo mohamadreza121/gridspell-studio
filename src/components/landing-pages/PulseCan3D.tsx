@@ -129,7 +129,7 @@ const FRAGMENT_SHADER = `
 
   float specularTerm(vec3 normal, vec3 lightDirection, vec3 viewDirection, float roughness) {
     vec3 halfVector = normalize(lightDirection + viewDirection);
-    float power = mix(180.0, 18.0, roughness);
+    float power = mix(220.0, 20.0, roughness);
     return pow(saturate(dot(normal, halfVector)), power);
   }
 
@@ -137,36 +137,48 @@ const FRAGMENT_SHADER = `
     vec3 normal = normalize(vNormal);
     vec3 viewDirection = normalize(uCamera - vWorldPosition);
 
-    vec3 keyDirection = normalize(vec3(-0.55, 0.72, 0.62));
-    vec3 fillDirection = normalize(vec3(0.78, 0.16, 0.52));
-    vec3 rimDirection = normalize(vec3(-0.22, -0.32, 0.94));
+    vec3 keyDirection = normalize(vec3(-0.58, 0.78, 0.58));
+    vec3 fillDirection = normalize(vec3(0.82, 0.08, 0.56));
+    vec3 rimDirection = normalize(vec3(-0.24, -0.24, 0.96));
 
     float keyDiffuse = saturate(dot(normal, keyDirection));
     float fillDiffuse = saturate(dot(normal, fillDirection));
     float rimDiffuse = saturate(dot(normal, rimDirection));
 
     float keySpecular = specularTerm(normal, keyDirection, viewDirection, uRoughness);
-    float fillSpecular = specularTerm(normal, fillDirection, viewDirection, min(1.0, uRoughness + 0.16));
-    float fresnel = pow(1.0 - saturate(dot(normal, viewDirection)), 3.7);
+    float fillSpecular = specularTerm(normal, fillDirection, viewDirection, min(1.0, uRoughness + 0.13));
+    float rimSpecular = specularTerm(normal, rimDirection, viewDirection, min(1.0, uRoughness + 0.04));
+    float fresnel = pow(1.0 - saturate(dot(normal, viewDirection)), 3.5);
 
     vec4 label = texture2D(uTexture, vUv);
     vec3 surface = mix(uBaseColor, label.rgb, uUseTexture);
+    surface = pow(surface, vec3(0.88));
 
-    vec3 diffuse = surface * (0.16 + keyDiffuse * 0.56 + fillDiffuse * 0.18 + rimDiffuse * 0.08);
-    vec3 reflection = mix(vec3(0.86, 0.90, 0.94), surface, uMetalness * 0.32);
-    reflection *= keySpecular * 1.42 + fillSpecular * 0.54;
+    float cylindricalDepth = 0.72 + 0.28 * pow(saturate(normal.z * 0.5 + 0.5), 0.62);
+    float labelEdge = smoothstep(0.0, 0.065, vUv.y) * smoothstep(0.0, 0.065, 1.0 - vUv.y);
+    float edgeShade = mix(0.72, 1.0, labelEdge);
 
-    float verticalSheen = exp(-pow((normal.x + sin(uTime * 0.22) * 0.08) * 5.4, 2.0));
-    vec3 sheenColor = mix(vec3(1.0), uAccentColor, 0.12);
+    vec3 diffuse = surface * (0.13 + keyDiffuse * 0.58 + fillDiffuse * 0.17 + rimDiffuse * 0.07);
+    diffuse *= mix(1.0, cylindricalDepth * edgeShade, uUseTexture);
+
+    vec3 reflection = mix(vec3(0.88, 0.93, 0.98), surface, uMetalness * 0.30);
+    reflection *= keySpecular * 1.75 + fillSpecular * 0.62 + rimSpecular * 0.48;
+
+    float movingSheen = sin(uTime * 0.20) * 0.10;
+    float primarySoftbox = exp(-pow((normal.x + 0.34 + movingSheen) * 5.8, 2.0));
+    float secondarySoftbox = exp(-pow((normal.x - 0.70) * 10.0, 2.0));
+    vec3 sheenColor = mix(vec3(1.0), uAccentColor, 0.10);
 
     vec3 color = diffuse + reflection;
-    color += sheenColor * verticalSheen * (0.11 + uMetalness * 0.14);
-    color += mix(vec3(0.92, 0.98, 1.0), uAccentColor, 0.18) * fresnel * 0.32;
+    color += sheenColor * primarySoftbox * (0.13 + uMetalness * 0.22);
+    color += vec3(0.76, 0.92, 1.0) * secondarySoftbox * (0.05 + uMetalness * 0.12);
+    color += mix(vec3(0.92, 0.98, 1.0), uAccentColor, 0.16) * fresnel * (0.24 + uMetalness * 0.24);
 
-    float brushed = sin(vWorldPosition.y * 210.0 + vWorldPosition.x * 28.0) * 0.006 * uMetalness;
+    float brushed = sin(vWorldPosition.y * 230.0 + vWorldPosition.x * 31.0) * 0.0065 * uMetalness;
+    brushed += sin(vWorldPosition.y * 93.0 - vWorldPosition.z * 47.0) * 0.0035 * uMetalness;
     color += brushed;
 
-    color = color / (color + vec3(1.0));
+    color = color / (color + vec3(0.86));
     color = pow(color, vec3(1.0 / 2.2));
 
     gl_FragColor = vec4(color, 1.0);
@@ -188,10 +200,10 @@ function multiply(a: Mat4, b: Mat4): Mat4 {
   for (let column = 0; column < 4; column += 1) {
     for (let row = 0; row < 4; row += 1) {
       output[column * 4 + row] =
-        a[0 * 4 + row] * b[column * 4 + 0] +
-        a[1 * 4 + row] * b[column * 4 + 1] +
-        a[2 * 4 + row] * b[column * 4 + 2] +
-        a[3 * 4 + row] * b[column * 4 + 3];
+        a[row] * b[column * 4] +
+        a[4 + row] * b[column * 4 + 1] +
+        a[8 + row] * b[column * 4 + 2] +
+        a[12 + row] * b[column * 4 + 3];
     }
   }
   return output;
@@ -277,22 +289,10 @@ function lookAt(eye: Vec3, target: Vec3, up: Vec3): Mat4 {
   const y = cross(z, x);
 
   return new Float32Array([
-    x[0],
-    y[0],
-    z[0],
-    0,
-    x[1],
-    y[1],
-    z[1],
-    0,
-    x[2],
-    y[2],
-    z[2],
-    0,
-    -dot(x, eye),
-    -dot(y, eye),
-    -dot(z, eye),
-    1
+    x[0], y[0], z[0], 0,
+    x[1], y[1], z[1], 0,
+    x[2], y[2], z[2], 0,
+    -dot(x, eye), -dot(y, eye), -dot(z, eye), 1
   ]);
 }
 
@@ -326,27 +326,61 @@ function composeModel({
   );
 }
 
-function createCylinderSide(radius: number, height: number, segments: number): MeshData {
+function canRadius(progress: number, radius: number) {
+  let result = radius;
+
+  if (progress < 0.11) {
+    const local = progress / 0.11;
+    const eased = local * local * (3 - 2 * local);
+    result *= 0.925 + eased * 0.075;
+  }
+
+  if (progress > 0.82) {
+    const local = (progress - 0.82) / 0.18;
+    const eased = local * local * (3 - 2 * local);
+    result *= 1 - eased * 0.105;
+  }
+
+  return result;
+}
+
+function createProfiledCanSide(radius: number, height: number, radialSegments: number, heightSegments: number): MeshData {
   const positions: number[] = [];
   const normals: number[] = [];
   const uvs: number[] = [];
   const indices: number[] = [];
+  const sampleStep = 1 / heightSegments;
 
-  for (let index = 0; index <= segments; index += 1) {
-    const progress = index / segments;
-    const angle = progress * Math.PI * 2;
-    const cosine = Math.cos(angle);
-    const sine = Math.sin(angle);
+  for (let yIndex = 0; yIndex <= heightSegments; yIndex += 1) {
+    const yProgress = yIndex / heightSegments;
+    const y = -height / 2 + yProgress * height;
+    const profileRadius = canRadius(yProgress, radius);
+    const previousRadius = canRadius(Math.max(0, yProgress - sampleStep), radius);
+    const nextRadius = canRadius(Math.min(1, yProgress + sampleStep), radius);
+    const radialSlope = (nextRadius - previousRadius) / (Math.max(sampleStep * 2, 0.0001) * height);
 
-    positions.push(radius * cosine, -height / 2, radius * sine);
-    positions.push(radius * cosine, height / 2, radius * sine);
-    normals.push(cosine, 0, sine, cosine, 0, sine);
-    uvs.push(progress, 1, progress, 0);
+    for (let xIndex = 0; xIndex <= radialSegments; xIndex += 1) {
+      const xProgress = xIndex / radialSegments;
+      const angle = xProgress * Math.PI * 2;
+      const cosine = Math.cos(angle);
+      const sine = Math.sin(angle);
+      const normal = normalize([cosine, -radialSlope, sine]);
+
+      positions.push(profileRadius * cosine, y, profileRadius * sine);
+      normals.push(...normal);
+      uvs.push(xProgress, yProgress);
+    }
   }
 
-  for (let index = 0; index < segments; index += 1) {
-    const start = index * 2;
-    indices.push(start, start + 1, start + 2, start + 1, start + 3, start + 2);
+  const row = radialSegments + 1;
+  for (let yIndex = 0; yIndex < heightSegments; yIndex += 1) {
+    for (let xIndex = 0; xIndex < radialSegments; xIndex += 1) {
+      const a = yIndex * row + xIndex;
+      const b = a + row;
+      const c = b + 1;
+      const d = a + 1;
+      indices.push(a, b, d, b, c, d);
+    }
   }
 
   return {
@@ -474,6 +508,23 @@ function uploadMesh(gl: WebGLRenderingContext, mesh: MeshData): GpuMesh {
   return { position, normal, uv, index, count: mesh.indices.length };
 }
 
+function drawDiagonalBand(
+  context: CanvasRenderingContext2D,
+  color: string,
+  x: number,
+  y: number,
+  width: number,
+  alpha: number
+) {
+  context.save();
+  context.translate(x, y);
+  context.rotate(-0.34);
+  context.fillStyle = color;
+  context.globalAlpha = alpha;
+  context.fillRect(-width / 2, -1400, width, 2800);
+  context.restore();
+}
+
 function createLabelCanvas(flavor: PulseFlavor) {
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
@@ -483,72 +534,82 @@ function createLabelCanvas(flavor: PulseFlavor) {
 
   const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradient.addColorStop(0, flavor.secondary);
-  gradient.addColorStop(0.43, flavor.base);
+  gradient.addColorStop(0.24, flavor.base);
+  gradient.addColorStop(0.70, flavor.base);
   gradient.addColorStop(1, flavor.accent);
   context.fillStyle = gradient;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  const glow = context.createRadialGradient(250, 350, 20, 250, 350, 660);
-  glow.addColorStop(0, "rgba(255,255,255,.48)");
+  const glow = context.createRadialGradient(210, 250, 10, 210, 250, 720);
+  glow.addColorStop(0, "rgba(255,255,255,.72)");
+  glow.addColorStop(0.42, "rgba(255,255,255,.18)");
   glow.addColorStop(1, "rgba(255,255,255,0)");
   context.fillStyle = glow;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  context.save();
-  context.translate(770, 920);
-  context.rotate(-0.34);
-  context.fillStyle = flavor.accent;
-  context.globalAlpha = 0.9;
-  context.fillRect(-125, -1200, 250, 2400);
-  context.restore();
+  drawDiagonalBand(context, flavor.accent, 790, 980, 300, 0.98);
+  drawDiagonalBand(context, "#ffffff", 615, 1060, 84, 0.25);
+  drawDiagonalBand(context, flavor.secondary, 255, 1120, 150, 0.72);
 
   context.save();
-  context.translate(290, 1160);
-  context.rotate(-0.34);
-  context.fillStyle = flavor.secondary;
-  context.globalAlpha = 0.42;
-  context.fillRect(-52, -1200, 104, 2400);
+  context.globalAlpha = 0.22;
+  context.strokeStyle = flavor.ink;
+  context.lineWidth = 5;
+  for (let index = -4; index < 12; index += 1) {
+    context.beginPath();
+    context.moveTo(index * 118, 1500);
+    context.lineTo(index * 118 + 760, 2048);
+    context.stroke();
+  }
   context.restore();
 
-  context.globalAlpha = 1;
-  context.fillStyle = flavor.ink;
   context.textAlign = "center";
-  context.font = "900 182px Arial Black, Arial, sans-serif";
-  context.fillText("PULSE", 512, 690);
-  context.font = "900 214px Arial Black, Arial, sans-serif";
-  context.fillText("DRIP", 512, 875);
+  context.textBaseline = "alphabetic";
+  context.lineJoin = "round";
+  context.fillStyle = flavor.ink;
+  context.strokeStyle = flavor.ink === "#ffffff" ? "rgba(24,6,45,.38)" : "rgba(255,255,255,.28)";
+  context.lineWidth = 15;
 
-  context.font = "700 46px Arial, sans-serif";
-  context.letterSpacing = "9px";
-  context.fillText(flavor.name.toUpperCase(), 512, 1010);
+  context.font = "900 188px Arial Black, Arial, sans-serif";
+  context.strokeText("PULSE", 512, 620);
+  context.fillText("PULSE", 512, 620);
+  context.font = "900 226px Arial Black, Arial, sans-serif";
+  context.strokeText("DRIP", 512, 820);
+  context.fillText("DRIP", 512, 820);
 
   context.fillStyle = flavor.ink;
-  context.globalAlpha = 0.84;
-  context.font = "700 26px Arial, sans-serif";
-  context.fillText("CLEAN ENERGY • ZERO SUGAR", 512, 1110);
-  context.fillText("180MG CAFFEINE • ELECTROLYTES", 512, 1152);
+  context.globalAlpha = 0.96;
+  context.font = "900 43px Arial, sans-serif";
+  context.fillText(flavor.name.toUpperCase(), 512, 970);
+
+  context.globalAlpha = 0.82;
+  context.font = "700 27px Arial, sans-serif";
+  context.fillText("CLEAN ENERGY  /  ZERO SUGAR", 512, 1075);
+  context.fillText("180MG CAFFEINE  /  ELECTROLYTES", 512, 1120);
 
   context.globalAlpha = 1;
   context.strokeStyle = flavor.ink;
-  context.lineWidth = 4;
+  context.lineWidth = 5;
   context.beginPath();
-  context.arc(512, 1395, 118, 0, Math.PI * 2);
+  context.arc(512, 1390, 124, 0, Math.PI * 2);
   context.stroke();
-  context.font = "900 82px Arial Black, Arial, sans-serif";
-  context.fillText("180", 512, 1420);
-  context.font = "700 22px Arial, sans-serif";
-  context.fillText("MG CAFFEINE", 512, 1460);
+  context.font = "900 86px Arial Black, Arial, sans-serif";
+  context.fillText("180", 512, 1417);
+  context.font = "700 23px Arial, sans-serif";
+  context.fillText("MG CAFFEINE", 512, 1462);
 
+  context.font = "900 30px Arial, sans-serif";
+  context.fillText("FUEL THE MOMENT.", 512, 1705);
   context.font = "700 24px Arial, sans-serif";
-  context.fillText("12 FL OZ / 355 ML", 512, 1840);
+  context.fillText("12 FL OZ / 355 ML", 512, 1845);
 
-  for (let index = 0; index < 38; index += 1) {
-    const x = (index * 173) % canvas.width;
-    const y = 120 + ((index * 241) % 1640);
-    const size = 3 + (index % 4) * 2;
+  for (let index = 0; index < 54; index += 1) {
+    const x = (index * 173 + 43) % canvas.width;
+    const y = 100 + ((index * 241) % 1770);
+    const size = 2.5 + (index % 5) * 1.5;
     context.beginPath();
-    context.fillStyle = index % 2 === 0 ? flavor.ink : "rgba(255,255,255,.6)";
-    context.globalAlpha = 0.24 + (index % 3) * 0.11;
+    context.fillStyle = index % 2 === 0 ? flavor.ink : "rgba(255,255,255,.8)";
+    context.globalAlpha = 0.18 + (index % 4) * 0.08;
     context.arc(x, y, size, 0, Math.PI * 2);
     context.fill();
   }
@@ -592,11 +653,27 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
       const program = createProgram(gl);
       gl.useProgram(program);
 
-      const sideMesh = uploadMesh(gl, createCylinderSide(1.12, 3.78, 128));
-      const discMesh = uploadMesh(gl, createDisc(1.03, 96, true));
-      const bottomDiscMesh = uploadMesh(gl, createDisc(1.03, 96, false));
-      const rimMesh = uploadMesh(gl, createTorus(1.04, 0.085, 96, 18));
-      const tabMesh = uploadMesh(gl, createTorus(0.36, 0.085, 64, 14));
+      const bodyMesh = uploadMesh(gl, createProfiledCanSide(1.12, 3.82, 144, 24));
+      const topDiscMesh = uploadMesh(gl, createDisc(0.96, 112, true));
+      const bottomDiscMesh = uploadMesh(gl, createDisc(0.96, 112, false));
+      const insetDiscMesh = uploadMesh(gl, createDisc(0.79, 96, true));
+      const rivetMesh = uploadMesh(gl, createDisc(0.095, 40, true));
+      const outerRimMesh = uploadMesh(gl, createTorus(1.015, 0.078, 112, 18));
+      const seamMesh = uploadMesh(gl, createTorus(0.985, 0.027, 96, 12));
+      const scoreRingMesh = uploadMesh(gl, createTorus(0.43, 0.022, 72, 12));
+      const tabMesh = uploadMesh(gl, createTorus(0.31, 0.072, 72, 14));
+
+      const meshes = [
+        bodyMesh,
+        topDiscMesh,
+        bottomDiscMesh,
+        insetDiscMesh,
+        rivetMesh,
+        outerRimMesh,
+        seamMesh,
+        scoreRingMesh,
+        tabMesh
+      ];
 
       const positionLocation = gl.getAttribLocation(program, "aPosition");
       const normalLocation = gl.getAttribLocation(program, "aNormal");
@@ -680,7 +757,7 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
 
       const resize = () => {
         const bounds = host.getBoundingClientRect();
-        const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.8);
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
         const width = Math.max(1, Math.round(bounds.width * pixelRatio));
         const height = Math.max(1, Math.round(bounds.height * pixelRatio));
         if (canvas.width !== width || canvas.height !== height) {
@@ -708,7 +785,7 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
       host.addEventListener("pointermove", handlePointerMove);
       host.addEventListener("pointerleave", handlePointerLeave);
 
-      const camera: Vec3 = [0, 0.2, 7.2];
+      const camera: Vec3 = [0, 0.26, 7.5];
       const start = performance.now();
 
       const render = (now: number) => {
@@ -725,7 +802,7 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
         pointerCurrent.y += (pointerTarget.y - pointerCurrent.y) * 0.055;
 
         const aspect = canvas.width / Math.max(canvas.height, 1);
-        const projection = perspective(Math.PI / 4.2, aspect, 0.1, 100);
+        const projection = perspective(Math.PI / 4.55, aspect, 0.1, 100);
         const view = lookAt(camera, [0, 0, 0], [0, 1, 0]);
         const viewProjection = multiply(projection, view);
 
@@ -739,17 +816,18 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
         const currentFlavor = flavorRef.current;
         const flavorBase = hexToVec3(currentFlavor.base);
         const flavorAccent = hexToVec3(currentFlavor.accent);
-        const silver: Vec3 = [0.64, 0.68, 0.72];
-        const darkMetal: Vec3 = [0.12, 0.14, 0.16];
-        const autoRotation = reducedMotion ? -0.34 : -0.34 + Math.sin(elapsed * 0.34) * 0.18 + elapsed * 0.08;
-        const floatY = reducedMotion ? 0 : Math.sin(elapsed * 1.05) * 0.10;
-        const baseRotationX = -0.16 + pointerCurrent.y * 0.09;
-        const baseRotationY = autoRotation + pointerCurrent.x * 0.18;
-        const baseRotationZ = -0.075 + pointerCurrent.x * 0.035;
-        const globalScale = aspect < 0.85 ? 0.86 : 1;
+        const brightSilver: Vec3 = [0.78, 0.82, 0.86];
+        const midSilver: Vec3 = [0.53, 0.57, 0.61];
+        const darkMetal: Vec3 = [0.105, 0.12, 0.135];
+        const autoRotation = reducedMotion ? -0.24 : -0.24 + Math.sin(elapsed * 0.31) * 0.12 + elapsed * 0.075;
+        const floatY = reducedMotion ? 0 : Math.sin(elapsed * 0.96) * 0.085;
+        const baseRotationX = -0.12 + pointerCurrent.y * 0.085;
+        const baseRotationY = autoRotation + pointerCurrent.x * 0.16;
+        const baseRotationZ = 0.055 + pointerCurrent.x * 0.025;
+        const globalScale = aspect < 0.85 ? 0.89 : 1.04;
 
         const baseTransform = composeModel({
-          y: floatY,
+          y: floatY + 0.03,
           rotateXValue: baseRotationX,
           rotateYValue: baseRotationY,
           rotateZValue: baseRotationZ,
@@ -759,30 +837,112 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
         });
 
         drawMesh({
-          mesh: sideMesh,
+          mesh: bodyMesh,
           model: baseTransform,
           useTexture: 1,
           baseColor: flavorBase,
           accentColor: flavorAccent,
-          metalness: 0.2,
-          roughness: 0.32
+          metalness: 0.14,
+          roughness: 0.27
         });
 
-        const topModel = multiply(baseTransform, translation(0, 1.89, 0));
-        const bottomModel = multiply(baseTransform, translation(0, -1.89, 0));
-        drawMesh({ mesh: discMesh, model: topModel, useTexture: 0, baseColor: silver, accentColor: flavorBase, metalness: 0.92, roughness: 0.22 });
-        drawMesh({ mesh: bottomDiscMesh, model: bottomModel, useTexture: 0, baseColor: silver, accentColor: flavorBase, metalness: 0.92, roughness: 0.28 });
+        const topY = 1.915;
+        const bottomY = -1.915;
+        drawMesh({
+          mesh: topDiscMesh,
+          model: multiply(baseTransform, translation(0, topY, 0)),
+          useTexture: 0,
+          baseColor: midSilver,
+          accentColor: flavorBase,
+          metalness: 0.96,
+          roughness: 0.18
+        });
+        drawMesh({
+          mesh: insetDiscMesh,
+          model: multiply(baseTransform, composeModel({ y: topY + 0.018, scaleX: 1, scaleY: 1, scaleZ: 0.94 })),
+          useTexture: 0,
+          baseColor: darkMetal,
+          accentColor: flavorBase,
+          metalness: 0.88,
+          roughness: 0.25
+        });
+        drawMesh({
+          mesh: bottomDiscMesh,
+          model: multiply(baseTransform, translation(0, bottomY, 0)),
+          useTexture: 0,
+          baseColor: midSilver,
+          accentColor: flavorBase,
+          metalness: 0.94,
+          roughness: 0.25
+        });
 
-        const topRimModel = multiply(baseTransform, translation(0, 1.89, 0));
-        const bottomRimModel = multiply(baseTransform, translation(0, -1.89, 0));
-        drawMesh({ mesh: rimMesh, model: topRimModel, useTexture: 0, baseColor: silver, accentColor: flavorBase, metalness: 1, roughness: 0.18 });
-        drawMesh({ mesh: rimMesh, model: bottomRimModel, useTexture: 0, baseColor: silver, accentColor: flavorBase, metalness: 1, roughness: 0.2 });
+        drawMesh({
+          mesh: outerRimMesh,
+          model: multiply(baseTransform, translation(0, topY + 0.022, 0)),
+          useTexture: 0,
+          baseColor: brightSilver,
+          accentColor: flavorBase,
+          metalness: 1,
+          roughness: 0.13
+        });
+        drawMesh({
+          mesh: outerRimMesh,
+          model: multiply(baseTransform, translation(0, bottomY - 0.005, 0)),
+          useTexture: 0,
+          baseColor: brightSilver,
+          accentColor: flavorBase,
+          metalness: 1,
+          roughness: 0.16
+        });
+        drawMesh({
+          mesh: seamMesh,
+          model: multiply(baseTransform, translation(0, 1.69, 0)),
+          useTexture: 0,
+          baseColor: brightSilver,
+          accentColor: flavorBase,
+          metalness: 0.94,
+          roughness: 0.18
+        });
+        drawMesh({
+          mesh: seamMesh,
+          model: multiply(baseTransform, translation(0, -1.70, 0)),
+          useTexture: 0,
+          baseColor: midSilver,
+          accentColor: flavorBase,
+          metalness: 0.92,
+          roughness: 0.20
+        });
 
-        const tabModel = multiply(
-          baseTransform,
-          composeModel({ x: 0.08, y: 1.97, z: 0.05, rotateYValue: 0.18, scaleX: 0.72, scaleY: 0.34, scaleZ: 0.42 })
-        );
-        drawMesh({ mesh: tabMesh, model: tabModel, useTexture: 0, baseColor: darkMetal, accentColor: flavorBase, metalness: 0.94, roughness: 0.2 });
+        drawMesh({
+          mesh: scoreRingMesh,
+          model: multiply(baseTransform, composeModel({ y: topY + 0.052, z: 0.035, scaleX: 1.14, scaleY: 0.72, scaleZ: 0.75 })),
+          useTexture: 0,
+          baseColor: midSilver,
+          accentColor: flavorBase,
+          metalness: 0.94,
+          roughness: 0.19
+        });
+        drawMesh({
+          mesh: tabMesh,
+          model: multiply(
+            baseTransform,
+            composeModel({ x: 0.10, y: topY + 0.092, z: 0.04, rotateYValue: -0.16, scaleX: 1.28, scaleY: 0.72, scaleZ: 0.56 })
+          ),
+          useTexture: 0,
+          baseColor: brightSilver,
+          accentColor: flavorBase,
+          metalness: 0.98,
+          roughness: 0.15
+        });
+        drawMesh({
+          mesh: rivetMesh,
+          model: multiply(baseTransform, composeModel({ x: -0.22, y: topY + 0.098, z: -0.02 })),
+          useTexture: 0,
+          baseColor: brightSilver,
+          accentColor: flavorBase,
+          metalness: 0.98,
+          roughness: 0.14
+        });
 
         animationFrame = requestAnimationFrame(render);
       };
@@ -797,7 +957,7 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
         host.removeEventListener("pointerleave", handlePointerLeave);
         gl.deleteProgram(program);
         gl.deleteTexture(texture);
-        [sideMesh, discMesh, bottomDiscMesh, rimMesh, tabMesh].forEach((mesh) => {
+        meshes.forEach((mesh) => {
           gl.deleteBuffer(mesh.position);
           gl.deleteBuffer(mesh.normal);
           gl.deleteBuffer(mesh.uv);
@@ -814,11 +974,27 @@ export function PulseCan3D({ flavor, className = "" }: { flavor: PulseFlavor; cl
     <div ref={hostRef} className={`pulse-can-stage relative h-full w-full ${className}`}>
       <div
         aria-hidden="true"
-        className="absolute left-1/2 top-1/2 h-[64%] w-[64%] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70 blur-[70px] transition-colors duration-700"
-        style={{ background: `radial-gradient(circle, ${flavor.glow}88 0%, ${flavor.glow}28 42%, transparent 72%)` }}
+        className="absolute left-1/2 top-[48%] h-[72%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-80 blur-[82px] transition-colors duration-700"
+        style={{ background: `radial-gradient(circle, ${flavor.glow}a8 0%, ${flavor.glow}38 38%, transparent 72%)` }}
       />
-      <canvas ref={canvasRef} className="relative z-10 block h-full w-full" aria-label={`Interactive 3D can of Pulse Drip ${flavor.name}`} />
-      <div aria-hidden="true" className="absolute bottom-[8%] left-1/2 h-[6%] w-[44%] -translate-x-1/2 rounded-full bg-black/55 blur-xl" />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-[8.5%] left-1/2 h-[9%] w-[50%] -translate-x-1/2 rounded-full blur-[18px]"
+        style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,.68) 0%, rgba(0,0,0,.38) 42%, transparent 76%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-[9.5%] left-1/2 h-[4%] w-[29%] -translate-x-1/2 rounded-full bg-black/70 blur-md"
+      />
+      <canvas
+        ref={canvasRef}
+        className="relative z-10 block h-full w-full drop-shadow-[0_34px_34px_rgba(0,0,0,.34)]"
+        aria-label={`Interactive 3D can of Pulse Drip ${flavor.name}`}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-[30%] top-[17%] z-20 h-[48%] rotate-[7deg] rounded-full bg-white/[0.045] blur-xl"
+      />
     </div>
   );
 }
