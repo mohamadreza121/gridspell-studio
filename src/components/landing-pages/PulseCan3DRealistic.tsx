@@ -70,7 +70,7 @@ const FRAGMENT_SHADER = `
 
   float specularTerm(vec3 normal, vec3 lightDirection, vec3 viewDirection, float roughness) {
     vec3 halfVector = normalize(lightDirection + viewDirection);
-    float power = mix(240.0, 22.0, roughness);
+    float power = mix(250.0, 22.0, roughness);
     return pow(saturateValue(dot(normal, halfVector)), power);
   }
 
@@ -78,9 +78,9 @@ const FRAGMENT_SHADER = `
     vec3 normal = normalize(vNormal);
     vec3 viewDirection = normalize(uCamera - vWorldPosition);
 
-    vec3 keyDirection = normalize(vec3(-0.50, 0.72, 0.62));
-    vec3 fillDirection = normalize(vec3(0.78, 0.12, 0.56));
-    vec3 rimDirection = normalize(vec3(-0.22, -0.18, 0.96));
+    vec3 keyDirection = normalize(vec3(-0.52, 0.74, 0.62));
+    vec3 fillDirection = normalize(vec3(0.80, 0.10, 0.55));
+    vec3 rimDirection = normalize(vec3(-0.20, -0.16, 0.97));
 
     float keyDiffuse = saturateValue(dot(normal, keyDirection));
     float fillDiffuse = saturateValue(dot(normal, fillDirection));
@@ -91,43 +91,47 @@ const FRAGMENT_SHADER = `
     float rimSpecular = specularTerm(normal, rimDirection, viewDirection, min(1.0, uRoughness + 0.04));
     float fresnel = pow(1.0 - saturateValue(dot(normal, viewDirection)), 4.0);
 
-    vec3 textureSrgb = texture2D(uTexture, vUv).rgb;
-    textureSrgb = saturateColor(textureSrgb, 1.34);
-    vec3 baseSrgb = saturateColor(uBaseColor, 1.12);
+    vec3 textureSrgb = saturateColor(texture2D(uTexture, vUv).rgb, 1.28);
+    vec3 baseSrgb = saturateColor(uBaseColor, 1.10);
     vec3 surfaceSrgb = mix(baseSrgb, textureSrgb, uUseTexture);
     vec3 surface = pow(surfaceSrgb, vec3(2.2));
 
-    float wrapLight = 0.36 + keyDiffuse * 0.48 + fillDiffuse * 0.13 + rimDiffuse * 0.04;
-    float metalLight = 0.10 + keyDiffuse * 0.42 + fillDiffuse * 0.13 + rimDiffuse * 0.06;
-    float diffuseLight = mix(metalLight, wrapLight, uUseTexture);
+    float printedLight = 0.42 + keyDiffuse * 0.42 + fillDiffuse * 0.11 + rimDiffuse * 0.035;
+    float metalLight = 0.10 + keyDiffuse * 0.44 + fillDiffuse * 0.13 + rimDiffuse * 0.06;
+    float diffuseLight = mix(metalLight, printedLight, uUseTexture);
 
-    float frontCurve = 0.76 + 0.24 * pow(saturateValue(normal.z * 0.5 + 0.5), 0.72);
-    float printEdge = smoothstep(0.0, 0.055, vUv.y) * smoothstep(0.0, 0.055, 1.0 - vUv.y);
-    vec3 diffuse = surface * diffuseLight * mix(1.0, frontCurve * mix(0.86, 1.0, printEdge), uUseTexture);
+    float cylinderDepth = 0.77 + 0.23 * pow(saturateValue(normal.z * 0.5 + 0.5), 0.72);
+    float labelEdge = smoothstep(0.0, 0.05, vUv.y) * smoothstep(0.0, 0.05, 1.0 - vUv.y);
+    vec3 diffuse = surface * diffuseLight * mix(1.0, cylinderDepth * mix(0.88, 1.0, labelEdge), uUseTexture);
 
-    vec3 specularColor = mix(vec3(0.96, 0.98, 1.0), surface, uMetalness * 0.26);
-    float specularStrength = mix(0.18, 1.0, uMetalness);
-    vec3 specular = specularColor * (keySpecular * 1.35 + fillSpecular * 0.38 + rimSpecular * 0.42) * specularStrength;
+    vec3 specularColor = mix(vec3(0.96, 0.98, 1.0), surface, uMetalness * 0.25);
+    float specularStrength = mix(0.14, 1.0, uMetalness);
+    vec3 specular = specularColor
+      * (keySpecular * 1.42 + fillSpecular * 0.38 + rimSpecular * 0.44)
+      * specularStrength;
 
-    float movingSheen = sin(uTime * 0.18) * 0.055;
-    float mainSoftbox = exp(-pow((normal.x + 0.42 + movingSheen) * 7.2, 2.0));
-    float edgeSoftbox = exp(-pow((normal.x - 0.73) * 12.0, 2.0));
-    float printSheen = mix(0.26, 0.075, uUseTexture);
+    float movingSheen = sin(uTime * 0.16) * 0.045;
+    float mainSoftbox = exp(-pow((normal.x + 0.43 + movingSheen) * 7.6, 2.0));
+    float edgeSoftbox = exp(-pow((normal.x - 0.74) * 12.0, 2.0));
 
     vec3 color = diffuse + specular;
-    color += vec3(1.0) * mainSoftbox * printSheen;
-    color += mix(vec3(0.74, 0.90, 1.0), uAccentColor, 0.12) * edgeSoftbox * mix(0.13, 0.045, uUseTexture);
-    color += mix(vec3(0.86, 0.95, 1.0), uAccentColor, 0.12) * fresnel * mix(0.27, 0.075, uUseTexture);
+    color += vec3(1.0) * mainSoftbox * mix(0.24, 0.055, uUseTexture);
+    color += mix(vec3(0.76, 0.91, 1.0), uAccentColor, 0.10)
+      * edgeSoftbox
+      * mix(0.13, 0.035, uUseTexture);
+    color += mix(vec3(0.88, 0.96, 1.0), uAccentColor, 0.10)
+      * fresnel
+      * mix(0.28, 0.055, uUseTexture);
 
     float brushed = sin(vWorldPosition.y * 250.0 + vWorldPosition.x * 37.0) * 0.006 * uMetalness;
     brushed += sin(vWorldPosition.y * 104.0 - vWorldPosition.z * 53.0) * 0.003 * uMetalness;
     color += brushed;
 
-    // Preserve printed ink density instead of tone-mapping it like bare aluminum.
-    vec3 printAnchor = surface * (0.24 + keyDiffuse * 0.10);
-    color = mix(color, max(color, printAnchor), uUseTexture * 0.74);
+    // Printed ink keeps its density while the exposed lid remains reflective metal.
+    vec3 printAnchor = surface * (0.31 + keyDiffuse * 0.08);
+    color = mix(color, max(color, printAnchor), uUseTexture * 0.82);
 
-    color = color / (vec3(1.0) + color * mix(0.46, 0.20, uUseTexture));
+    color = color / (vec3(1.0) + color * mix(0.46, 0.16, uUseTexture));
     color = pow(max(color, vec3(0.0)), vec3(1.0 / 2.2));
 
     gl_FragColor = vec4(color, 1.0);
@@ -213,7 +217,11 @@ function subtract(a: Vec3, b: Vec3): Vec3 {
 }
 
 function cross(a: Vec3, b: Vec3): Vec3 {
-  return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  return [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0]
+  ];
 }
 
 function dot(a: Vec3, b: Vec3) {
@@ -255,7 +263,10 @@ function composeModel({
 }): Mat4 {
   return multiply(
     translation(x, y, z),
-    multiply(rotationZ(rotateZValue), multiply(rotationY(rotateYValue), multiply(rotationX(rotateXValue), scaling(scaleX, scaleY, scaleZ))))
+    multiply(
+      rotationZ(rotateZValue),
+      multiply(rotationY(rotateYValue), multiply(rotationX(rotateXValue), scaling(scaleX, scaleY, scaleZ)))
+    )
   );
 }
 
@@ -265,21 +276,23 @@ function smoothStep(progress: number) {
 
 function canRadius(progress: number, radius: number) {
   let result = radius;
-
   if (progress < 0.065) {
     const local = smoothStep(progress / 0.065);
     result *= 0.968 + local * 0.032;
   }
-
   if (progress > 0.895) {
     const local = smoothStep((progress - 0.895) / 0.105);
     result *= 1 - local * 0.068;
   }
-
   return result;
 }
 
-function createProfiledCanSide(radius: number, height: number, radialSegments: number, heightSegments: number): MeshData {
+function createProfiledCanSide(
+  radius: number,
+  height: number,
+  radialSegments: number,
+  heightSegments: number
+): MeshData {
   const positions: number[] = [];
   const normals: number[] = [];
   const uvs: number[] = [];
@@ -303,7 +316,7 @@ function createProfiledCanSide(radius: number, height: number, radialSegments: n
 
       positions.push(profileRadius * cosine, y, profileRadius * sine);
       normals.push(...normal);
-      // Reverse U so the printed face is readable from outside the cylinder.
+      // Front artwork is centered at U=.75 and back copy at U=.25.
       uvs.push(1 - progress, yProgress);
     }
   }
@@ -355,7 +368,12 @@ function createDisc(radius: number, segments: number, upward: boolean): MeshData
   };
 }
 
-function createTorus(majorRadius: number, minorRadius: number, majorSegments: number, minorSegments: number): MeshData {
+function createTorus(
+  majorRadius: number,
+  minorRadius: number,
+  majorSegments: number,
+  minorSegments: number
+): MeshData {
   const positions: number[] = [];
   const normals: number[] = [];
   const uvs: number[] = [];
@@ -441,98 +459,279 @@ function uploadMesh(gl: WebGLRenderingContext, mesh: MeshData): GpuMesh {
   return { position, normal, uv, index, count: mesh.indices.length };
 }
 
-function drawBand(context: CanvasRenderingContext2D, color: string, x: number, width: number, alpha: number) {
+function roundedRect(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  const r = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + r, y);
+  context.lineTo(x + width - r, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + r);
+  context.lineTo(x + width, y + height - r);
+  context.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  context.lineTo(x + r, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - r);
+  context.lineTo(x, y + r);
+  context.quadraticCurveTo(x, y, x + r, y);
+  context.closePath();
+}
+
+function drawBand(
+  context: CanvasRenderingContext2D,
+  color: string,
+  x: number,
+  width: number,
+  alpha: number
+) {
   context.save();
   context.translate(x, 1024);
   context.rotate(-0.28);
   context.globalAlpha = alpha;
   context.fillStyle = color;
-  context.fillRect(-width / 2, -1500, width, 3000);
+  context.fillRect(-width / 2, -1700, width, 3400);
   context.restore();
+}
+
+function drawLines(
+  context: CanvasRenderingContext2D,
+  lines: string[],
+  x: number,
+  y: number,
+  lineHeight: number
+) {
+  lines.forEach((line, index) => context.fillText(line, x, y + index * lineHeight));
+}
+
+function drawBarcode(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  color: string
+) {
+  const pattern = [3, 1, 2, 1, 4, 2, 1, 3, 1, 1, 2, 4, 1, 2, 3, 1, 4, 1, 2, 2, 1, 3, 2, 1, 4, 2, 1, 2, 3, 1, 1, 4, 2, 1];
+  const total = pattern.reduce((sum, value) => sum + value, 0);
+  let cursor = x;
+  context.fillStyle = color;
+  pattern.forEach((value, index) => {
+    const barWidth = (value / total) * width;
+    if (index % 2 === 0) context.fillRect(cursor, y, Math.max(2, barWidth), height);
+    cursor += barWidth;
+  });
 }
 
 function createLabelCanvas(flavor: PulseFlavor) {
   const canvas = document.createElement("canvas");
-  canvas.width = 1024;
+  canvas.width = 2048;
   canvas.height = 2048;
   const context = canvas.getContext("2d");
   if (!context) return canvas;
 
-  const gradient = context.createLinearGradient(0, 0, 920, 2048);
-  gradient.addColorStop(0, flavor.secondary);
-  gradient.addColorStop(0.24, flavor.base);
-  gradient.addColorStop(0.68, flavor.base);
+  const frontX = 1536;
+  const backX = 512;
+
+  const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, flavor.accent);
+  gradient.addColorStop(0.18, flavor.base);
+  gradient.addColorStop(0.52, flavor.secondary);
+  gradient.addColorStop(0.78, flavor.base);
   gradient.addColorStop(1, flavor.accent);
   context.fillStyle = gradient;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  const topGlow = context.createRadialGradient(180, 190, 20, 180, 190, 680);
-  topGlow.addColorStop(0, "rgba(255,255,255,.34)");
-  topGlow.addColorStop(0.48, "rgba(255,255,255,.08)");
-  topGlow.addColorStop(1, "rgba(255,255,255,0)");
-  context.fillStyle = topGlow;
+  const glow = context.createRadialGradient(frontX - 260, 210, 20, frontX - 260, 210, 760);
+  glow.addColorStop(0, "rgba(255,255,255,.34)");
+  glow.addColorStop(0.48, "rgba(255,255,255,.07)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  context.fillStyle = glow;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawBand(context, flavor.accent, 790, 280, 0.98);
-  drawBand(context, "#ffffff", 632, 62, 0.16);
-  drawBand(context, flavor.secondary, 230, 128, 0.66);
+  drawBand(context, flavor.accent, frontX + 290, 360, 0.98);
+  drawBand(context, "#ffffff", frontX + 90, 74, 0.15);
+  drawBand(context, flavor.secondary, frontX - 310, 164, 0.70);
+  drawBand(context, flavor.accent, backX - 300, 250, 0.42);
 
   context.save();
   context.strokeStyle = flavor.ink;
-  context.globalAlpha = 0.14;
+  context.globalAlpha = 0.12;
   context.lineWidth = 4;
-  for (let index = -6; index < 14; index += 1) {
+  for (let index = -8; index < 26; index += 1) {
     context.beginPath();
-    context.moveTo(index * 98, 1510);
-    context.lineTo(index * 98 + 720, 2048);
+    context.moveTo(index * 102, 1510);
+    context.lineTo(index * 102 + 740, 2048);
     context.stroke();
   }
   context.restore();
 
+  // Front face.
   context.textAlign = "center";
   context.textBaseline = "alphabetic";
   context.lineJoin = "round";
   context.fillStyle = flavor.ink;
-  context.strokeStyle = flavor.ink === "#ffffff" ? "rgba(20,5,38,.32)" : "rgba(255,255,255,.20)";
-  context.lineWidth = 10;
+  context.strokeStyle = flavor.ink === "#ffffff" ? "rgba(20,5,38,.34)" : "rgba(255,255,255,.22)";
+  context.lineWidth = 11;
 
   context.font = "900 174px Arial Black, Arial, sans-serif";
-  context.strokeText("PULSE", 512, 610);
-  context.fillText("PULSE", 512, 610);
+  context.strokeText("PULSE", frontX, 610);
+  context.fillText("PULSE", frontX, 610);
   context.font = "900 214px Arial Black, Arial, sans-serif";
-  context.strokeText("DRIP", 512, 802);
-  context.fillText("DRIP", 512, 802);
+  context.strokeText("DRIP", frontX, 802);
+  context.fillText("DRIP", frontX, 802);
 
   context.globalAlpha = 0.96;
-  context.font = "900 41px Arial, sans-serif";
-  context.fillText(flavor.name.toUpperCase(), 512, 948);
+  context.font = "900 42px Arial, sans-serif";
+  context.fillText(flavor.name.toUpperCase(), frontX, 950);
 
   context.globalAlpha = 0.86;
   context.font = "700 25px Arial, sans-serif";
-  context.fillText("CLEAN ENERGY  /  ZERO SUGAR", 512, 1055);
-  context.fillText("180MG CAFFEINE  /  ELECTROLYTES", 512, 1099);
+  context.fillText("CLEAN ENERGY  /  ZERO SUGAR", frontX, 1055);
+  context.fillText("180MG CAFFEINE  /  ELECTROLYTES", frontX, 1099);
 
   context.globalAlpha = 1;
   context.lineWidth = 5;
   context.strokeStyle = flavor.ink;
   context.beginPath();
-  context.arc(512, 1375, 116, 0, Math.PI * 2);
+  context.arc(frontX, 1375, 116, 0, Math.PI * 2);
   context.stroke();
   context.font = "900 82px Arial Black, Arial, sans-serif";
-  context.fillText("180", 512, 1400);
+  context.fillText("180", frontX, 1400);
   context.font = "700 22px Arial, sans-serif";
-  context.fillText("MG CAFFEINE", 512, 1443);
-
+  context.fillText("MG CAFFEINE", frontX, 1443);
   context.font = "900 29px Arial, sans-serif";
-  context.fillText("FUEL THE MOMENT.", 512, 1710);
+  context.fillText("FUEL THE MOMENT.", frontX, 1710);
   context.font = "700 23px Arial, sans-serif";
-  context.fillText("12 FL OZ / 355 ML", 512, 1840);
+  context.fillText("12 FL OZ / 355 ML", frontX, 1840);
 
-  context.globalAlpha = 1;
+  // Back face: realistic packaging copy and utility information.
+  const lightInk = flavor.ink === "#ffffff";
+  const panelFill = lightInk ? "rgba(16,8,28,.72)" : "rgba(255,255,255,.72)";
+  const panelBorder = lightInk ? "rgba(255,255,255,.34)" : "rgba(10,16,12,.28)";
+  const panelText = lightInk ? "#ffffff" : "#10150b";
+  const panelX = backX - 350;
+  const panelY = 205;
+  const panelWidth = 700;
+  const panelHeight = 1640;
+
+  context.save();
+  roundedRect(context, panelX, panelY, panelWidth, panelHeight, 34);
+  context.fillStyle = panelFill;
+  context.fill();
+  context.strokeStyle = panelBorder;
+  context.lineWidth = 4;
+  context.stroke();
+
+  context.fillStyle = panelText;
+  context.strokeStyle = panelText;
+  context.textAlign = "left";
+  context.textBaseline = "top";
+
+  context.font = "900 34px Arial Black, Arial, sans-serif";
+  context.fillText("PULSE DRIP", panelX + 46, panelY + 42);
+  context.font = "700 18px Arial, sans-serif";
+  context.fillText(`${flavor.name.toUpperCase()} / CLEAN ENERGY SYSTEM`, panelX + 46, panelY + 92);
+
+  context.lineWidth = 3;
+  context.beginPath();
+  context.moveTo(panelX + 46, panelY + 132);
+  context.lineTo(panelX + panelWidth - 46, panelY + 132);
+  context.stroke();
+
+  context.font = "900 25px Arial Black, Arial, sans-serif";
+  context.fillText("SUPPLEMENT FACTS", panelX + 46, panelY + 168);
+  context.font = "700 18px Arial, sans-serif";
+  drawLines(context, [
+    "Serving size                         1 can (355 mL)",
+    "Calories                                            15",
+    "Total carbohydrate                              3 g",
+    "Total sugar                                        0 g",
+    "Vitamin B6                              2.0 mg 118%",
+    "Vitamin B12                              6 mcg 250%",
+    "Caffeine                                        180 mg",
+    "Electrolyte blend                              220 mg"
+  ], panelX + 46, panelY + 214, 36);
+
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(panelX + 46, panelY + 520);
+  context.lineTo(panelX + panelWidth - 46, panelY + 520);
+  context.stroke();
+
+  context.font = "900 22px Arial Black, Arial, sans-serif";
+  context.fillText("INGREDIENTS", panelX + 46, panelY + 555);
+  context.font = "700 17px Arial, sans-serif";
+  drawLines(context, [
+    "Carbonated water, natural flavors, citric acid,",
+    "potassium citrate, magnesium lactate, caffeine,",
+    "L-theanine, vitamins B6 and B12, sucralose.",
+    "",
+    "Contains 180 mg caffeine per can."
+  ], panelX + 46, panelY + 596, 29);
+
+  context.font = "900 22px Arial Black, Arial, sans-serif";
+  context.fillText("CAUTION", panelX + 46, panelY + 790);
+  context.font = "700 17px Arial, sans-serif";
+  drawLines(context, [
+    "Not recommended for children, people who are",
+    "pregnant or nursing, or anyone sensitive to caffeine.",
+    "Do not mix with alcohol. Consume responsibly."
+  ], panelX + 46, panelY + 832, 29);
+
+  context.font = "900 20px Arial Black, Arial, sans-serif";
+  context.fillText("BEST SERVED ICE COLD", panelX + 46, panelY + 965);
+  context.font = "700 17px Arial, sans-serif";
+  drawLines(context, [
+    "Crafted for long sessions and louder moments.",
+    "pulsedrip.com  /  @pulsedripenergy"
+  ], panelX + 46, panelY + 1005, 29);
+
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(panelX + 46, panelY + 1090);
+  context.lineTo(panelX + panelWidth - 46, panelY + 1090);
+  context.stroke();
+
+  // Recycle mark.
+  context.font = "900 42px Arial Black, Arial, sans-serif";
+  context.fillText("♻", panelX + 46, panelY + 1140);
+  context.font = "900 18px Arial, sans-serif";
+  context.fillText("PLEASE RECYCLE", panelX + 104, panelY + 1154);
+
+  drawBarcode(context, panelX + 46, panelY + 1235, 350, 145, panelText);
+  context.font = "700 15px Arial, sans-serif";
+  context.fillText("0 12345 67890 1", panelX + 46, panelY + 1390);
+
+  context.textAlign = "right";
+  context.font = "900 18px Arial, sans-serif";
+  context.fillText("12 FL OZ / 355 ML", panelX + panelWidth - 46, panelY + 1240);
+  context.font = "700 15px Arial, sans-serif";
+  drawLines(context, [
+    "DISTRIBUTED BY",
+    "PULSE DRIP LABS",
+    "TORONTO, CANADA",
+    "LOT PD-2401"
+  ], panelX + panelWidth - 46, panelY + 1282, 25);
+
+  context.textAlign = "center";
+  context.font = "700 14px Arial, sans-serif";
+  context.fillText("DEMO PRODUCT CONCEPT — NOT FOR RESALE", backX, panelY + panelHeight - 42);
+  context.restore();
+
   return canvas;
 }
 
-export function PulseCan3DRealistic({ flavor, className = "" }: { flavor: PulseFlavor; className?: string }) {
+export function PulseCan3DRealistic({
+  flavor,
+  className = ""
+}: {
+  flavor: PulseFlavor;
+  className?: string;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const flavorRef = useRef(flavor);
@@ -579,7 +778,19 @@ export function PulseCan3DRealistic({ flavor, className = "" }: { flavor: PulseF
       const tabMesh = uploadMesh(gl, createTorus(0.255, 0.047, 80, 12));
       const openingMesh = uploadMesh(gl, createTorus(0.285, 0.018, 80, 10));
 
-      const meshes = [bodyMesh, topDiscMesh, bottomDiscMesh, insetDiscMesh, rivetMesh, outerRimMesh, lowerRimMesh, seamMesh, scoreRingMesh, tabMesh, openingMesh];
+      const meshes = [
+        bodyMesh,
+        topDiscMesh,
+        bottomDiscMesh,
+        insetDiscMesh,
+        rivetMesh,
+        outerRimMesh,
+        lowerRimMesh,
+        seamMesh,
+        scoreRingMesh,
+        tabMesh,
+        openingMesh
+      ];
 
       const positionLocation = gl.getAttribLocation(program, "aPosition");
       const normalLocation = gl.getAttribLocation(program, "aNormal");
@@ -658,7 +869,14 @@ export function PulseCan3DRealistic({ flavor, className = "" }: { flavor: PulseF
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createLabelCanvas(currentFlavor));
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          createLabelCanvas(currentFlavor)
+        );
         gl.generateMipmap(gl.TEXTURE_2D);
       };
 
@@ -728,12 +946,14 @@ export function PulseCan3DRealistic({ flavor, className = "" }: { flavor: PulseF
         const insetSilver: Vec3 = [0.29, 0.32, 0.35];
         const darkMetal: Vec3 = [0.08, 0.095, 0.11];
 
-        const photoRotation = Math.PI / 2;
-        const idleTurn = reducedMotion ? 0 : Math.sin(elapsed * 0.31) * 0.12;
+        // One complete revolution takes roughly 36 seconds.
+        const autoSpin = reducedMotion ? 0 : elapsed * (Math.PI * 2 / 36);
         const floatY = reducedMotion ? 0 : Math.sin(elapsed * 0.88) * 0.055;
-        const baseRotationX = -0.055 + pointerCurrent.y * 0.055;
-        const baseRotationY = photoRotation + idleTurn + pointerCurrent.x * 0.105;
-        const baseRotationZ = -0.035 + pointerCurrent.x * 0.018;
+        const idleTiltX = reducedMotion ? -0.055 : -0.055 + Math.sin(elapsed * 0.62) * 0.008;
+        const idleTiltZ = reducedMotion ? -0.028 : -0.028 + Math.sin(elapsed * 0.48) * 0.006;
+        const baseRotationX = idleTiltX + pointerCurrent.y * 0.050;
+        const baseRotationY = autoSpin + pointerCurrent.x * 0.095;
+        const baseRotationZ = idleTiltZ + pointerCurrent.x * 0.014;
         const globalScale = aspect < 0.85 ? 0.78 : 0.90;
 
         const baseTransform = composeModel({
@@ -752,8 +972,8 @@ export function PulseCan3DRealistic({ flavor, className = "" }: { flavor: PulseF
           useTexture: 1,
           baseColor: flavorBase,
           accentColor: flavorAccent,
-          metalness: 0.035,
-          roughness: 0.42
+          metalness: 0.03,
+          roughness: 0.44
         });
 
         const topY = 2.59;
@@ -811,7 +1031,7 @@ export function PulseCan3DRealistic({ flavor, className = "" }: { flavor: PulseF
       <canvas
         ref={canvasRef}
         className="relative z-10 block h-full w-full drop-shadow-[0_34px_30px_rgba(0,0,0,.32)]"
-        aria-label={`Realistic interactive 3D can of Pulse Drip ${flavor.name}`}
+        aria-label={`Realistic rotating 3D can of Pulse Drip ${flavor.name}`}
       />
     </div>
   );
