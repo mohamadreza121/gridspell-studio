@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { EventLaunchExperience } from "@/components/landing-pages/EventLaunchExperience";
+import { EventLaunchExperienceV2 } from "@/components/landing-pages/EventLaunchExperienceV2";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -11,5 +11,5 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function EventLaunchDemoPage() {
-  return <EventLaunchExperience />;
+  return <EventLaunchExperienceV2 />;
 }
