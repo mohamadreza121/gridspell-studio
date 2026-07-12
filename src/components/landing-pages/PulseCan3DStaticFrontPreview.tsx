@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import type { PulseFlavor } from "@/components/landing-pages/PulseCan3D";
+import type { PulseFlavor } from "@/components/landing-pages/PulseFlavorData";
 
 type Vec3 = [number, number, number];
 type Mat4 = Float32Array;

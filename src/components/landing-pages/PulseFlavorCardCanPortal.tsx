@@ -1,10 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { pulseFlavors } from "@/components/landing-pages/PulseCan3D";
-import { PulseCan3DStaticFrontPreview } from "@/components/landing-pages/PulseCan3DStaticFrontPreview";
+import { pulseFlavors } from "@/components/landing-pages/PulseFlavorData";
+
+const PulseCan3DStaticFrontPreview = dynamic(
+  () => import("@/components/landing-pages/PulseCan3DStaticFrontPreview").then((module) => module.PulseCan3DStaticFrontPreview),
+  { ssr: false }
+);
 
 export function PulseFlavorCardCanPortal() {
   const [targets, setTargets] = useState<HTMLElement[]>([]);
@@ -12,6 +17,10 @@ export function PulseFlavorCardCanPortal() {
   useEffect(() => {
     let frame = 0;
     let attachedTargets: HTMLElement[] = [];
+    const desktopQuery = window.matchMedia("(min-width: 768px) and (pointer: fine)");
+    const flavorSection = document.querySelector<HTMLElement>("#flavors");
+
+    if (!desktopQuery.matches || !flavorSection) return;
 
     const findTargets = () => {
       const cards = Array.from(document.querySelectorAll<HTMLElement>("#flavors article"));
@@ -30,9 +39,18 @@ export function PulseFlavorCardCanPortal() {
       frame = requestAnimationFrame(findTargets);
     };
 
-    findTargets();
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        visibilityObserver.disconnect();
+        frame = requestAnimationFrame(findTargets);
+      },
+      { rootMargin: "700px 0px" }
+    );
+    visibilityObserver.observe(flavorSection);
 
     return () => {
+      visibilityObserver.disconnect();
       cancelAnimationFrame(frame);
       attachedTargets.forEach((target) => target.classList.remove("pulse-static-can-host"));
     };

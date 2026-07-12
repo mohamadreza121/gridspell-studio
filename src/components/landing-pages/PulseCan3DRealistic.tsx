@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import type { PulseFlavor } from "@/components/landing-pages/PulseCan3D";
+import type { PulseFlavor } from "@/components/landing-pages/PulseFlavorData";
 
 type Vec3 = [number, number, number];
 type Mat4 = Float32Array;
@@ -526,31 +526,34 @@ function drawBarcode(
   });
 }
 
-function createLabelCanvas(flavor: PulseFlavor) {
+function createLabelCanvas(flavor: PulseFlavor, textureSize = 2048) {
   const canvas = document.createElement("canvas");
-  canvas.width = 2048;
-  canvas.height = 2048;
+  canvas.width = textureSize;
+  canvas.height = textureSize;
   const context = canvas.getContext("2d");
   if (!context) return canvas;
+
+  const designSize = 2048;
+  context.scale(textureSize / designSize, textureSize / designSize);
 
   const frontX = 1536;
   const backX = 512;
 
-  const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+  const gradient = context.createLinearGradient(0, 0, designSize, designSize);
   gradient.addColorStop(0, flavor.accent);
   gradient.addColorStop(0.18, flavor.base);
   gradient.addColorStop(0.52, flavor.secondary);
   gradient.addColorStop(0.78, flavor.base);
   gradient.addColorStop(1, flavor.accent);
   context.fillStyle = gradient;
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, designSize, designSize);
 
   const glow = context.createRadialGradient(frontX - 260, 210, 20, frontX - 260, 210, 760);
   glow.addColorStop(0, "rgba(255,255,255,.34)");
   glow.addColorStop(0.48, "rgba(255,255,255,.07)");
   glow.addColorStop(1, "rgba(255,255,255,0)");
   context.fillStyle = glow;
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, designSize, designSize);
 
   drawBand(context, flavor.accent, frontX + 290, 360, 0.98);
   drawBand(context, "#ffffff", frontX + 90, 74, 0.15);
@@ -736,10 +739,12 @@ export function PulseCan3DRealistic({
   const hostRef = useRef<HTMLDivElement>(null);
   const flavorRef = useRef(flavor);
   const flavorVersionRef = useRef(0);
+  const requestRenderRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     flavorRef.current = flavor;
     flavorVersionRef.current += 1;
+    requestRenderRef.current?.();
   }, [flavor]);
 
   useEffect(() => {
@@ -768,17 +773,22 @@ export function PulseCan3DRealistic({
       const program = createProgram(gl);
       gl.useProgram(program);
 
-      const bodyMesh = uploadMesh(gl, createProfiledCanSide(0.96, 5.16, 160, 32));
-      const topDiscMesh = uploadMesh(gl, createDisc(0.895, 120, true));
-      const bottomDiscMesh = uploadMesh(gl, createDisc(0.91, 120, false));
-      const insetDiscMesh = uploadMesh(gl, createDisc(0.75, 104, true));
-      const rivetMesh = uploadMesh(gl, createDisc(0.074, 40, true));
-      const outerRimMesh = uploadMesh(gl, createTorus(0.90, 0.037, 120, 16));
-      const lowerRimMesh = uploadMesh(gl, createTorus(0.92, 0.035, 120, 16));
-      const seamMesh = uploadMesh(gl, createTorus(0.925, 0.014, 112, 10));
-      const scoreRingMesh = uploadMesh(gl, createTorus(0.34, 0.014, 80, 10));
-      const tabMesh = uploadMesh(gl, createTorus(0.255, 0.047, 80, 12));
-      const openingMesh = uploadMesh(gl, createTorus(0.285, 0.018, 80, 10));
+      const radialSegments = staticMobile ? 80 : 160;
+      const heightSegments = staticMobile ? 16 : 32;
+      const discSegments = staticMobile ? 64 : 120;
+      const torusSegments = staticMobile ? 64 : 120;
+      const torusTubeSegments = staticMobile ? 8 : 16;
+      const bodyMesh = uploadMesh(gl, createProfiledCanSide(0.96, 5.16, radialSegments, heightSegments));
+      const topDiscMesh = uploadMesh(gl, createDisc(0.895, discSegments, true));
+      const bottomDiscMesh = uploadMesh(gl, createDisc(0.91, discSegments, false));
+      const insetDiscMesh = uploadMesh(gl, createDisc(0.75, staticMobile ? 56 : 104, true));
+      const rivetMesh = uploadMesh(gl, createDisc(0.074, staticMobile ? 24 : 40, true));
+      const outerRimMesh = uploadMesh(gl, createTorus(0.90, 0.037, torusSegments, torusTubeSegments));
+      const lowerRimMesh = uploadMesh(gl, createTorus(0.92, 0.035, torusSegments, torusTubeSegments));
+      const seamMesh = uploadMesh(gl, createTorus(0.925, 0.014, staticMobile ? 56 : 112, staticMobile ? 6 : 10));
+      const scoreRingMesh = uploadMesh(gl, createTorus(0.34, 0.014, staticMobile ? 48 : 80, staticMobile ? 6 : 10));
+      const tabMesh = uploadMesh(gl, createTorus(0.255, 0.047, staticMobile ? 48 : 80, staticMobile ? 8 : 12));
+      const openingMesh = uploadMesh(gl, createTorus(0.285, 0.018, staticMobile ? 48 : 80, staticMobile ? 6 : 10));
 
       const meshes = [
         bodyMesh,
@@ -877,14 +887,14 @@ export function PulseCan3DRealistic({
           gl.RGBA,
           gl.RGBA,
           gl.UNSIGNED_BYTE,
-          createLabelCanvas(currentFlavor)
+          createLabelCanvas(currentFlavor, staticMobile ? 1024 : 2048)
         );
         gl.generateMipmap(gl.TEXTURE_2D);
       };
 
       const resize = () => {
         const bounds = host.getBoundingClientRect();
-        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, staticMobile ? 1.25 : 2);
         const width = Math.max(1, Math.round(bounds.width * pixelRatio));
         const height = Math.max(1, Math.round(bounds.height * pixelRatio));
         if (canvas.width !== width || canvas.height !== height) {
@@ -896,7 +906,10 @@ export function PulseCan3DRealistic({
         gl.viewport(0, 0, width, height);
       };
 
-      const observer = new ResizeObserver(resize);
+      const observer = new ResizeObserver(() => {
+        resize();
+        if (!animateMotion) requestRenderRef.current?.();
+      });
       observer.observe(host);
       resize();
 
@@ -997,13 +1010,19 @@ export function PulseCan3DRealistic({
         drawMesh({ mesh: tabMesh, model: multiply(baseTransform, composeModel({ x: -0.06, y: topY + 0.083, z: -0.02, rotateYValue: -0.18, scaleX: 1.30, scaleY: 0.72, scaleZ: 0.54 })), useTexture: 0, baseColor: brightSilver, accentColor: flavorBase, metalness: 0.99, roughness: 0.15 });
         drawMesh({ mesh: rivetMesh, model: multiply(baseTransform, composeModel({ x: -0.27, y: topY + 0.089, z: -0.04 })), useTexture: 0, baseColor: brightSilver, accentColor: flavorBase, metalness: 0.99, roughness: 0.14 });
 
-        animationFrame = requestAnimationFrame(render);
+        if (animateMotion) animationFrame = requestAnimationFrame(render);
       };
 
+      requestRenderRef.current = () => {
+        if (disposed) return;
+        cancelAnimationFrame(animationFrame);
+        animationFrame = requestAnimationFrame(render);
+      };
       animationFrame = requestAnimationFrame(render);
 
       return () => {
         disposed = true;
+        requestRenderRef.current = null;
         cancelAnimationFrame(animationFrame);
         observer.disconnect();
         if (animateMotion) {

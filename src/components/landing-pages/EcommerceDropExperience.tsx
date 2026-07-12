@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowRight,
@@ -18,8 +19,15 @@ import {
   type LucideIcon
 } from "lucide-react";
 
-import { pulseFlavors, type PulseFlavor, type PulseFlavorKey } from "@/components/landing-pages/PulseCan3D";
-import { PulseCan3DRealistic } from "@/components/landing-pages/PulseCan3DRealistic";
+import { pulseFlavors, type PulseFlavor, type PulseFlavorKey } from "@/components/landing-pages/PulseFlavorData";
+
+const PulseCan3DRealistic = dynamic(
+  () => import("@/components/landing-pages/PulseCan3DRealistic").then((module) => module.PulseCan3DRealistic),
+  {
+    ssr: false,
+    loading: () => <div aria-hidden="true" className="absolute inset-[15%] rounded-full bg-[var(--pulse-glow)]/20 blur-[72px]" />
+  }
+);
 
 const startHref =
   "/start-project?package=landing-page&source=ecommerce-drop&design=Pulse+Drip+Energy+Drink";
