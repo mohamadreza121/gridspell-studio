@@ -1,0 +1,66 @@
+name: Fix ESLint problems
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/fix-eslint-problems.mjs"
+      - ".github/workflows/fix-eslint-problems.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fix-eslint-problems
+  cancel-in-progress: true
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Synchronize latest main
+        run: |
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply lint repairs
+        run: node scripts/fix-eslint-problems.mjs
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run type check
+        run: npm run type-check
+
+      - name: Commit verified repairs
+        run: |
+          git config user.name "gridspell-lint-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src
+
+          if git diff --cached --quiet; then
+            echo "No lint repairs to commit."
+            exit 0
+          fi
+
+          git commit -m "Fix ESLint errors and warnings"
+          git push origin main
