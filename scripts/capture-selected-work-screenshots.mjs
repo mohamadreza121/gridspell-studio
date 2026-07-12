@@ -52,14 +52,14 @@ const devices = [
     id: "mobile",
     width: 430,
     height: 932,
-    suffix: "-mobile",
+    suffix: "-mobile-v2",
     deviceScaleFactor: 1
   },
   {
     id: "small-phone",
     width: 360,
     height: 800,
-    suffix: "-small-phone",
+    suffix: "-small-phone-v2",
     deviceScaleFactor: 1
   }
 ];
