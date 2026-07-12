@@ -220,94 +220,34 @@ function getRecommendation(business: string, goal: string, style: string) {
 }
 
 function SplashArt({ theme }: { theme: GalleryTheme }) {
-  const common = "pointer-events-none absolute transition duration-700 group-hover:scale-110";
-
-  switch (theme.decor) {
-    case "grid":
-      return (
-        <>
-          <span className={`${common} -right-12 -top-12 h-48 w-48 rotate-12 border-[28px] border-[var(--card-accent)]/55`} />
-          <span className={`${common} -bottom-10 left-[12%] h-20 w-52 -rotate-6 bg-[var(--card-accent-2)]/85`} />
-        </>
-      );
-    case "orbit":
-      return (
-        <>
-          <span className={`${common} -right-16 -top-20 h-64 w-64 rounded-full border-[34px] border-[var(--card-accent)]/55`} />
-          <span className={`${common} -bottom-20 -left-14 h-56 w-56 rounded-full border-[2px] border-[var(--card-accent-2)]/75`} />
-        </>
-      );
-    case "editorial":
-      return (
-        <>
-          <span className={`${common} -right-8 top-12 h-56 w-24 rotate-[18deg] bg-[var(--card-accent)]/72`} />
-          <span className={`${common} -bottom-8 left-10 h-24 w-24 rounded-full bg-[var(--card-accent-2)]/80`} />
-        </>
-      );
-    case "halo":
-      return (
-        <>
-          <span className={`${common} -right-20 -top-20 h-72 w-72 rounded-full bg-[var(--card-accent)]/38 blur-2xl`} />
-          <span className={`${common} -bottom-24 left-[12%] h-64 w-64 rounded-full bg-[var(--card-accent-2)]/42 blur-3xl`} />
-        </>
-      );
-    case "frame":
-      return (
-        <>
-          <span className={`${common} -right-7 -top-7 h-44 w-44 border border-[var(--card-accent)]/80`} />
-          <span className={`${common} -bottom-7 left-8 h-32 w-48 border-[12px] border-[var(--card-accent-2)]/65`} />
-        </>
-      );
-    case "bubbles":
-      return (
-        <>
-          <span className={`${common} -right-12 top-8 h-44 w-44 rounded-full bg-[var(--card-accent)]/65`} />
-          <span className={`${common} -bottom-12 left-[16%] h-28 w-28 rounded-full border-[18px] border-[var(--card-accent-2)]/55`} />
-        </>
-      );
-    case "slashes":
-      return (
-        <>
-          <span className={`${common} -right-4 -top-24 h-80 w-20 rotate-[28deg] bg-[var(--card-accent)]/78`} />
-          <span className={`${common} -bottom-20 left-[18%] h-72 w-16 rotate-[28deg] bg-[var(--card-accent-2)]/72`} />
-        </>
-      );
-    case "columns":
-      return (
-        <>
-          <span className={`${common} -right-6 -top-4 h-56 w-20 border-x-[10px] border-[var(--card-accent)]/62`} />
-          <span className={`${common} -bottom-12 left-[12%] h-32 w-32 border-b-[20px] border-l-[20px] border-[var(--card-accent-2)]/65`} />
-        </>
-      );
-    case "petals":
-      return (
-        <>
-          <span className={`${common} -right-10 top-0 h-48 w-32 rotate-[28deg] rounded-[70%_30%_70%_30%] bg-[var(--card-accent)]/70`} />
-          <span className={`${common} -bottom-10 left-[8%] h-36 w-24 -rotate-[24deg] rounded-[35%_65%_30%_70%] bg-[var(--card-accent-2)]/75`} />
-        </>
-      );
-    case "paper":
-      return (
-        <>
-          <span className={`${common} -right-8 -top-6 h-52 w-40 rotate-6 bg-[var(--card-accent)]/76 shadow-2xl`} />
-          <span className={`${common} -bottom-8 left-8 h-28 w-48 -rotate-6 bg-[var(--card-accent-2)]/82 shadow-2xl`} />
-        </>
-      );
-    case "charge":
-      return (
-        <>
-          <span className={`${common} -right-6 -top-10 h-56 w-56 rounded-full border-[32px] border-[var(--card-accent)]/62`} />
-          <span className={`${common} -bottom-20 left-[10%] h-72 w-12 -rotate-[38deg] bg-[var(--card-accent-2)]/82`} />
-        </>
-      );
-    case "signal":
-      return (
-        <>
-          <span className={`${common} -right-24 -top-24 h-72 w-72 rounded-full border-[24px] border-[var(--card-accent)]/68`} />
-          <span className={`${common} -bottom-16 left-[5%] h-36 w-36 rounded-full border-[14px] border-[var(--card-accent-2)]/72`} />
-        </>
-      );
-  }
+  return (
+    <>
+      <span
+        className="pointer-events-none absolute -left-10 top-16 h-44 w-44 rounded-full opacity-75 blur-[72px]"
+        style={{
+          background: `radial-gradient(circle, ${theme.accent} 0%, transparent 72%)`
+        }}
+      />
+      <span
+        className="pointer-events-none absolute right-[-2.5rem] top-[20%] h-56 w-56 rounded-full opacity-60 blur-[84px]"
+        style={{
+          background: `radial-gradient(circle, ${theme.accent2} 0%, transparent 74%)`
+        }}
+      />
+      <span
+        className="pointer-events-none absolute left-[18%] bottom-[-1.5rem] h-24 w-[46%] opacity-45 blur-[58px]"
+        style={{
+          background: `linear-gradient(90deg, transparent 0%, ${theme.accent} 30%, ${theme.accent2} 70%, transparent 100%)`
+        }}
+      />
+      <span
+        className="pointer-events-none absolute right-[12%] bottom-[18%] h-20 w-20 rounded-full opacity-35 blur-[40px]"
+        style={{
+          background: theme.accent
+        }}
+      />
+    </>
+  );
 }
 
 function Screenshot({ concept, className = "" }: { concept: LandingPageConcept; className?: string }) {
@@ -353,13 +293,22 @@ function GalleryCard({ concept, index }: { concept: LandingPageConcept; index: n
   };
 
   return (
-    <article style={style} className="group relative isolate flex h-full flex-col py-8 sm:py-10">
+    <article
+      style={style}
+      className="group relative isolate flex h-full flex-col py-6 sm:py-8"
+    >
       <SplashArt theme={theme} />
 
-      <div className="relative z-10 flex h-full flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#0d0f15]/92 shadow-[0_34px_100px_rgba(0,0,0,.35)] backdrop-blur-xl transition duration-500 group-hover:-translate-y-2 group-hover:border-white/18">
-        <Link href={concept.demoHref ?? startDesignHref(concept)} className="relative block overflow-hidden border-b border-white/8 bg-black">
-          <div className="aspect-[1.46] overflow-hidden">
-            <Screenshot concept={concept} className="transition duration-700 group-hover:scale-[1.035]" />
+      <div className="relative z-10 flex h-full flex-col overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#0d0f15]/94 shadow-[0_40px_120px_rgba(0,0,0,.38)] backdrop-blur-xl transition duration-500 group-hover:-translate-y-1.5 group-hover:border-white/18">
+        <Link
+          href={concept.demoHref ?? startDesignHref(concept)}
+          className="relative block overflow-hidden border-b border-white/8 bg-black"
+        >
+          <div className="aspect-[1.78] overflow-hidden bg-[#05070b] sm:aspect-[1.9]">
+            <Screenshot
+              concept={concept}
+              className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.02]"
+            />
           </div>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/46 via-transparent to-transparent" />
           <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/16 bg-black/46 px-3 py-2 text-[0.52rem] font-black uppercase tracking-[0.2em] text-white/78 backdrop-blur-xl">
@@ -371,13 +320,13 @@ function GalleryCard({ concept, index }: { concept: LandingPageConcept; index: n
           </span>
         </Link>
 
-        <div className="flex flex-1 flex-col p-6 sm:p-7">
+        <div className="flex flex-1 flex-col p-7 sm:p-8 lg:p-9">
           <div className="flex items-center justify-between gap-4">
             <p className="font-mono text-[0.58rem] tracking-[0.22em] text-[var(--card-accent)]">{String(index + 1).padStart(2, "0")}</p>
             <p className="text-right text-[0.52rem] font-bold uppercase tracking-[0.18em] text-white/32">{concept.category}</p>
           </div>
 
-          <h2 className="mt-6 max-w-[11ch] font-display text-[clamp(2.5rem,4vw,4.2rem)] font-semibold leading-[0.84] tracking-[-0.07em] text-white">
+          <h2 className="mt-6 max-w-[12ch] font-display text-[clamp(2.8rem,4vw,4.8rem)] font-semibold leading-[0.84] tracking-[-0.075em] text-white">
             {concept.title}
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/47">{concept.description}</p>
@@ -591,9 +540,11 @@ export function LandingPageGalleryExperience() {
             ) : null}
           </div>
 
-          <div className="mt-2 grid gap-x-7 lg:grid-cols-2 xl:gap-x-9">
-            {filteredConcepts.map((concept, index) => (
-              <GalleryCard key={concept.slug} concept={concept} index={landingPageConcepts.indexOf(concept)} />
+          <div className="mt-6 grid gap-y-12">
+            {filteredConcepts.map((concept) => (
+              <div key={concept.slug} className="mx-auto w-full max-w-[1180px]">
+                <GalleryCard concept={concept} index={landingPageConcepts.indexOf(concept)} />
+              </div>
             ))}
           </div>
         </Container>
