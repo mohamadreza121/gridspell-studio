@@ -264,7 +264,7 @@ export function AuraRingOrbitsPortal() {
   const [target, setTarget] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setTarget(document.getElementById("aura-scroll-product"));
+    window.requestAnimationFrame(() => setTarget(document.getElementById("aura-scroll-product")));
   }, []);
 
   return target ? createPortal(<AuraRingOrbits />, target) : null;

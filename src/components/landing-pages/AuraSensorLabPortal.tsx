@@ -14,7 +14,7 @@ export function AuraSensorLabPortal() {
     if (!host) return;
 
     host.classList.add("aura-sensor-lab-host");
-    setTarget(host);
+    window.requestAnimationFrame(() => setTarget(host));
 
     const cleanupId = window.requestAnimationFrame(() => {
       const nestedLab = host.querySelector<HTMLElement>(":scope > .aura-sensor-lab");

@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useRef, useState, type ReactNode } from "react";
 import {
@@ -17,7 +19,6 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
-  Stethoscope,
   X
 } from "lucide-react";
 
@@ -257,7 +258,7 @@ export function DentalTrustExperience() {
 
             <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 sm:bottom-7 sm:left-7 sm:right-7">
               <div className="hidden max-w-[18rem] items-center gap-3 border border-white/25 bg-[#0f3029]/58 p-3 text-white backdrop-blur-xl sm:flex">
-                <img
+                <Image width={1600} height={1000} sizes="100vw" unoptimized
                   src="https://images.pexels.com/photos/4967239/pexels-photo-4967239.jpeg?auto=compress&cs=tinysrgb&w=500"
                   alt="Smiling dental patient"
                   className="h-16 w-14 object-cover"
@@ -363,7 +364,7 @@ export function DentalTrustExperience() {
 
       <section id="experience" className="grid bg-[#dfeae5] lg:min-h-svh lg:grid-cols-2">
         <div className="relative min-h-[70svh] overflow-hidden lg:min-h-svh">
-          <img
+          <Image width={1600} height={1000} sizes="100vw" unoptimized
             src="https://images.pexels.com/photos/11749490/pexels-photo-11749490.jpeg?auto=compress&cs=tinysrgb&w=1800"
             alt="Woman smiling confidently"
             className="absolute inset-0 h-full w-full object-cover"
@@ -412,7 +413,7 @@ export function DentalTrustExperience() {
         <div className="mx-auto grid max-w-[1450px] gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
           <div className="relative">
             <div className="absolute -left-5 -top-5 h-full w-full border border-[#15312b]/12" />
-            <img
+            <Image width={1600} height={1000} sizes="100vw" unoptimized
               src="https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=1600"
               alt="Dental care provider"
               className="relative aspect-[4/5] w-full object-cover grayscale-[20%]"

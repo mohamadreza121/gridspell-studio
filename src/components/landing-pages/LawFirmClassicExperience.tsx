@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import {
@@ -222,7 +224,7 @@ export function LawFirmClassicExperience() {
           </div>
 
           <div className="relative min-h-[65svh] overflow-hidden bg-[#d5cec0] lg:min-h-0">
-            <img
+            <Image width={1600} height={1000} sizes="100vw" unoptimized
               src="https://images.pexels.com/photos/5668882/pexels-photo-5668882.jpeg?auto=compress&cs=tinysrgb&w=2200"
               alt="Legal counsel reviewing a matter"
               className="absolute inset-0 h-full w-full object-cover grayscale-[18%]"
@@ -328,7 +330,7 @@ export function LawFirmClassicExperience() {
 
       <section id="approach" className="grid bg-[#dcd5ca] lg:min-h-svh lg:grid-cols-2">
         <div className="relative min-h-[68svh] overflow-hidden lg:min-h-svh">
-          <img
+          <Image width={1600} height={1000} sizes="100vw" unoptimized
             src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1900"
             alt="Counsel discussing strategy"
             className="absolute inset-0 h-full w-full object-cover grayscale-[22%]"
@@ -375,7 +377,7 @@ export function LawFirmClassicExperience() {
         <div className="mx-auto grid max-w-[1450px] gap-12 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
           <div className="relative">
             <div aria-hidden="true" className="absolute -left-5 -top-5 h-full w-full border border-[#252321]/14" />
-            <img
+            <Image width={1600} height={1000} sizes="100vw" unoptimized
               src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=1600"
               alt="Senior legal counsel"
               className="relative aspect-[4/5] w-full object-cover grayscale-[18%]"

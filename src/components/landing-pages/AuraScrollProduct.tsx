@@ -152,7 +152,7 @@ export function AuraScrollProduct({ children }: { children: ReactNode }) {
       Object.entries(artConfigs).map(([key, config]) => [key, document.querySelector<HTMLElement>(config.selector)])
     ) as Record<ArtKey, HTMLElement | null>;
 
-    setTargets(hosts);
+    window.requestAnimationFrame(() => setTargets(hosts));
     if (!page || !product || !story || !afterStory) return;
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);

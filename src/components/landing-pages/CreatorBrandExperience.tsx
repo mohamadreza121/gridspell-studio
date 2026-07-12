@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import {
@@ -7,7 +9,6 @@ import {
   BookOpen,
   BriefcaseBusiness,
   Camera,
-  Check,
   ChevronRight,
   Mail,
   Menu,
@@ -240,7 +241,7 @@ export function CreatorBrandExperience() {
             <div className="absolute inset-x-[8%] inset-y-[3%] rounded-[2.2rem] bg-[#a7462b]" />
             <div className="absolute inset-x-[4%] inset-y-[8%] rotate-[-2deg] rounded-[2.2rem] border border-[#241b16]/22 bg-[#d8a73a]" />
             <div className="absolute inset-x-[10%] inset-y-[1%] rotate-[1.4deg] overflow-hidden rounded-[2.2rem] border border-[#241b16]/18 bg-[#7a7047] shadow-[0_38px_110px_rgba(58,38,25,.2)]">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src="https://images.pexels.com/photos/3764016/pexels-photo-3764016.jpeg?auto=compress&cs=tinysrgb&w=1900"
                 alt="Independent creator working in a warm studio"
                 className="absolute inset-0 h-full w-full object-cover grayscale-[8%] sepia-[10%]"
@@ -261,7 +262,7 @@ export function CreatorBrandExperience() {
             </div>
 
             <div className="absolute bottom-[7%] left-0 w-[42%] rotate-[-5deg] rounded-[1.4rem] border border-[#241b16]/18 bg-[#f7ecd8] p-3 shadow-[0_24px_70px_rgba(58,38,25,.18)] sm:p-4">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src="https://images.pexels.com/photos/4050315/pexels-photo-4050315.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Notebook and creative planning"
                 className="aspect-[4/3] w-full rounded-[1rem] object-cover sepia-[18%]"
@@ -312,7 +313,7 @@ export function CreatorBrandExperience() {
 
           <div className="mt-14 grid auto-rows-[minmax(15rem,auto)] gap-5 lg:grid-cols-12">
             <article className="group relative min-h-[38rem] overflow-hidden rounded-[2rem] bg-[#7a7047] lg:col-span-7 lg:row-span-2">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1900"
                 alt="Creative team working around a table"
                 className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
@@ -346,7 +347,7 @@ export function CreatorBrandExperience() {
             </article>
 
             <article className="group relative min-h-[25rem] overflow-hidden rounded-[2rem] bg-[#a7462b] text-[#f6ead5] lg:col-span-5">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src="https://images.pexels.com/photos/261949/pexels-photo-261949.jpeg?auto=compress&cs=tinysrgb&w=1400"
                 alt="Old books and editorial references"
                 className="absolute inset-0 h-full w-full object-cover opacity-42 mix-blend-multiply transition duration-700 group-hover:scale-[1.04]"
@@ -400,7 +401,7 @@ export function CreatorBrandExperience() {
             </div>
 
             <div className="relative min-h-[43rem] overflow-hidden">
-              <img src={active.image} alt={active.title} className="absolute inset-0 h-full w-full object-cover transition duration-700" />
+              <Image width={1600} height={1000} sizes="100vw" unoptimized src={active.image} alt={active.title} className="absolute inset-0 h-full w-full object-cover transition duration-700" />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(28,19,15,.04),rgba(28,19,15,.18)_44%,rgba(28,19,15,.94)_100%)]" />
               <div className="absolute left-5 top-5 rounded-full border border-white/25 bg-black/18 px-4 py-2 backdrop-blur-xl sm:left-8 sm:top-8">
                 <p className="text-[0.5rem] font-black uppercase tracking-[0.21em]">{active.label}</p>
@@ -469,7 +470,7 @@ export function CreatorBrandExperience() {
         <div className="mx-auto grid max-w-[1480px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div className="relative min-h-[44rem]">
             <div className="absolute left-[8%] top-[4%] h-[82%] w-[72%] rotate-[-3deg] rounded-[2rem] bg-[#d8a73a]" />
-            <img
+            <Image width={1600} height={1000} sizes="100vw" unoptimized
               src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=1600"
               alt="Nora Vale in her studio"
               className="absolute left-[4%] top-0 h-[84%] w-[74%] rotate-[1.5deg] rounded-[2rem] object-cover grayscale-[10%] sepia-[8%] shadow-[0_34px_90px_rgba(28,20,15,.28)]"

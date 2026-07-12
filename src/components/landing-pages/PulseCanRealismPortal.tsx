@@ -16,7 +16,7 @@ export function PulseCanRealismPortal() {
 
     const page = stage.closest<HTMLElement>("main");
     stage.classList.add("pulse-can-realism-host");
-    setTarget(stage);
+    window.requestAnimationFrame(() => setTarget(stage));
 
     const originalCanvas = stage.querySelector<HTMLCanvasElement>("canvas");
     const originalContext = originalCanvas?.getContext("webgl");

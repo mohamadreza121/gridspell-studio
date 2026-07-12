@@ -7,7 +7,6 @@ import {
   Layers,
   Ruler,
   ShieldCheck,
-  Waves,
   type LucideIcon
 } from "lucide-react";
 
@@ -153,7 +152,7 @@ export function AuraEngineeringVault() {
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) {
-      setEntered(true);
+      window.requestAnimationFrame(() => setEntered(true));
       return;
     }
 

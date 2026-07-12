@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import {
@@ -148,7 +149,7 @@ function HeroScreenshotStack() {
             className={`group absolute overflow-hidden rounded-[1.8rem] border border-white/14 bg-[#0b0d12] p-2 shadow-[0_38px_110px_rgba(0,0,0,.52)] transition duration-500 hover:z-20 hover:rotate-0 hover:scale-[1.025] ${positions[index]}`}
           >
             <div className="relative aspect-[1.6] overflow-hidden rounded-[1.3rem]">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src={screenshotPath(concept)}
                 alt={`${concept.title} landing page screenshot`}
                 className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.025]"
@@ -184,7 +185,7 @@ function ShowcaseRow({ concept, index }: { concept: LandingPageConcept; index: n
       <div className="relative z-10 overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#0c0e14]/94 shadow-[0_44px_130px_rgba(0,0,0,.42)] backdrop-blur-xl">
         <Link href={concept.demoHref ?? "/landing-pages"} className="relative block overflow-hidden border-b border-white/9 bg-black">
           <div className="aspect-[1.72] overflow-hidden sm:aspect-[1.88]">
-            <img
+            <Image width={1600} height={1000} sizes="100vw" unoptimized
               src={screenshotPath(concept)}
               alt={`${concept.title} landing page screenshot`}
               className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.018]"

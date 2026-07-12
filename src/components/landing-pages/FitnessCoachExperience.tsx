@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useRef, useState, type ReactNode } from "react";
 import {
@@ -377,7 +379,7 @@ export function FitnessCoachExperience() {
             </div>
 
             <div className="relative min-h-[44rem] overflow-hidden">
-              <img src={active.image} alt={active.title} className="absolute inset-0 h-full w-full object-cover transition duration-700" />
+              <Image width={1600} height={1000} sizes="100vw" unoptimized src={active.image} alt={active.title} className="absolute inset-0 h-full w-full object-cover transition duration-700" />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,9,7,.08),rgba(8,9,7,.18)_42%,rgba(8,9,7,.88)_100%)]" />
               <div className="absolute left-5 top-5 border border-white/25 bg-black/25 px-4 py-3 backdrop-blur-xl sm:left-8 sm:top-8">
                 <p className="text-[0.53rem] font-black uppercase tracking-[0.22em] text-[#d8ff3f]">{active.label}</p>
@@ -406,14 +408,14 @@ export function FitnessCoachExperience() {
         <div className="mx-auto grid max-w-[1500px] gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div className="relative min-h-[46rem]">
             <div className="absolute left-0 top-0 w-[68%] overflow-hidden border-[10px] border-[#625bff]">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src="https://images.pexels.com/photos/416809/pexels-photo-416809.jpeg?auto=compress&cs=tinysrgb&w=1500"
                 alt="Athlete training with a coach"
                 className="aspect-[4/5] w-full object-cover"
               />
             </div>
             <div className="absolute bottom-0 right-0 w-[54%] overflow-hidden border-[10px] border-[#625bff]">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src="https://images.pexels.com/photos/3757376/pexels-photo-3757376.jpeg?auto=compress&cs=tinysrgb&w=1200"
                 alt="Focused strength training"
                 className="aspect-[4/5] w-full object-cover"
@@ -467,7 +469,7 @@ export function FitnessCoachExperience() {
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
             {results.map((result, index) => (
               <article key={result.name} className={`group relative overflow-hidden ${index === 1 ? "lg:mt-16" : ""}`}>
-                <img src={result.image} alt="Fitness coaching client" className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-[1.035]" />
+                <Image width={1600} height={1000} sizes="100vw" unoptimized src={result.image} alt="Fitness coaching client" className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-[1.035]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/8 to-transparent" />
                 <div className={`absolute left-4 top-4 px-4 py-3 ${result.tone}`}>
                   <strong className="font-display text-3xl font-black tracking-[-0.055em]">{result.value}</strong>
@@ -485,7 +487,7 @@ export function FitnessCoachExperience() {
 
       <section id="coach" className="grid min-h-svh bg-[#11120f] text-white lg:grid-cols-2">
         <div className="relative min-h-[75svh] overflow-hidden lg:min-h-svh">
-          <img
+          <Image width={1600} height={1000} sizes="100vw" unoptimized
             src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1800"
             alt="Fitness coach"
             className="absolute inset-0 h-full w-full object-cover grayscale-[15%]"

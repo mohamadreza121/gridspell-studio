@@ -185,7 +185,7 @@ export function AuraSensorLab() {
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) {
-      setEntered(true);
+      window.requestAnimationFrame(() => setEntered(true));
       return;
     }
 

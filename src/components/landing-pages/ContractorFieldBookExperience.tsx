@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useRef, useState } from "react";
 import {
@@ -7,7 +9,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Building2,
-  Camera,
   Check,
   CheckCircle2,
   ChevronDown,
@@ -19,7 +20,6 @@ import {
   Home,
   MapPin,
   Phone,
-  Ruler,
   ShieldCheck,
   Star,
   Upload,
@@ -345,7 +345,7 @@ function BeforeAfterSlider() {
   return (
     <div className="overflow-hidden rounded-[1.9rem] border border-slate-200 bg-white p-3 shadow-[0_28px_90px_rgba(15,32,49,.12)] sm:p-4">
       <div className="relative aspect-[4/3] min-h-[27rem] overflow-hidden rounded-[1.45rem] bg-slate-900">
-        <img
+        <Image width={1600} height={1000} sizes="100vw" unoptimized
           src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1500&q=86"
           alt="Attic before insulation work"
           className="absolute inset-0 h-full w-full object-cover grayscale-[.45]"
@@ -353,7 +353,7 @@ function BeforeAfterSlider() {
         <div className="absolute left-5 top-5 rounded-full bg-slate-950/72 px-4 py-2 text-[0.58rem] font-black uppercase tracking-[0.2em] text-white backdrop-blur">Before</div>
 
         <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
-          <img
+          <Image width={1600} height={1000} sizes="100vw" unoptimized
             src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1500&q=88"
             alt="Finished home renovation after contractor work"
             className="h-full w-full object-cover"
@@ -552,7 +552,7 @@ export function ContractorFieldBookExperience({ startHref }: { startHref: string
 
             <div className="relative">
               <div className="project-photo relative min-h-[38rem] overflow-hidden rounded-[2rem] border border-white/10 bg-[#10243a] shadow-[0_36px_120px_rgba(0,0,0,.45)]">
-                <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1800&q=88" alt="TrueNorth contractor crew on an active project" className="absolute inset-0 h-full w-full object-cover" />
+                <Image width={1600} height={1000} sizes="100vw" unoptimized src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1800&q=88" alt="TrueNorth contractor crew on an active project" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,19,31,.95),transparent_65%),linear-gradient(120deg,rgba(8,19,31,.28),transparent_52%)]" />
                 <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
                   <div className="flex flex-wrap items-center justify-between gap-4">
@@ -608,7 +608,7 @@ export function ContractorFieldBookExperience({ startHref }: { startHref: string
           <div className="mt-12 grid gap-5 lg:grid-cols-2">
             {services.map(({ icon: Icon, title, copy, response, image }, index) => (
               <article key={title} className={`service-photo group relative min-h-[28rem] overflow-hidden rounded-[1.8rem] border border-white/10 ${index === 0 ? "lg:row-span-2 lg:min-h-[58rem]" : ""}`}>
-                <img src={image} alt={`${title} contractor project`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                <Image width={1600} height={1000} sizes="100vw" unoptimized src={image} alt={`${title} contractor project`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                 <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,19,31,.98),rgba(8,19,31,.18)_72%)]" />
                 <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
                   <div className="flex items-center justify-between gap-4"><span className="grid h-12 w-12 place-items-center rounded-xl bg-[#d85428] text-white"><Icon className="h-6 w-6" /></span><ArrowUpRight className="h-5 w-5 text-white/34 transition group-hover:text-[#ff9a5c]" /></div>
@@ -632,7 +632,7 @@ export function ContractorFieldBookExperience({ startHref }: { startHref: string
             {projects.map((project, index) => (
               <article key={project.title} className={`project-photo group overflow-hidden rounded-[1.8rem] border border-slate-200 bg-white p-3 shadow-[0_22px_70px_rgba(15,32,49,.08)] ${index === 0 ? "lg:col-span-2" : ""}`}>
                 <div className={`relative overflow-hidden rounded-[1.4rem] ${index === 0 ? "min-h-[34rem]" : "min-h-[26rem]"}`}>
-                  <img src={project.image} alt={project.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                  <Image width={1600} height={1000} sizes="100vw" unoptimized src={project.image} alt={project.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                   <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,19,31,.92),transparent_62%)]" />
                   <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8"><p className="text-[0.58rem] font-black uppercase tracking-[0.22em] text-[#ff9a5c]">Completed project {String(index + 1).padStart(2, "0")}</p><h3 className="mt-4 font-display text-4xl font-semibold tracking-[-0.06em] sm:text-5xl">{project.title}</h3><div className="mt-5 flex flex-wrap gap-x-7 gap-y-3 text-sm text-white/64"><span>{project.location}</span><span>{project.service}</span><span>{project.duration}</span></div></div>
                 </div>

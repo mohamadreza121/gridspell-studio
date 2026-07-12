@@ -847,7 +847,7 @@ export function AuraRing3DPortal() {
   const [target, setTarget] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setTarget(document.getElementById("aura-scroll-product"));
+    window.requestAnimationFrame(() => setTarget(document.getElementById("aura-scroll-product")));
   }, []);
 
   return target ? createPortal(<AuraRing3DCanvas />, target) : null;

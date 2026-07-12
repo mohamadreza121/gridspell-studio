@@ -13,7 +13,7 @@ export function AuraEngineeringVaultPortal() {
     if (!host) return;
 
     host.classList.add("aura-engineering-vault-host");
-    setTarget(host);
+    window.requestAnimationFrame(() => setTarget(host));
 
     return () => {
       host.classList.remove("aura-engineering-vault-host");

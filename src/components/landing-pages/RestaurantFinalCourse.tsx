@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, CalendarDays, Flame, Users } from "lucide-react";
 
@@ -5,7 +6,7 @@ export function RestaurantFinalCourse({ startHref }: { startHref: string }) {
   return (
     <div className="relative overflow-hidden rounded-[1.95rem] border border-[#e8bd79]/18 bg-[#25100b] text-white shadow-[0_34px_100px_rgba(50,22,15,.28)]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_12%,rgba(231,159,73,.2),transparent_22rem),linear-gradient(120deg,rgba(19,7,4,.98)_0_47%,rgba(19,7,4,.62)_62%,rgba(19,7,4,.18)_100%)]" />
-      <img
+      <Image width={1600} height={1000} sizes="100vw" unoptimized
         src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1800&q=88"
         alt="Candlelit dinner table at Casa Ember"
         className="absolute inset-y-0 right-0 h-full w-full object-cover object-center opacity-54 sm:w-[62%]"

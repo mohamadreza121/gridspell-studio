@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -290,7 +292,7 @@ function TreatmentStack() {
               >
                 <div className="grid min-h-[42rem] lg:grid-cols-[1.08fr_0.92fr]">
                   <div className="relative min-h-[22rem] overflow-hidden lg:min-h-full">
-                    <img
+                    <Image width={1600} height={1000} sizes="100vw" unoptimized
                       src={treatment.image}
                       alt={treatment.title}
                       className="beauty-treatment-image absolute inset-0 h-full w-full object-cover"
@@ -364,7 +366,7 @@ export function BeautyTreatmentStackPortal() {
     if (!section) return;
 
     section.classList.add("beauty-treatment-stack-ready");
-    setTarget(section);
+    window.requestAnimationFrame(() => setTarget(section));
 
     return () => {
       section.classList.remove("beauty-treatment-stack-ready");

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowRight,
-  BatteryCharging,
   Brain,
   Check,
   ChevronRight,

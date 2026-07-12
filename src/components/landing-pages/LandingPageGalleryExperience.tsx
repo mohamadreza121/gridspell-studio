@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import {
@@ -273,7 +275,7 @@ function Screenshot({ concept, className = "" }: { concept: LandingPageConcept; 
   }
 
   return (
-    <img
+    <Image width={1600} height={1000} sizes="100vw" unoptimized
       src={screenshotPath(concept)}
       alt={`${concept.title} landing page screenshot`}
       className={`h-full w-full object-cover object-top ${className}`}

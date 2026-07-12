@@ -7,17 +7,13 @@ import {
   CheckCircle2,
   ChevronRight,
   Command,
-  Cpu,
   Database,
   GitBranch,
-  Layers,
-  MessageSquare,
   Play,
   ShieldCheck,
   Sparkles,
   Star,
   Terminal,
-  Zap,
   type LucideIcon
 } from "lucide-react";
 

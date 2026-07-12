@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useRef, useState } from "react";
 import {
@@ -290,7 +292,7 @@ export function LuxuryRealEstateExperience() {
             {properties.map((property, index) => (
               <article key={property.name} className="group">
                 <div className={`relative overflow-hidden ${index === 1 ? "lg:mt-16" : ""}`}>
-                  <img
+                  <Image width={1600} height={1000} sizes="100vw" unoptimized
                     src={property.image}
                     alt={property.name}
                     className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-[1.035]"
@@ -330,7 +332,7 @@ export function LuxuryRealEstateExperience() {
 
       <section id="lifestyle" className="grid min-h-svh bg-[#d8d0c2] lg:grid-cols-2">
         <div className="relative min-h-[68svh] overflow-hidden lg:min-h-svh">
-          <img
+          <Image width={1600} height={1000} sizes="100vw" unoptimized
             src="https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=2000"
             alt="Warm contemporary living room"
             className="absolute inset-0 h-full w-full object-cover"
@@ -395,7 +397,7 @@ export function LuxuryRealEstateExperience() {
       <section id="advisor" className="bg-[#e5dfd4] px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-36">
         <div className="mx-auto grid max-w-[1500px] gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
           <div className="relative overflow-hidden">
-            <img
+            <Image width={1600} height={1000} sizes="100vw" unoptimized
               src="https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=1600"
               alt="Private real estate advisor"
               className="aspect-[4/5] w-full object-cover grayscale"
@@ -424,7 +426,7 @@ export function LuxuryRealEstateExperience() {
       </section>
 
       <section id="inquiry" className="relative min-h-[82svh] overflow-hidden bg-[#11110f] text-white">
-        <img
+        <Image width={1600} height={1000} sizes="100vw" unoptimized
           src="https://images.pexels.com/photos/261146/pexels-photo-261146.jpeg?auto=compress&cs=tinysrgb&w=2200"
           alt="Luxury home at dusk"
           className="absolute inset-0 h-full w-full object-cover"

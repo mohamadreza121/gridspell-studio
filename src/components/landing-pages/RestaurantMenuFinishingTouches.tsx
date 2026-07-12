@@ -22,6 +22,8 @@ export function RestaurantMenuFinishingTouches({ startHref }: { startHref: strin
 
   useEffect(() => {
     let frame = 0;
+    let attachedReviews: HTMLElement | null = null;
+    let attachedFinalCourse: HTMLElement | null = null;
 
     function findTargets() {
       const headings = Array.from(document.querySelectorAll<HTMLElement>("h2"));
@@ -39,6 +41,8 @@ export function RestaurantMenuFinishingTouches({ startHref }: { startHref: strin
       if (reviewSection && finalCard) {
         reviewSection.classList.add("restaurant-guest-notes-host");
         finalCard.classList.add("restaurant-final-course-host");
+        attachedReviews = reviewSection;
+        attachedFinalCourse = finalCard;
         setTargets({ reviews: reviewSection, finalCourse: finalCard });
         return;
       }
@@ -50,8 +54,8 @@ export function RestaurantMenuFinishingTouches({ startHref }: { startHref: strin
 
     return () => {
       cancelAnimationFrame(frame);
-      targets.reviews?.classList.remove("restaurant-guest-notes-host");
-      targets.finalCourse?.classList.remove("restaurant-final-course-host");
+      attachedReviews?.classList.remove("restaurant-guest-notes-host");
+      attachedFinalCourse?.classList.remove("restaurant-final-course-host");
     };
   }, []);
 

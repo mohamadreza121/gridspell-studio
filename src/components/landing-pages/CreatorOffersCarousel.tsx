@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
@@ -335,7 +337,7 @@ function CreatorOffersCarousel() {
             >
               <div className="grid min-h-[42rem] md:grid-cols-[1.08fr_0.92fr]">
                 <div className="relative min-h-[25rem] overflow-hidden md:min-h-full">
-                  <img
+                  <Image width={1600} height={1000} sizes="100vw" unoptimized
                     src={offer.image}
                     alt={offer.title}
                     className="creator-offer-image absolute inset-0 h-full w-full object-cover"
@@ -413,7 +415,7 @@ export function CreatorOffersCarouselPortal() {
     if (!section) return;
 
     section.classList.add("creator-offers-carousel-ready");
-    setTarget(section);
+    window.requestAnimationFrame(() => setTarget(section));
 
     return () => {
       section.classList.remove("creator-offers-carousel-ready");

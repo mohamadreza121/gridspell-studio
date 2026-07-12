@@ -11,6 +11,7 @@ export function PulseFlavorCardCanPortal() {
 
   useEffect(() => {
     let frame = 0;
+    let attachedTargets: HTMLElement[] = [];
 
     const findTargets = () => {
       const cards = Array.from(document.querySelectorAll<HTMLElement>("#flavors article"));
@@ -21,6 +22,7 @@ export function PulseFlavorCardCanPortal() {
 
       if (nextTargets.length === pulseFlavors.length) {
         nextTargets.forEach((target) => target.classList.add("pulse-static-can-host"));
+        attachedTargets = nextTargets;
         setTargets(nextTargets);
         return;
       }
@@ -32,7 +34,7 @@ export function PulseFlavorCardCanPortal() {
 
     return () => {
       cancelAnimationFrame(frame);
-      targets.forEach((target) => target.classList.remove("pulse-static-can-host"));
+      attachedTargets.forEach((target) => target.classList.remove("pulse-static-can-host"));
     };
   }, []);
 

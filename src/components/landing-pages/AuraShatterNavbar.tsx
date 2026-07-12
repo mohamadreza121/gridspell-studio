@@ -47,7 +47,7 @@ function AuraShatterNavbar() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reducedMotion) {
-      setStage("shattered");
+      window.requestAnimationFrame(() => setStage("shattered"));
       return;
     }
 
@@ -506,7 +506,7 @@ export function AuraShatterNavbarPortal() {
   const [target, setTarget] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setTarget(document.body);
+    window.requestAnimationFrame(() => setTarget(document.body));
   }, []);
 
   return target ? createPortal(<AuraShatterNavbar />, target) : null;

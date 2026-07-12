@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useRef, useState, type ReactNode } from "react";
 import {
@@ -362,7 +364,7 @@ export function BeautyBookingExperience() {
             </div>
 
             <div className="relative min-h-[42rem] overflow-hidden">
-              <img src={active.image} alt={active.title} className="absolute inset-0 h-full w-full object-cover transition duration-700" />
+              <Image width={1600} height={1000} sizes="100vw" unoptimized src={active.image} alt={active.title} className="absolute inset-0 h-full w-full object-cover transition duration-700" />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(44,25,20,.04),rgba(44,25,20,.12)_42%,rgba(44,25,20,.88)_100%)]" />
               <div className="absolute left-5 top-5 rounded-full border border-white/28 bg-[#3b241f]/25 px-4 py-2 text-white backdrop-blur-xl sm:left-8 sm:top-8">
                 <p className="text-[0.52rem] font-black uppercase tracking-[0.22em]">{active.label}</p>
@@ -394,7 +396,7 @@ export function BeautyBookingExperience() {
         <div className="mx-auto max-w-[1450px]">
           <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="relative min-h-[44rem] overflow-hidden rounded-[2.4rem_2.4rem_10rem_2.4rem]">
-              <img
+              <Image width={1600} height={1000} sizes="100vw" unoptimized
                 src="https://images.pexels.com/photos/3997989/pexels-photo-3997989.jpeg?auto=compress&cs=tinysrgb&w=1900"
                 alt="Warm modern beauty studio"
                 className="absolute inset-0 h-full w-full object-cover"
@@ -438,7 +440,7 @@ export function BeautyBookingExperience() {
         <div className="mx-auto grid max-w-[1450px] gap-12 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
           <div className="relative">
             <div aria-hidden="true" className="absolute -left-5 -top-5 h-full w-full rounded-[2.5rem_2.5rem_2.5rem_8rem] border border-[#3b241f]/12" />
-            <img
+            <Image width={1600} height={1000} sizes="100vw" unoptimized
               src="https://images.pexels.com/photos/3764016/pexels-photo-3764016.jpeg?auto=compress&cs=tinysrgb&w=1600"
               alt="Beauty artist in a modern studio"
               className="relative aspect-[4/5] w-full rounded-[2.5rem_2.5rem_2.5rem_8rem] object-cover grayscale-[8%]"

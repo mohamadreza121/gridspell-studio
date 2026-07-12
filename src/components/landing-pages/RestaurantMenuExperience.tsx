@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -282,7 +283,7 @@ export function RestaurantMenuExperience({ startHref }: { startHref: string }) {
                 </div>
 
                 <div className="menu-photo relative min-h-[31rem] overflow-hidden rounded-[1.9rem] border-[8px] border-[#efe0c3] bg-[#2b120d] shadow-[0_34px_90px_rgba(74,31,18,.28)] sm:min-h-[38rem]">
-                  <img
+                  <Image width={1600} height={1000} sizes="100vw" unoptimized
                     src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1600&q=88"
                     alt="Handmade pasta served at Casa Ember"
                     className="absolute inset-0 h-full w-full object-cover"
@@ -293,7 +294,7 @@ export function RestaurantMenuExperience({ startHref }: { startHref: string }) {
 
                   <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8">
                     <div className="flex items-center justify-between gap-4">
-                      <span className="rounded-full border border-white/18 bg-black/22 px-4 py-2 text-[0.58rem] font-black uppercase tracking-[0.22em] backdrop-blur">Tonight's feature</span>
+                      <span className="rounded-full border border-white/18 bg-black/22 px-4 py-2 text-[0.58rem] font-black uppercase tracking-[0.22em] backdrop-blur">Tonight&apos;s feature</span>
                       <Flame className="h-6 w-6 text-[#f0bd65]" />
                     </div>
                     <p className="mt-5 max-w-[9ch] font-display text-5xl font-semibold leading-[0.84] tracking-[-0.07em] sm:text-6xl">Wild mushroom tagliatelle.</p>
@@ -328,7 +329,7 @@ export function RestaurantMenuExperience({ startHref }: { startHref: string }) {
 
               <section id="story" className="grid gap-6 border-b border-[#4d2417]/12 px-5 py-14 sm:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:px-12 lg:py-20">
                 <div className="menu-photo relative min-h-[34rem] overflow-hidden rounded-[1.8rem] bg-[#28110b] shadow-[0_26px_80px_rgba(74,31,18,.2)]">
-                  <img
+                  <Image width={1600} height={1000} sizes="100vw" unoptimized
                     src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=86"
                     alt="Warm restaurant dining room"
                     className="absolute inset-0 h-full w-full object-cover"
@@ -355,7 +356,7 @@ export function RestaurantMenuExperience({ startHref }: { startHref: string }) {
 
                   <div className="relative overflow-hidden rounded-[1.6rem] bg-[#7a1f1f] p-6 text-white shadow-[0_24px_65px_rgba(122,31,31,.22)] sm:p-8">
                     <div aria-hidden="true" className="absolute -right-12 -top-12 h-40 w-40 rounded-full border-[22px] border-white/8" />
-                    <p className="text-[0.58rem] font-black uppercase tracking-[0.28em] text-[#f0bd65]">Chef's pairing</p>
+                    <p className="text-[0.58rem] font-black uppercase tracking-[0.28em] text-[#f0bd65]">Chef&apos;s pairing</p>
                     <p className="mt-5 max-w-[12ch] font-display text-4xl font-semibold leading-[0.9] tracking-[-0.06em]">Ember short rib + cellar syrah.</p>
                     <p className="mt-5 max-w-md text-sm leading-7 text-white/66">Roasted garlic mash, red wine jus, crispy shallots, and a pour with enough structure for the fire.</p>
                   </div>
