@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { RestaurantMenuExperience } from "@/components/landing-pages/RestaurantMenuExperience";
+import { RestaurantMenuFinishingTouches } from "@/components/landing-pages/RestaurantMenuFinishingTouches";
 import { getLandingPageConcept } from "@/config/landing-pages";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -24,5 +25,12 @@ function startHref() {
 }
 
 export default function RestaurantLocalDemoPage() {
-  return <RestaurantMenuExperience startHref={startHref()} />;
+  const href = startHref();
+
+  return (
+    <>
+      <RestaurantMenuExperience startHref={href} />
+      <RestaurantMenuFinishingTouches startHref={href} />
+    </>
+  );
 }
