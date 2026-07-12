@@ -15,7 +15,8 @@ type Target = {
 type Variant = "tablet" | "mobile" | "small-phone";
 
 function variantPath(slug: string, variant: Variant) {
-  return `/images/work/selected-work/${slug}-${variant}.jpg`;
+  const suffix = variant === "tablet" ? "tablet" : `${variant}-v2`;
+  return `/images/work/selected-work/${slug}-${suffix}.jpg`;
 }
 
 function DeviceFrame({
