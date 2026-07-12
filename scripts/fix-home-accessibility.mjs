@@ -32,14 +32,6 @@ const replacements = [
     changes: [
       ['    <>\n      <HomeBackgroundBoundary />\n      <HomeExperience />\n      <HomeHeroModeShowcase />\n      <HomeDeferredSections />\n    </>', '    <main id="main-content">\n      <HomeBackgroundBoundary />\n      <HomeExperience />\n      <HomeHeroModeShowcase />\n      <HomeDeferredSections />\n    </main>']
     ]
-  },
-  {
-    path: "src/components/landing-pages/DemoConceptPage.tsx",
-    changes: [["const [primary, secondary, surface] = concept.palette;", "const [primary, secondary] = concept.palette;"]]
-  },
-  {
-    path: "src/components/landing-pages/LandingPageGalleryExperience.tsx",
-    changes: [["import { useMemo, useState, type CSSProperties, type ReactNode } from \"react\";", "import { useMemo, useState, type CSSProperties } from \"react\";"]]
   }
 ];
 
@@ -54,4 +46,4 @@ for (const { path, changes } of replacements) {
   await writeFile(path, source);
 }
 
-console.log("Applied homepage accessibility and cleanup fixes.");
+console.log("Applied homepage accessibility fixes.");
