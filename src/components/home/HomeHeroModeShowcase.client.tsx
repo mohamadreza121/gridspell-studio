@@ -133,9 +133,9 @@ function ModeCard({ activeMode }: { activeMode: HeroModeId }) {
               <p className="text-[0.46rem] uppercase tracking-[0.18em] text-white/24">
                 Current experience
               </p>
-              <h3 className="mt-3 max-w-[18ch] font-display text-[clamp(1.35rem,2.1vw,2rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-white">
+              <h2 className="mt-3 max-w-[18ch] font-display text-[clamp(1.35rem,2.1vw,2rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-white">
                 {mode.title}
-              </h3>
+              </h2>
               <p className="mt-3 text-[0.72rem] leading-5 text-white/38 sm:text-xs sm:leading-6">
                 {mode.detail}
               </p>
@@ -318,26 +318,24 @@ export function HomeHeroModeShowcaseClient() {
           hosts.forEach((host) => {
             host.dataset.heroModeReady = "true";
           });
-        }, 180);
+        }, 80);
       });
     });
 
     return () => {
       window.cancelAnimationFrame(firstFrameId);
-
       if (secondFrameId !== undefined) {
         window.cancelAnimationFrame(secondFrameId);
       }
-
       if (timeoutId !== undefined) {
         window.clearTimeout(timeoutId);
       }
-
-      hosts.forEach((host) => {
-        delete host.dataset.heroModeReady;
-      });
     };
-  }, [hosts]);
+  }, [activeMode, hosts]);
+
+  if (hosts.length === 0) {
+    return null;
+  }
 
   return (
     <>
