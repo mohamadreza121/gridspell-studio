@@ -15,7 +15,7 @@ export function Footer() {
             <Logo />
             <h2 className="mt-10 max-w-3xl font-display text-4xl font-semibold leading-[0.95] tracking-[-0.055em] sm:text-6xl">
               Have a serious idea?
-              <span className="block text-white/28">
+              <span className="block text-white/62">
                 Let&apos;s make it impossible to ignore.
               </span>
             </h2>
@@ -27,13 +27,13 @@ export function Footer() {
 
           <div className="grid grid-cols-2 gap-8">
             <div>
-              <p className="text-xs uppercase tracking-[0.34em] text-white/24">Explore</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.34em] text-white/68">Explore</p>
               <div className="mt-6 grid gap-3">
                 {marketingNavigation.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-sm text-white/48 transition-colors hover:text-white"
+                    className="text-sm text-white/68 transition-colors hover:text-white"
                   >
                     {item.label}
                   </Link>
@@ -42,8 +42,8 @@ export function Footer() {
             </div>
 
             <div>
-              <p className="text-xs uppercase tracking-[0.34em] text-white/24">Contact</p>
-              <div className="mt-6 grid gap-3 text-sm text-white/48">
+              <p className="text-xs font-semibold uppercase tracking-[0.34em] text-white/68">Contact</p>
+              <div className="mt-6 grid gap-3 text-sm text-white/68">
                 <a className="transition-colors hover:text-white" href={`mailto:${siteConfig.email}`}>
                   {siteConfig.email}
                 </a>
@@ -59,7 +59,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-white/[0.08] pt-8 text-xs text-white/28 sm:flex-row sm:justify-between">
+        <div className="mt-16 flex flex-col gap-3 border-t border-white/[0.08] pt-8 text-xs text-white/62 sm:flex-row sm:justify-between">
           <p>
             © {new Date().getFullYear()} {siteConfig.legalName}.
           </p>

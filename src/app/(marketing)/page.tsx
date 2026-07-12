@@ -15,11 +15,11 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function HomePage() {
   return (
-    <>
+    <main id="main-content">
       <HomeBackgroundBoundary />
       <HomeExperience />
       <HomeHeroModeShowcase />
       <HomeDeferredSections />
-    </>
+    </main>
   );
 }

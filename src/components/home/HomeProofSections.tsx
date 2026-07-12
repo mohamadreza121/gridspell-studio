@@ -96,7 +96,7 @@ function MiniInterfacePreview({ project }: { project: FeaturedProject }) {
         <span className="h-2 w-2 rounded-full bg-white/20" />
         <span className="h-2 w-2 rounded-full bg-white/12" />
         <span className="h-2 w-2 rounded-full bg-white/[0.07]" />
-        <span className="ml-auto rounded-full border border-white/[0.08] px-3 py-1 text-[0.52rem] uppercase tracking-[0.16em] text-white/24">
+        <span className="ml-auto rounded-full border border-white/[0.18] bg-white/[0.055] px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.16em] text-white/72">
           {project.slug.replaceAll("-", ".")}
         </span>
       </div>

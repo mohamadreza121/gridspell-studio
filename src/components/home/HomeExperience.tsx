@@ -505,9 +505,9 @@ function HeroScene({
           <p className="text-[0.52rem] font-semibold uppercase tracking-[0.18em] text-[#8be9ff]">
             Marketing experience
           </p>
-          <h3 className="mt-3 text-xl font-semibold leading-tight tracking-[-0.04em] text-white">
+          <h2 className="mt-3 text-xl font-semibold leading-tight tracking-[-0.04em] text-white">
             A premium first impression built to convert.
-          </h3>
+          </h2>
           <p className="mt-3 text-sm leading-6 text-white/44">
             Strategy, interface, development, SEO, analytics, and reliable lead capture.
           </p>
