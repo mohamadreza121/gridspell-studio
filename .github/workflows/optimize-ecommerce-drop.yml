@@ -1,0 +1,43 @@
+name: Optimize ecommerce drop
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/optimize-ecommerce-drop.mjs
+      - src/components/landing-pages/PulseFlavorData.ts
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: node scripts/optimize-ecommerce-drop.mjs
+      - run: npm run lint
+      - run: npm run type-check
+
+      - name: Commit verified optimization
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/app/'(marketing)'/demo/ecommerce-drop/page.tsx src/components/landing-pages/EcommerceDropExperience.tsx
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Optimize ecommerce drop performance and contrast"
+          git push
