@@ -7,87 +7,43 @@ import { featuredProjects } from "@/config/work";
 
 type Target = {
   host: HTMLElement;
-  mediaHost: HTMLElement;
   slug: string;
   alt: string;
 };
 
-type Variant = "tablet" | "mobile" | "small-phone";
-
-function variantPath(slug: string, variant: Variant) {
-  const suffix = variant === "tablet" ? "tablet" : `${variant}-v2`;
-  return `/images/work/selected-work/${slug}-${suffix}.jpg`;
+function phoneCapturePath(slug: string, variant: "mobile" | "small-phone") {
+  return `/images/work/selected-work/${slug}-${variant}-v2.jpg`;
 }
 
-function DeviceFrame({
-  slug,
-  alt,
-  variant,
-  className
-}: {
-  slug: string;
-  alt: string;
-  variant: Variant;
-  className: string;
-}) {
-  return (
-    <div className={className} aria-hidden="true">
-      <div className="h-full w-full overflow-hidden rounded-[inherit] border border-white/14 bg-[#05060a] p-[3px] shadow-[0_22px_60px_rgba(0,0,0,.55)] backdrop-blur-xl">
-        <div className="relative h-full w-full overflow-hidden rounded-[inherit] bg-[#05060a]">
-          <img
-            src={variantPath(slug, variant)}
-            alt={`${alt} ${variant.replace("-", " ")} screenshot`}
-            className="h-full w-full object-cover object-top"
-            loading="lazy"
-          />
-          <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.06]" />
-        </div>
-      </div>
-    </div>
-  );
+function decodedImageSource(image: HTMLImageElement) {
+  const source = image.currentSrc || image.src || image.getAttribute("src") || "";
+
+  try {
+    return decodeURIComponent(source);
+  } catch {
+    return source;
+  }
 }
 
-function DesktopDeviceSet({ slug, alt }: { slug: string; alt: string }) {
+function MobileProjectPreview({ slug, alt }: { slug: string; alt: string }) {
   return (
-    <div className="selected-work-device-set pointer-events-none absolute inset-0 z-20">
-      <DeviceFrame
-        slug={slug}
-        alt={alt}
-        variant="tablet"
-        className="absolute bottom-[5%] right-[3%] h-[54%] w-[34%] rounded-[1rem]"
-      />
-      <DeviceFrame
-        slug={slug}
-        alt={alt}
-        variant="mobile"
-        className="absolute bottom-[3%] right-[25%] h-[42%] w-[14%] rounded-[0.9rem]"
-      />
-      <DeviceFrame
-        slug={slug}
-        alt={alt}
-        variant="small-phone"
-        className="absolute bottom-[2%] right-[17%] h-[35%] w-[10.5%] rounded-[0.75rem]"
-      />
-      <span className="absolute bottom-[2%] right-[2%] rounded-full border border-white/12 bg-black/58 px-3 py-1.5 text-[0.48rem] font-semibold uppercase tracking-[0.16em] text-white/52 backdrop-blur-xl">
-        Desktop · Tablet · Mobile
-      </span>
-    </div>
-  );
-}
-
-function ResponsiveReplacement({ slug, alt }: { slug: string; alt: string }) {
-  return (
-    <div className="selected-work-mobile-replacement relative z-30 hidden w-full overflow-hidden rounded-[1.45rem] border border-white/[0.12] bg-[radial-gradient(circle_at_75%_10%,rgba(41,214,255,.12),transparent_18rem),linear-gradient(145deg,#090b12,#111629)] p-4 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-6">
+    <div className="selected-work-phone-replacement relative hidden w-full overflow-hidden rounded-[1.35rem] border border-white/[0.12] bg-[radial-gradient(circle_at_78%_8%,rgba(41,214,255,.13),transparent_18rem),linear-gradient(145deg,#090b12,#111629)] px-3 py-5 shadow-[0_28px_90px_rgba(0,0,0,.5)]">
       <picture className="block w-full">
-        <source media="(min-width: 768px)" srcSet={variantPath(slug, "tablet")} />
-        <source media="(max-width: 374px)" srcSet={variantPath(slug, "small-phone")} />
+        <source
+          media="(max-width: 374px)"
+          srcSet={phoneCapturePath(slug, "small-phone")}
+        />
         <img
-          src={variantPath(slug, "mobile")}
+          src={phoneCapturePath(slug, "mobile")}
           alt={alt}
-          className="mx-auto block aspect-[430/932] w-[78%] max-w-[20rem] rounded-[1.85rem] border-[5px] border-[#11141b] object-cover object-top shadow-[0_28px_80px_rgba(0,0,0,.58)] ring-1 ring-white/[0.14] min-[768px]:aspect-[4/3] min-[768px]:w-full min-[768px]:max-w-none min-[768px]:rounded-[1.3rem] min-[768px]:border-[6px]"
+          className="mx-auto block aspect-[430/932] w-[88%] max-w-[20rem] rounded-[1.75rem] border-[5px] border-[#11141b] object-cover object-top shadow-[0_28px_80px_rgba(0,0,0,.58)] ring-1 ring-white/[0.14] max-[374px]:aspect-[360/800] max-[374px]:w-[92%]"
           loading="lazy"
         />
       </picture>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]"
+      />
     </div>
   );
 }
@@ -104,33 +60,39 @@ export function SelectedWorkDevicePreviewEnhancer() {
       frame = requestAnimationFrame(() => {
         const next: Target[] = [];
 
-        document
-          .querySelectorAll<HTMLImageElement>('img[src*="/images/work/selected-work/"]')
-          .forEach((image) => {
-            const src = image.currentSrc || image.src;
-            const project = featuredProjects.find((item) => {
-              const filename = item.previewImage?.split("/").at(-1);
-              return filename ? src.includes(filename) : false;
-            });
+        document.querySelectorAll<HTMLImageElement>("img").forEach((image) => {
+          if (
+            image.closest(
+              ".selected-work-phone-replacement, .selected-work-device-set"
+            )
+          ) {
+            return;
+          }
 
-            if (!project) return;
+          const source = decodedImageSource(image);
+          if (!source.includes("/images/work/selected-work/")) return;
 
-            const mediaHost = image.parentElement;
-            const browserHost = mediaHost?.parentElement;
-            if (!mediaHost || !browserHost) return;
-            if (browserHost.dataset.selectedWorkResponsiveRoot === "true") return;
-
-            browserHost.dataset.selectedWorkResponsiveRoot = "true";
-            browserHost.classList.add("selected-work-browser-root");
-            mediaHost.classList.add("selected-work-desktop-media-host");
-
-            next.push({
-              host: browserHost,
-              mediaHost,
-              slug: project.slug,
-              alt: project.previewAlt ?? project.title
-            });
+          const project = featuredProjects.find((item) => {
+            const filename = item.previewImage?.split("/").at(-1);
+            return filename ? source.includes(filename) : false;
           });
+
+          if (!project) return;
+
+          const mediaHost = image.parentElement;
+          const browserHost = mediaHost?.parentElement;
+          if (!mediaHost || !browserHost) return;
+          if (browserHost.dataset.selectedWorkPhoneRoot === "true") return;
+
+          browserHost.dataset.selectedWorkPhoneRoot = "true";
+          browserHost.classList.add("selected-work-phone-root");
+
+          next.push({
+            host: browserHost,
+            slug: project.slug,
+            alt: project.previewAlt ?? project.title
+          });
+        });
 
         if (next.length > 0) {
           setTargets((current) => [...current, ...next]);
@@ -150,19 +112,14 @@ export function SelectedWorkDevicePreviewEnhancer() {
   return (
     <>
       <style>{`
-        .selected-work-desktop-media-host {
-          position: relative !important;
-          isolation: isolate;
-        }
-
-        @media (min-width: 1024px) {
-          .selected-work-mobile-replacement {
+        @media (min-width: 768px) {
+          .selected-work-phone-replacement {
             display: none !important;
           }
         }
 
-        @media (max-width: 1023px) {
-          .selected-work-browser-root {
+        @media (max-width: 767px) {
+          .selected-work-phone-root {
             height: auto !important;
             min-height: 0 !important;
             overflow: visible !important;
@@ -171,44 +128,33 @@ export function SelectedWorkDevicePreviewEnhancer() {
             box-shadow: none !important;
           }
 
-          .selected-work-browser-root > :not(.selected-work-mobile-replacement) {
+          .selected-work-phone-root > :not(.selected-work-phone-replacement) {
             display: none !important;
           }
 
-          .selected-work-browser-root > .selected-work-mobile-replacement {
+          .selected-work-phone-root > .selected-work-phone-replacement {
             display: block !important;
-          }
-
-          .selected-work-device-set {
-            display: none !important;
           }
         }
 
-        @media (max-width: 479px) {
-          .selected-work-mobile-replacement {
-            padding: 0.85rem !important;
-            border-radius: 1.25rem !important;
-          }
-
-          .selected-work-mobile-replacement img {
-            width: 82% !important;
-            max-width: 18.5rem !important;
+        @media (max-width: 374px) {
+          .selected-work-phone-replacement {
+            padding: 0.7rem !important;
+            border-radius: 1.15rem !important;
           }
         }
       `}</style>
 
-      {targets.map((target, index) => (
-        <span key={`${target.slug}-${index}`}>
-          {createPortal(
-            <DesktopDeviceSet slug={target.slug} alt={target.alt} />,
-            target.mediaHost
-          )}
-          {createPortal(
-            <ResponsiveReplacement slug={target.slug} alt={target.alt} />,
-            target.host
-          )}
-        </span>
-      ))}
+      {targets.map((target, index) =>
+        createPortal(
+          <MobileProjectPreview
+            key={`${target.slug}-${index}`}
+            slug={target.slug}
+            alt={target.alt}
+          />,
+          target.host
+        )
+      )}
     </>
   );
 }
