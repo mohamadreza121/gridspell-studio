@@ -21,7 +21,8 @@ function screenshotPath(
   project: FeaturedProject,
   variant: "tablet" | "mobile" | "small-phone"
 ) {
-  return `/images/work/selected-work/${project.slug}-${variant}.jpg`;
+  const suffix = variant === "tablet" ? "tablet" : `${variant}-v2`;
+  return `/images/work/selected-work/${project.slug}-${suffix}.jpg`;
 }
 
 function ResponsiveProjectPreview({
