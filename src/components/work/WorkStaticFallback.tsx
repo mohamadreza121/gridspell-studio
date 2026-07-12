@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, ExternalLink } from "lucide-react";
 
-import { ExperienceLab } from "@/components/work/experience-lab/ExperienceLab";
 import { Container } from "@/components/ui/Container";
 import { featuredProjects, type FeaturedProject } from "@/config/work";
 
@@ -35,10 +34,7 @@ function ResponsiveProjectPreview({
   const alt = project.previewAlt ?? `${project.title} website preview`;
 
   return (
-    <div className="relative overflow-hidden rounded-[1.7rem] border border-white/[0.11] bg-[radial-gradient(circle_at_70%_18%,rgba(41,214,255,.12),transparent_24rem),linear-gradient(145deg,#0b0d13,#11182a)] px-4 py-7 sm:px-6 sm:py-8 md:px-8">
-      <div aria-hidden="true" className="absolute -left-16 bottom-[-5rem] h-56 w-56 rounded-full bg-[#7657ff]/24 blur-[70px]" />
-      <div aria-hidden="true" className="absolute -right-16 top-[-4rem] h-52 w-52 rounded-full bg-[#29d6ff]/14 blur-[76px]" />
-
+    <div className="relative overflow-hidden rounded-[1.7rem] border border-white/[0.11] bg-[linear-gradient(145deg,#0b0d13,#11182a)] px-4 py-7 sm:px-6 sm:py-8 md:px-8">
       <picture className="relative z-10 block">
         <source
           media="(min-width: 768px)"
@@ -52,8 +48,9 @@ function ResponsiveProjectPreview({
           src={screenshotPath(project, "mobile")}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
-          className="mx-auto block aspect-[360/800] w-[72%] max-w-[19rem] rounded-[1.9rem] border-[5px] border-[#11141b] object-cover object-top shadow-[0_32px_90px_rgba(0,0,0,.58)] ring-1 ring-white/[0.14] min-[375px]:aspect-[430/932] md:aspect-[4/3] md:w-full md:max-w-none md:rounded-[1.45rem] md:border-[6px]"
+          decoding="async"
+          fetchPriority={priority ? "high" : "low"}
+          className="mx-auto block aspect-[360/800] w-[72%] max-w-[19rem] rounded-[1.9rem] border-[5px] border-[#11141b] object-cover object-top shadow-[0_22px_60px_rgba(0,0,0,.45)] ring-1 ring-white/[0.14] min-[375px]:aspect-[430/932] md:aspect-[4/3] md:w-full md:max-w-none md:rounded-[1.45rem] md:border-[6px]"
         />
       </picture>
 
@@ -67,7 +64,7 @@ export function WorkStaticFallback() {
     <main className="relative overflow-hidden bg-[#07080c] pb-24 pt-32">
       <div
         aria-hidden="true"
-        className="page-grid pointer-events-none absolute inset-0 opacity-35"
+        className="page-grid pointer-events-none absolute inset-0 hidden opacity-35 sm:block"
       />
 
       <Container className="relative">
@@ -87,18 +84,18 @@ export function WorkStaticFallback() {
         </div>
       </Container>
 
-      <ExperienceLab />
-
       <Container className="relative">
         <div className="mt-16 grid gap-16">
           {featuredProjects.map((project, index) => (
             <article
               key={project.slug}
-              className="border-t border-white/[0.08] pt-8"
+              className="work-mobile-card border-t border-white/[0.08] pt-8"
             >
               <Link
                 href={`/work/${project.slug}`}
-                className="group block"
+                prefetch={false}
+                className="group block touch-manipulation active:opacity-80"
+                aria-label={`Open ${project.title} case study`}
               >
                 <ResponsiveProjectPreview project={project} priority={index === 0} />
               </Link>
@@ -145,7 +142,8 @@ export function WorkStaticFallback() {
                 <div className="mt-7 flex flex-wrap gap-4">
                   <Link
                     href={`/work/${project.slug}`}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-[#8be9ff]"
+                    prefetch={false}
+                    className="inline-flex touch-manipulation items-center gap-2 text-sm font-semibold text-[#8be9ff] active:opacity-70"
                   >
                     View case study
                     <ArrowUpRight className="h-4 w-4" />
@@ -153,7 +151,8 @@ export function WorkStaticFallback() {
 
                   <Link
                     href={startProjectHref(project)}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-white/56"
+                    prefetch={false}
+                    className="inline-flex touch-manipulation items-center gap-2 text-sm font-semibold text-white/56 active:opacity-70"
                   >
                     Start similar project
                     <ArrowUpRight className="h-4 w-4" />
@@ -164,7 +163,7 @@ export function WorkStaticFallback() {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-white/50"
+                      className="inline-flex touch-manipulation items-center gap-2 text-sm font-semibold text-white/50 active:opacity-70"
                     >
                       Live website
                       <ExternalLink className="h-4 w-4" />
