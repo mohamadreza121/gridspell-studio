@@ -1,0 +1,66 @@
+name: Capture selected work screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/capture-selected-work-screenshots.mjs"
+      - ".github/workflows/capture-selected-work-screenshots.yml"
+      - "src/config/work.ts"
+      - "src/app/(marketing)/work/**"
+      - "src/components/work/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: selected-work-screenshots
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Synchronize latest main
+        run: |
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture production websites
+        run: node scripts/capture-selected-work-screenshots.mjs
+
+      - name: Commit refreshed screenshots
+        run: |
+          git config user.name "gridspell-work-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/images/work/selected-work
+
+          if git diff --cached --quiet; then
+            echo "No screenshot changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Refresh selected work screenshots"
+          git push origin main
