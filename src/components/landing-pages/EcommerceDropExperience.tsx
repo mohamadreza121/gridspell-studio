@@ -18,7 +18,8 @@ import {
   type LucideIcon
 } from "lucide-react";
 
-import { PulseCan3D, pulseFlavors, type PulseFlavor, type PulseFlavorKey } from "@/components/landing-pages/PulseCan3D";
+import { pulseFlavors, type PulseFlavor, type PulseFlavorKey } from "@/components/landing-pages/PulseCan3D";
+import { PulseCan3DRealistic } from "@/components/landing-pages/PulseCan3DRealistic";
 
 const startHref =
   "/start-project?package=landing-page&source=ecommerce-drop&design=Pulse+Drip+Energy+Drink";
@@ -311,7 +312,7 @@ export function EcommerceDropExperience() {
             <div className="absolute left-[7%] top-[9%] rounded-full border border-white/12 bg-black/20 px-4 py-2 text-[0.5rem] font-black uppercase tracking-[0.2em] text-white/42 backdrop-blur-xl">
               Interactive product model
             </div>
-            <PulseCan3D flavor={activeFlavor} className="absolute inset-0" />
+            <PulseCan3DRealistic flavor={activeFlavor} className="absolute inset-0" />
             <div className="absolute bottom-[8%] left-[7%] grid gap-2 text-[0.48rem] font-black uppercase tracking-[0.18em] text-white/32 sm:grid-cols-3 sm:gap-5">
               <span>Zero sugar</span>
               <span>180mg caffeine</span>

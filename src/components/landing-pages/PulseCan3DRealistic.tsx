@@ -759,6 +759,8 @@ export function PulseCan3DRealistic({
     let disposed = false;
     let appliedFlavorVersion = -1;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const staticMobile = window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
+    const animateMotion = !reducedMotion && !staticMobile;
     const pointerTarget = { x: 0, y: 0 };
     const pointerCurrent = { x: 0, y: 0 };
 
@@ -907,8 +909,10 @@ export function PulseCan3DRealistic({
         pointerTarget.x = 0;
         pointerTarget.y = 0;
       };
-      host.addEventListener("pointermove", handlePointerMove);
-      host.addEventListener("pointerleave", handlePointerLeave);
+      if (animateMotion) {
+        host.addEventListener("pointermove", handlePointerMove);
+        host.addEventListener("pointerleave", handlePointerLeave);
+      }
 
       const camera: Vec3 = [0, 0.14, 9.15];
       const start = performance.now();
@@ -947,10 +951,10 @@ export function PulseCan3DRealistic({
         const darkMetal: Vec3 = [0.08, 0.095, 0.11];
 
         // One complete revolution takes roughly 36 seconds.
-        const autoSpin = reducedMotion ? 0 : elapsed * (Math.PI * 2 / 36);
-        const floatY = reducedMotion ? 0 : Math.sin(elapsed * 0.88) * 0.055;
-        const idleTiltX = reducedMotion ? -0.055 : -0.055 + Math.sin(elapsed * 0.62) * 0.008;
-        const idleTiltZ = reducedMotion ? -0.028 : -0.028 + Math.sin(elapsed * 0.48) * 0.006;
+        const autoSpin = animateMotion ? elapsed * (Math.PI * 2 / 36) : 0;
+        const floatY = animateMotion ? Math.sin(elapsed * 0.88) * 0.055 : 0;
+        const idleTiltX = animateMotion ? -0.055 + Math.sin(elapsed * 0.62) * 0.008 : -0.055;
+        const idleTiltZ = animateMotion ? -0.028 + Math.sin(elapsed * 0.48) * 0.006 : -0.028;
         const baseRotationX = idleTiltX + pointerCurrent.y * 0.050;
         const baseRotationY = autoSpin + pointerCurrent.x * 0.095;
         const baseRotationZ = idleTiltZ + pointerCurrent.x * 0.014;
@@ -1002,8 +1006,10 @@ export function PulseCan3DRealistic({
         disposed = true;
         cancelAnimationFrame(animationFrame);
         observer.disconnect();
-        host.removeEventListener("pointermove", handlePointerMove);
-        host.removeEventListener("pointerleave", handlePointerLeave);
+        if (animateMotion) {
+          host.removeEventListener("pointermove", handlePointerMove);
+          host.removeEventListener("pointerleave", handlePointerLeave);
+        }
         gl.deleteProgram(program);
         gl.deleteTexture(texture);
         meshes.forEach((mesh) => {
@@ -1031,7 +1037,7 @@ export function PulseCan3DRealistic({
       <canvas
         ref={canvasRef}
         className="relative z-10 block h-full w-full drop-shadow-[0_34px_30px_rgba(0,0,0,.32)]"
-        aria-label={`Realistic rotating 3D can of Pulse Drip ${flavor.name}`}
+        aria-label={`Interactive 3D can of Pulse Drip ${flavor.name}`}
       />
     </div>
   );

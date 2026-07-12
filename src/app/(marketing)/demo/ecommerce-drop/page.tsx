@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { EcommerceDropExperience } from "@/components/landing-pages/EcommerceDropExperience";
-import { PulseCanRealismPortal } from "@/components/landing-pages/PulseCanRealismPortal";
 import { PulseFlavorCardCanPortal } from "@/components/landing-pages/PulseFlavorCardCanPortal";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -16,7 +15,6 @@ export default function EcommerceDropDemoPage() {
   return (
     <>
       <EcommerceDropExperience />
-      <PulseCanRealismPortal />
       <PulseFlavorCardCanPortal />
     </>
   );
