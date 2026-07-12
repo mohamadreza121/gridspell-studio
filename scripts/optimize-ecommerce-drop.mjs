@@ -1,13 +1,17 @@
 import { readFile, writeFile } from "node:fs/promises";
 
+let changedFiles = 0;
+
 async function edit(path, transform) {
   const source = await readFile(path, "utf8");
   const next = transform(source);
 
   if (next === source) {
-    throw new Error(`No optimization changes were produced for ${path}`);
+    console.log(`No additional changes needed in ${path}`);
+    return;
   }
 
+  changedFiles += 1;
   await writeFile(path, next);
 }
 
@@ -64,4 +68,8 @@ await edit("src/components/landing-pages/EcommerceDropExperience.tsx", (source) 
   return next;
 });
 
-console.log("Optimized ecommerce drop performance and contrast.");
+if (changedFiles === 0) {
+  console.log("Ecommerce drop is already optimized.");
+} else {
+  console.log(`Optimized ${changedFiles} ecommerce file(s).`);
+}
