@@ -29,6 +29,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Synchronize latest main
+        run: |
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -58,4 +64,4 @@ jobs:
           fi
 
           git commit -m "Refresh landing page gallery screenshots"
-          git push
+          git push origin main
