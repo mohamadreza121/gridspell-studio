@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { GalleryTightTopSpacing } from "@/components/landing-pages/GalleryTightTopSpacing";
 import { LandingPageGalleryExperience } from "@/components/landing-pages/LandingPageGalleryExperience";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -11,5 +12,9 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function LandingPagesPage() {
-  return <LandingPageGalleryExperience />;
+  return (
+    <GalleryTightTopSpacing>
+      <LandingPageGalleryExperience />
+    </GalleryTightTopSpacing>
+  );
 }
