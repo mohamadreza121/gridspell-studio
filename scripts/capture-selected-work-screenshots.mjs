@@ -28,7 +28,11 @@ const projects = [
   },
   {
     slug: "gridspell-studio",
-    url: "https://gridspellstudio.com/"
+    url: "https://gridspellstudio.com/",
+    fileName: "gridspell-studio-v3.jpg",
+    reducedMotion: "no-preference",
+    waitForGridspellHero: true,
+    postFreezeDelayMs: 1_200
   }
 ];
 
@@ -39,11 +43,18 @@ const context = await browser.newContext({
   viewport: { width: 1600, height: 900 },
   deviceScaleFactor: 1,
   colorScheme: "dark",
-  reducedMotion: "reduce"
+  reducedMotion: "no-preference"
 });
 
 for (const project of projects) {
   const page = await context.newPage();
+
+  if (project.reducedMotion) {
+    await page.emulateMedia({
+      reducedMotion: project.reducedMotion
+    });
+  }
+
   console.log(`Capturing ${project.url}`);
 
   await page.goto(project.url, {
@@ -59,60 +70,177 @@ for (const project of projects) {
 
   // Let entrance sequences finish before freezing animation. Freezing first can leave
   // loader overlays permanently visible on sites with animated preloaders.
-  await page.waitForTimeout(project.settleDelayMs ?? 6_000);
+if (project.waitForGridspellHero) {
+  await page.emulateMedia({
+    reducedMotion: "no-preference"
+  });
 
-  if (project.waitForPreloader) {
-    try {
-      await page.waitForFunction(
-        () => {
-          const isVisible = (element) => {
-            if (!(element instanceof HTMLElement)) return false;
+  // Force the real pinned desktop homepage and hide the duplicate static layout.
+  await page.addStyleTag({
+    content: `
+      .home-presentation-only {
+        display: block !important;
+      }
 
-            const style = window.getComputedStyle(element);
-            if (style.display === "none" || style.visibility === "hidden") return false;
-            if (Number.parseFloat(style.opacity || "1") <= 0.04) return false;
+      .home-static-only {
+        display: none !important;
+      }
+    `
+  });
 
-            const rect = element.getBoundingClientRect();
-            return rect.width > 1 && rect.height > 1;
-          };
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
 
-          const explicitLoaders = Array.from(
-            document.querySelectorAll(
-              '[class*="preload" i], [class*="loader" i], [class*="loading" i], [id*="preload" i], [id*="loader" i], [id*="loading" i]'
-            )
-          ).filter(isVisible);
+    // Starts GridSpell's lazily hydrated hero immediately.
+    window.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true
+      })
+    );
+  });
 
-          if (explicitLoaders.length > 0) return false;
+  const desktopHero = page.locator(
+    ".home-presentation-only .home-presentation-track > .sticky"
+  );
 
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
+  await desktopHero.waitFor({
+    state: "visible",
+    timeout: 30_000
+  });
 
-          const blockingOverlay = Array.from(document.body.querySelectorAll("*"))
-            .filter((element) => element instanceof HTMLElement)
-            .some((element) => {
-              if (element.tagName === "CANVAS" || element.tagName === "VIDEO") return false;
+  await page.waitForFunction(
+    () => {
+      const desktop = document.querySelector(
+        ".home-presentation-only"
+      );
+
+      if (!(desktop instanceof HTMLElement)) {
+        return false;
+      }
+
+      const desktopStyle = window.getComputedStyle(desktop);
+
+      if (desktopStyle.display === "none") {
+        return false;
+      }
+
+      const host = desktop.querySelector(
+        '.home-hero-mode-host[data-hero-mode-ready="true"]'
+      );
+
+      if (!(host instanceof HTMLElement)) {
+        return false;
+      }
+
+      const style = window.getComputedStyle(host);
+      const rect = host.getBoundingClientRect();
+
+      return (
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        Number.parseFloat(style.opacity || "1") > 0.9 &&
+        rect.width > 300 &&
+        rect.height > 180 &&
+        rect.top >= 0 &&
+        rect.bottom <= window.innerHeight + 20
+      );
+    },
+    undefined,
+    {
+      timeout: 30_000
+    }
+  );
+
+  await page.waitForTimeout(1_500);
+  } else {
+    await page.waitForTimeout(project.settleDelayMs ?? 6_000);
+
+    if (project.waitForPreloader) {
+      try {
+        await page.waitForFunction(
+          () => {
+            const isVisible = (element) => {
+              if (!(element instanceof HTMLElement)) return false;
 
               const style = window.getComputedStyle(element);
-              if (style.position !== "fixed") return false;
-              if (!isVisible(element)) return false;
 
-              const zIndex = Number.parseInt(style.zIndex || "0", 10);
-              if (!Number.isFinite(zIndex) || zIndex < 20) return false;
+              if (
+                style.display === "none" ||
+                style.visibility === "hidden"
+              ) {
+                return false;
+              }
+
+              if (Number.parseFloat(style.opacity || "1") <= 0.04) {
+                return false;
+              }
 
               const rect = element.getBoundingClientRect();
-              return (
-                rect.width >= viewportWidth * 0.78 &&
-                rect.height >= viewportHeight * 0.78
-              );
-            });
 
-          return !blockingOverlay && document.querySelectorAll("main, section").length > 0;
-        },
-        { timeout: 18_000 }
-      );
-    } catch {
-      // The extended settle delay still allows the capture to proceed if the site uses
-      // an unusual loader implementation that does not match the detection heuristics.
+              return rect.width > 1 && rect.height > 1;
+            };
+
+            const explicitLoaders = Array.from(
+              document.querySelectorAll(
+                '[class*="preload" i], ' +
+                  '[class*="loader" i], ' +
+                  '[class*="loading" i], ' +
+                  '[id*="preload" i], ' +
+                  '[id*="loader" i], ' +
+                  '[id*="loading" i]'
+              )
+            ).filter(isVisible);
+
+            if (explicitLoaders.length > 0) return false;
+
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            const blockingOverlay = Array.from(
+              document.body.querySelectorAll("*")
+            )
+              .filter((element) => element instanceof HTMLElement)
+              .some((element) => {
+                if (
+                  element.tagName === "CANVAS" ||
+                  element.tagName === "VIDEO"
+                ) {
+                  return false;
+                }
+
+                const style = window.getComputedStyle(element);
+
+                if (style.position !== "fixed") return false;
+                if (!isVisible(element)) return false;
+
+                const zIndex = Number.parseInt(
+                  style.zIndex || "0",
+                  10
+                );
+
+                if (!Number.isFinite(zIndex) || zIndex < 20) {
+                  return false;
+                }
+
+                const rect = element.getBoundingClientRect();
+
+                return (
+                  rect.width >= viewportWidth * 0.78 &&
+                  rect.height >= viewportHeight * 0.78
+                );
+              });
+
+            return (
+              !blockingOverlay &&
+              document.querySelectorAll("main, section").length > 0
+            );
+          },
+          undefined,
+          { timeout: 18_000 }
+        );
+      } catch {
+        // Continue after the normal settle delay.
+      }
     }
   }
 
@@ -145,13 +273,29 @@ for (const project of projects) {
 
   await page.waitForTimeout(project.postFreezeDelayMs ?? 750);
 
-  await page.screenshot({
-    path: path.join(outputDir, `${project.slug}.jpg`),
-    type: "jpeg",
-    quality: 88,
-    fullPage: false,
-    animations: "disabled"
-  });
+  const outputName =
+    project.fileName ?? `${project.slug}.jpg`;
+
+  if (project.waitForGridspellHero) {
+    const desktopHero = page.locator(
+      ".home-presentation-only .home-presentation-track > .sticky"
+    );
+
+    await desktopHero.screenshot({
+      path: path.join(outputDir, outputName),
+      type: "jpeg",
+      quality: 88,
+      animations: "disabled"
+    });
+  } else {
+    await page.screenshot({
+      path: path.join(outputDir, outputName),
+      type: "jpeg",
+      quality: 88,
+      fullPage: false,
+      animations: "disabled"
+    });
+  }
 
   await page.close();
 }

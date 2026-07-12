@@ -118,7 +118,7 @@ export const featuredProjects: FeaturedProject[] = [
     result:
       "A premium web design brand supported by practical systems for pricing, inquiries, projects, and client operations.",
     accent: "cyan",
-    previewImage: "/images/work/selected-work/gridspell-studio.jpg",
+    previewImage: "/images/work/selected-work/gridspell-studio-v3.jpg",
     previewAlt: "GridSpell Studio homepage screenshot",
 
     liveUrl: "https://gridspellstudio.com/",
