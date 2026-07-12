@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "scripts/capture-selected-work-screenshots.mjs"
+      - "scripts/recapture-landing-gallery-mobile.mjs"
       - ".github/workflows/capture-selected-work-screenshots.yml"
       - "src/config/work.ts"
       - "src/app/(marketing)/work/**"
@@ -49,7 +50,9 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Capture production websites
-        run: node scripts/capture-selected-work-screenshots.mjs
+        run: |
+          node scripts/capture-selected-work-screenshots.mjs
+          node scripts/recapture-landing-gallery-mobile.mjs
 
       - name: Commit refreshed screenshots
         run: |
