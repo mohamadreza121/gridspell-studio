@@ -3,7 +3,7 @@
 import Image from "next/image";
 
 import Link from "next/link";
-import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import {
   ArrowUpRight,
   CheckCircle2,

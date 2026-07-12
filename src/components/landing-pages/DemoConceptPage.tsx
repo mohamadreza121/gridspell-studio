@@ -57,7 +57,7 @@ export function DemoConceptPage({
     notFound();
   }
 
-  const [primary, secondary, surface] = concept.palette;
+  const [primary, secondary] = concept.palette;
   const startProject = startHref(concept.slug, concept.title);
 
   return (
