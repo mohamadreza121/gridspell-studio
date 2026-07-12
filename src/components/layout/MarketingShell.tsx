@@ -4,6 +4,7 @@ import { Navbar, type MarketingViewer } from "@/components/layout/Navbar";
 import { NavigationAccessibilityController } from "@/components/layout/NavigationAccessibilityController";
 import { NavigationFocusRestore } from "@/components/layout/NavigationFocusRestore";
 import { TinyViewportRecoveryStyles } from "@/components/layout/TinyViewportRecoveryStyles";
+import { SelectedWorkDevicePreviewEnhancer } from "@/components/work/SelectedWorkDevicePreviewEnhancer";
 import { getViewerContext } from "@/lib/supabase/auth";
 
 function initials(fullName: string | null, email: string | null) {
@@ -42,6 +43,7 @@ export async function MarketingShell({ children }: { children: ReactNode }) {
       </a>
       <NavigationAccessibilityController />
       <NavigationFocusRestore />
+      <SelectedWorkDevicePreviewEnhancer />
       <Navbar viewer={viewer} />
       <div id="main-content" tabIndex={-1} className="focus:outline-none">
         {children}
