@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, ExternalLink } from "lucide-react";
 
@@ -16,6 +15,50 @@ function startProjectHref(project: FeaturedProject) {
   const params = new URLSearchParams({ package: packageId, source: project.slug });
 
   return `/start-project?${params.toString()}`;
+}
+
+function screenshotPath(
+  project: FeaturedProject,
+  variant: "tablet" | "mobile" | "small-phone"
+) {
+  return `/images/work/selected-work/${project.slug}-${variant}.jpg`;
+}
+
+function ResponsiveProjectPreview({
+  project,
+  priority
+}: {
+  project: FeaturedProject;
+  priority: boolean;
+}) {
+  const alt = project.previewAlt ?? `${project.title} website preview`;
+
+  return (
+    <div className="relative overflow-hidden rounded-[1.7rem] border border-white/[0.11] bg-[radial-gradient(circle_at_70%_18%,rgba(41,214,255,.12),transparent_24rem),linear-gradient(145deg,#0b0d13,#11182a)] px-4 py-7 sm:px-6 sm:py-8 md:px-8">
+      <div aria-hidden="true" className="absolute -left-16 bottom-[-5rem] h-56 w-56 rounded-full bg-[#7657ff]/24 blur-[70px]" />
+      <div aria-hidden="true" className="absolute -right-16 top-[-4rem] h-52 w-52 rounded-full bg-[#29d6ff]/14 blur-[76px]" />
+
+      <picture className="relative z-10 block">
+        <source
+          media="(min-width: 768px)"
+          srcSet={screenshotPath(project, "tablet")}
+        />
+        <source
+          media="(max-width: 374px)"
+          srcSet={screenshotPath(project, "small-phone")}
+        />
+        <img
+          src={screenshotPath(project, "mobile")}
+          alt={alt}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          className="mx-auto block aspect-[360/800] w-[72%] max-w-[19rem] rounded-[1.9rem] border-[5px] border-[#11141b] object-cover object-top shadow-[0_32px_90px_rgba(0,0,0,.58)] ring-1 ring-white/[0.14] min-[375px]:aspect-[430/932] md:aspect-[4/3] md:w-full md:max-w-none md:rounded-[1.45rem] md:border-[6px]"
+        />
+      </picture>
+
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]" />
+    </div>
+  );
 }
 
 export function WorkStaticFallback() {
@@ -54,26 +97,9 @@ export function WorkStaticFallback() {
             >
               <Link
                 href={`/work/${project.slug}`}
-                className="group block overflow-hidden rounded-[1.6rem] border border-white/[0.1] bg-[#080a0f]"
+                className="group block"
               >
-                <div className="relative aspect-video overflow-hidden bg-[radial-gradient(circle_at_70%_20%,rgba(41,214,255,.16),transparent_28rem),linear-gradient(145deg,#0b0d13,#11182a)]">
-                  {project.previewImage ? (
-                    <Image
-                      src={project.previewImage}
-                      alt={project.previewAlt ?? `${project.title} website preview`}
-                      fill
-                      sizes="(min-width: 1024px) 70vw, 92vw"
-                      className="object-cover object-top transition duration-500 group-hover:scale-[1.015]"
-                      priority={index === 0}
-                    />
-                  ) : (
-                    <div className="absolute inset-0 grid place-items-center p-8 text-center">
-                      <p className="max-w-[14ch] font-display text-[clamp(2.2rem,7vw,5.5rem)] font-semibold leading-[0.9] tracking-[-0.065em] text-white">
-                        {project.title}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                <ResponsiveProjectPreview project={project} priority={index === 0} />
               </Link>
 
               <div className="mt-7">
