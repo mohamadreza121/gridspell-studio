@@ -29,10 +29,7 @@ function MobileProjectPreview({ slug, alt }: { slug: string; alt: string }) {
   return (
     <div className="selected-work-phone-replacement relative hidden w-full overflow-hidden rounded-[1.35rem] border border-white/[0.12] bg-[radial-gradient(circle_at_78%_8%,rgba(41,214,255,.13),transparent_18rem),linear-gradient(145deg,#090b12,#111629)] px-3 py-5 shadow-[0_28px_90px_rgba(0,0,0,.5)]">
       <picture className="block w-full">
-        <source
-          media="(max-width: 374px)"
-          srcSet={phoneCapturePath(slug, "small-phone")}
-        />
+        <source media="(max-width: 374px)" srcSet={phoneCapturePath(slug, "small-phone")} />
         <img
           src={phoneCapturePath(slug, "mobile")}
           alt={alt}
@@ -40,10 +37,7 @@ function MobileProjectPreview({ slug, alt }: { slug: string; alt: string }) {
           loading="lazy"
         />
       </picture>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]"
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]" />
     </div>
   );
 }
@@ -63,7 +57,7 @@ export function SelectedWorkDevicePreviewEnhancer() {
         document.querySelectorAll<HTMLImageElement>("img").forEach((image) => {
           if (
             image.closest(
-              ".selected-work-phone-replacement, .selected-work-device-set"
+              ".native-selected-work-preview, .selected-work-phone-replacement, .selected-work-device-set"
             )
           ) {
             return;
@@ -147,11 +141,7 @@ export function SelectedWorkDevicePreviewEnhancer() {
 
       {targets.map((target, index) =>
         createPortal(
-          <MobileProjectPreview
-            key={`${target.slug}-${index}`}
-            slug={target.slug}
-            alt={target.alt}
-          />,
+          <MobileProjectPreview key={`${target.slug}-${index}`} slug={target.slug} alt={target.alt} />,
           target.host
         )
       )}
