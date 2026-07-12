@@ -1,0 +1,61 @@
+name: Capture landing page screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/capture-landing-page-screenshots.mjs"
+      - ".github/workflows/capture-landing-page-screenshots.yml"
+      - "src/app/(marketing)/demo/**"
+      - "src/components/landing-pages/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: landing-page-screenshots
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture production demos
+        env:
+          GALLERY_BASE_URL: https://gridspellstudio.com
+        run: node scripts/capture-landing-page-screenshots.mjs
+
+      - name: Commit refreshed screenshots
+        run: |
+          git config user.name "gridspell-gallery-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/landing-page-screenshots
+
+          if git diff --cached --quiet; then
+            echo "No screenshot changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Refresh landing page gallery screenshots"
+          git push
