@@ -11,7 +11,9 @@ type Target = {
   alt: string;
 };
 
-function variantPath(slug: string, variant: "tablet" | "mobile" | "small-phone") {
+type Variant = "tablet" | "mobile" | "small-phone";
+
+function variantPath(slug: string, variant: Variant) {
   return `/images/work/selected-work/${slug}-${variant}.jpg`;
 }
 
@@ -23,7 +25,7 @@ function DeviceFrame({
 }: {
   slug: string;
   alt: string;
-  variant: "tablet" | "mobile" | "small-phone";
+  variant: Variant;
   className: string;
 }) {
   return (
@@ -32,7 +34,7 @@ function DeviceFrame({
         <div className="relative h-full w-full overflow-hidden rounded-[inherit] bg-[#05060a]">
           <img
             src={variantPath(slug, variant)}
-            alt={`${alt} ${variant.replace("-", " ")} screenshot`}
+            alt=""
             className="h-full w-full object-cover object-top"
             loading="lazy"
           />
@@ -71,6 +73,31 @@ function DeviceSet({ slug, alt }: { slug: string; alt: string }) {
   );
 }
 
+function ResponsiveViewportPreview({ slug, alt }: { slug: string; alt: string }) {
+  return (
+    <picture className="selected-work-viewport-preview pointer-events-none absolute inset-0 z-20">
+      <source media="(max-width: 374px)" srcSet={variantPath(slug, "small-phone")} />
+      <source media="(max-width: 767px)" srcSet={variantPath(slug, "mobile")} />
+      <source media="(max-width: 1023px)" srcSet={variantPath(slug, "tablet")} />
+      <img
+        src={variantPath(slug, "tablet")}
+        alt={`${alt} responsive website screenshot`}
+        className="h-full w-full object-cover object-top"
+        loading="lazy"
+      />
+    </picture>
+  );
+}
+
+function ResponsivePreview({ slug, alt }: { slug: string; alt: string }) {
+  return (
+    <>
+      <ResponsiveViewportPreview slug={slug} alt={alt} />
+      <DeviceSet slug={slug} alt={alt} />
+    </>
+  );
+}
+
 export function SelectedWorkDevicePreviewEnhancer() {
   const [targets, setTargets] = useState<Target[]>([]);
 
@@ -84,6 +111,8 @@ export function SelectedWorkDevicePreviewEnhancer() {
         const next: Target[] = [];
 
         document.querySelectorAll<HTMLImageElement>('img[src*="/images/work/selected-work/"]').forEach((image) => {
+          if (image.closest(".selected-work-device-set, .selected-work-viewport-preview")) return;
+
           const src = image.currentSrc || image.src;
           const project = featuredProjects.find((item) =>
             item.previewImage ? src.includes(item.previewImage.split("/").at(-1) ?? "") : false
@@ -129,34 +158,53 @@ export function SelectedWorkDevicePreviewEnhancer() {
           transform-origin: top left;
         }
 
-        @media (max-width: 639px) {
-          .selected-work-device-tablet {
-            right: 2% !important;
-            bottom: 5% !important;
-            width: 38% !important;
-            height: 50% !important;
+        .selected-work-viewport-preview {
+          display: none;
+        }
+
+        @media (max-width: 1023px) {
+          .selected-work-responsive-host {
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: hidden !important;
           }
 
-          .selected-work-device-mobile {
-            right: 28% !important;
-            width: 16% !important;
-            height: 39% !important;
+          .selected-work-responsive-host > img:not(.selected-work-viewport-preview img) {
+            opacity: 0 !important;
           }
 
-          .selected-work-device-small {
-            right: 19% !important;
-            width: 12% !important;
-            height: 32% !important;
+          .selected-work-viewport-preview {
+            display: block;
           }
 
-          .selected-work-device-set > span {
-            display: none;
+          .selected-work-device-set {
+            display: none !important;
+          }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .selected-work-responsive-host {
+            aspect-ratio: 4 / 3 !important;
+          }
+        }
+
+        @media (min-width: 375px) and (max-width: 767px) {
+          .selected-work-responsive-host {
+            aspect-ratio: 430 / 932 !important;
+            max-height: min(76svh, 760px) !important;
+          }
+        }
+
+        @media (max-width: 374px) {
+          .selected-work-responsive-host {
+            aspect-ratio: 360 / 800 !important;
+            max-height: min(76svh, 680px) !important;
           }
         }
       `}</style>
       {targets.map((target, index) =>
         createPortal(
-          <DeviceSet key={`${target.slug}-${index}`} slug={target.slug} alt={target.alt} />,
+          <ResponsivePreview key={`${target.slug}-${index}`} slug={target.slug} alt={target.alt} />,
           target.host
         )
       )}
