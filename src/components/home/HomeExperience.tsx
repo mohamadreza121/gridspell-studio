@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 
 
+import { HomeHeroModeShowcaseClient } from "@/components/home/HomeHeroModeShowcase.client";
 import { StaticWorkGallery, WorkCarouselScene } from "@/components/home/WorkCarouselScene";
 import { ActionLink } from "@/components/ui/ActionControl";
 import { Container } from "@/components/ui/Container";
@@ -454,42 +455,34 @@ function HeroScene({
         </span>
       </Heading>
 
-      <div className="mt-8 grid w-full max-w-[1500px] gap-7 xl:grid-cols-[minmax(0,760px)_auto] xl:items-end">
+      <div className="mt-8 w-full max-w-[760px]">
         <p className="max-w-3xl text-lg leading-8 text-white/48 sm:text-xl sm:leading-9">
           GridSpell creates premium websites, client portals, dashboards, and
           connected digital systems that make ambitious businesses feel
           established, valuable, and ready to grow.
         </p>
+      </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
-          <ActionLink href="/start-project" className="min-h-14 px-7">
+      <HomeHeroModeShowcaseClient />
+
+      <div className="home-hero-card-actions-host">
+        <div className="home-hero-card-actions flex flex-col gap-3 sm:flex-row">
+          <ActionLink
+            href="/start-project"
+            className="min-h-14 flex-1 justify-center px-6"
+          >
             Start a project
             <ArrowUpRight className="h-4 w-4" />
           </ActionLink>
-
           <ActionLink
             href="/work"
-            className="min-h-14 border-white/[0.12] bg-none bg-white/[0.035] px-7 shadow-none hover:bg-white/[0.07]"
+            className="min-h-14 flex-1 justify-center border-white/[0.12] bg-none bg-white/[0.035] px-6 shadow-none hover:bg-white/[0.07]"
           >
             Explore selected work
             <ArrowUpRight className="h-4 w-4" />
           </ActionLink>
         </div>
       </div>
-
-      <div className="mt-9 flex flex-wrap gap-2">
-        {["Websites", "Portals", "Automation", "Digital systems"].map(
-          (item) => (
-            <span
-              key={item}
-              className="rounded-full border border-white/[0.1] bg-white/[0.025] px-4 py-2 text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-white/38"
-            >
-              {item}
-            </span>
-          )
-        )}
-      </div>
-
 
       <div className="tiny-hero-card mt-7 rounded-[1.35rem] border border-white/[0.1] bg-[linear-gradient(145deg,rgba(255,255,255,0.045),rgba(255,255,255,0.018)),rgba(11,13,19,0.78)] p-4 shadow-[0_24px_70px_rgba(0,0,0,0.3)] backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">

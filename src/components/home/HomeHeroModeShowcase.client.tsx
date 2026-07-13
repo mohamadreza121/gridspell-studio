@@ -11,8 +11,7 @@ import {
   ShieldCheck,
   Workflow
 } from "lucide-react";
-import { useEffect, useState, type ComponentType } from "react";
-import { createPortal } from "react-dom";
+import { useState, type ComponentType } from "react";
 
 type IconComponent = ComponentType<{ className?: string }>;
 type HeroModeId = "websites" | "portals" | "automation" | "systems";
@@ -79,8 +78,6 @@ const heroModes: readonly HeroMode[] = [
     progress: 88
   }
 ] as const;
-
-const labels = heroModes.map((mode) => mode.label);
 
 function ModeCard({ activeMode }: { activeMode: HeroModeId }) {
   const reduceMotion = useReducedMotion();
@@ -206,146 +203,37 @@ function ModeCard({ activeMode }: { activeMode: HeroModeId }) {
 
 export function HomeHeroModeShowcaseClient() {
   const [activeMode, setActiveMode] = useState<HeroModeId>("websites");
-  const [hosts, setHosts] = useState<HTMLElement[]>([]);
-
-  useEffect(() => {
-    const root = document.querySelector(".home-experience");
-    if (!root) return;
-
-    const matchingSpans = Array.from(root.querySelectorAll<HTMLSpanElement>("span")).filter(
-      (span) => labels.includes((span.textContent ?? "").trim())
-    );
-
-    const candidateParents = Array.from(
-      new Set(
-        matchingSpans
-          .map((span) => span.parentElement)
-          .filter((element): element is HTMLElement => Boolean(element))
-      )
-    );
-
-    const tabGroups = candidateParents.filter((parent) => {
-      const childLabels = Array.from(parent.children).map((child) =>
-        (child.textContent ?? "").trim()
-      );
-      return labels.every((label) => childLabels.includes(label));
-    });
-
-    const createdHosts: HTMLElement[] = [];
-    const cleanups: Array<() => void> = [];
-
-    tabGroups.forEach((group, groupIndex) => {
-      group.classList.add("home-hero-mode-tabs");
-
-      Array.from(group.children).forEach((child) => {
-        if (!(child instanceof HTMLSpanElement)) return;
-        const label = (child.textContent ?? "").trim();
-        const mode = heroModes.find((item) => item.label === label);
-        if (!mode) return;
-
-        const activate = () => setActiveMode(mode.id);
-        const handleKeyDown = (event: KeyboardEvent) => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-          activate();
-        };
-
-        child.classList.add("home-hero-mode-tab");
-        child.dataset.heroMode = mode.id;
-        child.setAttribute("role", "button");
-        child.setAttribute("tabindex", "0");
-        child.setAttribute("aria-label", `Show ${mode.label} demonstration`);
-        child.addEventListener("click", activate);
-        child.addEventListener("keydown", handleKeyDown);
-
-        cleanups.push(() => {
-          child.removeEventListener("click", activate);
-          child.removeEventListener("keydown", handleKeyDown);
-          child.classList.remove("home-hero-mode-tab");
-          delete child.dataset.heroMode;
-          delete child.dataset.active;
-          child.removeAttribute("role");
-          child.removeAttribute("tabindex");
-          child.removeAttribute("aria-label");
-          child.removeAttribute("aria-pressed");
-        });
-      });
-
-      const host = document.createElement("div");
-      host.className = "home-hero-mode-host";
-      host.dataset.heroModeHost = String(groupIndex);
-      group.insertAdjacentElement("afterend", host);
-      createdHosts.push(host);
-
-      cleanups.push(() => {
-        group.classList.remove("home-hero-mode-tabs");
-        host.remove();
-      });
-    });
-
-    const hostFrameId = window.requestAnimationFrame(() => {
-      setHosts(createdHosts);
-    });
-
-    return () => {
-      window.cancelAnimationFrame(hostFrameId);
-      cleanups.forEach((cleanup) => cleanup());
-      setHosts([]);
-    };
-  }, []);
-
-  useEffect(() => {
-    document.querySelectorAll<HTMLElement>(".home-hero-mode-tab").forEach((tab) => {
-      const active = tab.dataset.heroMode === activeMode;
-      tab.dataset.active = String(active);
-      tab.setAttribute("aria-pressed", String(active));
-    });
-  }, [activeMode, hosts]);
-
-  useEffect(() => {
-    if (hosts.length === 0) return;
-
-    let secondFrameId: number | undefined;
-    let timeoutId: number | undefined;
-
-    hosts.forEach((host) => {
-      delete host.dataset.heroModeReady;
-    });
-
-    const firstFrameId = window.requestAnimationFrame(() => {
-      secondFrameId = window.requestAnimationFrame(() => {
-        timeoutId = window.setTimeout(() => {
-          hosts.forEach((host) => {
-            host.dataset.heroModeReady = "true";
-          });
-        }, 80);
-      });
-    });
-
-    return () => {
-      window.cancelAnimationFrame(firstFrameId);
-      if (secondFrameId !== undefined) {
-        window.cancelAnimationFrame(secondFrameId);
-      }
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-      }
-    };
-  }, [activeMode, hosts]);
-
-  if (hosts.length === 0) {
-    return null;
-  }
 
   return (
     <>
-      {hosts.map((host, index) =>
-        createPortal(
-          <ModeCard activeMode={activeMode} />,
-          host,
-          `home-hero-mode-${index}`
-        )
-      )}
+      <div
+        className="home-hero-mode-tabs mt-9 flex flex-wrap gap-2"
+        role="group"
+        aria-label="Homepage experience demonstrations"
+      >
+        {heroModes.map((mode) => {
+          const active = mode.id === activeMode;
+
+          return (
+            <button
+              key={mode.id}
+              type="button"
+              className="home-hero-mode-tab rounded-full border border-white/[0.1] bg-white/[0.025] px-4 py-2 text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-white/38"
+              data-hero-mode={mode.id}
+              data-active={String(active)}
+              aria-label={`Show ${mode.label} demonstration`}
+              aria-pressed={active}
+              onClick={() => setActiveMode(mode.id)}
+            >
+              {mode.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="home-hero-mode-host" data-hero-mode-ready="true">
+        <ModeCard activeMode={activeMode} />
+      </div>
     </>
   );
 }

@@ -18,6 +18,41 @@ function shouldTrackForReadiness(request: Request) {
   return !["media", "websocket"].includes(request.resourceType());
 }
 
+test("homepage mobile hydration stays within the CLS budget", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    const clsWindow = window as Window & { __homeCls?: number };
+    clsWindow.__homeCls = 0;
+
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        const layoutShift = entry as PerformanceEntry & {
+          hadRecentInput: boolean;
+          value: number;
+        };
+
+        if (!layoutShift.hadRecentInput) {
+          clsWindow.__homeCls = (clsWindow.__homeCls ?? 0) + layoutShift.value;
+        }
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(
+    page
+      .locator(".home-static-only")
+      .getByRole("button", { name: "Show Websites demonstration" })
+  ).toBeVisible();
+  await page.waitForTimeout(2400);
+
+  const cls = await page.evaluate(
+    () => (window as Window & { __homeCls?: number }).__homeCls ?? 0
+  );
+
+  expect(cls).toBeLessThan(0.03);
+});
+
 for (const route of ["/", "/work", "/services", "/insights", "/start-project"]) {
   test(`${route} loads without failed first-party requests`, async ({ page }) => {
     const failures = new Set<string>();

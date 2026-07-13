@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import {
@@ -18,6 +18,56 @@ import {
   usePrefersReducedMotion
 } from "@/hooks/useMediaQuery";
 
+function phoneCapturePath(
+  slug: string,
+  variant: "mobile" | "small-phone"
+) {
+  return `/images/work/selected-work/${slug}-${variant}-v2.jpg`;
+}
+
+function MobileProjectPreview({ project }: { project: FeaturedProject }) {
+  const alt = project.previewAlt ?? `${project.title} homepage screenshot`;
+  const { props: mobileProps } = getImageProps({
+    src: phoneCapturePath(project.slug, "mobile"),
+    alt,
+    width: 430,
+    height: 932,
+    sizes: "(max-width: 374px) 92vw, (max-width: 767px) 88vw, 320px",
+    quality: 72,
+    loading: "lazy"
+  });
+  const { props: smallPhoneProps } = getImageProps({
+    src: phoneCapturePath(project.slug, "small-phone"),
+    alt,
+    width: 360,
+    height: 800,
+    sizes: "(max-width: 374px) 92vw, 330px",
+    quality: 72,
+    loading: "lazy"
+  });
+
+  return (
+    <div className="home-selected-work-phone relative hidden w-full overflow-hidden rounded-[1.35rem] border border-white/[0.12] bg-[radial-gradient(circle_at_78%_8%,rgba(41,214,255,.13),transparent_18rem),linear-gradient(145deg,#090b12,#111629)] px-3 py-5 shadow-[0_28px_90px_rgba(0,0,0,.5)]">
+      <picture className="block w-full">
+        <source
+          media="(max-width: 374px)"
+          srcSet={smallPhoneProps.srcSet}
+          sizes={smallPhoneProps.sizes}
+        />
+        <img
+          {...mobileProps}
+          alt={alt}
+          className="mx-auto block h-auto w-[88%] max-w-[20rem] rounded-[1.75rem] border-[5px] border-[#11141b] object-cover object-top shadow-[0_28px_80px_rgba(0,0,0,.58)] ring-1 ring-white/[0.14] max-[374px]:w-[92%]"
+        />
+      </picture>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]"
+      />
+    </div>
+  );
+}
+
 function BrowserPreview({
   project,
   enableVideo = false
@@ -33,85 +83,86 @@ function BrowserPreview({
     : `${project.slug}.gridspell.preview`;
 
   return (
-    <div className="relative h-full min-h-[360px] overflow-hidden rounded-[1.45rem] border border-white/[0.13] bg-[#05060a] shadow-[0_38px_120px_rgba(0,0,0,0.5)]">
-      {/* Browser chrome */}
-      <div className="relative z-20 flex h-11 items-center gap-3 border-b border-white/[0.09] bg-[#080a0f]/95 px-4">
-        <div className="flex gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/13" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/8" />
-        </div>
-
-        <div className="mx-auto max-w-[72%] truncate rounded-full border border-white/[0.08] bg-white/[0.045] px-5 py-1.5 text-[0.58rem] tracking-[0.08em] text-white/38">
-          {hostname}
-        </div>
-      </div>
-
-      {/* Website preview */}
-      <div className="relative h-[calc(100%-2.75rem)] min-h-[316px] overflow-hidden bg-[#05060a]">
-        {previewVideo ? (
-          <video
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-top"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={project.previewImage}
-            disablePictureInPicture
-            controlsList="nodownload noplaybackrate nofullscreen"
-            aria-label={project.previewAlt ?? `${project.title} homepage video preview`}
-          >
-            {project.mobilePreviewVideo ? (
-              <source
-                src={project.mobilePreviewVideo}
-                type="video/mp4"
-                media="(max-width: 639px)"
-              />
-            ) : null}
-
-            <source
-              src={previewVideo}
-              type="video/mp4"
-            />
-          </video>
-        ) : project.previewImage ? (
-          <Image
-            src={project.previewImage}
-            alt={project.previewAlt ?? `${project.title} homepage preview`}
-            fill
-            sizes="(min-width: 1440px) 48vw, (min-width: 900px) 54vw, 92vw"
-            className="object-cover object-top"
-            priority={false}
-          />
-        ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(41,214,255,.16),transparent_28rem),linear-gradient(145deg,#0b0d13,#11182a)] p-8">
-            <div className="h-3 w-24 rounded-full bg-white/14" />
-
-            <div className="mt-12 max-w-[72%] font-display text-5xl font-semibold leading-[0.92] tracking-[-0.055em] text-white">
-              {project.title}
-            </div>
-
-            <div className="mt-8 h-2 w-3/5 rounded-full bg-white/10" />
-            <div className="mt-3 h-2 w-2/5 rounded-full bg-white/7" />
-
-            <div className="absolute bottom-8 left-8 right-8 grid grid-cols-3 gap-3">
-              <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
-              <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
-              <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
-            </div>
+    <div className="home-selected-work-preview-root h-full w-full">
+      <div className="home-selected-work-browser relative h-full min-h-[360px] overflow-hidden rounded-[1.45rem] border border-white/[0.13] bg-[#05060a] shadow-[0_38px_120px_rgba(0,0,0,0.5)]">
+        {/* Browser chrome */}
+        <div className="relative z-20 flex h-11 items-center gap-3 border-b border-white/[0.09] bg-[#080a0f]/95 px-4">
+          <div className="flex gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/13" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/8" />
           </div>
-        )}
 
-        {/* Much lighter overlay than before */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#05060a]/10 via-transparent to-transparent" />
+          <div className="mx-auto max-w-[72%] truncate rounded-full border border-white/[0.08] bg-white/[0.045] px-5 py-1.5 text-[0.58rem] tracking-[0.08em] text-white/38">
+            {hostname}
+          </div>
+        </div>
 
-        {/* Subtle glass reflection */}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.035),transparent_28%,transparent_72%,rgba(41,214,255,0.025))]" />
+        {/* Website preview */}
+        <div className="relative h-[calc(100%-2.75rem)] min-h-[316px] overflow-hidden bg-[#05060a]">
+          {previewVideo ? (
+            <video
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-top"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={project.previewImage}
+              disablePictureInPicture
+              controlsList="nodownload noplaybackrate nofullscreen"
+              aria-label={project.previewAlt ?? `${project.title} homepage video preview`}
+            >
+              {project.mobilePreviewVideo ? (
+                <source
+                  src={project.mobilePreviewVideo}
+                  type="video/mp4"
+                  media="(max-width: 639px)"
+                />
+              ) : null}
 
-        {/* Inner browser edge */}
-        <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]" />
+              <source src={previewVideo} type="video/mp4" />
+            </video>
+          ) : project.previewImage ? (
+            <Image
+              src={project.previewImage}
+              alt={project.previewAlt ?? `${project.title} homepage preview`}
+              fill
+              sizes="(min-width: 1440px) 48vw, (min-width: 900px) 54vw, 92vw"
+              className="object-cover object-top"
+              priority={false}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(41,214,255,.16),transparent_28rem),linear-gradient(145deg,#0b0d13,#11182a)] p-8">
+              <div className="h-3 w-24 rounded-full bg-white/14" />
+
+              <div className="mt-12 max-w-[72%] font-display text-5xl font-semibold leading-[0.92] tracking-[-0.055em] text-white">
+                {project.title}
+              </div>
+
+              <div className="mt-8 h-2 w-3/5 rounded-full bg-white/10" />
+              <div className="mt-3 h-2 w-2/5 rounded-full bg-white/7" />
+
+              <div className="absolute bottom-8 left-8 right-8 grid grid-cols-3 gap-3">
+                <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
+                <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
+                <div className="h-24 rounded-xl border border-white/[0.07] bg-white/[0.035]" />
+              </div>
+            </div>
+          )}
+
+          {/* Much lighter overlay than before */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#05060a]/10 via-transparent to-transparent" />
+
+          {/* Subtle glass reflection */}
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.035),transparent_28%,transparent_72%,rgba(41,214,255,0.025))]" />
+
+          {/* Inner browser edge */}
+          <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/[0.035]" />
+        </div>
       </div>
+
+      <MobileProjectPreview project={project} />
     </div>
   );
 }

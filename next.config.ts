@@ -46,6 +46,10 @@ export default sentryConfigured
       authToken: process.env.SENTRY_AUTH_TOKEN,
       silent: !process.env.CI,
       telemetry: false,
+      bundleSizeOptimizations: {
+        excludeDebugStatements: true
+      },
+      routeManifestInjection: false,
       sourcemaps: {
         disable: !process.env.SENTRY_AUTH_TOKEN
       },

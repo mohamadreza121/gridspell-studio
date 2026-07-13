@@ -76,11 +76,10 @@ async function expectHomepageHeroContent(page: Page) {
 }
 
 async function expectHomepageProofContent(page: Page) {
-  await expect(page.getByRole("heading", { name: /Real proof, not just polish/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Every screen has a job/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /More than a pretty homepage/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "DESA Foam Insulation", exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "GridSpell Studio", exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Network Engineering Portfolio", exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Visitor view", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Strategy view", exact: true })).toBeVisible();
 }
 
 test.describe("responsive marketing pages", () => {

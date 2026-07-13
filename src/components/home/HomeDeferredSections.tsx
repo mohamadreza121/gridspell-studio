@@ -25,17 +25,6 @@ const DeferredHomeFAQSection = dynamic(
   }
 );
 
-const DeferredHomeHeroActionsPlacement = dynamic(
-  () =>
-    import("@/components/home/HomeHeroActionsPlacement").then(
-      (module) => module.HomeHeroActionsPlacement
-    ),
-  {
-    ssr: false,
-    loading: () => null
-  }
-);
-
 export function HomeDeferredSections() {
   const [ready, setReady] = useState(false);
 
@@ -57,7 +46,6 @@ export function HomeDeferredSections() {
     <>
       <DeferredHomeProofSections />
       <DeferredHomeFAQSection />
-      <DeferredHomeHeroActionsPlacement />
     </>
   );
 }

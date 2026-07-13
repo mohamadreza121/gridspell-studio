@@ -6,7 +6,6 @@ import "@/app/home-story-polish.css";
 import { HomeBackgroundBoundary } from "@/components/home/HomeBackgroundBoundary";
 import { HomeDeferredSections } from "@/components/home/HomeDeferredSections";
 import { HomeExperience } from "@/components/home/HomeExperience";
-import { HomeHeroModeShowcase } from "@/components/home/HomeHeroModeShowcase";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -21,7 +20,6 @@ export default function HomePage() {
     <main id="main-content">
       <HomeBackgroundBoundary />
       <HomeExperience />
-      <HomeHeroModeShowcase />
       <HomeDeferredSections />
     </main>
   );
