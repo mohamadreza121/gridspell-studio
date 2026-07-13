@@ -33,27 +33,28 @@ body > header,
 }
 
 .home-deferred-placeholder {
-  display: block;
-  min-height: 1px;
-  contain: layout paint style;
+  display: none;
+  min-height: 0;
+  contain: none;
 }
 
-.home-proof-sections {
-  contain: layout paint style;
-  content-visibility: auto;
-  contain-intrinsic-size: 1800px;
-}
-
+/*
+ * Do not virtualize the multi-section proof wrapper or the FAQ. This stylesheet
+ * loads after home-performance.css, so the old 1800px/1100px intrinsic sizes
+ * were overriding the real fix and leaving a persistent blank band in the
+ * normal document flow.
+ */
+.home-proof-sections,
 .home-faq-section {
-  contain: layout paint style;
-  content-visibility: auto;
-  contain-intrinsic-size: 1100px;
+  contain: none;
+  content-visibility: visible;
+  contain-intrinsic-size: none;
 }
 
 .home-static-layout .home-static-scene {
   contain: layout paint style;
   content-visibility: auto;
-  contain-intrinsic-size: 760px;
+  contain-intrinsic-size: auto 760px;
 }
 
 @media (min-width: 1280px) {
