@@ -526,7 +526,13 @@ function drawBarcode(
   });
 }
 
+const labelCanvasCache = new Map<string, HTMLCanvasElement>();
+
 function createLabelCanvas(flavor: PulseFlavor, textureSize = 2048) {
+  const cacheKey = `${flavor.key}-${textureSize}`;
+  const cachedCanvas = labelCanvasCache.get(cacheKey);
+  if (cachedCanvas) return cachedCanvas;
+
   const canvas = document.createElement("canvas");
   canvas.width = textureSize;
   canvas.height = textureSize;
@@ -725,6 +731,7 @@ function createLabelCanvas(flavor: PulseFlavor, textureSize = 2048) {
   context.fillText("DEMO PRODUCT CONCEPT — NOT FOR RESALE", backX, panelY + panelHeight - 42);
   context.restore();
 
+  labelCanvasCache.set(cacheKey, canvas);
   return canvas;
 }
 
@@ -763,6 +770,10 @@ export function PulseCan3DRealistic({
     let animationFrame = 0;
     let disposed = false;
     let appliedFlavorVersion = -1;
+    let isInViewport = true;
+    let isPageVisible = !document.hidden;
+    let elapsedSeconds = 0;
+    let lastFrameTime = 0;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const staticMobile = window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
     const animateMotion = !reducedMotion && !staticMobile;
@@ -908,7 +919,7 @@ export function PulseCan3DRealistic({
 
       const observer = new ResizeObserver(() => {
         resize();
-        if (!animateMotion) requestRenderRef.current?.();
+        requestRenderRef.current?.();
       });
       observer.observe(host);
       resize();
@@ -928,18 +939,20 @@ export function PulseCan3DRealistic({
       }
 
       const camera: Vec3 = [0, 0.14, 9.15];
-      const start = performance.now();
 
       const render = (now: number) => {
         if (disposed) return;
-        resize();
 
         if (appliedFlavorVersion !== flavorVersionRef.current) {
           appliedFlavorVersion = flavorVersionRef.current;
           updateTexture();
         }
 
-        const elapsed = (now - start) / 1000;
+        if (animateMotion && lastFrameTime > 0) {
+          elapsedSeconds += Math.min((now - lastFrameTime) / 1000, 0.1);
+        }
+        lastFrameTime = now;
+        const elapsed = animateMotion ? elapsedSeconds : 0;
         pointerCurrent.x += (pointerTarget.x - pointerCurrent.x) * 0.052;
         pointerCurrent.y += (pointerTarget.y - pointerCurrent.y) * 0.052;
 
@@ -1010,21 +1023,60 @@ export function PulseCan3DRealistic({
         drawMesh({ mesh: tabMesh, model: multiply(baseTransform, composeModel({ x: -0.06, y: topY + 0.083, z: -0.02, rotateYValue: -0.18, scaleX: 1.30, scaleY: 0.72, scaleZ: 0.54 })), useTexture: 0, baseColor: brightSilver, accentColor: flavorBase, metalness: 0.99, roughness: 0.15 });
         drawMesh({ mesh: rivetMesh, model: multiply(baseTransform, composeModel({ x: -0.27, y: topY + 0.089, z: -0.04 })), useTexture: 0, baseColor: brightSilver, accentColor: flavorBase, metalness: 0.99, roughness: 0.14 });
 
-        if (animateMotion) animationFrame = requestAnimationFrame(render);
+        if (animateMotion && isInViewport && isPageVisible) {
+          animationFrame = requestAnimationFrame(render);
+        } else {
+          animationFrame = 0;
+        }
       };
 
+      const scheduleFrame = () => {
+        if (disposed || animationFrame || document.hidden) return;
+        animationFrame = requestAnimationFrame(render);
+      };
+
+      const updateAnimationActivity = () => {
+        isPageVisible = !document.hidden;
+        if (animateMotion && isInViewport && isPageVisible) {
+          lastFrameTime = 0;
+          scheduleFrame();
+          return;
+        }
+
+        cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+        lastFrameTime = 0;
+      };
+
+      const visibilityObserver = new IntersectionObserver(
+        ([entry]) => {
+          isInViewport = entry?.isIntersecting ?? true;
+          updateAnimationActivity();
+        },
+        { rootMargin: "160px 0px", threshold: 0 }
+      );
+      const handleVisibilityChange = () => updateAnimationActivity();
+      visibilityObserver.observe(host);
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
       requestRenderRef.current = () => {
-        if (disposed) return;
+        if (disposed || document.hidden) return;
+        if (animateMotion && isInViewport) {
+          scheduleFrame();
+          return;
+        }
         cancelAnimationFrame(animationFrame);
         animationFrame = requestAnimationFrame(render);
       };
-      animationFrame = requestAnimationFrame(render);
+      requestRenderRef.current();
 
       return () => {
         disposed = true;
         requestRenderRef.current = null;
         cancelAnimationFrame(animationFrame);
         observer.disconnect();
+        visibilityObserver.disconnect();
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
         if (animateMotion) {
           host.removeEventListener("pointermove", handlePointerMove);
           host.removeEventListener("pointerleave", handlePointerLeave);

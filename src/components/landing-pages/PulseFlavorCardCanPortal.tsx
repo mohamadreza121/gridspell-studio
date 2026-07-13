@@ -13,6 +13,7 @@ const PulseCan3DStaticFrontPreview = dynamic(
 
 export function PulseFlavorCardCanPortal() {
   const [targets, setTargets] = useState<HTMLElement[]>([]);
+  const [mountedCount, setMountedCount] = useState(0);
 
   useEffect(() => {
     let frame = 0;
@@ -30,9 +31,9 @@ export function PulseFlavorCardCanPortal() {
         .slice(0, pulseFlavors.length);
 
       if (nextTargets.length === pulseFlavors.length) {
-        nextTargets.forEach((target) => target.classList.add("pulse-static-can-host"));
         attachedTargets = nextTargets;
         setTargets(nextTargets);
+        setMountedCount(1);
         return;
       }
 
@@ -45,7 +46,7 @@ export function PulseFlavorCardCanPortal() {
         visibilityObserver.disconnect();
         frame = requestAnimationFrame(findTargets);
       },
-      { rootMargin: "700px 0px" }
+      { rootMargin: "120px 0px" }
     );
     visibilityObserver.observe(flavorSection);
 
@@ -56,7 +57,35 @@ export function PulseFlavorCardCanPortal() {
     };
   }, []);
 
-  if (targets.length !== pulseFlavors.length) return null;
+  useEffect(() => {
+    targets.forEach((target, index) => {
+      target.classList.toggle("pulse-static-can-host", index < mountedCount);
+    });
+
+    return () => {
+      targets.forEach((target) => target.classList.remove("pulse-static-can-host"));
+    };
+  }, [mountedCount, targets]);
+
+  useEffect(() => {
+    if (targets.length === 0 || mountedCount >= targets.length) return;
+
+    const mountNext = () => setMountedCount((count) => Math.min(count + 1, targets.length));
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    if (idleWindow.requestIdleCallback) {
+      const idleId = idleWindow.requestIdleCallback(mountNext, { timeout: 500 });
+      return () => idleWindow.cancelIdleCallback?.(idleId);
+    }
+
+    const timeoutId = window.setTimeout(mountNext, 140);
+    return () => window.clearTimeout(timeoutId);
+  }, [mountedCount, targets]);
+
+  if (targets.length !== pulseFlavors.length || mountedCount === 0) return null;
 
   return (
     <>
@@ -111,7 +140,7 @@ export function PulseFlavorCardCanPortal() {
         }
       `}</style>
 
-      {targets.map((target, index) =>
+      {targets.slice(0, mountedCount).map((target, index) =>
         createPortal(
           <PulseCan3DStaticFrontPreview key={pulseFlavors[index].key} flavor={pulseFlavors[index]} />,
           target

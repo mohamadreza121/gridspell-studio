@@ -195,7 +195,7 @@ export function EcommerceDropExperience() {
   };
 
   return (
-    <main style={pageStyle} className="overflow-hidden bg-[#090b0e] text-white transition-colors duration-700">
+    <main style={pageStyle} className="pulse-page overflow-hidden bg-[#090b0e] text-white transition-colors duration-700">
       <section className="relative min-h-svh overflow-hidden border-b border-white/8">
         <div
           aria-hidden="true"
@@ -642,6 +642,12 @@ export function EcommerceDropExperience() {
 
         .pulse-spin { animation: pulse-spin 22s linear infinite; }
         .pulse-droplet { animation: pulse-droplet 5s ease-in-out infinite; }
+
+        .pulse-page > section:nth-of-type(n + 3),
+        .pulse-page > footer {
+          content-visibility: auto;
+          contain-intrinsic-block-size: 900px;
+        }
 
         @media (prefers-reduced-motion: reduce) {
           .pulse-spin,
