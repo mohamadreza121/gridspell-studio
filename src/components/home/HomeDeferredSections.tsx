@@ -29,23 +29,6 @@ export function HomeDeferredSections() {
     <>
       <DeferredHomeProofSections />
       <DeferredHomeFAQSection />
-
-      <style jsx global>{`
-        .home-deferred-placeholder {
-          display: none !important;
-          width: 0 !important;
-          height: 0 !important;
-          min-height: 0 !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        }
-
-        .home-faq-section {
-          content-visibility: visible !important;
-          contain-intrinsic-size: 0px !important;
-          padding-top: 0 !important;
-        }
-      `}</style>
     </>
   );
 }
