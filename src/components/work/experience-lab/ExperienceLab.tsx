@@ -16,6 +16,8 @@ import {
   AnimatePresence,
   motion,
   useInView,
+  useMotionValue,
+  useSpring,
   useReducedMotion
 } from "motion/react";
 import {
@@ -267,8 +269,7 @@ function LabBackground({
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <motion.div
-        className="absolute -left-[16%] -top-[28%] h-[78%] w-[72%] rounded-full blur-[90px]"
-        style={{ background: palette.accentSoft }}
+        className="absolute -left-[16%] -top-[28%] h-[78%] w-[72%] will-change-transform [transform:translateZ(0)]"
         animate={
           animate
             ? {
@@ -279,10 +280,14 @@ function LabBackground({
             : undefined
         }
         transition={{ duration: profile.duration * 1.4, repeat: Infinity, ease: "easeInOut" }}
-      />
+      >
+        <div
+          className="absolute inset-0 rounded-full blur-[90px]"
+          style={{ background: palette.accentSoft }}
+        />
+      </motion.div>
       <motion.div
-        className="absolute -bottom-[35%] right-[-14%] h-[82%] w-[74%] rounded-full blur-[110px]"
-        style={{ background: `color-mix(in srgb, ${palette.accentDeep} 55%, transparent)` }}
+        className="absolute -bottom-[35%] right-[-14%] h-[82%] w-[74%] will-change-transform [transform:translateZ(0)]"
         animate={
           animate
             ? {
@@ -293,7 +298,14 @@ function LabBackground({
             : undefined
         }
         transition={{ duration: profile.duration * 1.8, repeat: Infinity, ease: "easeInOut" }}
-      />
+      >
+        <div
+          className="absolute inset-0 rounded-full blur-[110px]"
+          style={{
+            background: `color-mix(in srgb, ${palette.accentDeep} 55%, transparent)`
+          }}
+        />
+      </motion.div>
     </div>
   );
 }
@@ -308,7 +320,10 @@ function PreviewButton({
   children: React.ReactNode;
 }) {
   const reduceMotion = useReducedMotion();
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const xOffset = useMotionValue(0);
+  const yOffset = useMotionValue(0);
+  const x = useSpring(xOffset, { stiffness: 260, damping: 20 });
+  const y = useSpring(yOffset, { stiffness: 260, damping: 20 });
 
   function handlePointerMove(event: PointerEvent<HTMLButtonElement>) {
     if (effect !== "magnetic" || reduceMotion || event.pointerType === "touch") return;
@@ -316,7 +331,13 @@ function PreviewButton({
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left - rect.width / 2;
     const y = event.clientY - rect.top - rect.height / 2;
-    setOffset({ x: x * 0.16, y: y * 0.16 });
+    xOffset.set(x * 0.16);
+    yOffset.set(y * 0.16);
+  }
+
+  function resetOffset() {
+    xOffset.set(0);
+    yOffset.set(0);
   }
 
   const effectClasses = {
@@ -338,14 +359,13 @@ function PreviewButton({
       style={{
         background: palette.accent,
         color: palette.surface,
-        x: offset.x,
-        y: offset.y
+        x,
+        y
       }}
       onPointerMove={handlePointerMove}
-      onPointerLeave={() => setOffset({ x: 0, y: 0 })}
-      onPointerDown={() => setOffset({ x: 0, y: 1 })}
-      onPointerUp={() => setOffset({ x: 0, y: 0 })}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      onPointerLeave={resetOffset}
+      onPointerDown={() => yOffset.set(1)}
+      onPointerUp={resetOffset}
     >
       {effect === "glow" ? (
         <span
@@ -597,10 +617,10 @@ function SceneArtwork({
           </div>
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/[0.06]">
             <motion.div
-              className="h-full rounded-full"
-              style={{ background: palette.accent }}
-              initial={{ width: 0 }}
-              animate={{ width: "92%" }}
+              className="h-full origin-left rounded-full"
+              style={{ background: palette.accent, width: "92%" }}
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
               transition={{ duration: 0.8 }}
             />
           </div>
@@ -687,12 +707,20 @@ function ExperiencePreview({
             <AnimatePresence mode="wait">
               <motion.div
                 key={scene.id}
-                initial={{ opacity: 0, y: 24, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -16, filter: "blur(8px)" }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="grid gap-8 pb-4 pt-12 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-10 lg:pt-16"
+                className="relative grid gap-8 pb-4 pt-12 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-10 lg:pt-16"
               >
+                <motion.div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 z-20 backdrop-blur-[10px]"
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 0 }}
+                  exit={{ opacity: 0.8 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                />
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="h-px w-9" style={{ background: palette.accent }} />

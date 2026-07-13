@@ -59,7 +59,7 @@ function ProjectMedia({ project, active }: { project: RollProject; active: boole
           muted
           loop
           playsInline
-          preload={active ? "auto" : "metadata"}
+          preload={active && inView ? "auto" : "none"}
           poster={project.previewImage}
           disablePictureInPicture
           controlsList="nodownload noplaybackrate nofullscreen"
@@ -356,6 +356,10 @@ function DesktopRollScene() {
 
   const progressScale = useTransform(progress, [0, 1], [0.02, 1]);
 
+  const visibleProjects = projects
+    .map((project, index) => ({ project, index }))
+    .filter(({ index }) => Math.abs(index - activeProject) <= 1);
+
   function scrollToProject(index: number) {
     const track = trackRef.current;
 
@@ -454,7 +458,7 @@ function DesktopRollScene() {
                   }}
                 />
 
-                {projects.map((project, index) => (
+                {visibleProjects.map(({ project, index }) => (
                   <BrowserProjectCard
                     key={project.slug}
                     project={project}
@@ -468,7 +472,7 @@ function DesktopRollScene() {
 
               {/* Synchronized project copy */}
               <div className="relative h-full min-h-0 py-4">
-                {projects.map((project, index) => (
+                {visibleProjects.map(({ project, index }) => (
                   <ProjectCopy
                     key={project.slug}
                     project={project}
