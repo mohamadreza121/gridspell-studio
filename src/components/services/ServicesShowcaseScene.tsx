@@ -261,6 +261,8 @@ function ServiceChapter({
 
   return (
     <section
+      data-service-chapter={service.slug}
+      data-active={active ? "true" : "false"}
       className={cn(
         "absolute inset-0 grid min-h-0 items-center gap-8 xl:grid-cols-[1.08fr_0.92fr] xl:gap-12 2xl:gap-16",
         active
@@ -295,6 +297,7 @@ function ServiceChapter({
         }}
       >
         <div
+          data-service-visual={service.slug}
           className={cn(
             "services-scene__visual relative mx-auto w-full",
             sceneClasses.visual

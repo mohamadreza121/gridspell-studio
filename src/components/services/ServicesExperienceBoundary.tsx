@@ -1,13 +1,17 @@
 "use client";
 
-import { AnimatePresence } from "motion/react";
+import dynamic from "next/dynamic";
 
-import { ServicesShowcaseScene } from "@/components/services/ServicesShowcaseScene";
 import { ServicesStaticFallback } from "@/components/services/ServicesStaticFallback";
-import {
-  useMediaQuery,
-  usePrefersReducedMotion
-} from "@/hooks/useMediaQuery";
+import { useMediaQuery, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+
+const ServicesShowcaseScene = dynamic(
+  () =>
+    import("@/components/services/ServicesShowcaseScene").then(
+      (module) => module.ServicesShowcaseScene
+    ),
+  { ssr: false }
+);
 
 export function ServicesExperienceBoundary() {
   const reduceMotion = usePrefersReducedMotion();
@@ -17,9 +21,5 @@ export function ServicesExperienceBoundary() {
     return <ServicesStaticFallback />;
   }
 
-  return (
-    <AnimatePresence initial={false}>
-      <ServicesShowcaseScene />
-    </AnimatePresence>
-  );
+  return <ServicesShowcaseScene />;
 }
