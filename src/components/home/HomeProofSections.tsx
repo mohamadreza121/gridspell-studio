@@ -21,6 +21,12 @@ const buildFacts = [
   "Metadata, sitemap, validation, and launch checks"
 ] as const;
 
+const portalLayers = [
+  { icon: LayoutDashboard, label: "Project overview" },
+  { icon: ShieldCheck, label: "Secure access" },
+  { icon: MessageSquareText, label: "Client communication" }
+] as const;
+
 export function HomeProofSections() {
   return (
     <div className="home-proof-sections home-story-band relative z-[3] isolate overflow-hidden bg-[#07080c] text-white max-[480px]:bg-transparent">
@@ -277,27 +283,17 @@ export function HomeProofSections() {
                 </div>
 
                 <div className="space-y-2">
-                  {[
-                    [LayoutDashboard, "Project overview"],
-                    [ShieldCheck, "Secure access"],
-                    [MessageSquareText, "Client communication"]
-                  ].map(([Icon, label]) => {
-                    const LayerIcon = Icon;
-
-                    return (
-                      <div
-                        key={label as string}
-                        className="flex items-center gap-3 rounded-xl border border-white/[0.07] bg-black/20 p-3"
-                      >
-                        <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.04] text-white/45">
-                          <LayerIcon className="h-4 w-4" />
-                        </span>
-                        <span className="text-xs font-medium text-white/52">
-                          {label as string}
-                        </span>
-                      </div>
-                    );
-                  })}
+                  {portalLayers.map(({ icon: LayerIcon, label }) => (
+                    <div
+                      key={label}
+                      className="flex items-center gap-3 rounded-xl border border-white/[0.07] bg-black/20 p-3"
+                    >
+                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.04] text-white/45">
+                        <LayerIcon className="h-4 w-4" />
+                      </span>
+                      <span className="text-xs font-medium text-white/52">{label}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </article>
