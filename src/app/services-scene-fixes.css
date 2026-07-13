@@ -1,4 +1,17 @@
+/* Render the correct first frame before JavaScript knows the viewport width. */
+.services-experience__desktop-initial {
+  display: none;
+}
+
 @media (min-width: 1280px) {
+  .services-experience__desktop-initial {
+    display: block;
+  }
+
+  .services-experience__static-initial {
+    display: none;
+  }
+
   .services-scene__title--business,
   .services-scene__title--care {
     max-width: 16ch !important;

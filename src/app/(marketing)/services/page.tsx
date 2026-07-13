@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/app/services-scene-fixes.css";
 
 import { ServicesExperienceBoundary } from "@/components/services/ServicesExperienceBoundary";
 import { createPageMetadata } from "@/lib/metadata";

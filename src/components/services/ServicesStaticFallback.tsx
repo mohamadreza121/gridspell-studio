@@ -123,7 +123,6 @@ export function ServicesStaticFallback() {
   const [selectedGoal, setSelectedGoal] = useState<ServiceBuyerGoalId>(
     serviceBuyerGoals[0].id
   );
-  const [expandedService, setExpandedService] = useState<string | null>(null);
   const [readiness, setReadiness] = useState<Set<number>>(() => new Set());
 
   const recommendedGoal = useMemo(
@@ -168,12 +167,25 @@ export function ServicesStaticFallback() {
       { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
     );
 
-    chapters.forEach((chapter) => {
-      activeObserver.observe(chapter);
-      revealObserver.observe(chapter);
-    });
+    const startObserving = () => {
+      chapters.forEach((chapter) => {
+        activeObserver.observe(chapter);
+        revealObserver.observe(chapter);
+      });
+    };
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const idleHandle = idleWindow.requestIdleCallback?.(startObserving);
+    const timeoutHandle = idleHandle === undefined
+      ? window.setTimeout(startObserving, 180)
+      : undefined;
 
     return () => {
+      if (idleHandle !== undefined) idleWindow.cancelIdleCallback?.(idleHandle);
+      if (timeoutHandle !== undefined) window.clearTimeout(timeoutHandle);
       activeObserver.disconnect();
       revealObserver.disconnect();
     };
@@ -330,9 +342,8 @@ export function ServicesStaticFallback() {
         </nav>
 
         <div className="mt-7 grid gap-7 sm:gap-10">
-          {services.map((service, index) => {
+          {services.map((service) => {
             const commercial = getServiceCommercialDetails(service);
-            const expanded = expandedService === service.slug;
 
             return (
               <article
@@ -361,7 +372,6 @@ export function ServicesStaticFallback() {
                     src={serviceVisualPath(service.slug)}
                     alt={`${service.shortTitle} system visualization`}
                     fill
-                    priority={index === 0}
                     sizes="(max-width: 767px) calc(100vw - 2.5rem), (max-width: 1279px) 46vw, 560px"
                     className="services-mobile__object relative z-10 object-contain p-2 sm:p-5 lg:p-7"
                   />
@@ -437,28 +447,18 @@ export function ServicesStaticFallback() {
                       Explore this service
                       <ArrowUpRight className="h-4 w-4" />
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => setExpandedService(expanded ? null : service.slug)}
-                      aria-expanded={expanded}
-                      aria-controls={`scope-${service.slug}`}
-                      className="inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-full border border-[#8be9ff]/18 bg-[#8be9ff]/6 px-5 text-sm font-semibold text-[#8be9ff]"
-                    >
-                      {expanded ? "Hide scope" : "View scope details"}
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 transition-transform",
-                          expanded && "rotate-180"
-                        )}
-                      />
-                    </button>
                   </div>
 
-                  {expanded ? (
-                    <div id={`scope-${service.slug}`} className="lg:col-span-2">
+                  <details className="group mt-3">
+                    <summary className="inline-flex min-h-12 w-fit cursor-pointer list-none items-center justify-center gap-2 rounded-full border border-[#8be9ff]/18 bg-[#8be9ff]/6 px-5 text-sm font-semibold text-[#8be9ff] [&::-webkit-details-marker]:hidden">
+                      <span className="group-open:hidden">View scope details</span>
+                      <span className="hidden group-open:inline">Hide scope</span>
+                      <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div className="lg:col-span-2">
                       <ServiceScope service={service} />
                     </div>
-                  ) : null}
+                  </details>
                 </div>
               </article>
             );
