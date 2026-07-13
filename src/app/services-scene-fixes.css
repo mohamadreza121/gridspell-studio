@@ -14,3 +14,120 @@
     font-size: clamp(2.1rem, 2.45vw, 3.75rem) !important;
   }
 }
+
+@media (max-width: 1279px) {
+  .services-mobile__nav {
+    position: sticky;
+    top: 5.25rem;
+    z-index: 30;
+    background: linear-gradient(
+      180deg,
+      rgba(7, 8, 12, 0.98) 0%,
+      rgba(7, 8, 12, 0.9) 78%,
+      transparent 100%
+    );
+  }
+
+  .services-mobile__chapter {
+    opacity: 0.58;
+    transform: translate3d(0, 24px, 0) scale(0.985);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 450ms ease;
+  }
+
+  .services-mobile__chapter[data-visible="true"] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  .services-mobile__object {
+    transform: translate3d(0, 10px, 0) scale(0.94);
+    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .services-mobile__chapter[data-visible="true"] .services-mobile__object {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  .services-mobile__visual::after {
+    content: "";
+    position: absolute;
+    z-index: 25;
+    left: 8%;
+    right: 8%;
+    top: 8%;
+    height: 1px;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(139, 233, 255, 0.9),
+      transparent
+    );
+    box-shadow: 0 0 24px rgba(41, 214, 255, 0.5);
+  }
+
+  .services-mobile__chapter[data-visible="true"] .services-mobile__visual::after {
+    animation: services-mobile-scan 1100ms 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .services-mobile__scope {
+    animation: services-mobile-scope 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (max-width: 1279px) {
+  .services-mobile__chapter:hover {
+    border-color: rgba(139, 233, 255, 0.2);
+  }
+
+  .services-mobile__chapter:hover .services-mobile__object {
+    transform: translate3d(0, -3px, 0) scale(1.025);
+  }
+}
+
+@keyframes services-mobile-scan {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+
+  16% {
+    opacity: 0.82;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 27rem, 0);
+  }
+}
+
+@keyframes services-mobile-scope {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-mobile__chapter,
+  .services-mobile__object,
+  .services-mobile__scope {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .services-mobile__visual::after {
+    display: none;
+  }
+}
