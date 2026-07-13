@@ -100,11 +100,14 @@ const kickoffSignals: readonly {
 ] as const;
 
 export function HomeFAQSection() {
-  const [openIndex, setOpenIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState(-1);
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="home-faq-section home-story-section relative z-[3] isolate overflow-hidden border-t border-white/[0.06] bg-[#07080c] py-24 text-white max-xl:bg-transparent sm:py-32">
+    <section
+      className="home-faq-section home-story-section relative z-[3] isolate overflow-hidden border-t border-white/[0.06] bg-[#07080c] py-20 text-white max-xl:bg-transparent sm:py-24 lg:py-28"
+      style={{ contentVisibility: "visible", containIntrinsicSize: "auto" }}
+    >
       <div
         aria-hidden="true"
         className="page-grid pointer-events-none absolute inset-0 opacity-20"
@@ -119,12 +122,12 @@ export function HomeFAQSection() {
       />
 
       <Container className="relative">
-        <div className="grid gap-12 xl:grid-cols-[0.76fr_1.24fr] xl:items-start xl:gap-16">
-          <div className="xl:sticky xl:top-28">
+        <div className="grid gap-10 xl:grid-cols-[0.72fr_1.28fr] xl:items-start xl:gap-14">
+          <div className="xl:sticky xl:top-24">
             <p className="text-[0.66rem] font-semibold uppercase tracking-[0.42em] text-[#8be9ff]">
               FAQ
             </p>
-            <h2 className="mt-6 max-w-[10.5ch] text-balance font-display text-[clamp(3.2rem,6.4vw,6.7rem)] font-semibold leading-[0.84] tracking-[-0.075em]">
+            <h2 className="mt-6 max-w-[10.5ch] text-balance font-display text-[clamp(3.2rem,6.2vw,6.5rem)] font-semibold leading-[0.84] tracking-[-0.075em]">
               Questions before we build.
             </h2>
             <p className="mt-6 max-w-xl text-base leading-8 text-white/48 sm:text-lg">
@@ -132,7 +135,7 @@ export function HomeFAQSection() {
               launch quality, and what happens after the website goes live.
             </p>
 
-            <div className="mt-9 overflow-hidden rounded-[1.7rem] border border-white/[0.09] bg-[linear-gradient(145deg,rgba(255,255,255,0.055),rgba(255,255,255,0.018)),rgba(8,10,15,0.78)] backdrop-blur-xl">
+            <div className="mt-8 overflow-hidden rounded-[1.7rem] border border-white/[0.09] bg-[linear-gradient(145deg,rgba(255,255,255,0.055),rgba(255,255,255,0.018)),rgba(8,10,15,0.78)] backdrop-blur-xl">
               <div className="flex items-center justify-between gap-4 border-b border-white/[0.07] px-5 py-4">
                 <div>
                   <p className="font-mono text-[0.5rem] uppercase tracking-[0.2em] text-[#8be9ff]">
@@ -179,11 +182,70 @@ export function HomeFAQSection() {
 
             <Link
               href="/start-project"
-              className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#8be9ff]/20 bg-[#8be9ff]/8 px-5 text-sm font-semibold text-[#8be9ff] transition hover:-translate-y-0.5 hover:border-[#8be9ff]/38 hover:bg-[#8be9ff]/13 hover:text-white"
+              className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#8be9ff]/20 bg-[#8be9ff]/8 px-5 text-sm font-semibold text-[#8be9ff] transition hover:-translate-y-0.5 hover:border-[#8be9ff]/38 hover:bg-[#8be9ff]/13 hover:text-white"
             >
               Ask about your project
               <ArrowUpRight className="h-4 w-4" />
             </Link>
+
+            <div className="relative mt-8 hidden min-h-[17rem] overflow-hidden rounded-[1.8rem] border border-white/[0.09] bg-[radial-gradient(circle_at_75%_20%,rgba(124,92,255,0.22),transparent_12rem),radial-gradient(circle_at_18%_88%,rgba(41,214,255,0.13),transparent_14rem),rgba(8,10,15,0.82)] xl:block">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(139,233,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(139,233,255,0.08)_1px,transparent_1px)] [background-size:2.4rem_2.4rem]"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-[-3rem] top-[-3rem] h-44 w-44 rounded-full border border-[#8be9ff]/12 shadow-[0_0_80px_rgba(41,214,255,0.08)]"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-4 top-4 h-24 w-24 rounded-full border border-[#7c5cff]/24"
+              />
+
+              <div className="relative flex min-h-[17rem] flex-col justify-between p-5">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="font-mono text-[0.48rem] uppercase tracking-[0.2em] text-[#8be9ff]">
+                      Build route
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-white/68">
+                      One connected delivery path
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5 font-mono text-[0.46rem] uppercase tracking-[0.15em] text-white/32">
+                    GS / 04
+                  </span>
+                </div>
+
+                <div className="relative my-7 grid grid-cols-4 gap-2">
+                  <div
+                    aria-hidden="true"
+                    className="absolute left-[10%] right-[10%] top-5 h-px bg-gradient-to-r from-[#7c5cff]/60 via-[#8be9ff]/60 to-[#29d6ff]/60"
+                  />
+                  {["Brief", "Design", "Build", "Launch"].map((step, index) => (
+                    <div key={step} className="relative text-center">
+                      <span className="mx-auto grid h-10 w-10 place-items-center rounded-full border border-[#8be9ff]/18 bg-[#0b0e15] font-mono text-[0.5rem] text-[#8be9ff] shadow-[0_0_28px_rgba(41,214,255,0.08)]">
+                        0{index + 1}
+                      </span>
+                      <p className="mt-3 text-[0.52rem] font-semibold uppercase tracking-[0.13em] text-white/45">
+                        {step}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between gap-4 border-t border-white/[0.07] pt-4">
+                  <p className="max-w-[24rem] text-xs leading-5 text-white/36">
+                    Strategy, interface, development, and launch stay connected instead
+                    of becoming separate handoffs.
+                  </p>
+                  <span className="flex shrink-0 items-center gap-2 text-[0.5rem] font-semibold uppercase tracking-[0.15em] text-[#7aefb9]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#7aefb9]" />
+                    Structured
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="overflow-hidden rounded-[2rem] border border-white/[0.1] bg-[radial-gradient(circle_at_88%_0%,rgba(124,92,255,0.14),transparent_22rem),radial-gradient(circle_at_0%_100%,rgba(41,214,255,0.08),transparent_24rem),rgba(9,11,17,0.88)] shadow-[0_30px_100px_rgba(0,0,0,0.28)] backdrop-blur-xl">
@@ -201,7 +263,7 @@ export function HomeFAQSection() {
               </span>
             </div>
 
-            <div className="grid gap-6 border-b border-white/[0.075] px-5 py-6 sm:grid-cols-[1fr_auto] sm:items-end sm:px-7 sm:py-7">
+            <div className="grid gap-5 border-b border-white/[0.075] px-5 py-5 sm:grid-cols-[1fr_auto] sm:items-end sm:px-6 sm:py-6">
               <div>
                 <p className="text-[0.54rem] font-semibold uppercase tracking-[0.2em] text-[#8be9ff]">
                   Common project questions
@@ -216,7 +278,7 @@ export function HomeFAQSection() {
               </div>
             </div>
 
-            <div>
+            <div className="grid items-start gap-3 p-4 sm:p-5 lg:grid-cols-2">
               {homepageFaqs.map((item, index) => {
                 const isOpen = openIndex === index;
                 const answerId = `homepage-faq-answer-${index}`;
@@ -225,29 +287,29 @@ export function HomeFAQSection() {
                   <article
                     key={item.question}
                     data-open={String(isOpen)}
-                    className="border-b border-white/[0.07] transition-colors last:border-b-0 data-[open=true]:bg-[linear-gradient(90deg,rgba(124,92,255,0.07),rgba(41,214,255,0.035),transparent)]"
+                    className="overflow-hidden rounded-[1.3rem] border border-white/[0.075] bg-white/[0.018] transition-colors data-[open=true]:border-[#8be9ff]/18 data-[open=true]:bg-[linear-gradient(135deg,rgba(124,92,255,0.075),rgba(41,214,255,0.035),rgba(255,255,255,0.018))]"
                   >
                     <button
                       type="button"
                       aria-expanded={isOpen}
                       aria-controls={answerId}
                       onClick={() => setOpenIndex(isOpen ? -1 : index)}
-                      className="group grid w-full grid-cols-[auto_1fr_auto] items-start gap-4 px-5 py-5 text-left sm:gap-5 sm:px-7 sm:py-6"
+                      className="group grid w-full grid-cols-[auto_1fr_auto] items-start gap-3 px-4 py-4 text-left sm:px-5 sm:py-5"
                     >
-                      <span className="pt-1 font-mono text-[0.52rem] tracking-[0.18em] text-[#8be9ff]">
+                      <span className="pt-1 font-mono text-[0.5rem] tracking-[0.16em] text-[#8be9ff]">
                         {String(index + 1).padStart(2, "0")}
                       </span>
 
                       <span className="min-w-0">
-                        <span className="inline-flex rounded-full border border-white/[0.07] bg-white/[0.025] px-2.5 py-1 text-[0.46rem] font-semibold uppercase tracking-[0.17em] text-white/30 transition group-hover:border-white/[0.12] group-hover:text-white/45">
+                        <span className="inline-flex rounded-full border border-white/[0.07] bg-white/[0.025] px-2.5 py-1 text-[0.44rem] font-semibold uppercase tracking-[0.16em] text-white/30 transition group-hover:border-white/[0.12] group-hover:text-white/45">
                           {item.category}
                         </span>
-                        <span className="mt-3 block max-w-[28ch] font-display text-xl font-semibold leading-tight tracking-[-0.04em] text-white/82 transition group-hover:text-white sm:text-2xl">
+                        <span className="mt-2.5 block font-display text-lg font-semibold leading-tight tracking-[-0.035em] text-white/82 transition group-hover:text-white sm:text-xl">
                           {item.question}
                         </span>
                       </span>
 
-                      <span className="relative mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/[0.1] bg-white/[0.03] text-white/48 transition group-hover:border-[#8be9ff]/24 group-hover:text-[#8be9ff]">
+                      <span className="relative mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/[0.1] bg-white/[0.03] text-white/48 transition group-hover:border-[#8be9ff]/24 group-hover:text-[#8be9ff]">
                         {isOpen ? (
                           <Minus className="h-4 w-4" />
                         ) : (
@@ -264,16 +326,16 @@ export function HomeFAQSection() {
                           animate={{ height: "auto", opacity: 1 }}
                           exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
                           transition={{
-                            height: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
-                            opacity: { duration: 0.22, ease: "easeOut" }
+                            height: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+                            opacity: { duration: 0.18, ease: "easeOut" }
                           }}
                           className="overflow-hidden"
                         >
-                          <div className="grid gap-5 px-5 pb-6 pl-[3.55rem] sm:grid-cols-[1fr_auto] sm:items-end sm:px-7 sm:pb-7 sm:pl-[4.6rem]">
-                            <p className="max-w-3xl text-sm leading-7 text-white/50 sm:text-base sm:leading-8">
+                          <div className="px-4 pb-5 pl-[3.25rem] sm:px-5 sm:pb-5 sm:pl-[3.8rem]">
+                            <p className="text-sm leading-7 text-white/50">
                               {item.answer}
                             </p>
-                            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#69e6ad]/14 bg-[#69e6ad]/6 px-3 py-1.5 text-[0.48rem] font-semibold uppercase tracking-[0.14em] text-[#7aefb9]">
+                            <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-[#69e6ad]/14 bg-[#69e6ad]/6 px-3 py-1.5 text-[0.46rem] font-semibold uppercase tracking-[0.13em] text-[#7aefb9]">
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               Clear before kickoff
                             </span>
@@ -286,7 +348,7 @@ export function HomeFAQSection() {
               })}
             </div>
 
-            <div className="grid gap-5 border-t border-white/[0.075] bg-black/15 px-5 py-6 sm:grid-cols-[1fr_auto] sm:items-center sm:px-7">
+            <div className="grid gap-5 border-t border-white/[0.075] bg-black/15 px-5 py-5 sm:grid-cols-[1fr_auto] sm:items-center sm:px-6">
               <div className="flex items-center gap-4">
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#8be9ff]/16 bg-[#8be9ff]/7 text-[#8be9ff]">
                   <LayoutDashboard className="h-4.5 w-4.5" />
