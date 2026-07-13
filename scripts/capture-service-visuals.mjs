@@ -37,9 +37,10 @@ await mkdir(outputDir, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
-  viewport: { width: 1440, height: 1000 },
+  viewport: { width: 1600, height: 1000 },
   deviceScaleFactor: 1,
-  colorScheme: "dark"
+  colorScheme: "dark",
+  reducedMotion: "no-preference"
 });
 const page = await context.newPage();
 
@@ -49,7 +50,7 @@ await page.goto(`${baseUrl}/services`, {
 });
 
 await page.locator('[data-service-visual="business-websites"]').waitFor({
-  state: "visible",
+  state: "attached",
   timeout: 30_000
 });
 
