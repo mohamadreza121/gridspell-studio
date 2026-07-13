@@ -51,6 +51,25 @@ body > header,
   contain-intrinsic-size: none;
 }
 
+/*
+ * The FAQ starts with three aria-hidden decoration layers. Both
+ * home-performance.css and home-story-polish.css contain broad child selectors
+ * that turn every direct child into position: relative. That pulled the 32rem
+ * and 30rem glow layers into normal flow and added nearly 1,000px of blank
+ * space before the real FAQ container. Keep only those decorative children
+ * absolutely positioned and keep the actual FAQ content above them.
+ */
+.home-faq-section > [aria-hidden="true"] {
+  position: absolute !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+.home-faq-section > :not([aria-hidden="true"]) {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
 .home-static-layout .home-static-scene {
   contain: layout paint style;
   content-visibility: auto;
