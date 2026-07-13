@@ -207,7 +207,7 @@ export function HomeHeroModeShowcaseClient() {
   return (
     <>
       <div
-        className="home-hero-mode-tabs mt-9 grid w-full grid-cols-2 gap-3 md:grid-cols-4 md:gap-4"
+        className="home-hero-mode-tabs mt-[31px] grid w-full grid-cols-2 gap-3 md:grid-cols-4 md:gap-4"
         style={{ maxWidth: "46rem" }}
         role="group"
         aria-label="Homepage experience demonstrations"
