@@ -406,7 +406,7 @@ export function ServicesStaticFallback() {
                 "inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-full border px-4 text-[0.6rem] font-semibold uppercase tracking-[0.14em] transition",
                 activeService === service.slug
                   ? "border-[#8be9ff]/35 bg-[#8be9ff]/10 text-white"
-                  : "border-white/[0.1] bg-[#0a0c12] text-white/45"
+                  : "border-white/[0.1] bg-[#0a0c12] text-white/65"
               )}
             >
               <span className="font-mono text-[#8be9ff]">{service.number}</span>
@@ -424,7 +424,7 @@ export function ServicesStaticFallback() {
               <article
                 id={`service-${service.slug}`}
                 data-service-slug={service.slug}
-                data-visible={index === 0 ? "true" : "false"}
+                data-visible="false"
                 key={service.slug}
                 className="services-mobile__chapter group scroll-mt-24 overflow-hidden rounded-[2rem] border border-white/[0.1] bg-[#090b11]/92 shadow-[0_28px_90px_rgba(0,0,0,0.3)] lg:grid lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch"
               >
@@ -608,6 +608,7 @@ export function ServicesStaticFallback() {
               <Link
                 key={project.href}
                 href={project.href}
+                aria-label={`View the ${project.title} case study`}
                 className="group overflow-hidden rounded-[1.6rem] border border-white/[0.09] bg-white/[0.025]"
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#07080c]">
