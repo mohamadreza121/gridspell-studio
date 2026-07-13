@@ -1,19 +1,16 @@
-"use client";
-
-import { AboutExperience } from "@/components/about/AboutExperience";
+import { AboutDesktopLoader } from "@/components/about/AboutDesktopLoader";
 import { AboutStaticFallback } from "@/components/about/AboutStaticFallback";
-import {
-  useMediaQuery,
-  usePrefersReducedMotion
-} from "@/hooks/useMediaQuery";
 
 export function AboutExperienceBoundary() {
-  const reduceMotion = usePrefersReducedMotion();
-  const useDesktopExperience = useMediaQuery("(min-width: 1280px)");
+  return (
+    <>
+      <div className="xl:hidden">
+        <AboutStaticFallback />
+      </div>
 
-  if (reduceMotion || !useDesktopExperience) {
-    return <AboutStaticFallback />;
-  }
-
-  return <AboutExperience />;
+      <div className="hidden xl:block">
+        <AboutDesktopLoader />
+      </div>
+    </>
+  );
 }

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import "@/app/about-mobile.css";
+
 import { AboutExperienceBoundary } from "@/components/about/AboutExperienceBoundary";
 import { createPageMetadata } from "@/lib/metadata";
 

@@ -1,187 +1,422 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Check } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  Check,
+  Code2,
+  Gauge,
+  Network,
+  Sparkles
+} from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 
-const chapters = [
-  {
-    number: "01",
-    eyebrow: "About the founder",
-    title:
-      "Hi, I’m Mohammadreza. GridSpell is the studio I built to make serious businesses look and work the part online.",
-    introduction:
-      "I’m a Toronto-based web developer with a background in network engineering. I approach websites as complete digital systems: the presentation people see, the technology underneath it, and the path that turns attention into a real business result.",
-    points: [
-      "Direct collaboration from planning through launch",
-      "Strategy, design, development, and production setup",
-      "A practical technical foundation built around the business"
-    ]
-  },
-  {
-    number: "02",
-    eyebrow: "About GridSpell",
-    title: "Grid is the structure. Spell is the experience people remember.",
-    introduction:
-      "GridSpell is an independent web design and development studio for businesses that need more than a disposable template.",
-    points: [
-      "Business strategy before decoration",
-      "Custom design rather than recycled templates",
-      "Responsive development for every screen",
-      "Clear conversion paths and measurable actions"
-    ]
-  },
-  {
-    number: "03",
-    eyebrow: "What we build",
-    title: "From focused business websites to working digital products.",
-    introduction:
-      "GridSpell builds digital experiences around what the business actually needs to communicate, automate, sell, or organize.",
-    points: [
-      "Professional business and service websites",
-      "Complete redesigns and migrations",
-      "Campaign and lead-generation landing pages",
-      "Client portals and operational dashboards",
-      "Custom full-stack web applications"
-    ]
-  },
-  {
-    number: "04",
-    eyebrow: "Technology",
-    title: "Modern tools selected for the project—not for the buzzword.",
-    introduction:
-      "The technology is selected around performance, maintainability, security, content needs, and future growth.",
-    points: [
-      "React, Next.js, TypeScript, and modern CSS",
-      "Supabase, PostgreSQL, APIs, and secure permissions",
-      "Vercel deployment, monitoring, and production setup"
-    ]
-  },
-  {
-    number: "05",
-    eyebrow: "Search, advertising, and growth",
-    title: "A launch matters when the right people can find the business and take action.",
-    introduction:
-      "Projects can include the measurement and visibility setup required to support search, advertising, and ongoing improvement.",
-    points: [
-      "Technical SEO and crawlability",
-      "Google Search Console and Analytics",
-      "Google Ads and conversion tracking",
-      "Core Web Vitals and performance improvements"
-    ]
-  },
-  {
-    number: "06",
-    eyebrow: "Infrastructure and integrations",
-    title: "The invisible setup matters as much as the page people see.",
-    introduction:
-      "A production website often depends on domains, email delivery, databases, permissions, notifications, analytics, and outside platforms working together correctly.",
-    points: [
-      "Domains, DNS, hosting, and deployment",
-      "Transactional email and customer notifications",
-      "Payments, CRM, authentication, and databases",
-      "API and third-party service integrations"
-    ]
-  },
-  {
-    number: "07",
-    eyebrow: "Working with GridSpell",
-    title: "One technical partner from the first idea to launch—and after.",
-    introduction:
-      "Projects move through a clear scope, information architecture, design direction, production development, testing, launch, and optional ongoing care.",
-    points: [
-      "Clear scope and responsibilities",
-      "Direct and documented communication",
-      "Visible milestones and approval points",
-      "Production setup and launch support"
-    ]
-  }
+const chapterLinks = [
+  ["01", "Founder", "founder"],
+  ["02", "Philosophy", "philosophy"],
+  ["03", "What we build", "build"],
+  ["04", "Technology", "technology"],
+  ["05", "Growth", "growth"],
+  ["06", "Systems", "systems"],
+  ["07", "Working together", "process"]
 ] as const;
+
+const buildAreas = [
+  "Business websites",
+  "E-commerce",
+  "Landing pages",
+  "Client portals",
+  "Dashboards",
+  "Web applications"
+] as const;
+
+const stack = [
+  "HTML",
+  "Modern CSS",
+  "TypeScript",
+  "React",
+  "Next.js",
+  "Node.js",
+  "Supabase",
+  "PostgreSQL",
+  "REST APIs",
+  "Vercel"
+] as const;
+
+const growthPoints = [
+  "Technical SEO and crawlability",
+  "Search Console, GA4, and event measurement",
+  "Google Ads and conversion tracking",
+  "Core Web Vitals and ongoing improvement"
+] as const;
+
+const systemPoints = [
+  "Domains, DNS, hosting, and deployment",
+  "Transactional email and notifications",
+  "Payments, CRM, authentication, and databases",
+  "Secure APIs and third-party integrations"
+] as const;
+
+const process = [
+  ["01", "Define", "Goals, audience, scope, budget, and timeline."],
+  ["02", "Shape", "Information architecture and a focused design direction."],
+  ["03", "Build", "Production development, integrations, and responsive QA."],
+  ["04", "Launch", "Deployment, measurement, handoff, and optional care."]
+] as const;
+
+function ChapterLabel({
+  number,
+  children
+}: {
+  number: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="about-mobile-chapter-label">
+      <span>{number}</span>
+      <i />
+      <p>{children}</p>
+    </div>
+  );
+}
+
+function PointList({ points }: { points: readonly string[] }) {
+  return (
+    <ul className="about-mobile-point-list">
+      {points.map((point) => (
+        <li key={point}>
+          <span aria-hidden="true">
+            <Check />
+          </span>
+          {point}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function AboutStaticFallback() {
   return (
-    <main className="relative isolate overflow-hidden bg-[#07080c] pb-24 pt-32">
-      <div
-        aria-hidden="true"
-        className="page-grid pointer-events-none absolute inset-0 opacity-28"
-      />
+    <main className="about-mobile-page">
+      <div className="about-mobile-backdrop" aria-hidden="true">
+      </div>
 
-      <Container className="relative z-10">
-        <div className="max-w-4xl">
-          <p className="text-[0.64rem] font-semibold uppercase tracking-[0.36em] text-[#8be9ff]">
-            About GridSpell
-          </p>
+      <section className="about-mobile-hero">
+        <Container className="about-mobile-hero-inner">
+          <div className="about-mobile-hero-kicker">
+            <span>About GridSpell</span>
+            <span>Toronto · Canada</span>
+          </div>
 
-          <h1 className="mt-7 text-balance font-display text-[clamp(4rem,12vw,7.6rem)] font-semibold leading-[0.82] tracking-[-0.075em] text-white">
-            Structure, craft, and a little magic.
-          </h1>
+          <div className="about-mobile-orbit" aria-hidden="true">
+            <svg viewBox="0 0 420 420" fill="none">
+              <circle
+                cx="210"
+                cy="210"
+                r="164"
+                stroke="currentColor"
+                strokeDasharray="4 11"
+              />
+              <ellipse
+                cx="210"
+                cy="210"
+                rx="94"
+                ry="151"
+                stroke="currentColor"
+              />
+              <path
+                d="M105 155 210 96l111 68v124l-111 64-116-72Z"
+                stroke="url(#about-mobile-orbit-gradient)"
+              />
+              <path
+                d="m105 155 105 71 111-62M210 226v126m0-126L94 280"
+                stroke="currentColor"
+              />
+              <circle cx="210" cy="226" r="24" stroke="#8be9ff" />
+              <circle cx="210" cy="46" r="5" fill="#8be9ff" />
+              <defs>
+                <linearGradient
+                  id="about-mobile-orbit-gradient"
+                  x1="94"
+                  y1="96"
+                  x2="321"
+                  y2="352"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#a895ff" />
+                  <stop offset="1" stopColor="#29d6ff" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
 
-          <p className="mt-7 max-w-2xl text-base leading-8 text-white/48 sm:text-lg">
-            An independent Toronto web design and development studio founded by
-            Mohammadreza Heidarpoor.
-          </p>
-        </div>
+          <div className="about-mobile-hero-copy">
+            <h1>
+              <span>Structure,</span>
+              <span>craft, and a</span>
+              <span className="about-mobile-gradient-text">little magic.</span>
+            </h1>
 
-        <div className="mt-20 grid gap-20">
-          {chapters.map((chapter) => (
-            <article
-              key={chapter.number}
-              className="border-t border-white/[0.08] pt-9"
-            >
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-[0.62rem] tracking-[0.2em] text-white/28">
-                  {chapter.number}
-                </span>
-                <span className="h-px w-10 bg-gradient-to-r from-[#7c5cff] to-[#29d6ff]" />
-                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
-                  {chapter.eyebrow}
-                </span>
-              </div>
+            <p>
+              An independent web design and development studio founded by
+              Mohammadreza Heidarpoor.
+            </p>
+          </div>
 
-              <div className="mt-7 grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-                <div>
-                  <h2 className="max-w-[18ch] font-display text-4xl font-semibold leading-[0.92] tracking-[-0.058em] text-white sm:text-6xl">
-                    {chapter.title}
-                  </h2>
-                  <p className="mt-6 max-w-3xl text-base leading-8 text-white/52">
-                    {chapter.introduction}
-                  </p>
-                </div>
+          <div className="about-mobile-hero-meta">
+            <p>
+              <span aria-hidden="true" />
+              Independent studio
+            </p>
+            <p>Strategy → launch</p>
+          </div>
 
-                <div className="rounded-[1.7rem] border border-white/[0.09] bg-white/[0.025] p-6">
-                  <ul className="grid gap-3">
-                    {chapter.points.map((point) => (
-                      <li
-                        key={point}
-                        className="flex gap-3 text-sm leading-6 text-white/52"
-                      >
-                        <Check className="mt-1 h-3.5 w-3.5 shrink-0 text-[#8be9ff]" />
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-20 flex flex-wrap gap-3 border-t border-white/[0.08] pt-10">
-          <Link
-            href="/start-project"
-            className="inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-[#08090d]"
-          >
-            Start a project
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-
-          <a
-            href="mailto:hello@gridspellstudio.com"
-            className="inline-flex min-h-12 items-center rounded-full border border-white/[0.11] bg-white/[0.03] px-6 text-sm font-semibold text-white/60"
-          >
-            Email the studio
+          <a className="about-mobile-scroll-cue" href="#founder">
+            Meet the studio
+            <ArrowDown aria-hidden="true" />
           </a>
-        </div>
-      </Container>
+        </Container>
+      </section>
+
+      <nav className="about-mobile-chapter-nav" aria-label="About page chapters">
+        <ol>
+          {chapterLinks.map(([number, label, id]) => (
+            <li key={id}>
+              <a href={`#${id}`}>
+                <span>{number}</span>
+                {label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <section className="about-mobile-story" aria-label="About GridSpell">
+        <Container>
+          <div className="about-mobile-story-intro">
+            <p>One studio · Every layer</p>
+            <h2>Designed with character. Built like a system.</h2>
+          </div>
+
+          <article
+            className="about-mobile-chapter about-mobile-founder"
+            id="founder"
+          >
+            <ChapterLabel number="01">About the founder</ChapterLabel>
+
+            <div className="about-mobile-founder-visual">
+              <Image
+                src="/images/about/mohammadreza.webp"
+                alt="Mohammadreza Heidarpoor, founder of GridSpell Studio"
+                fill
+                sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1279px) 46vw, 1px"
+                quality={68}
+              />
+              <div className="about-mobile-image-shade" />
+              <p>Founder · Designer · Developer</p>
+              <span>Toronto, ON</span>
+            </div>
+
+            <div className="about-mobile-chapter-copy">
+              <h2>
+                Hi, I’m Mohammadreza. I built GridSpell to make serious
+                businesses look and work the part online.
+              </h2>
+              <p>
+                My background in network engineering means I approach websites
+                as complete digital systems: the presentation people see, the
+                technology underneath it, and the path that turns attention into
+                a real business result.
+              </p>
+              <PointList
+                points={[
+                  "Direct collaboration from planning through launch",
+                  "Strategy, design, development, and production setup",
+                  "A practical technical foundation built around the business"
+                ]}
+              />
+            </div>
+          </article>
+
+          <article
+            className="about-mobile-chapter about-mobile-philosophy about-mobile-deferred"
+            id="philosophy"
+          >
+            <ChapterLabel number="02">The philosophy</ChapterLabel>
+
+            <div className="about-mobile-chapter-copy">
+              <h2>Grid is the structure. Spell is the experience people remember.</h2>
+              <p>
+                Every project connects reliable systems with a distinct visual
+                point of view. The design supports the offer, the code supports
+                the experience, and the experience supports the business.
+              </p>
+            </div>
+
+            <div className="about-mobile-duality">
+              <div>
+                <span>01 · Grid</span>
+                <strong>Clarity</strong>
+                <p>Hierarchy, usability, consistency, and room to grow.</p>
+              </div>
+              <div>
+                <span>02 · Spell</span>
+                <strong>Memory</strong>
+                <p>Character, movement, atmosphere, and credibility.</p>
+              </div>
+            </div>
+          </article>
+
+          <article
+            className="about-mobile-chapter about-mobile-deferred"
+            id="build"
+          >
+            <ChapterLabel number="03">What we build</ChapterLabel>
+
+            <div className="about-mobile-chapter-copy">
+              <h2>From focused business websites to working digital products.</h2>
+              <p>
+                The format follows what the business needs to communicate,
+                automate, sell, or organize—not a preselected template.
+              </p>
+            </div>
+
+            <div className="about-mobile-build-grid">
+              {buildAreas.map((area, index) => (
+                <div key={area}>
+                  <span>0{index + 1}</span>
+                  <p>{area}</p>
+                  <ArrowUpRight aria-hidden="true" />
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article
+            className="about-mobile-chapter about-mobile-deferred"
+            id="technology"
+          >
+            <ChapterLabel number="04">Technology</ChapterLabel>
+
+            <div className="about-mobile-icon-heading">
+              <span aria-hidden="true">
+                <Code2 />
+              </span>
+              <div>
+                <h2>Modern tools, selected for the project.</h2>
+                <p>
+                  Performance, maintainability, security, content needs, and
+                  future growth decide the stack—not buzzwords.
+                </p>
+              </div>
+            </div>
+
+            <div className="about-mobile-stack" aria-label="Technology stack">
+              {stack.map((technology) => (
+                <span key={technology}>{technology}</span>
+              ))}
+            </div>
+          </article>
+
+          <article
+            className="about-mobile-chapter about-mobile-split about-mobile-deferred"
+            id="growth"
+          >
+            <ChapterLabel number="05">Search, advertising, and growth</ChapterLabel>
+
+            <div className="about-mobile-split-visual">
+              <Image
+                src="/images/about/growth-and-analytics.webp"
+                alt="Analytics and growth systems designed by GridSpell"
+                fill
+                sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1279px) 42vw, 1px"
+                quality={64}
+              />
+              <div className="about-mobile-image-shade" />
+              <span aria-hidden="true">
+                <Gauge />
+              </span>
+            </div>
+
+            <div className="about-mobile-chapter-copy">
+              <h2>A launch matters when the right people can find you and act.</h2>
+              <PointList points={growthPoints} />
+            </div>
+          </article>
+
+          <article
+            className="about-mobile-chapter about-mobile-split about-mobile-split--reverse about-mobile-deferred"
+            id="systems"
+          >
+            <ChapterLabel number="06">Infrastructure and integrations</ChapterLabel>
+
+            <div className="about-mobile-split-visual">
+              <Image
+                src="/images/about/systems-and-infrastructure.webp"
+                alt="Connected infrastructure and integration systems"
+                fill
+                sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1279px) 42vw, 1px"
+                quality={60}
+              />
+              <div className="about-mobile-image-shade" />
+              <span aria-hidden="true">
+                <Network />
+              </span>
+            </div>
+
+            <div className="about-mobile-chapter-copy">
+              <h2>The invisible setup matters as much as the page people see.</h2>
+              <PointList points={systemPoints} />
+            </div>
+          </article>
+
+          <article
+            className="about-mobile-chapter about-mobile-process about-mobile-deferred"
+            id="process"
+          >
+            <ChapterLabel number="07">Working with GridSpell</ChapterLabel>
+
+            <div className="about-mobile-icon-heading">
+              <span aria-hidden="true">
+                <Sparkles />
+              </span>
+              <div>
+                <h2>One technical partner, from first idea to launch—and after.</h2>
+                <p>
+                  You work directly with the person planning, designing, and
+                  developing the project, with clear milestones and approval
+                  points throughout.
+                </p>
+              </div>
+            </div>
+
+            <ol className="about-mobile-process-list">
+              {process.map(([number, title, description]) => (
+                <li key={number}>
+                  <span>{number}</span>
+                  <div>
+                    <strong>{title}</strong>
+                    <p>{description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <div className="about-mobile-cta">
+              <p>Have a serious idea?</p>
+              <h2>Let’s build the system behind it.</h2>
+              <div>
+                <Link href="/start-project">
+                  Start a project
+                  <ArrowUpRight aria-hidden="true" />
+                </Link>
+                <a href="mailto:hello@gridspellstudio.com">Email the studio</a>
+              </div>
+            </div>
+          </article>
+        </Container>
+      </section>
     </main>
   );
 }
