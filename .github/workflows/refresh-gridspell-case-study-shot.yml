@@ -6,13 +6,19 @@ on:
       - refresh/gridspell-case-study-screenshot
     paths:
       - .github/workflows/refresh-gridspell-case-study-shot.yml
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
 
 permissions:
   contents: write
 
 jobs:
   capture:
-    if: ${{ !contains(github.event.head_commit.message, '[skip screenshot]') }}
+    if: ${{ github.event_name == 'pull_request' || !contains(github.event.head_commit.message, '[skip screenshot]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
