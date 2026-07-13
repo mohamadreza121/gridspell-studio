@@ -48,33 +48,12 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Start the capture site
-        run: |
-          npm run dev -- --hostname 127.0.0.1 > /tmp/service-capture-next.log 2>&1 &
-          echo $! > /tmp/service-capture-next.pid
-
-          for attempt in {1..60}; do
-            if curl --fail --silent --show-error http://127.0.0.1:3000/services > /dev/null; then
-              exit 0
-            fi
-
-            sleep 2
-          done
-
-          cat /tmp/service-capture-next.log
-          exit 1
-
       - name: Capture desktop service objects
         env:
-          SERVICE_CAPTURE_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/capture-service-visuals.mjs
-
-      - name: Stop the capture site
-        if: always()
+          SERVICE_CAPTURE_BASE_URL: https://gridspellstudio.com
         run: |
-          if [ -f /tmp/service-capture-next.pid ]; then
-            kill "$(cat /tmp/service-capture-next.pid)" || true
-          fi
+          sleep 45
+          node scripts/capture-service-visuals.mjs
 
       - name: Commit refreshed renders
         run: |
