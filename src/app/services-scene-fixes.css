@@ -6,6 +6,17 @@
     line-height: 0.96 !important;
     letter-spacing: -0.055em !important;
   }
+
+  @supports (content-visibility: auto) {
+    .services-desktop-details {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 2500px;
+    }
+  }
+
+  .services-desktop-details__recommendation {
+    animation: services-desktop-recommendation 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 }
 
 @media (min-width: 1536px) {
@@ -128,6 +139,18 @@
   }
 }
 
+@keyframes services-desktop-recommendation {
+  from {
+    opacity: 0.55;
+    transform: translate3d(18px, 0, 0) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .services-mobile__chapter,
   .services-mobile__object,
@@ -136,6 +159,11 @@
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+
+  .services-desktop-details__recommendation {
+    animation: none !important;
+    transform: none !important;
   }
 
   .services-mobile__visual::after {

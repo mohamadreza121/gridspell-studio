@@ -15,114 +15,23 @@ import {
 } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
-import { packages } from "@/config/packages";
 import { services, type Service } from "@/config/services";
+import {
+  getServiceCommercialDetails,
+  getServiceScopeExclusions,
+  serviceBuyerGoals,
+  serviceProofProjects,
+  serviceReadinessItems,
+  type ServiceBuyerGoalId
+} from "@/config/services-page";
 import { cn } from "@/lib/utils";
-
-const packageById = new Map(packages.map((item) => [item.id, item]));
-
-const buyerGoals = [
-  {
-    id: "credibility",
-    label: "Look credible and get more enquiries",
-    detail: "You need a clear, professional sales website.",
-    serviceSlug: "business-websites"
-  },
-  {
-    id: "underperforming",
-    label: "Fix an outdated or underperforming site",
-    detail: "The business has outgrown its current website.",
-    serviceSlug: "website-redesign"
-  },
-  {
-    id: "campaign",
-    label: "Launch one offer or campaign",
-    detail: "You need one focused page and one measurable action.",
-    serviceSlug: "landing-pages"
-  },
-  {
-    id: "clients",
-    label: "Give clients a better workflow",
-    detail: "Files, approvals, updates, and reporting need one home.",
-    serviceSlug: "client-portals"
-  },
-  {
-    id: "software",
-    label: "Build custom software",
-    detail: "Your workflow needs more than an off-the-shelf tool.",
-    serviceSlug: "full-stack-apps"
-  },
-  {
-    id: "support",
-    label: "Keep an existing site healthy",
-    detail: "You need reliable updates, monitoring, and improvement.",
-    serviceSlug: "care-plans"
-  }
-] as const;
-
-type BuyerGoalId = (typeof buyerGoals)[number]["id"];
-
-const proofProjects = [
-  {
-    title: "DESA Foam Insulation",
-    label: "Business website · client work",
-    href: "/work/desa-foam-insulation",
-    image: "/images/work/selected-work/desa-foam-insulation-mobile-v2.jpg"
-  },
-  {
-    title: "Landing Page Gallery",
-    label: "12 live conversion directions",
-    href: "/work/landing-page-gallery",
-    image: "/images/work/selected-work/landing-page-gallery-mobile-v3.jpg"
-  },
-  {
-    title: "GridSpell Studio",
-    label: "Design system · full website",
-    href: "/work/gridspell-studio",
-    image: "/images/work/selected-work/gridspell-studio-mobile-v2.jpg"
-  }
-] as const;
-
-const readinessItems = [
-  "I can explain the offer or problem in a few sentences",
-  "I know who the primary customer or user is",
-  "I have rough content, examples, or existing material",
-  "I have a target launch window in mind",
-  "The people approving the project can join key reviews"
-] as const;
 
 function serviceVisualPath(slug: string) {
   return `/images/services/mobile/${slug}.webp`;
 }
 
-function getCommercialDetails(service: Service) {
-  if (service.slug === "care-plans") {
-    return {
-      price: "Monthly scope after a site audit",
-      timeline: "Ongoing support",
-      packageName: "Care plan"
-    };
-  }
-
-  const recommendedPackage = packageById.get(service.packageId);
-
-  return {
-    price: recommendedPackage?.price ?? "Quoted by scope",
-    timeline: recommendedPackage?.timeline ?? "Confirmed after discovery",
-    packageName: recommendedPackage?.name ?? "Custom"
-  };
-}
-
 function ServiceScope({ service }: { service: Service }) {
-  const recommendedPackage = packageById.get(service.packageId);
-  const exclusions =
-    service.slug === "care-plans"
-      ? [
-          "Monthly capacity and response times are confirmed after the initial audit",
-          "Large redesigns, new applications, and major features are quoted separately",
-          "Third-party software and hosting fees remain separate"
-        ]
-      : (recommendedPackage?.exclusions ?? []);
+  const exclusions = getServiceScopeExclusions(service);
 
   return (
     <div className="services-mobile__scope mt-7 border-t border-white/[0.08] pt-7">
@@ -211,18 +120,23 @@ function ServiceScope({ service }: { service: Service }) {
 
 export function ServicesStaticFallback() {
   const [activeService, setActiveService] = useState(services[0].slug);
-  const [selectedGoal, setSelectedGoal] = useState<BuyerGoalId>(buyerGoals[0].id);
+  const [selectedGoal, setSelectedGoal] = useState<ServiceBuyerGoalId>(
+    serviceBuyerGoals[0].id
+  );
   const [expandedService, setExpandedService] = useState<string | null>(null);
   const [readiness, setReadiness] = useState<Set<number>>(() => new Set());
 
   const recommendedGoal = useMemo(
-    () => buyerGoals.find((goal) => goal.id === selectedGoal) ?? buyerGoals[0],
+    () =>
+      serviceBuyerGoals.find((goal) => goal.id === selectedGoal) ?? serviceBuyerGoals[0],
     [selectedGoal]
   );
   const recommendedService =
     services.find((service) => service.slug === recommendedGoal.serviceSlug) ??
     services[0];
-  const readinessProgress = Math.round((readiness.size / readinessItems.length) * 100);
+  const readinessProgress = Math.round(
+    (readiness.size / serviceReadinessItems.length) * 100
+  );
 
   useEffect(() => {
     const chapters = services
@@ -333,7 +247,7 @@ export function ServicesStaticFallback() {
           </h2>
 
           <div className="mt-6 grid gap-2 sm:grid-cols-2">
-            {buyerGoals.map((goal) => {
+            {serviceBuyerGoals.map((goal) => {
               const selected = selectedGoal === goal.id;
               return (
                 <button
@@ -417,7 +331,7 @@ export function ServicesStaticFallback() {
 
         <div className="mt-7 grid gap-7 sm:gap-10">
           {services.map((service, index) => {
-            const commercial = getCommercialDetails(service);
+            const commercial = getServiceCommercialDetails(service);
             const expanded = expandedService === service.slug;
 
             return (
@@ -564,7 +478,7 @@ export function ServicesStaticFallback() {
 
           <div className="mt-7 overflow-hidden rounded-[1.7rem] border border-white/[0.09] bg-white/[0.02]">
             {services.map((service) => {
-              const commercial = getCommercialDetails(service);
+              const commercial = getServiceCommercialDetails(service);
               return (
                 <button
                   key={service.slug}
@@ -604,7 +518,7 @@ export function ServicesStaticFallback() {
             Real work, built to be explored.
           </h2>
           <div className="mt-7 grid gap-4 sm:grid-cols-3">
-            {proofProjects.map((project) => (
+            {serviceProofProjects.map((project) => (
               <Link
                 key={project.href}
                 href={project.href}
@@ -663,7 +577,7 @@ export function ServicesStaticFallback() {
           </div>
 
           <div className="mt-6 grid gap-2">
-            {readinessItems.map((item, index) => {
+            {serviceReadinessItems.map((item, index) => {
               const checked = readiness.has(index);
               return (
                 <button

@@ -16,12 +16,14 @@ import {
   ArrowUpRight
 } from "lucide-react";
 
+import { ServicesDesktopDetails } from "@/components/services/ServicesDesktopDetails";
 import { ServiceVisual } from "@/components/services/ServiceVisuals";
 import { Container } from "@/components/ui/Container";
 import {
   services,
   type Service
 } from "@/config/services";
+import { getServiceCommercialDetails } from "@/config/services-page";
 import { cn } from "@/lib/utils";
 
 const SERVICE_COUNT = services.length;
@@ -150,6 +152,7 @@ function ServiceChapter({
   const last = index === count - 1;
   const sceneClasses = serviceSceneClassMap[service.slug] ?? {};
   const titleStyle = getSceneTitleStyle(service.slug);
+  const commercial = getServiceCommercialDetails(service);
 
   const localProgress = useTransform(
     progress,
@@ -347,7 +350,26 @@ function ServiceChapter({
           {service.summary}
         </p>
 
-        <div className="mt-6 border-l border-[#8be9ff]/30 pl-5">
+        <div className="mt-4 flex flex-wrap gap-2.5">
+          <div className="rounded-xl border border-white/[0.08] bg-white/[0.025] px-3.5 py-2">
+            <p className="text-[0.5rem] font-semibold uppercase tracking-[0.18em] text-white/28">
+              Starting point
+            </p>
+            <p className="mt-1 text-xs font-semibold text-white/72">
+              {commercial.price}
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/[0.08] bg-white/[0.025] px-3.5 py-2">
+            <p className="text-[0.5rem] font-semibold uppercase tracking-[0.18em] text-white/28">
+              Typical timing
+            </p>
+            <p className="mt-1 text-xs font-semibold text-white/72">
+              {commercial.timeline}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 border-l border-[#8be9ff]/30 pl-5">
           <p className="text-[0.58rem] font-semibold uppercase tracking-[0.25em] text-white/26">
             Ideal for
           </p>
@@ -357,7 +379,7 @@ function ServiceChapter({
           </p>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           {service.deliverables.slice(0, 3).map((deliverable) => (
             <span
               key={deliverable}
@@ -370,7 +392,7 @@ function ServiceChapter({
 
         <Link
           href={`/services/${service.slug}`}
-          className="group mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/[0.14] bg-white px-6 text-sm font-semibold text-[#08090d] transition duration-300 hover:-translate-y-0.5"
+          className="group mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/[0.14] bg-white px-6 text-sm font-semibold text-[#08090d] transition duration-300 hover:-translate-y-0.5"
         >
           Explore this service
 
@@ -650,6 +672,7 @@ export function ServicesShowcaseScene() {
     <>
       <div className="hidden xl:block">
         <DesktopServicesShowcase />
+        <ServicesDesktopDetails />
       </div>
 
       <div className="xl:hidden">
