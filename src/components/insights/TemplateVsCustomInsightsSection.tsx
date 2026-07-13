@@ -12,7 +12,7 @@ const signals = [
 
 export function TemplateVsCustomInsightsSection() {
   return (
-    <section className="relative overflow-hidden border-t border-white/[0.08] bg-[#0b0d13] py-24 text-white sm:py-32">
+    <section className="insights-deferred-section relative overflow-hidden border-t border-white/[0.08] bg-[#0b0d13]/74 py-24 text-white sm:py-32">
       <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-20" />
       <div aria-hidden="true" className="pointer-events-none absolute left-[-18rem] top-[-12rem] h-[38rem] w-[38rem] rounded-full bg-[#29d6ff]/8 blur-[150px]" />
       <div aria-hidden="true" className="pointer-events-none absolute right-[-18rem] bottom-[-14rem] h-[38rem] w-[38rem] rounded-full bg-[#7c5cff]/12 blur-[150px]" />

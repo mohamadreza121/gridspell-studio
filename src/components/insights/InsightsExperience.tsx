@@ -18,7 +18,7 @@ import {
   Sparkles
 } from "lucide-react";
 
-import { InsightRowVisual } from "@/components/insights/InsightRowVisual";
+import { DeferredInsightRowVisual } from "@/components/insights/DeferredInsightRowVisual";
 import { Container } from "@/components/ui/Container";
 import {
   insightArticles,
@@ -386,7 +386,7 @@ function ArticleRow({
         ease: [0.22, 1, 0.36, 1]
       }}
       className={cn(
-        "group relative overflow-hidden border-t border-white/[0.085]",
+        "insights-deferred-row group relative overflow-hidden border-t border-white/[0.085]",
         accent.border
       )}
     >
@@ -426,7 +426,7 @@ function ArticleRow({
             </span>
           </div>
 
-          <InsightRowVisual article={article} />
+          <DeferredInsightRowVisual article={article} />
 
           <div
             aria-hidden="true"
@@ -502,7 +502,7 @@ export function InsightsExperience() {
   return (
     <div
       ref={pageRef}
-      className="relative overflow-hidden bg-[#07080c]"
+      className="relative overflow-hidden bg-transparent"
     >
       <motion.div
         aria-hidden="true"
@@ -559,30 +559,19 @@ export function InsightsExperience() {
               </p>
             </motion.div>
 
-            <motion.h1
-              initial={
-                reduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 55,
-                      filter: "blur(10px)"
-                    }
-              }
-              animate={{
-                opacity: 1,
-                y: 0,
-                filter: "blur(0px)"
-              }}
-              transition={{
-                duration: 0.9,
-                delay: 0.08,
-                ease: [0.22, 1, 0.36, 1]
-              }}
+            <h1
               className="mt-9 max-w-[12ch] text-balance font-display text-[clamp(4.4rem,9vw,10.5rem)] font-semibold leading-[0.78] tracking-[-0.082em] text-white"
             >
               Practical thinking for better digital decisions.
-            </motion.h1>
+            </h1>
+
+            <motion.div
+              aria-hidden="true"
+              initial={reduceMotion ? false : { opacity: 0, scaleX: 0 }}
+              animate={{ opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.85, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
+              className="insights-hero-accent mt-8 h-px w-[min(34rem,82vw)] bg-gradient-to-r from-[#7c5cff] via-[#8be9ff]/70 to-transparent"
+            />
 
             <motion.div
               initial={
@@ -691,7 +680,7 @@ export function InsightsExperience() {
                 duration: 0.8,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className="relative mt-24 overflow-hidden rounded-[2.2rem] border border-white/[0.09] bg-white/[0.025] p-8 sm:mt-32 sm:p-12"
+              className="insights-deferred-section relative mt-24 overflow-hidden rounded-[2.2rem] border border-white/[0.09] bg-white/[0.025] p-8 sm:mt-32 sm:p-12"
             >
               <div
                 aria-hidden="true"

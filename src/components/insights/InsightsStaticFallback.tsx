@@ -166,7 +166,7 @@ export function InsightsStaticFallback() {
   );
 
   return (
-    <main className="relative overflow-hidden bg-[#07080c] pb-24 pt-32">
+    <main className="relative overflow-hidden bg-transparent pb-24 pt-32">
       <div
         aria-hidden="true"
         className="page-grid pointer-events-none absolute inset-0 opacity-35"
