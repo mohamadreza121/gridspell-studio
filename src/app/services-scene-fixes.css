@@ -16,6 +16,17 @@
 }
 
 @media (max-width: 1279px) {
+  @supports (content-visibility: auto) {
+    .services-mobile__deferred {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 760px;
+    }
+
+    .services-mobile__chapter.services-mobile__deferred {
+      contain-intrinsic-size: auto 1120px;
+    }
+  }
+
   .services-mobile__nav {
     position: sticky;
     top: 5.25rem;

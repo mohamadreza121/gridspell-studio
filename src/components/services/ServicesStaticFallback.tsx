@@ -426,7 +426,7 @@ export function ServicesStaticFallback() {
                 data-service-slug={service.slug}
                 data-visible="false"
                 key={service.slug}
-                className="services-mobile__chapter group scroll-mt-24 overflow-hidden rounded-[2rem] border border-white/[0.1] bg-[#090b11]/92 shadow-[0_28px_90px_rgba(0,0,0,0.3)] lg:grid lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch"
+                className="services-mobile__chapter services-mobile__deferred group scroll-mt-24 overflow-hidden rounded-[2rem] border border-white/[0.1] bg-[#090b11]/92 shadow-[0_28px_90px_rgba(0,0,0,0.3)] lg:grid lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch"
               >
                 <div className="services-mobile__visual relative aspect-[1.05/1] min-h-[18rem] overflow-hidden border-b border-white/[0.08] bg-[#07080c] sm:min-h-[24rem] lg:aspect-auto lg:min-h-[36rem] lg:border-b-0 lg:border-r">
                   <div
@@ -551,7 +551,7 @@ export function ServicesStaticFallback() {
           })}
         </div>
 
-        <section className="mt-16">
+        <section className="services-mobile__deferred mt-16">
           <div className="flex items-center gap-3">
             <Sparkles className="h-4 w-4 text-[#8be9ff]" />
             <p className="text-[0.58rem] font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
@@ -596,7 +596,7 @@ export function ServicesStaticFallback() {
           </div>
         </section>
 
-        <section className="mt-16">
+        <section className="services-mobile__deferred mt-16">
           <p className="text-[0.58rem] font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
             Relevant work
           </p>
@@ -640,7 +640,7 @@ export function ServicesStaticFallback() {
           </div>
         </section>
 
-        <section className="mt-16 rounded-[2rem] border border-white/[0.09] bg-white/[0.025] p-6 sm:p-8">
+        <section className="services-mobile__deferred mt-16 rounded-[2rem] border border-white/[0.09] bg-white/[0.025] p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-[0.58rem] font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
@@ -702,7 +702,7 @@ export function ServicesStaticFallback() {
           </p>
         </section>
 
-        <div className="mt-14 rounded-[2rem] border border-[#8be9ff]/16 bg-gradient-to-br from-[#7c5cff]/10 to-[#29d6ff]/5 p-7 sm:p-9">
+        <div className="services-mobile__deferred mt-14 rounded-[2rem] border border-[#8be9ff]/16 bg-gradient-to-br from-[#7c5cff]/10 to-[#29d6ff]/5 p-7 sm:p-9">
           <p className="text-[0.58rem] font-semibold uppercase tracking-[0.28em] text-[#8be9ff]">
             Not sure where to start?
           </p>
