@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 
 const DeferredHomeProofSections = dynamic(
   () =>
@@ -10,7 +9,7 @@ const DeferredHomeProofSections = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <div className="home-deferred-placeholder" aria-hidden="true" />
+    loading: () => null
   }
 );
 
@@ -26,26 +25,27 @@ const DeferredHomeFAQSection = dynamic(
 );
 
 export function HomeDeferredSections() {
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setReady(true);
-    }, 900);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, []);
-
-  if (!ready) {
-    return <div className="home-deferred-placeholder" aria-hidden="true" />;
-  }
-
   return (
     <>
       <DeferredHomeProofSections />
       <DeferredHomeFAQSection />
+
+      <style jsx global>{`
+        .home-deferred-placeholder {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+          min-height: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        .home-faq-section {
+          content-visibility: visible !important;
+          contain-intrinsic-size: 0px !important;
+          padding-top: 0 !important;
+        }
+      `}</style>
     </>
   );
 }
