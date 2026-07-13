@@ -126,7 +126,7 @@
   margin-top: auto;
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.085);
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.58);
   font-family: var(--font-mono);
   font-size: 0.58rem;
   letter-spacing: 0.11em;
@@ -427,7 +427,7 @@
 .about-mobile-duality p {
   max-width: 22rem;
   margin: 0.55rem 0 0;
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.58);
   font-size: 0.78rem;
   line-height: 1.6;
 }
@@ -549,7 +549,7 @@
 
 .about-mobile-process-list p {
   margin: 0.38rem 0 0;
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.58);
   font-size: 0.74rem;
   line-height: 1.58;
 }
