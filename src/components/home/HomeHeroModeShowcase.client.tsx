@@ -207,7 +207,8 @@ export function HomeHeroModeShowcaseClient() {
   return (
     <>
       <div
-        className="home-hero-mode-tabs mt-9 grid w-full max-w-[46rem] grid-cols-2 gap-2 sm:grid-cols-4"
+        className="home-hero-mode-tabs mt-9 grid w-full grid-cols-2 gap-3 md:grid-cols-4 md:gap-4"
+        style={{ maxWidth: "46rem" }}
         role="group"
         aria-label="Homepage experience demonstrations"
       >
@@ -218,7 +219,7 @@ export function HomeHeroModeShowcaseClient() {
             <button
               key={mode.id}
               type="button"
-              className="home-hero-mode-tab flex min-h-10 min-w-0 w-full items-center justify-center whitespace-nowrap rounded-full border border-white/[0.1] bg-white/[0.025] px-2 py-2 text-center text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-white/38 sm:text-[0.6rem] sm:tracking-[0.13em]"
+              className="home-hero-mode-tab flex min-h-11 min-w-0 w-full items-center justify-center whitespace-nowrap rounded-full border border-white/[0.1] bg-white/[0.025] px-3 py-2 text-center text-[0.56rem] font-semibold uppercase tracking-[0.11em] text-white/38 md:px-4 md:text-[0.58rem] md:tracking-[0.12em] lg:text-[0.6rem] lg:tracking-[0.13em]"
               data-hero-mode={mode.id}
               data-active={String(active)}
               aria-label={`Show ${mode.label} demonstration`}
