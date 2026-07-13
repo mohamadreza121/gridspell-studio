@@ -1,6 +1,7 @@
 import { chromium } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import sharp from "sharp";
 
 const outputDir = path.join(process.cwd(), "public", "images", "services", "mobile");
 
@@ -72,12 +73,17 @@ for (const service of services) {
 
   await page.waitForTimeout(1_100);
 
-  await chapter.locator(`[data-service-visual="${service.slug}"]`).screenshot({
-    path: path.join(outputDir, `${service.slug}.webp`),
-    type: "webp",
-    quality: 82,
-    animations: "disabled"
-  });
+  const screenshot = await chapter
+    .locator(`[data-service-visual="${service.slug}"]`)
+    .screenshot({
+      type: "jpeg",
+      quality: 90,
+      animations: "disabled"
+    });
+
+  await sharp(screenshot)
+    .webp({ quality: 82 })
+    .toFile(path.join(outputDir, `${service.slug}.webp`));
 }
 
 await context.close();
