@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
+import { ServicesSystemBackdrop } from "@/components/services/ServicesSystemBackdrop";
 import { services, type Service } from "@/config/services";
 import {
   getServiceCommercialDetails,
@@ -209,26 +210,15 @@ export function ServicesStaticFallback() {
 
   return (
     <main className="services-mobile relative overflow-hidden bg-[#07080c] pb-24 pt-28 text-white sm:pt-32">
+      <ServicesSystemBackdrop />
       <div
         aria-hidden="true"
-        className="page-grid pointer-events-none absolute inset-0 opacity-38"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-[-16rem] top-20 h-[32rem] w-[32rem] rounded-full bg-[#7c5cff]/14 blur-[150px]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute right-[-17rem] top-[42rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/10 blur-[150px]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-[3%] top-28 whitespace-nowrap font-display text-[38vw] font-semibold leading-none tracking-[-0.1em] text-white/[0.014] sm:text-[27vw]"
+        className="pointer-events-none absolute left-[3%] top-28 z-[1] whitespace-nowrap font-display text-[38vw] font-semibold leading-none tracking-[-0.1em] text-white/[0.014] sm:text-[27vw]"
       >
         SYSTEMS
       </div>
 
-      <Container className="relative">
+      <Container className="relative z-10">
         <div className="max-w-4xl">
           <div className="flex items-center gap-4">
             <span className="h-px w-11 bg-gradient-to-r from-[#7c5cff] to-[#29d6ff]" />
