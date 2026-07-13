@@ -13,8 +13,8 @@ import {
   Workflow
 } from "lucide-react";
 
+import { HomeDesignAnatomySection } from "@/components/home/HomeDesignAnatomySection";
 import { Container } from "@/components/ui/Container";
-import { featuredProjects, type FeaturedProject } from "@/config/work";
 
 const systemProof = [
   {
@@ -66,55 +66,8 @@ const buildFacts = [
   "SEO-ready metadata, sitemap, and page architecture"
 ] as const;
 
-const projectPackageMap: Record<string, { id: string; low: number; high: number; timeline: string }> = {
-  "desa-foam-insulation": { id: "growth", low: 4500, high: 5200, timeline: "5–7 weeks" },
-  "gridspell-studio": { id: "custom", low: 7500, high: 8650, timeline: "8+ weeks" },
-  "network-engineering-portfolio": { id: "launch", low: 1800, high: 2500, timeline: "3–4 weeks" }
-};
-
 function storyDelay(index: number) {
   return { "--story-reveal-delay": `${index * 70}ms` } as CSSProperties;
-}
-
-function startProjectHref(project: FeaturedProject) {
-  const packageInfo = projectPackageMap[project.slug] ?? projectPackageMap["desa-foam-insulation"];
-  const params = new URLSearchParams({
-    package: packageInfo.id,
-    estimateLow: String(packageInfo.low),
-    estimateHigh: String(packageInfo.high),
-    timeline: packageInfo.timeline,
-    source: project.slug
-  });
-
-  return `/start-project?${params.toString()}`;
-}
-
-function MiniInterfacePreview({ project }: { project: FeaturedProject }) {
-  return (
-    <div className="home-story-preview relative overflow-hidden rounded-[1.35rem] border border-white/[0.08] bg-[#07080c] p-4">
-      <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
-        <span className="h-2 w-2 rounded-full bg-white/20" />
-        <span className="h-2 w-2 rounded-full bg-white/12" />
-        <span className="h-2 w-2 rounded-full bg-white/[0.07]" />
-        <span className="ml-auto rounded-full border border-white/[0.18] bg-white/[0.055] px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.16em] text-white/72">
-          {project.slug.replaceAll("-", ".")}
-        </span>
-      </div>
-
-      <div className="mt-5 grid gap-3">
-        <div className="h-2 w-20 rounded-full bg-[#8be9ff]/40" />
-        <div className="h-8 w-[78%] rounded-xl bg-white/[0.09]" />
-        <div className="h-8 w-[58%] rounded-xl bg-white/[0.055]" />
-        <div className="mt-2 grid grid-cols-3 gap-2">
-          <span className="h-16 rounded-xl border border-white/[0.06] bg-white/[0.035]" />
-          <span className="h-16 rounded-xl border border-[#8be9ff]/12 bg-[#8be9ff]/7" />
-          <span className="h-16 rounded-xl border border-white/[0.06] bg-white/[0.035]" />
-        </div>
-      </div>
-
-      <div className="pointer-events-none absolute right-[-4rem] top-[-4rem] h-36 w-36 rounded-full bg-[#7c5cff]/18 blur-3xl" />
-    </div>
-  );
 }
 
 export function HomeProofSections() {
@@ -124,86 +77,7 @@ export function HomeProofSections() {
       <div aria-hidden="true" className="home-story-glow home-story-glow--purple pointer-events-none absolute right-[-18rem] top-24 h-[34rem] w-[34rem] rounded-full bg-[#7c5cff]/12 blur-[150px] max-[480px]:hidden" />
       <div aria-hidden="true" className="home-story-glow home-story-glow--cyan pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px] max-[480px]:hidden" />
 
-      <section className="home-story-section home-story-reveal relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
-        <Container className="relative">
-          <div className="home-story-reveal-item grid gap-10 xl:grid-cols-[0.68fr_1.32fr] xl:items-end">
-            <div>
-              <p className="text-[0.66rem] font-semibold uppercase tracking-[0.42em] text-[#8be9ff]">
-                Selected builds
-              </p>
-              <h2 className="mt-6 max-w-[11ch] text-balance font-display text-[clamp(3.2rem,7vw,7.2rem)] font-semibold leading-[0.84] tracking-[-0.075em]">
-                Real proof, not just polish.
-              </h2>
-            </div>
-
-            <p className="max-w-3xl text-base leading-8 text-white/46 sm:text-lg">
-              GridSpell does not just design pages. The work connects positioning,
-              responsive interfaces, lead flow, SEO foundations, dashboards, and launch
-              systems so the website keeps working after the first impression.
-            </p>
-          </div>
-
-          <div className="mt-14 grid gap-5 lg:grid-cols-3">
-            {featuredProjects.map((project, index) => (
-              <article
-                key={project.slug}
-                style={storyDelay(index + 1)}
-                className="home-story-card home-story-project-card home-story-reveal-item group rounded-[1.8rem] border border-white/[0.09] bg-white/[0.028] p-4 transition duration-300 hover:border-[#8be9ff]/22 hover:bg-white/[0.042] sm:p-5"
-              >
-                <MiniInterfacePreview project={project} />
-
-                <div className="mt-6">
-                  <p className="text-[0.56rem] font-semibold uppercase tracking-[0.24em] text-[#8be9ff]">
-                    {String(index + 1).padStart(2, "0")} · {project.category}
-                  </p>
-                  <h3 className="mt-3 font-display text-3xl font-semibold tracking-[-0.055em] text-white">
-                    {project.title}
-                  </h3>
-                  <p className="mt-4 text-sm leading-7 text-white/44">
-                    {project.description}
-                  </p>
-                </div>
-
-                {project.proof ? (
-                  <div className="mt-6 grid gap-3 border-t border-white/[0.08] pt-5">
-                    {([
-                      ["Problem", project.proof.problem],
-                      ["Built", project.proof.built],
-                      ["Result", project.proof.result]
-                    ] as const).map(([label, text]) => (
-                      <div key={label}>
-                        <p className="text-[0.56rem] font-semibold uppercase tracking-[0.18em] text-white/24">
-                          {label}
-                        </p>
-                        <p className="mt-1.5 text-xs leading-6 text-white/44">
-                          {text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href={`/work/${project.slug}`}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#8be9ff]/18 bg-[#8be9ff]/8 px-4 text-xs font-semibold text-[#8be9ff] transition hover:border-[#8be9ff]/35 hover:bg-[#8be9ff]/12"
-                  >
-                    View case study
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Link>
-                  <Link
-                    href={startProjectHref(project)}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.025] px-4 text-xs font-semibold text-white/54 transition hover:border-white/20 hover:text-white"
-                  >
-                    Start similar project
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        </Container>
-      </section>
+      <HomeDesignAnatomySection />
 
       <section className="home-story-section home-story-reveal relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
         <Container className="relative">
