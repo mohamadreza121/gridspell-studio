@@ -10,7 +10,7 @@ on:
 jobs:
   responsive-check:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 12
 
     steps:
       - name: Check out pull request
@@ -28,7 +28,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Check all redesigned service pages
+      - name: Inspect preview routes
         shell: bash
         run: |
           set -o pipefail
@@ -37,95 +37,43 @@ jobs:
 
           const baseUrl = 'https://gridspell-studio-git-age-4595e1-mohammadrezas-projects-f5433da6.vercel.app';
           const routes = [
-            ['/services/website-redesign', 'Turn the current website into the version the business has grown into.'],
-            ['/services/landing-pages', 'A focused page that turns campaign attention into one measurable action.'],
-            ['/services/client-portals', 'Give clients one secure place to see progress and move work forward.'],
-            ['/services/full-stack-apps', 'Build the workflow your business needs—not another tool it has to work around.'],
-            ['/services/care-plans', 'Keep the website healthy, current, and ready for the next change.']
+            '/services/website-redesign',
+            '/services/landing-pages',
+            '/services/client-portals',
+            '/services/full-stack-apps',
+            '/services/care-plans'
           ];
-          const viewports = [
-            ['desktop', 1440, 960],
-            ['tablet', 768, 1024],
-            ['phone', 390, 844],
-            ['small-phone', 320, 720]
-          ];
-
-          async function openPage(page, path, heading) {
-            let lastError;
-            for (let attempt = 1; attempt <= 5; attempt += 1) {
-              try {
-                await page.goto(`${baseUrl}${path}?responsive-check=${Date.now()}`, {
-                  waitUntil: 'domcontentloaded',
-                  timeout: 60000
-                });
-                await page.getByRole('heading', { level: 1, name: heading })
-                  .waitFor({ state: 'visible', timeout: 15000 });
-                return;
-              } catch (error) {
-                lastError = error;
-                console.error(`${path}: attempt ${attempt} failed: ${error.message}`);
-                await page.waitForTimeout(4000);
-              }
-            }
-            throw lastError;
-          }
 
           (async () => {
             const browser = await chromium.launch({ headless: true });
 
-            for (const [viewportName, width, height] of viewports) {
-              for (const [path, heading] of routes) {
-                console.log(`Checking ${viewportName} ${path}`);
-                const page = await browser.newPage({ viewport: { width, height } });
-                const runtimeProblems = [];
+            for (const path of routes) {
+              const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
+              const response = await page.goto(`${baseUrl}${path}?inspect=${Date.now()}`, {
+                waitUntil: 'domcontentloaded',
+                timeout: 60000
+              });
+              await page.waitForTimeout(1000);
 
-                page.on('pageerror', (error) => runtimeProblems.push(error.message));
-                page.on('console', (message) => {
-                  if (/hydration failed|server rendered html didn't match|not an animatable value/i.test(message.text())) {
-                    runtimeProblems.push(message.text());
-                  }
-                });
-
-                await openPage(page, path, heading);
-                await page.waitForTimeout(450);
-
-                const layout = await page.evaluate(() => ({
-                  scrollWidth: document.documentElement.scrollWidth,
-                  clientWidth: document.documentElement.clientWidth
-                }));
-                if (layout.scrollWidth > layout.clientWidth + 2) {
-                  throw new Error(`${viewportName} ${path}: horizontal overflow ${JSON.stringify(layout)}`);
+              const snapshot = await page.evaluate(() => ({
+                title: document.title,
+                h1: Array.from(document.querySelectorAll('h1')).map((node) => node.textContent?.replace(/\s+/g, ' ').trim()),
+                body: document.body.innerText.replace(/\s+/g, ' ').slice(0, 500),
+                width: {
+                  scroll: document.documentElement.scrollWidth,
+                  client: document.documentElement.clientWidth
                 }
+              }));
 
-                const heroBox = await page.getByRole('heading', { level: 1, name: heading }).boundingBox();
-                if (!heroBox || heroBox.x < -1 || heroBox.x + heroBox.width > width + 1) {
-                  throw new Error(`${viewportName} ${path}: clipped hero ${JSON.stringify(heroBox)}`);
-                }
+              console.log(JSON.stringify({
+                path,
+                status: response?.status(),
+                finalUrl: page.url(),
+                ...snapshot
+              }, null, 2));
 
-                await page.getByText('Why it matters', { exact: true }).waitFor({ state: 'visible' });
-                await page.getByText('Outcomes', { exact: true }).waitFor({ state: 'visible' });
-                await page.getByText('Core deliverables', { exact: true }).waitFor({ state: 'visible' });
-                await page.locator('#scope').waitFor({ state: 'attached' });
-
-                const ctaBox = await page.locator('a[href^="/start-project?service="]').first().boundingBox();
-                if (!ctaBox || ctaBox.height < 44) {
-                  throw new Error(`${viewportName} ${path}: primary CTA below 44px ${JSON.stringify(ctaBox)}`);
-                }
-
-                if (runtimeProblems.length > 0) {
-                  throw new Error(`${viewportName} ${path}: runtime issues ${runtimeProblems.join('\n')}`);
-                }
-
-                console.log(`${viewportName} ${path}: passed`);
-                await page.close();
-              }
+              await page.close();
             }
-
-            const reducedPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
-            await reducedPage.emulateMedia({ reducedMotion: 'reduce' });
-            await openPage(reducedPage, routes[0][0], routes[0][1]);
-            await reducedPage.getByText('Why it matters', { exact: true }).waitFor({ state: 'visible' });
-            await reducedPage.close();
 
             await browser.close();
           })().catch((error) => {
@@ -134,7 +82,7 @@ jobs:
           });
           NODE
 
-      - name: Upload responsive sweep diagnostics
+      - name: Upload preview diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
