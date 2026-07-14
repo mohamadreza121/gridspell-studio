@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   images: { formats: ["image/avif", "image/webp"] },
   experimental: {
     cpus: 2,
-    inlineCss: true,
     optimizePackageImports: ["lucide-react", "motion"]
   },
   poweredByHeader: false,

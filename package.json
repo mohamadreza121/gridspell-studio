@@ -29,6 +29,7 @@
     "test:reduced-motion": "npm run test:e2e:install && playwright test tests/e2e/reduced-motion.spec.ts --project=desktop-chromium",
     "test:performance": "npm run test:e2e:install && playwright test tests/e2e/performance.spec.ts --project=desktop-chromium",
     "stripe:test-webhook": "node --env-file=.env.local scripts/test-stripe-webhook.mjs",
+    "indexnow:submit": "node scripts/submit-indexnow.mjs",
     "quality:phase8": "npm run check && npm run performance:assets && npm run test:keyboard && npm run test:accessibility && npm run test:responsive && npm run test:reduced-motion && npm run test:performance",
     "performance:assets": "node scripts/check-asset-budget.mjs"
   },

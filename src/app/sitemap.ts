@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
+
 import { insightArticles } from "@/config/insights";
 import { services } from "@/config/services";
 import { siteConfig } from "@/config/site";
 import { featuredProjects } from "@/config/work";
 
-const buildDate = new Date("2026-06-26T00:00:00.000Z");
-
 export default function sitemap(): MetadataRoute.Sitemap {
+  // This metadata route is generated with the production build, so the date
+  // reflects the deployment that search engines are being asked to crawl.
+  const buildDate = new Date();
   const routes = [
     "",
     "/work",
