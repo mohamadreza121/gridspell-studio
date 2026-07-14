@@ -6,7 +6,11 @@ const routes = [
   "/work/gridspell-studio",
   "/services",
   "/services/business-websites",
+  "/services/website-redesign",
+  "/services/landing-pages",
   "/services/client-portals",
+  "/services/full-stack-apps",
+  "/services/care-plans",
   "/pricing",
   "/start-project",
   "/about",
@@ -53,6 +57,11 @@ for (const route of routes) {
       await expect(
         page.getByText("Admin lead dashboard", { exact: true }).first()
       ).toBeVisible();
+    }
+
+    if (route.startsWith("/services/") && route !== "/services/business-websites") {
+      await expect(page.getByText("Why it matters", { exact: true })).toBeVisible();
+      await expect(page.getByText("Core deliverables", { exact: true })).toBeVisible();
     }
 
     const reduced = await page.evaluate(

@@ -1,0 +1,289 @@
+.root {
+  --svc-accent: #8be9ff;
+  --svc-accent-rgb: 139 233 255;
+  --svc-accent-2: #7c5cff;
+  --svc-accent-2-rgb: 124 92 255;
+  background:
+    radial-gradient(circle at 12% 8%, rgb(var(--svc-accent-rgb) / 0.08), transparent 28rem),
+    radial-gradient(circle at 88% 24%, rgb(var(--svc-accent-2-rgb) / 0.09), transparent 30rem),
+    #07080c;
+}
+
+.heroCopy {
+  animation: service-rise 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.heroVisual {
+  animation: service-rise 860ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+}
+
+.floatSlow {
+  animation: service-float 7s ease-in-out infinite;
+}
+
+.floatReverse {
+  animation: service-float-reverse 8.5s ease-in-out infinite;
+}
+
+.scanLine {
+  animation: service-scan 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.pulseDot {
+  animation: service-pulse 2.2s ease-in-out infinite;
+}
+
+.pulseRing {
+  animation: service-ring 2.8s ease-out infinite;
+}
+
+.flowLine {
+  animation: service-flow 2.9s linear infinite;
+  background-size: 220% 100%;
+}
+
+.barGrow {
+  transform-origin: left center;
+  animation: service-bar 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.orbit {
+  animation: service-orbit 15s linear infinite;
+}
+
+.orbitReverse {
+  animation: service-orbit-reverse 18s linear infinite;
+}
+
+.breathe {
+  animation: service-breathe 4s ease-in-out infinite;
+}
+
+.card {
+  transition:
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 360ms ease,
+    background-color 360ms ease,
+    box-shadow 360ms ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: rgb(var(--svc-accent-rgb) / 0.25);
+  box-shadow: 0 26px 80px rgb(0 0 0 / 0.28);
+}
+
+.accentText {
+  color: var(--svc-accent);
+}
+
+.accentBorder {
+  border-color: rgb(var(--svc-accent-rgb) / 0.2);
+}
+
+.accentSurface {
+  background: rgb(var(--svc-accent-rgb) / 0.07);
+}
+
+.accentGradient {
+  background: linear-gradient(135deg, var(--svc-accent-2), var(--svc-accent));
+}
+
+.accentGlow {
+  box-shadow: 0 18px 60px rgb(var(--svc-accent-rgb) / 0.18);
+}
+
+.viewReveal {
+  opacity: 1;
+  transform: none;
+}
+
+@supports (animation-timeline: view()) {
+  .viewReveal {
+    animation: service-view-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 6% cover 28%;
+  }
+}
+
+@keyframes service-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes service-view-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes service-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-0.35deg);
+  }
+
+  50% {
+    transform: translate3d(0, -12px, 0) rotate(0.35deg);
+  }
+}
+
+@keyframes service-float-reverse {
+  0%,
+  100% {
+    transform: translate3d(0, -4px, 0) rotate(0.45deg);
+  }
+
+  50% {
+    transform: translate3d(0, 10px, 0) rotate(-0.45deg);
+  }
+}
+
+@keyframes service-scan {
+  0% {
+    transform: translate3d(0, -130%, 0);
+    opacity: 0;
+  }
+
+  16% {
+    opacity: 0.72;
+  }
+
+  84% {
+    opacity: 0.52;
+  }
+
+  100% {
+    transform: translate3d(0, 820%, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes service-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes service-ring {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.65);
+  }
+
+  78%,
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes service-flow {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -20% 0;
+  }
+}
+
+@keyframes service-bar {
+  from {
+    transform: scaleX(0.08);
+    opacity: 0.35;
+  }
+
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes service-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes service-orbit-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes service-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    filter: saturate(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    filter: saturate(1.25);
+  }
+}
+
+@media (max-width: 639px) {
+  .floatSlow,
+  .floatReverse {
+    animation-duration: 10s;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroCopy,
+  .heroVisual,
+  .floatSlow,
+  .floatReverse,
+  .scanLine,
+  .pulseDot,
+  .pulseRing,
+  .flowLine,
+  .barGrow,
+  .orbit,
+  .orbitReverse,
+  .breathe,
+  .viewReveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .card {
+    transition: none;
+  }
+}
