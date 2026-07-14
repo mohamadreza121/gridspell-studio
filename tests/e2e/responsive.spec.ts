@@ -121,7 +121,17 @@ test.describe("responsive marketing pages", () => {
         await expect(page.locator(".small-phone-home-pricing, .small-phone-home-pricing-only")).toHaveCount(0);
       }
 
-      if (route.startsWith("/services/")) {
+      if (route === "/services/business-websites") {
+        await expect(
+          page.getByRole("heading", {
+            level: 1,
+            name: /A website that makes the business feel established/i
+          })
+        ).toBeVisible();
+        await expect(page.getByText("The decision system", { exact: true })).toBeVisible();
+        await expect(page.getByText("What ships", { exact: true })).toBeVisible();
+        await expect(page.getByRole("link", { name: /Start a business website/i })).toBeVisible();
+      } else if (route.startsWith("/services/")) {
         await expect(page.getByText("Why it matters", { exact: true }).first()).toBeVisible();
         await expect(page.getByText("Outcomes", { exact: true }).first()).toBeVisible();
         await expect(page.getByText("Core deliverables", { exact: true }).first()).toBeVisible();
