@@ -1,6 +1,9 @@
-name: Submit production URLs to IndexNow
+name: IndexNow crawl submission
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -10,11 +13,30 @@ permissions:
   contents: read
 
 concurrency:
-  group: gridspell-indexnow-production
+  group: gridspell-indexnow-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
+  validate-indexnow:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate submission script and ownership key
+        run: |
+          node --check scripts/submit-indexnow.mjs
+          test "$(tr -d '\r\n' < public/c4eff21748a1961153c97fc0e7f4530d.txt)" = "c4eff21748a1961153c97fc0e7f4530d"
+
   submit-indexnow:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 8
 
