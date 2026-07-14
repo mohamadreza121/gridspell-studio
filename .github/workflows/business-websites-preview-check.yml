@@ -42,6 +42,9 @@ jobs:
 
       - name: Start local Next server
         run: |
+          NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000 \
+          NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 \
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_responsive_check \
           npm run dev -- --hostname 127.0.0.1 > /tmp/gridspell-next.log 2>&1 &
           echo $! > /tmp/gridspell-next.pid
           for attempt in $(seq 1 60); do
