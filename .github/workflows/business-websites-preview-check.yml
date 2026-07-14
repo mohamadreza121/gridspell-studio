@@ -1,6 +1,11 @@
 name: Business websites responsive preview check
 
 on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - synchronize
   push:
     branches:
       - agent/business-websites-modern-redesign
@@ -12,7 +17,7 @@ permissions:
 
 jobs:
   responsive-preview:
-    if: ${{ !contains(github.event.head_commit.message, '[skip service preview]') }}
+    if: ${{ github.event_name == 'pull_request' || !contains(github.event.head_commit.message, '[skip service preview]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 18
 
