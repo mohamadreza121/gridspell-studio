@@ -55,7 +55,8 @@ jobs:
 
       - name: Check desktop, tablet, and phone layouts
         run: |
-          node <<'NODE'
+          set -o pipefail
+          node <<'NODE' 2>&1 | tee /tmp/business-websites-check.log
           const { chromium } = require('@playwright/test');
 
           const baseUrl = 'http://127.0.0.1:3000';
@@ -73,6 +74,7 @@ jobs:
             const browser = await chromium.launch({ headless: true });
 
             for (const viewport of viewports) {
+              console.log(`checking ${viewport.name} at ${viewport.width}x${viewport.height}`);
               const page = await browser.newPage({ viewport });
               const runtimeErrors = [];
 
@@ -96,6 +98,7 @@ jobs:
                 clientWidth: document.documentElement.clientWidth,
                 bodyWidth: document.body.getBoundingClientRect().width
               }));
+              console.log(`${viewport.name} layout ${JSON.stringify(layout)}`);
 
               if (layout.scrollWidth > layout.clientWidth + 2) {
                 throw new Error(`${viewport.name}: horizontal overflow ${JSON.stringify(layout)}`);
@@ -106,6 +109,7 @@ jobs:
                 name: expectedHeading
               });
               const heroBox = await hero.boundingBox();
+              console.log(`${viewport.name} hero ${JSON.stringify(heroBox)}`);
 
               if (!heroBox || heroBox.x < -1 || heroBox.x + heroBox.width > viewport.width + 1) {
                 throw new Error(`${viewport.name}: hero heading is clipped ${JSON.stringify(heroBox)}`);
@@ -119,6 +123,7 @@ jobs:
                 name: /Start a business website/i
               });
               const ctaBox = await primaryCta.boundingBox();
+              console.log(`${viewport.name} CTA ${JSON.stringify(ctaBox)}`);
 
               if (!ctaBox || ctaBox.height < 44) {
                 throw new Error(`${viewport.name}: primary CTA is smaller than 44px ${JSON.stringify(ctaBox)}`);
@@ -128,7 +133,7 @@ jobs:
                 throw new Error(`${viewport.name}: runtime rendering errors ${runtimeErrors.join('\n')}`);
               }
 
-              console.log(`${viewport.name}: passed at ${viewport.width}x${viewport.height}`);
+              console.log(`${viewport.name}: passed`);
               await page.close();
             }
 
@@ -138,6 +143,16 @@ jobs:
             process.exit(1);
           });
           NODE
+
+      - name: Upload validation diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: business-websites-responsive-log
+          path: |
+            /tmp/business-websites-check.log
+            /tmp/gridspell-next.log
+          retention-days: 1
 
       - name: Stop local server
         if: always()
