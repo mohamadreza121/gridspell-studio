@@ -19,7 +19,7 @@ jobs:
   responsive-preview:
     if: ${{ github.event_name == 'pull_request' || !contains(github.event.head_commit.message, '[skip service preview]') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 12
 
     steps:
       - name: Check out branch
@@ -59,24 +59,22 @@ jobs:
           async function openLatest(page) {
             let lastError;
 
-            for (let attempt = 1; attempt <= 15; attempt += 1) {
+            for (let attempt = 1; attempt <= 6; attempt += 1) {
               try {
                 await page.goto(`${baseUrl}${route}?preview-check=${Date.now()}`, {
                   waitUntil: 'domcontentloaded',
-                  timeout: 90000
+                  timeout: 45000
                 });
 
-                const heading = page.getByRole('heading', {
+                await page.getByRole('heading', {
                   level: 1,
                   name: expectedHeading
-                });
-
-                await heading.waitFor({ state: 'visible', timeout: 10000 });
+                }).waitFor({ state: 'visible', timeout: 15000 });
                 return;
               } catch (error) {
                 lastError = error;
                 console.log(`Preview attempt ${attempt} is not ready yet.`);
-                await page.waitForTimeout(10000);
+                await page.waitForTimeout(8000);
               }
             }
 
@@ -96,8 +94,7 @@ jobs:
               });
 
               await openLatest(page);
-              await page.evaluate(async () => document.fonts.ready);
-              await page.waitForTimeout(500);
+              await page.waitForTimeout(700);
 
               const layout = await page.evaluate(() => ({
                 scrollWidth: document.documentElement.scrollWidth,
@@ -135,11 +132,6 @@ jobs:
               if (runtimeErrors.some((message) => /hydration|server rendered|not an animatable value/i.test(message))) {
                 throw new Error(`${viewport.name}: runtime rendering errors ${runtimeErrors.join('\n')}`);
               }
-
-              await page.screenshot({
-                path: `/tmp/business-websites-${viewport.name}.png`,
-                fullPage: true
-              });
 
               console.log(`${viewport.name}: passed at ${viewport.width}x${viewport.height}`);
               await page.close();
