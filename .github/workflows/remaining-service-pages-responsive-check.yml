@@ -1,0 +1,171 @@
+name: Remaining service pages responsive check
+
+on:
+  push:
+    branches:
+      - agent/redesign-remaining-service-pages
+    paths:
+      - .github/workflows/remaining-service-pages-responsive-check.yml
+
+permissions:
+  contents: write
+
+jobs:
+  responsive-check:
+    if: ${{ !contains(github.event.head_commit.message, '[skip service sweep]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/redesign-remaining-service-pages
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Check all redesigned service pages
+        run: |
+          node <<'NODE'
+          const { chromium } = require('@playwright/test');
+
+          const baseUrl = 'https://gridspell-studio-git-age-4595e1-mohammadrezas-projects-f5433da6.vercel.app';
+          const routes = [
+            {
+              path: '/services/website-redesign',
+              heading: 'Turn the current website into the version the business has grown into.'
+            },
+            {
+              path: '/services/landing-pages',
+              heading: 'A focused page that turns campaign attention into one measurable action.'
+            },
+            {
+              path: '/services/client-portals',
+              heading: 'Give clients one secure place to see progress and move work forward.'
+            },
+            {
+              path: '/services/full-stack-apps',
+              heading: 'Build the workflow your business needs—not another tool it has to work around.'
+            },
+            {
+              path: '/services/care-plans',
+              heading: 'Keep the website healthy, current, and ready for the next change.'
+            }
+          ];
+          const viewports = [
+            { name: 'desktop', width: 1440, height: 960 },
+            { name: 'tablet', width: 768, height: 1024 },
+            { name: 'phone', width: 390, height: 844 },
+            { name: 'small-phone', width: 320, height: 720 }
+          ];
+
+          async function openPage(page, route) {
+            let lastError;
+
+            for (let attempt = 1; attempt <= 8; attempt += 1) {
+              try {
+                await page.goto(`${baseUrl}${route.path}?responsive-check=${Date.now()}`, {
+                  waitUntil: 'domcontentloaded',
+                  timeout: 60000
+                });
+                await page.getByRole('heading', {
+                  level: 1,
+                  name: route.heading
+                }).waitFor({ state: 'visible', timeout: 15000 });
+                return;
+              } catch (error) {
+                lastError = error;
+                console.log(`${route.path}: preview attempt ${attempt} is not ready yet.`);
+                await page.waitForTimeout(6000);
+              }
+            }
+
+            throw lastError;
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+
+            for (const viewport of viewports) {
+              for (const route of routes) {
+                const page = await browser.newPage({ viewport });
+                const runtimeProblems = [];
+
+                page.on('pageerror', (error) => runtimeProblems.push(error.message));
+                page.on('console', (message) => {
+                  if (/hydration failed|server rendered html didn't match|not an animatable value/i.test(message.text())) {
+                    runtimeProblems.push(message.text());
+                  }
+                });
+
+                await openPage(page, route);
+                await page.waitForTimeout(450);
+
+                const layout = await page.evaluate(() => ({
+                  scrollWidth: document.documentElement.scrollWidth,
+                  clientWidth: document.documentElement.clientWidth
+                }));
+
+                if (layout.scrollWidth > layout.clientWidth + 2) {
+                  throw new Error(`${viewport.name} ${route.path}: horizontal overflow ${JSON.stringify(layout)}`);
+                }
+
+                const hero = page.getByRole('heading', { level: 1, name: route.heading });
+                const heroBox = await hero.boundingBox();
+
+                if (!heroBox || heroBox.x < -1 || heroBox.x + heroBox.width > viewport.width + 1) {
+                  throw new Error(`${viewport.name} ${route.path}: clipped hero ${JSON.stringify(heroBox)}`);
+                }
+
+                await page.getByText('Why it matters', { exact: true }).waitFor({ state: 'visible' });
+                await page.getByText('Outcomes', { exact: true }).waitFor({ state: 'visible' });
+                await page.getByText('Core deliverables', { exact: true }).waitFor({ state: 'visible' });
+                await page.locator('#scope').waitFor({ state: 'attached' });
+
+                const primaryCta = page.locator(`a[href^="/start-project?service="]`).first();
+                const ctaBox = await primaryCta.boundingBox();
+
+                if (!ctaBox || ctaBox.height < 44) {
+                  throw new Error(`${viewport.name} ${route.path}: primary CTA below 44px ${JSON.stringify(ctaBox)}`);
+                }
+
+                if (runtimeProblems.length > 0) {
+                  throw new Error(`${viewport.name} ${route.path}: runtime issues ${runtimeProblems.join('\n')}`);
+                }
+
+                console.log(`${viewport.name} ${route.path}: passed`);
+                await page.close();
+              }
+            }
+
+            const reducedPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+            await reducedPage.emulateMedia({ reducedMotion: 'reduce' });
+            await openPage(reducedPage, routes[0]);
+            await reducedPage.getByText('Why it matters', { exact: true }).waitFor({ state: 'visible' });
+            await reducedPage.close();
+
+            await browser.close();
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/remaining-service-pages-responsive-check.yml
+          git commit -m "Remove one-time service sweep [skip service sweep]"
+          git push origin HEAD:agent/redesign-remaining-service-pages
