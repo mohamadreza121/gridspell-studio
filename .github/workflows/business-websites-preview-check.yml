@@ -1,0 +1,156 @@
+name: Business websites responsive preview check
+
+on:
+  push:
+    branches:
+      - agent/business-websites-modern-redesign
+    paths:
+      - .github/workflows/business-websites-preview-check.yml
+
+permissions:
+  contents: write
+
+jobs:
+  responsive-preview:
+    if: ${{ !contains(github.event.head_commit.message, '[skip service preview]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/business-websites-modern-redesign
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Check desktop, tablet, and phone layouts
+        run: |
+          node <<'NODE'
+          const { chromium } = require('@playwright/test');
+
+          const baseUrl = 'https://gridspell-studio-git-age-8dd10a-mohammadrezas-projects-f5433da6.vercel.app';
+          const route = '/services/business-websites';
+          const expectedHeading = 'A website that makes the business feel established.';
+          const viewports = [
+            { name: 'desktop', width: 1440, height: 1000 },
+            { name: 'laptop', width: 1180, height: 820 },
+            { name: 'tablet', width: 768, height: 1024 },
+            { name: 'phone', width: 390, height: 844 },
+            { name: 'small-phone', width: 320, height: 720 }
+          ];
+
+          async function openLatest(page) {
+            let lastError;
+
+            for (let attempt = 1; attempt <= 15; attempt += 1) {
+              try {
+                await page.goto(`${baseUrl}${route}?preview-check=${Date.now()}`, {
+                  waitUntil: 'domcontentloaded',
+                  timeout: 90000
+                });
+
+                const heading = page.getByRole('heading', {
+                  level: 1,
+                  name: expectedHeading
+                });
+
+                await heading.waitFor({ state: 'visible', timeout: 10000 });
+                return;
+              } catch (error) {
+                lastError = error;
+                console.log(`Preview attempt ${attempt} is not ready yet.`);
+                await page.waitForTimeout(10000);
+              }
+            }
+
+            throw lastError;
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+
+            for (const viewport of viewports) {
+              const page = await browser.newPage({ viewport });
+              const runtimeErrors = [];
+
+              page.on('pageerror', (error) => runtimeErrors.push(error.message));
+              page.on('console', (message) => {
+                if (message.type() === 'error') runtimeErrors.push(message.text());
+              });
+
+              await openLatest(page);
+              await page.evaluate(async () => document.fonts.ready);
+              await page.waitForTimeout(500);
+
+              const layout = await page.evaluate(() => ({
+                scrollWidth: document.documentElement.scrollWidth,
+                clientWidth: document.documentElement.clientWidth,
+                bodyWidth: document.body.getBoundingClientRect().width
+              }));
+
+              if (layout.scrollWidth > layout.clientWidth + 2) {
+                throw new Error(`${viewport.name}: horizontal overflow ${JSON.stringify(layout)}`);
+              }
+
+              const hero = page.getByRole('heading', {
+                level: 1,
+                name: expectedHeading
+              });
+              const heroBox = await hero.boundingBox();
+
+              if (!heroBox || heroBox.x < -1 || heroBox.x + heroBox.width > viewport.width + 1) {
+                throw new Error(`${viewport.name}: hero heading is clipped ${JSON.stringify(heroBox)}`);
+              }
+
+              await page.getByText('The decision system', { exact: true }).waitFor({ state: 'visible' });
+              await page.getByText('What ships', { exact: true }).waitFor({ state: 'visible' });
+              await page.locator('#scope').waitFor({ state: 'attached' });
+
+              const primaryCta = page.getByRole('link', {
+                name: /Start a business website/i
+              });
+              const ctaBox = await primaryCta.boundingBox();
+
+              if (!ctaBox || ctaBox.height < 44) {
+                throw new Error(`${viewport.name}: primary CTA is smaller than 44px ${JSON.stringify(ctaBox)}`);
+              }
+
+              if (runtimeErrors.some((message) => /hydration|server rendered|not an animatable value/i.test(message))) {
+                throw new Error(`${viewport.name}: runtime rendering errors ${runtimeErrors.join('\n')}`);
+              }
+
+              await page.screenshot({
+                path: `/tmp/business-websites-${viewport.name}.png`,
+                fullPage: true
+              });
+
+              console.log(`${viewport.name}: passed at ${viewport.width}x${viewport.height}`);
+              await page.close();
+            }
+
+            await browser.close();
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/business-websites-preview-check.yml
+          git commit -m "Remove one-time service preview check [skip service preview]"
+          git push origin HEAD:agent/business-websites-modern-redesign
