@@ -64,8 +64,10 @@ test("package context survives the redesigned project brief and submits", async 
   await page.getByLabel("Email").fill("client@example.com");
   await page.getByLabel("Business name").fill("Example Studio");
   await page.getByLabel("What are you building?").selectOption("Business website");
-  await page.getByLabel("Custom design").check();
-  await page.getByLabel("Next.js development").check();
+  await page.getByText("Custom design", { exact: true }).click();
+  await page.getByText("Next.js development", { exact: true }).click();
+  await expect(page.getByLabel("Custom design")).toBeChecked();
+  await expect(page.getByLabel("Next.js development")).toBeChecked();
   await page
     .getByLabel("Business problem and goal")
     .fill("We need a clearer website that explains our services and generates qualified project inquiries.");
