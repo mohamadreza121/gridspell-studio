@@ -2,7 +2,10 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: { formats: ["image/avif", "image/webp"] },
+  images: {
+    formats: ["image/avif", "image/webp"],
+    qualities: [58, 75]
+  },
   experimental: {
     cpus: 2,
     optimizePackageImports: ["lucide-react", "motion"]
