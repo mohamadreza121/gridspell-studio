@@ -206,6 +206,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
   return (
     <div
       ref={wrapperRef}
+      data-turnstile-wrapper="true"
       className="grid gap-2"
       onFocusCapture={activateWidget}
       onPointerEnter={activateWidget}
@@ -224,6 +225,8 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
         aria-labelledby={labelId}
         aria-describedby={descriptionId}
         className="min-h-[65px] w-full"
+        onPointerEnter={activateWidget}
+        onPointerDown={activateWidget}
       />
 
       {widgetError ? (
