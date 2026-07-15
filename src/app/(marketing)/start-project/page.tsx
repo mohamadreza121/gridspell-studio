@@ -7,9 +7,7 @@ import {
   ArrowUpRight,
   CheckCircle2,
   CircleDollarSign,
-  Clock3,
   Gauge,
-  Layers3,
   MessageSquareText,
   SearchCheck,
   ShieldCheck,
@@ -269,6 +267,8 @@ export default function StartProjectPage() {
             fill
             sizes="(min-width: 1280px) 64vw, 100vw"
             quality={58}
+            loading="eager"
+            fetchPriority="high"
             className={styles.heroImage}
           />
         </div>
