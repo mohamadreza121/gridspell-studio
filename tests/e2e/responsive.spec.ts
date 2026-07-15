@@ -137,6 +137,17 @@ test.describe("responsive marketing pages", () => {
         await expect(page.getByText("Core deliverables", { exact: true }).first()).toBeVisible();
       }
 
+      if (route === "/start-project") {
+        await expect(
+          page.getByRole("heading", {
+            level: 1,
+            name: /Turn the idea into a clear build plan/i
+          })
+        ).toBeVisible();
+        await expect(page.getByText("Structured intake", { exact: true })).toBeVisible();
+        await expect(page.getByRole("button", { name: /Submit project brief/i })).toBeVisible();
+      }
+
       if (isSmallPhoneProject(testInfo.project.name) && route === "/") {
         const tinyMenuButton = page.locator('label[for="tiny-phone-nav-toggle"].tiny-phone-nav__button');
         const tinyMenuToggle = page.locator("#tiny-phone-nav-toggle");
