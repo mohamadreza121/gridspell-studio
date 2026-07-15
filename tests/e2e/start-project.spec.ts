@@ -94,6 +94,63 @@ test("package context survives the redesigned project brief and submits", async 
   });
 });
 
+test("event demo context is imported, preselected, and sent with the project brief", async ({ page }) => {
+  let submittedPayload: Record<string, unknown> | null = null;
+
+  await page.route("**/api/leads", async (route) => {
+    submittedPayload = route.request().postDataJSON() as Record<string, unknown>;
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true })
+    });
+  });
+
+  await page.goto(
+    "/start-project?package=landing-page&source=event-launch&design=Signal+Live+Event"
+  );
+
+  await expect(page.getByText("Signal Live Event", { exact: true })).toBeVisible();
+  await expect(page.getByText("Event Launch", { exact: true })).toBeVisible();
+  await expect(page.getByText("Starter package", { exact: true }).first()).toBeVisible();
+  await expect(page.getByLabel("What are you building?")).toHaveValue("Landing page");
+  await expect(page.getByLabel("Selected package")).toHaveValue("starter");
+  await expect(page.getByLabel("Estimated investment")).toHaveValue(
+    "Starter / landing page — CAD $950+"
+  );
+  await expect(page.getByLabel("Preferred timeline")).toHaveValue("1–2 weeks");
+
+  const routeFollowsForm = await page.evaluate(() => {
+    const form = document.querySelector("form.project-brief-form");
+    const route = document.querySelector("#project-route");
+    if (!form || !route) return false;
+    return Boolean(form.compareDocumentPosition(route) & Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+  expect(routeFollowsForm).toBe(true);
+
+  await page.getByLabel("Your name").fill("Event Client");
+  await page.getByLabel("Email").fill("event@example.com");
+  await page
+    .getByLabel("Business problem and goal")
+    .fill("We need this event launch direction adapted into a branded registration page for our conference.");
+  await page.getByRole("button", { name: /Submit project brief/i }).click();
+
+  await expect(
+    page.getByRole("heading", { name: /Your project is ready for review/i })
+  ).toBeVisible();
+
+  expect(submittedPayload).toMatchObject({
+    name: "Event Client",
+    email: "event@example.com",
+    projectType: "Landing page",
+    selectedPackage: "starter",
+    budget: "Starter / landing page — CAD $950+",
+    timeline: "1–2 weeks",
+    pricingTimeline: "1–2 weeks",
+    addOns: "Project source: Event Launch | Design reference: Signal Live Event"
+  });
+});
+
 test("invalid project briefs still surface field errors and focus the first field", async ({ page }) => {
   await page.goto("/start-project");
   await page.getByRole("button", { name: /Submit project brief/i }).click();
