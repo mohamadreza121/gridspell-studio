@@ -1,7 +1,9 @@
 "use client";
 
-import Script from "next/script";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+
+const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 declare global {
   interface Window {
@@ -94,6 +96,55 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
   }, [shouldLoadScript]);
 
   useEffect(() => {
+    if (!siteKey || !shouldLoadScript) return;
+
+    if (window.turnstile) {
+      setScriptReady(true);
+      return;
+    }
+
+    let cancelled = false;
+    let script = document.querySelector<HTMLScriptElement>(
+      'script[data-gridspell-turnstile="true"]'
+    );
+
+    const handleLoad = () => {
+      if (script) script.dataset.loaded = "true";
+      if (!cancelled) setScriptReady(true);
+    };
+
+    const handleError = () => {
+      if (!cancelled) {
+        setWidgetError(
+          "The security check could not load. Refresh the page or email hello@gridspellstudio.com."
+        );
+      }
+    };
+
+    if (!script) {
+      script = document.createElement("script");
+      script.src = TURNSTILE_SCRIPT_SRC;
+      script.async = true;
+      script.defer = true;
+      script.dataset.gridspellTurnstile = "true";
+      document.head.appendChild(script);
+    }
+
+    script.addEventListener("load", handleLoad);
+    script.addEventListener("error", handleError);
+
+    if (script.dataset.loaded === "true" || window.turnstile) {
+      handleLoad();
+    }
+
+    return () => {
+      cancelled = true;
+      script?.removeEventListener("load", handleLoad);
+      script?.removeEventListener("error", handleError);
+    };
+  }, [shouldLoadScript, siteKey]);
+
+  useEffect(() => {
     const container = containerRef.current;
 
     if (!siteKey || !scriptReady || !container || !window.turnstile) {
@@ -160,15 +211,6 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
       onPointerEnter={activateWidget}
       onPointerDown={activateWidget}
     >
-      {shouldLoadScript ? (
-        <Script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
-          onLoad={() => setScriptReady(true)}
-          onReady={() => setScriptReady(true)}
-        />
-      ) : null}
-
       <input type="hidden" name="turnstileToken" value={token} readOnly />
 
       <span id={labelId} className="sr-only">
