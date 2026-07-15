@@ -135,6 +135,9 @@ for (const viewport of viewports) {
       name: "Bot protection verification"
     });
     await verification.scrollIntoViewIfNeeded();
+    await page
+      .locator('[data-turnstile-wrapper="true"]')
+      .dispatchEvent("pointerenter");
     await expect(page.locator('input[name="turnstileToken"]')).toHaveValue(
       "playwright-performance-token"
     );
