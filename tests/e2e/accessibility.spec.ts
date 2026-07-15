@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const turnstileStub = `
   window.turnstile = {
@@ -16,7 +16,7 @@ const turnstileStub = `
   };
 `;
 
-async function stubTurnstile(page: import("@playwright/test").Page) {
+async function stubTurnstile(page: Page) {
   await page.route(
     "https://challenges.cloudflare.com/turnstile/v0/api.js**",
     async (route) => {
@@ -27,6 +27,17 @@ async function stubTurnstile(page: import("@playwright/test").Page) {
       });
     }
   );
+}
+
+async function activateTurnstile(page: Page) {
+  const verification = page.getByRole("group", {
+    name: "Bot protection verification"
+  });
+  await verification.scrollIntoViewIfNeeded();
+  await page
+    .locator('[data-turnstile-wrapper="true"]')
+    .dispatchEvent("pointerenter");
+  return verification;
 }
 
 test("skip link reaches the main content", async ({ page }) => {
@@ -56,11 +67,7 @@ test("navigation dialog traps focus and closes with Escape", async ({ page }) =>
 test("project form exposes validation errors accessibly", async ({ page }) => {
   await stubTurnstile(page);
   await page.goto("/start-project");
-
-  const verification = page.getByRole("group", {
-    name: "Bot protection verification"
-  });
-  await verification.scrollIntoViewIfNeeded();
+  await activateTurnstile(page);
 
   const turnstileToken = page.locator('input[name="turnstileToken"]');
   await expect(turnstileToken).toHaveValue("playwright-accessibility-token");
@@ -79,10 +86,7 @@ test("project verification uses a valid named accessibility group", async ({ pag
   await stubTurnstile(page);
   await page.goto("/start-project");
 
-  const verification = page.getByRole("group", {
-    name: "Bot protection verification"
-  });
-  await verification.scrollIntoViewIfNeeded();
+  const verification = await activateTurnstile(page);
   await expect(verification).toBeVisible();
   await expect(verification).toHaveAttribute("aria-labelledby", /turnstile-label-/);
   await expect(verification).toHaveAttribute("aria-describedby", /turnstile-description-/);
