@@ -17,6 +17,7 @@ import {
   UserRound,
   WandSparkles
 } from "lucide-react";
+
 import { trackAnalyticsEvent } from "@/components/analytics/GoogleAnalytics";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { ActionButton } from "@/components/ui/ActionControl";
@@ -31,7 +32,7 @@ const projectOptions = [
   "Full-stack web application",
   "Google Ads landing page",
   "Not sure yet"
-];
+] as const;
 
 const budgetOptions = [
   "Starter / landing page — CAD $950+",
@@ -39,7 +40,7 @@ const budgetOptions = [
   "Growth website — CAD $4,500–$7,500",
   "Custom portal / system — CAD $7,500+",
   "Not sure yet"
-];
+] as const;
 
 const serviceOptions = [
   "Custom design",
@@ -52,13 +53,24 @@ const serviceOptions = [
   "Analytics and conversion tracking",
   "Client portal or dashboard",
   "Maintenance / care plan"
-];
+] as const;
+
+const packageAliases: Record<string, string> = {
+  "landing-page": "starter",
+  landing: "starter",
+  starter: "starter",
+  launch: "launch",
+  growth: "growth",
+  custom: "custom",
+  portal: "custom",
+  application: "custom"
+};
 
 type FieldErrors = Partial<Record<LeadField, string>>;
 
 function FieldIcon({ children }: { children: React.ReactNode }) {
   return (
-    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/26">
+    <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-white/26">
       {children}
     </span>
   );
@@ -74,7 +86,34 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
+function normalizePackageId(packageId: string) {
+  return packageAliases[packageId.trim().toLowerCase()] ?? packageId;
+}
+
+function humanizeContext(value: string) {
+  return value
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function inferProjectType(explicitType: string, source: string, designReference: string) {
+  if (projectOptions.includes(explicitType as (typeof projectOptions)[number])) {
+    return explicitType;
+  }
+
+  const context = `${source} ${designReference}`.toLowerCase();
+
+  if (/event|landing|campaign|launch page/.test(context)) return "Landing page";
+  if (/redesign/.test(context)) return "Website redesign";
+  if (/portal|dashboard/.test(context)) return "Client portal or dashboard";
+  if (/application|app|full-stack/.test(context)) return "Full-stack web application";
+  if (/google ads|paid search/.test(context)) return "Google Ads landing page";
+
+  return "";
+}
+
 function budgetFromPackage(packageId: string | null) {
+  if (packageId === "starter") return "Starter / landing page — CAD $950+";
   if (packageId === "launch") return "Launch website — CAD $1,800–$3,000";
   if (packageId === "growth") return "Growth website — CAD $4,500–$7,500";
   if (packageId === "custom") return "Custom portal / system — CAD $7,500+";
@@ -101,14 +140,32 @@ function getEstimateLabel(low: string | null, high: string | null) {
 
 export function ProjectBriefForm() {
   const searchParams = useSearchParams();
-  const selectedPackageId = searchParams.get("package") ?? "";
+  const rawPackageId = searchParams.get("package") ?? "";
+  const selectedPackageId = normalizePackageId(rawPackageId);
   const selectedPackage = packages.find((item) => item.id === selectedPackageId);
   const estimateLow = searchParams.get("estimateLow") ?? "";
   const estimateHigh = searchParams.get("estimateHigh") ?? "";
   const pricingTimeline = searchParams.get("timeline") || selectedPackage?.timeline || "";
-  const addOns = searchParams.get("addOns") ?? "";
+  const originalAddOns = searchParams.get("addOns") ?? "";
+  const projectSource = searchParams.get("source")?.trim() ?? "";
+  const designReference = searchParams.get("design")?.trim() ?? "";
+  const requestedProjectType = searchParams.get("projectType")?.trim() ?? "";
+  const initialProjectType = inferProjectType(
+    requestedProjectType,
+    projectSource,
+    designReference
+  );
   const estimateLabel = getEstimateLabel(estimateLow, estimateHigh);
   const defaultBudget = budgetFromPackage(selectedPackageId);
+  const sourceLabel = projectSource ? humanizeContext(projectSource) : "";
+  const importedContext = [
+    originalAddOns,
+    sourceLabel ? `Project source: ${sourceLabel}` : "",
+    designReference ? `Design reference: ${designReference}` : ""
+  ]
+    .filter(Boolean)
+    .join(" | ");
+  const hasImportedContext = Boolean(projectSource || designReference);
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle"
@@ -166,9 +223,7 @@ export function ProjectBriefForm() {
       turnstileToken: readField("turnstileToken")
     };
 
-    const turnstileRequired = Boolean(
-      process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
-    );
+    const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
     if (turnstileRequired && !data.turnstileToken) {
       setStatus("error");
@@ -177,6 +232,7 @@ export function ProjectBriefForm() {
       );
       return;
     }
+
     const validation = leadSchema.safeParse(data);
 
     if (!validation.success) {
@@ -220,24 +276,15 @@ export function ProjectBriefForm() {
       setStatus("success");
     } catch (error) {
       window.turnstile?.reset();
-
       setStatus("error");
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong."
-      );
+      setMessage(error instanceof Error ? error.message : "Something went wrong.");
     }
   }
 
   if (status === "success") {
     return (
-      <div
-        className="glass-panel rounded-[2rem] p-8 sm:p-10"
-        role="status"
-        aria-live="polite"
-      >
-        <div className="grid h-14 w-14 place-items-center rounded-2xl border border-[#35d07f]/30 bg-[#35d07f]/8">
+      <div className="project-brief-success" role="status" aria-live="polite">
+        <div className="grid h-14 w-14 place-items-center border border-[#35d07f]/30 bg-[#35d07f]/8">
           <CheckCircle2 className="h-7 w-7 text-[#35d07f]" />
         </div>
         <p className="mt-8 text-xs uppercase tracking-[0.34em] text-[#7ce3aa]">
@@ -247,8 +294,7 @@ export function ProjectBriefForm() {
           Your project is ready for review.
         </h2>
         <p className="mt-5 max-w-xl leading-8 text-white/46">
-          GridSpell will review the business goal, scope, budget, and timing before the
-          next conversation.
+          GridSpell will review the business goal, scope, budget, and timing before the next conversation.
         </p>
       </div>
     );
@@ -261,335 +307,220 @@ export function ProjectBriefForm() {
   });
 
   return (
-    <form
-      onSubmit={submit}
-      noValidate
-      className="glass-panel overflow-hidden rounded-[2rem]"
-    >
+    <form onSubmit={submit} noValidate className="project-brief-form">
       <input type="hidden" name="formStartedAt" value={formStartedAt} />
       <input type="hidden" name="estimateLow" value={estimateLow} />
       <input type="hidden" name="estimateHigh" value={estimateHigh} />
       <input type="hidden" name="pricingTimeline" value={pricingTimeline} />
-      <input type="hidden" name="addOns" value={addOns} />
+      <input type="hidden" name="addOns" value={importedContext} />
 
-      <div className="border-b border-white/[0.08] p-6 sm:p-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.34em] text-[#8be9ff]">
-              Project brief
-            </p>
-            <h2 className="mt-4 font-display text-3xl font-semibold tracking-[-0.045em] sm:text-4xl">
-              Give GridSpell the useful details.
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/42">
-              The form is package-aware, so your selected pricing range and project type
-              stay attached to the lead before the first conversation.
-            </p>
-          </div>
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.035] px-3 py-2 text-xs text-white/38">
-            <WandSparkles className="h-3.5 w-3.5 text-[#8be9ff]" />
-            About 4 minutes
-          </span>
+      <header className="project-brief-header">
+        <div>
+          <p className="text-xs uppercase tracking-[0.34em] text-[#8be9ff]">Project brief</p>
+          <h2 className="mt-4 max-w-2xl font-display text-3xl font-semibold tracking-[-0.05em] sm:text-5xl">
+            Map the useful details.
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/42">
+            Each section captures one decision layer. Package, pricing, and demo context stay connected to the submission.
+          </p>
         </div>
+        <span className="inline-flex w-fit items-center gap-2 border-l border-[#8be9ff]/30 px-3 py-2 text-xs text-white/38">
+          <WandSparkles className="h-3.5 w-3.5 text-[#8be9ff]" />
+          About 4 minutes
+        </span>
 
-        {selectedPackage ? (
-          <div className="mt-6 grid gap-3 rounded-[1.5rem] border border-[#8be9ff]/18 bg-[#8be9ff]/6 p-4 sm:grid-cols-3">
+        {hasImportedContext ? (
+          <div className="project-origin-context">
+            <span className="project-origin-index">IN</span>
             <div>
-              <p className="text-[0.55rem] uppercase tracking-[0.2em] text-white/28">Package</p>
-              <p className="mt-2 text-sm font-semibold text-white/72">{selectedPackage.name}</p>
+              <p className="text-[0.52rem] font-black uppercase tracking-[0.18em] text-white/28">
+                Imported project direction
+              </p>
+              <p className="mt-2 text-sm font-semibold text-white/72">
+                {designReference || sourceLabel}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-white/34">
+                This reference will be included with the inquiry automatically.
+              </p>
             </div>
-            <div>
-              <p className="text-[0.55rem] uppercase tracking-[0.2em] text-white/28">Planning range</p>
-              <p className="mt-2 text-sm font-semibold text-white/72">{estimateLabel ?? selectedPackage.price}</p>
-            </div>
-            <div>
-              <p className="text-[0.55rem] uppercase tracking-[0.2em] text-white/28">Timeline</p>
-              <p className="mt-2 text-sm font-semibold text-white/72">{pricingTimeline}</p>
-            </div>
+            {sourceLabel ? <span className="project-origin-source">{sourceLabel}</span> : null}
           </div>
         ) : null}
-      </div>
 
-      <div className="grid gap-9 p-6 sm:p-8">
-        <fieldset>
-          <legend className="text-xs font-semibold uppercase tracking-[0.28em] text-white/30">
-            01 · Contact
+        {selectedPackage ? (
+          <div className="project-origin-context">
+            <span className="project-origin-index">PK</span>
+            <div>
+              <p className="text-[0.52rem] font-black uppercase tracking-[0.18em] text-white/28">
+                Attached package
+              </p>
+              <p className="mt-2 text-sm font-semibold text-white/72">{selectedPackage.name}</p>
+              <p className="mt-1 text-xs leading-5 text-white/34">
+                {estimateLabel ?? selectedPackage.price} · {pricingTimeline}
+              </p>
+            </div>
+            <span className="project-origin-source">Package context</span>
+          </div>
+        ) : null}
+      </header>
+
+      <div className="project-brief-body">
+        <fieldset className="project-brief-step">
+          <legend>
+            <span className="project-step-number">01</span>
+            Contact
           </legend>
-          <div className="mt-5 grid gap-5 sm:grid-cols-2">
-            <label className="grid gap-2 text-sm text-white/58">
+          <div className="project-fields-grid">
+            <label className="project-field-label">
               Your name
               <span className="relative block">
-                <FieldIcon>
-                  <UserRound className="h-4 w-4" />
-                </FieldIcon>
-                <input
-                  name="name"
-                  required
-                  maxLength={100}
-                  autoComplete="name"
-                  className="form-field form-field-with-icon"
-                  placeholder="Full name"
-                  {...commonInputProps("name")}
-                />
+                <FieldIcon><UserRound className="h-4 w-4" /></FieldIcon>
+                <input name="name" required maxLength={100} autoComplete="name" className="form-field form-field-with-icon" placeholder="Full name" {...commonInputProps("name")} />
               </span>
               <FieldError id="name-error" message={fieldErrors.name} />
             </label>
 
-            <label className="grid gap-2 text-sm text-white/58">
+            <label className="project-field-label">
               Email
               <span className="relative block">
-                <FieldIcon>
-                  <Mail className="h-4 w-4" />
-                </FieldIcon>
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  maxLength={180}
-                  autoComplete="email"
-                  className="form-field form-field-with-icon"
-                  placeholder="you@company.com"
-                  {...commonInputProps("email")}
-                />
+                <FieldIcon><Mail className="h-4 w-4" /></FieldIcon>
+                <input name="email" type="email" required maxLength={180} autoComplete="email" className="form-field form-field-with-icon" placeholder="you@company.com" {...commonInputProps("email")} />
               </span>
               <FieldError id="email-error" message={fieldErrors.email} />
             </label>
 
-            <label className="grid gap-2 text-sm text-white/58">
+            <label className="project-field-label">
               Business name
               <span className="relative block">
-                <FieldIcon>
-                  <Building2 className="h-4 w-4" />
-                </FieldIcon>
-                <input
-                  name="company"
-                  maxLength={140}
-                  autoComplete="organization"
-                  className="form-field form-field-with-icon"
-                  placeholder="Company or brand name"
-                  {...commonInputProps("company")}
-                />
+                <FieldIcon><Building2 className="h-4 w-4" /></FieldIcon>
+                <input name="company" maxLength={140} autoComplete="organization" className="form-field form-field-with-icon" placeholder="Company or brand name" {...commonInputProps("company")} />
               </span>
               <FieldError id="company-error" message={fieldErrors.company} />
             </label>
 
-            <label className="grid gap-2 text-sm text-white/58">
+            <label className="project-field-label">
               Phone
               <span className="relative block">
-                <FieldIcon>
-                  <Phone className="h-4 w-4" />
-                </FieldIcon>
-                <input
-                  name="phone"
-                  maxLength={40}
-                  autoComplete="tel"
-                  className="form-field form-field-with-icon"
-                  placeholder="Optional"
-                  {...commonInputProps("phone")}
-                />
+                <FieldIcon><Phone className="h-4 w-4" /></FieldIcon>
+                <input name="phone" maxLength={40} autoComplete="tel" className="form-field form-field-with-icon" placeholder="Optional" {...commonInputProps("phone")} />
               </span>
               <FieldError id="phone-error" message={fieldErrors.phone} />
             </label>
 
-            <label className="grid gap-2 text-sm text-white/58 sm:col-span-2">
+            <label className="project-field-label project-field-span-two">
               Current website
               <span className="relative block">
-                <FieldIcon>
-                  <Globe2 className="h-4 w-4" />
-                </FieldIcon>
-                <input
-                  name="currentWebsite"
-                  maxLength={220}
-                  inputMode="url"
-                  autoComplete="url"
-                  className="form-field form-field-with-icon"
-                  placeholder="https://yourwebsite.com or leave blank"
-                  {...commonInputProps("currentWebsite")}
-                />
+                <FieldIcon><Globe2 className="h-4 w-4" /></FieldIcon>
+                <input name="currentWebsite" maxLength={220} inputMode="url" autoComplete="url" className="form-field form-field-with-icon" placeholder="https://yourwebsite.com or leave blank" {...commonInputProps("currentWebsite")} />
               </span>
               <FieldError id="currentWebsite-error" message={fieldErrors.currentWebsite} />
             </label>
           </div>
         </fieldset>
 
-        <fieldset className="border-t border-white/[0.08] pt-9">
-          <legend className="text-xs font-semibold uppercase tracking-[0.28em] text-white/30">
-            02 · Scope and pricing
+        <fieldset className="project-brief-step">
+          <legend>
+            <span className="project-step-number">02</span>
+            Scope and pricing
           </legend>
-          <div className="mt-5 grid gap-5 sm:grid-cols-2">
-            <label className="grid gap-2 text-sm text-white/58">
+          <div className="project-fields-grid">
+            <label className="project-field-label">
               What are you building?
               <span className="relative block">
-                <FieldIcon>
-                  <WandSparkles className="h-4 w-4" />
-                </FieldIcon>
-                <select
-                  name="projectType"
-                  required
-                  defaultValue=""
-                  className="form-field form-field-with-icon"
-                  {...commonInputProps("projectType")}
-                >
-                  <option value="" disabled>
-                    Select project type
-                  </option>
-                  {projectOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
+                <FieldIcon><WandSparkles className="h-4 w-4" /></FieldIcon>
+                <select name="projectType" required defaultValue={initialProjectType} className="form-field form-field-with-icon" {...commonInputProps("projectType")}>
+                  <option value="" disabled>Select project type</option>
+                  {projectOptions.map((option) => <option key={option} value={option}>{option}</option>)}
                 </select>
               </span>
               <FieldError id="projectType-error" message={fieldErrors.projectType} />
             </label>
 
-            <label className="grid gap-2 text-sm text-white/58">
+            <label className="project-field-label">
               Selected package
               <span className="relative block">
-                <FieldIcon>
-                  <Layers3 className="h-4 w-4" />
-                </FieldIcon>
-                <select
-                  name="selectedPackage"
-                  defaultValue={selectedPackage?.id ?? ""}
-                  className="form-field form-field-with-icon"
-                  {...commonInputProps("selectedPackage")}
-                >
+                <FieldIcon><Layers3 className="h-4 w-4" /></FieldIcon>
+                <select name="selectedPackage" defaultValue={selectedPackage?.id ?? ""} className="form-field form-field-with-icon" {...commonInputProps("selectedPackage")}>
                   <option value="">Not selected yet</option>
-                  {packages.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name} — {item.price}
-                    </option>
-                  ))}
+                  {packages.map((item) => <option key={item.id} value={item.id}>{item.name} — {item.price}</option>)}
                 </select>
               </span>
               <FieldError id="selectedPackage-error" message={fieldErrors.selectedPackage} />
             </label>
 
-            <label className="grid gap-2 text-sm text-white/58">
+            <label className="project-field-label">
               Estimated investment
               <span className="relative block">
-                <FieldIcon>
-                  <CircleDollarSign className="h-4 w-4" />
-                </FieldIcon>
-                <select
-                  name="budget"
-                  required
-                  defaultValue={defaultBudget}
-                  className="form-field form-field-with-icon"
-                  {...commonInputProps("budget")}
-                >
-                  <option value="" disabled>
-                    Select budget range
-                  </option>
-                  {budgetOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
+                <FieldIcon><CircleDollarSign className="h-4 w-4" /></FieldIcon>
+                <select name="budget" required defaultValue={defaultBudget} className="form-field form-field-with-icon" {...commonInputProps("budget")}>
+                  <option value="" disabled>Select budget range</option>
+                  {budgetOptions.map((option) => <option key={option} value={option}>{option}</option>)}
                 </select>
               </span>
               <FieldError id="budget-error" message={fieldErrors.budget} />
             </label>
 
-            <label className="grid gap-2 text-sm text-white/58">
+            <label className="project-field-label">
               Preferred timeline
               <span className="relative block">
-                <FieldIcon>
-                  <Clock3 className="h-4 w-4" />
-                </FieldIcon>
-                <input
-                  name="timeline"
-                  maxLength={100}
-                  defaultValue={pricingTimeline}
-                  className="form-field form-field-with-icon"
-                  placeholder="Example: launch within 8–10 weeks"
-                  {...commonInputProps("timeline")}
-                />
+                <FieldIcon><Clock3 className="h-4 w-4" /></FieldIcon>
+                <input name="timeline" maxLength={100} defaultValue={pricingTimeline} className="form-field form-field-with-icon" placeholder="Example: launch within 8–10 weeks" {...commonInputProps("timeline")} />
               </span>
               <FieldError id="timeline-error" message={fieldErrors.timeline} />
             </label>
           </div>
         </fieldset>
 
-        <fieldset className="border-t border-white/[0.08] pt-9">
-          <legend className="text-xs font-semibold uppercase tracking-[0.28em] text-white/30">
-            03 · Services needed
+        <fieldset className="project-brief-step">
+          <legend>
+            <span className="project-step-number">03</span>
+            Services needed
           </legend>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-white/38">
-            Select everything that might be useful. GridSpell will narrow this into a clear
-            scope before a proposal is written.
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/38">
+            Select everything that might be useful. GridSpell will narrow this into a clear scope before a proposal is written.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="project-services-grid">
             {serviceOptions.map((option) => (
-              <label
-                key={option}
-                className="group flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-3 text-sm text-white/54 transition hover:border-[#8be9ff]/24 hover:bg-[#8be9ff]/5 hover:text-white/72"
-              >
-                <input
-                  type="checkbox"
-                  name="servicesNeeded"
-                  value={option}
-                  className="peer sr-only"
-                  onChange={() => clearFieldError("servicesNeeded")}
-                />
-                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md border border-white/[0.16] bg-black/10 text-transparent transition peer-checked:border-[#8be9ff]/40 peer-checked:bg-[#8be9ff]/12 peer-checked:text-[#8be9ff]">
-                  <Check className="h-3.5 w-3.5" />
-                </span>
-                {option}
+              <label key={option} className="project-service-option">
+                <input type="checkbox" name="servicesNeeded" value={option} className="peer sr-only" onChange={() => clearFieldError("servicesNeeded")} />
+                <span className="project-checkmark"><Check className="h-3.5 w-3.5" /></span>
+                <span className="relative z-10">{option}</span>
               </label>
             ))}
           </div>
           <FieldError id="servicesNeeded-error" message={fieldErrors.servicesNeeded} />
         </fieldset>
 
-        <fieldset className="border-t border-white/[0.08] pt-9">
-          <legend className="text-xs font-semibold uppercase tracking-[0.28em] text-white/30">
-            04 · Context
+        <fieldset className="project-brief-step">
+          <legend>
+            <span className="project-step-number">04</span>
+            Context
           </legend>
-          <label className="mt-5 grid gap-2 text-sm text-white/58">
+          <label className="project-field-label mt-6">
             Business problem and goal
             <span className="relative block">
               <MessageSquareText className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-white/26" />
-              <textarea
-                name="message"
-                required
-                minLength={20}
-                maxLength={4000}
-                rows={8}
-                className="form-field form-field-with-icon min-h-48 resize-y py-4"
-                placeholder="What is not working now? What should the new website or platform accomplish? Mention important features, integrations, deadlines, competitors, or examples you like."
-                {...commonInputProps("message")}
-              />
+              <textarea name="message" required minLength={20} maxLength={4000} rows={8} className="form-field min-h-48 resize-y" placeholder="What is not working now? What should the new website or platform accomplish? Mention important features, integrations, deadlines, competitors, or examples you like." {...commonInputProps("message")} />
             </span>
             <FieldError id="message-error" message={fieldErrors.message} />
           </label>
         </fieldset>
 
-        <div className="border-t border-white/[0.08] pt-8">
+        <div className="border-b border-white/[0.08] py-8">
           <TurnstileWidget />
         </div>
 
         {status === "error" ? (
-          <p
-            className="rounded-2xl border border-[#ff5f6d]/25 bg-[#ff5f6d]/8 px-4 py-3 text-sm leading-6 text-[#ff9aa3]"
-            role="alert"
-            aria-live="assertive"
-          >
+          <p className="border-l-2 border-[#ff5f6d] bg-[#ff5f6d]/8 px-4 py-3 text-sm leading-6 text-[#ff9aa3]" role="alert" aria-live="assertive">
             {message}
           </p>
         ) : null}
 
-        <div className="flex flex-col gap-5 border-t border-white/[0.08] pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="project-submit-zone">
           <p className="max-w-md text-xs leading-6 text-white/28">
-            Every inquiry is reviewed for scope, fit, timing, and a realistic path to
-            delivery. Submitting does not create an automatic quote.
+            Every inquiry is reviewed for scope, fit, timing, and a realistic path to delivery. Submitting does not create an automatic quote.
           </p>
-          <ActionButton
-            type="submit"
-            disabled={status === "submitting"}
-            className="shrink-0"
-          >
+          <ActionButton type="submit" disabled={status === "submitting"}>
             {status === "submitting" ? "Submitting…" : "Submit project brief"}
             <ArrowRight className="h-4 w-4" />
           </ActionButton>
