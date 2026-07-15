@@ -12,9 +12,25 @@ const currencyFormatter = new Intl.NumberFormat("en-CA", {
   maximumFractionDigits: 0
 });
 
+const packageAliases: Record<string, string> = {
+  "landing-page": "starter",
+  landing: "starter",
+  starter: "starter",
+  launch: "launch",
+  growth: "growth",
+  custom: "custom",
+  portal: "custom",
+  application: "custom"
+};
+
+function normalizePackageId(packageId: string | null) {
+  if (!packageId) return null;
+  return packageAliases[packageId.trim().toLowerCase()] ?? packageId;
+}
+
 export function PricingSelectionSummary() {
   const searchParams = useSearchParams();
-  const packageId = searchParams.get("package");
+  const packageId = normalizePackageId(searchParams.get("package"));
   const selectedPackage = packages.find((item) => item.id === packageId);
 
   if (!selectedPackage) return null;
@@ -43,15 +59,11 @@ export function PricingSelectionSummary() {
           </h2>
 
           <p className="mt-3 max-w-2xl text-sm leading-7 text-white/44">
-            This planning range will be included as context. GridSpell will confirm the final
-            scope and investment after reviewing the complete brief.
+            This planning range will be included as context. GridSpell will confirm the final scope and investment after reviewing the complete brief.
           </p>
         </div>
 
-        <Link
-          href="/pricing"
-          className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.035] px-4 text-xs font-semibold text-white/54 transition hover:border-white/20 hover:text-white"
-        >
+        <Link href="/pricing" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.035] px-4 text-xs font-semibold text-white/54 transition hover:border-white/20 hover:text-white">
           <ArrowLeft className="h-3.5 w-3.5" />
           Adjust estimate
         </Link>
