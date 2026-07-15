@@ -50,7 +50,9 @@ test("package context survives the redesigned project brief and submits", async 
     })
   ).toBeVisible();
   await expect(page.getByText("Launch package", { exact: true })).toBeVisible();
-  await expect(page.getByText("$1,800–$3,000", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("definition").filter({ hasText: "$1,800–$3,000" })
+  ).toBeVisible();
 
   await expect(page.getByLabel("Selected package")).toHaveValue("launch");
   await expect(page.getByLabel("Estimated investment")).toHaveValue(
