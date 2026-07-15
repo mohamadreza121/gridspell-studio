@@ -49,13 +49,13 @@ jobs:
         run: npx playwright test tests/e2e/start-project.spec.ts --project=desktop-chromium
 
       - name: Test responsive layouts
-        run: npx playwright test tests/e2e/responsive.spec.ts --grep "^/start-project fits" --project=desktop-chromium --project=tablet-chromium --project=mobile-chromium --project=small-phone-chromium
+        run: npx playwright test tests/e2e/responsive.spec.ts --grep "/start-project fits" --project=desktop-chromium --project=tablet-chromium --project=mobile-chromium --project=small-phone-chromium
 
       - name: Test reduced motion
-        run: npx playwright test tests/e2e/reduced-motion.spec.ts --grep "^/start-project remains" --project=desktop-chromium
+        run: npx playwright test tests/e2e/reduced-motion.spec.ts --grep "/start-project remains" --project=desktop-chromium
 
       - name: Test first-party requests
-        run: npx playwright test tests/e2e/performance.spec.ts --grep "^/start-project loads" --project=desktop-chromium
+        run: npx playwright test tests/e2e/performance.spec.ts --grep "/start-project loads" --project=desktop-chromium
 
       - name: Capture desktop and phone previews
         run: |
