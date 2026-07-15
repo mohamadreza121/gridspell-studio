@@ -35,11 +35,20 @@ export function PricingSelectionSummary() {
 
   if (!selectedPackage) return null;
 
-  const estimateLow = Number(searchParams.get("estimateLow"));
-  const estimateHigh = Number(searchParams.get("estimateHigh"));
+  const estimateLowParam = searchParams.get("estimateLow");
+  const estimateHighParam = searchParams.get("estimateHigh");
+  const estimateLow = Number(estimateLowParam);
+  const estimateHigh = Number(estimateHighParam);
   const timeline = searchParams.get("timeline") || selectedPackage.timeline;
   const addOns = searchParams.get("addOns");
-  const hasEstimate = Number.isFinite(estimateLow) && Number.isFinite(estimateHigh);
+  const hasEstimate = Boolean(
+    estimateLowParam &&
+      estimateHighParam &&
+      Number.isFinite(estimateLow) &&
+      Number.isFinite(estimateHigh) &&
+      estimateLow > 0 &&
+      estimateHigh > 0
+  );
 
   return (
     <div className="rounded-[2rem] border border-[#8be9ff]/20 bg-[radial-gradient(circle_at_90%_0%,rgba(41,214,255,0.1),transparent_18rem),rgba(11,13,19,0.9)] p-6 sm:p-8">
