@@ -1,5 +1,42 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+const turnstileStub = `
+  window.turnstile = {
+    render: function (_container, options) {
+      Promise.resolve().then(function () {
+        if (options && options.callback) {
+          options.callback("playwright-accessibility-token");
+        }
+      });
+      return "playwright-widget";
+    },
+    reset: function () {},
+    remove: function () {}
+  };
+`;
+
+async function stubTurnstile(page: Page) {
+  await page.route(
+    "https://challenges.cloudflare.com/turnstile/v0/api.js**",
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/javascript",
+        body: turnstileStub
+      });
+    }
+  );
+}
+
+async function activateTurnstile(page: Page) {
+  const verification = page.getByRole("group", {
+    name: "Bot protection verification"
+  });
+  await verification.scrollIntoViewIfNeeded();
+  await page.locator('[data-turnstile-wrapper="true"]').hover();
+  return verification;
+}
 
 test("skip link reaches the main content", async ({ page }) => {
   await page.goto("/");
@@ -26,31 +63,9 @@ test("navigation dialog traps focus and closes with Escape", async ({ page }) =>
 });
 
 test("project form exposes validation errors accessibly", async ({ page }) => {
-  await page.route(
-    "https://challenges.cloudflare.com/turnstile/v0/api.js**",
-    async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/javascript",
-        body: `
-          window.turnstile = {
-            render: function (_container, options) {
-              Promise.resolve().then(function () {
-                if (options && options.callback) {
-                  options.callback("playwright-accessibility-token");
-                }
-              });
-              return "playwright-widget";
-            },
-            reset: function () {},
-            remove: function () {}
-          };
-        `
-      });
-    }
-  );
-
+  await stubTurnstile(page);
   await page.goto("/start-project");
+  await activateTurnstile(page);
 
   const turnstileToken = page.locator('input[name="turnstileToken"]');
   await expect(turnstileToken).toHaveValue("playwright-accessibility-token");
@@ -63,6 +78,23 @@ test("project form exposes validation errors accessibly", async ({ page }) => {
     "true"
   );
   await expect(page.locator("input[name='name']")).toBeFocused();
+});
+
+test("project verification uses a valid named accessibility group", async ({ page }) => {
+  await stubTurnstile(page);
+  await page.goto("/start-project");
+
+  const verification = await activateTurnstile(page);
+  await expect(verification).toBeVisible();
+  await expect(verification).toHaveAttribute("aria-labelledby", /turnstile-label-/);
+  await expect(verification).toHaveAttribute("aria-describedby", /turnstile-description-/);
+
+  const results = await new AxeBuilder({ page })
+    .include("#project-brief")
+    .withRules(["aria-allowed-attr", "aria-valid-attr", "aria-valid-attr-value"])
+    .analyze();
+
+  expect(results.violations).toEqual([]);
 });
 
 test("public homepage has no critical accessibility violations", async ({ page }) => {

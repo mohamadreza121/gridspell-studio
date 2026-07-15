@@ -21,6 +21,7 @@ import { ProjectBriefForm } from "@/components/forms/ProjectBriefForm";
 import { Container } from "@/components/ui/Container";
 
 import styles from "./StartProjectExperience.module.css";
+import performanceStyles from "./StartProjectPerformance.module.css";
 
 const heroSignals = [
   {
@@ -67,7 +68,10 @@ const strongBriefSignals = [
 
 function BriefSystemVisual() {
   return (
-    <div aria-hidden="true" className={`${styles.console} mx-auto w-full max-w-[720px]`}>
+    <div
+      aria-hidden="true"
+      className={`${styles.console} ${performanceStyles.console} mx-auto w-full max-w-[720px]`}
+    >
       <div className="relative flex h-12 items-center justify-between border-b border-white/[0.08] px-4 sm:h-14 sm:px-5">
         <div className="flex gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-white/18" />
@@ -78,7 +82,9 @@ function BriefSystemVisual() {
           Project intake system
         </span>
         <span className="flex items-center gap-2 font-mono text-[0.46rem] uppercase tracking-[0.14em] text-[#74efb6]">
-          <span className={`${styles.signalDot} h-2 w-2 rounded-full bg-[#74efb6]`} />
+          <span
+            className={`${styles.signalDot} ${performanceStyles.signalDot} h-2 w-2 rounded-full bg-[#74efb6]`}
+          />
           Ready
         </span>
       </div>
@@ -98,7 +104,10 @@ function BriefSystemVisual() {
 
           <div className="relative mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {["Goal", "Scope", "System", "Launch"].map((label, index) => (
-              <div key={label} className={`${styles.metricCard} border border-white/[0.08] bg-white/[0.025] p-3.5`}>
+              <div
+                key={label}
+                className={`${styles.metricCard} border border-white/[0.08] bg-white/[0.025] p-3.5`}
+              >
                 <span className="font-mono text-[0.44rem] tracking-[0.15em] text-white/22">
                   0{index + 1}
                 </span>
@@ -135,7 +144,10 @@ function BriefSystemVisual() {
             </div>
             <div className="mt-6 grid gap-3">
               {["Business context", "Investment range", "Required systems"].map((label) => (
-                <div key={label} className="flex items-center gap-3 border-b border-white/[0.08] bg-black/10 px-3 py-3">
+                <div
+                  key={label}
+                  className="flex items-center gap-3 border-b border-white/[0.08] bg-black/10 px-3 py-3"
+                >
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-[#74efb6]" />
                   <span className="text-[0.6rem] font-semibold text-white/48">{label}</span>
                 </div>
@@ -157,7 +169,9 @@ function BriefSystemVisual() {
             <p className="relative mt-4 text-xs leading-6 text-white/38">
               Your package, budget, timeline, and goals stay connected to the inquiry.
             </p>
-            <div className={`${styles.flowLine} relative mt-7 h-px bg-[linear-gradient(90deg,transparent,#7c5cff,#29d6ff,transparent)]`} />
+            <div
+              className={`${styles.flowLine} ${performanceStyles.flowLine} relative mt-7 h-px bg-[linear-gradient(90deg,transparent,#7c5cff,#29d6ff,transparent)]`}
+            />
             <div className="relative mt-5 flex items-center justify-between text-[0.5rem] uppercase tracking-[0.15em] text-white/28">
               <span>Review path</span>
               <span className="text-[#8be9ff]">Active</span>
@@ -166,7 +180,7 @@ function BriefSystemVisual() {
         </div>
       </div>
 
-      <div className={styles.consoleScan} />
+      <div className={`${styles.consoleScan} ${performanceStyles.consoleScan}`} />
     </div>
   );
 }
@@ -179,12 +193,17 @@ function ProjectRoutePanel() {
           <p className="font-mono text-[0.52rem] uppercase tracking-[0.22em] text-[#8be9ff]">
             Your project route
           </p>
-          <h2 id="project-route-title" className="mt-4 font-display text-[clamp(2.5rem,5vw,5.4rem)] font-semibold leading-[0.88] tracking-[-0.07em] text-white">
+          <h2
+            id="project-route-title"
+            className="mt-4 font-display text-[clamp(2.5rem,5vw,5.4rem)] font-semibold leading-[0.88] tracking-[-0.07em] text-white"
+          >
             What happens after submit.
           </h2>
         </div>
         <span className={styles.clearPath}>
-          <span className={`${styles.signalDot} h-1.5 w-1.5 bg-[#74efb6]`} />
+          <span
+            className={`${styles.signalDot} ${performanceStyles.signalDot} h-1.5 w-1.5 bg-[#74efb6]`}
+          />
           Clear path
         </span>
       </div>
@@ -216,7 +235,10 @@ function ProjectRoutePanel() {
           </div>
           <ul className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">
             {strongBriefSignals.map((item) => (
-              <li key={item} className="flex gap-3 border-t border-white/[0.08] pt-4 text-sm leading-6 text-white/44">
+              <li
+                key={item}
+                className="flex gap-3 border-t border-white/[0.08] pt-4 text-sm leading-6 text-white/44"
+              >
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-[#8be9ff]" />
                 {item}
               </li>
@@ -251,25 +273,31 @@ export function StartProjectExperience() {
   return (
     <main className={`${styles.root} overflow-hidden text-white`}>
       <section className={`${styles.hero} pt-24 sm:pt-28`}>
-        <div className={styles.heroImageStage}>
+        <div className={`${styles.heroImageStage} ${performanceStyles.heroImageStage}`}>
           <Image
             src="/images/work/selected-work/gridspell-studio-v4.jpg"
             alt=""
             aria-hidden="true"
             fill
-            sizes="(min-width: 1280px) 64vw, 100vw"
+            sizes="(min-width: 1280px) 64vw, (min-width: 768px) 100vw, 1px"
             quality={58}
-            loading="eager"
-            fetchPriority="high"
-            className={styles.heroImage}
+            loading="lazy"
+            decoding="async"
+            className={`${styles.heroImage} ${performanceStyles.heroImage}`}
           />
         </div>
         <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-30" />
-        <div aria-hidden="true" className="pointer-events-none absolute -left-56 top-24 h-[36rem] w-[36rem] rounded-full bg-[#7c5cff]/12 blur-[150px]" />
-        <div aria-hidden="true" className="pointer-events-none absolute -right-52 top-16 h-[38rem] w-[38rem] rounded-full bg-[#29d6ff]/9 blur-[160px]" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-56 top-24 h-[36rem] w-[36rem] rounded-full bg-[#7c5cff]/12 blur-[150px]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-52 top-16 h-[38rem] w-[38rem] rounded-full bg-[#29d6ff]/9 blur-[160px]"
+        />
 
         <Container className="relative grid min-h-[calc(min(920px,100svh)-6rem)] min-w-0 gap-14 py-12 sm:py-16 xl:grid-cols-[.86fr_1.14fr] xl:items-center xl:gap-16 xl:py-20">
-          <div className={`${styles.heroCopy} min-w-0`}>
+          <div className={`${styles.heroCopy} ${performanceStyles.heroCopy} min-w-0`}>
             <p className="inline-flex items-center gap-2 text-[0.62rem] font-black uppercase tracking-[0.34em] text-[#8be9ff]">
               <Sparkles className="h-4 w-4" /> Start a project
             </p>
@@ -306,14 +334,20 @@ export function StartProjectExperience() {
             </div>
           </div>
 
-          <div className={`${styles.heroVisual} min-w-0`}>
+          <div className={`${styles.heroVisual} ${performanceStyles.heroVisual} min-w-0`}>
             <BriefSystemVisual />
           </div>
         </Container>
       </section>
 
-      <section id="project-brief" className={`${styles.briefSection} relative py-20 sm:py-28`}>
-        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 h-[30rem] w-[75%] -translate-x-1/2 rounded-full bg-[#7c5cff]/6 blur-[140px]" />
+      <section
+        id="project-brief"
+        className={`${styles.briefSection} ${performanceStyles.briefSection} relative py-20 sm:py-28`}
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-0 h-[30rem] w-[75%] -translate-x-1/2 rounded-full bg-[#7c5cff]/6 blur-[140px]"
+        />
         <Container className="relative">
           <div className="grid gap-8 border-b border-white/[0.08] pb-10 xl:grid-cols-[.8fr_1.2fr] xl:items-end">
             <div>

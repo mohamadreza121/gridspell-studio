@@ -1,7 +1,9 @@
 "use client";
 
-import Script from "next/script";
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+
+const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 declare global {
   interface Window {
@@ -48,18 +50,99 @@ function getTurnstileErrorMessage(errorCode: string) {
 export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
   const productionSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const previewSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_PREVIEW_SITE_KEY;
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const [siteKey, setSiteKey] = useState<string | null>(null);
+  const [shouldLoadScript, setShouldLoadScript] = useState(false);
   const [scriptReady, setScriptReady] = useState(false);
   const [token, setToken] = useState("");
   const [widgetError, setWidgetError] = useState("");
   const reactId = useId().split(":").join("");
+  const labelId = `turnstile-label-${reactId}`;
+  const descriptionId = `turnstile-description-${reactId}`;
+
+  const activateWidget = useCallback(() => {
+    setShouldLoadScript(true);
+  }, []);
 
   useEffect(() => {
     const preview = isPreviewHostname(window.location.hostname);
     setSiteKey(preview ? previewSiteKey || productionSiteKey || null : productionSiteKey || null);
   }, [previewSiteKey, productionSiteKey]);
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+
+    if (!wrapper || shouldLoadScript) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setShouldLoadScript(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoadScript(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "720px 0px" }
+    );
+
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, [shouldLoadScript]);
+
+  useEffect(() => {
+    if (!siteKey || !shouldLoadScript) return;
+
+    if (window.turnstile) {
+      setScriptReady(true);
+      return;
+    }
+
+    let cancelled = false;
+    let script = document.querySelector<HTMLScriptElement>(
+      'script[data-gridspell-turnstile="true"]'
+    );
+
+    const handleLoad = () => {
+      if (script) script.dataset.loaded = "true";
+      if (!cancelled) setScriptReady(true);
+    };
+
+    const handleError = () => {
+      if (!cancelled) {
+        setWidgetError(
+          "The security check could not load. Refresh the page or email hello@gridspellstudio.com."
+        );
+      }
+    };
+
+    if (!script) {
+      script = document.createElement("script");
+      script.src = TURNSTILE_SCRIPT_SRC;
+      script.async = true;
+      script.defer = true;
+      script.dataset.gridspellTurnstile = "true";
+      document.head.appendChild(script);
+    }
+
+    script.addEventListener("load", handleLoad);
+    script.addEventListener("error", handleError);
+
+    if (script.dataset.loaded === "true" || window.turnstile) {
+      handleLoad();
+    }
+
+    return () => {
+      cancelled = true;
+      script?.removeEventListener("load", handleLoad);
+      script?.removeEventListener("error", handleError);
+    };
+  }, [shouldLoadScript, siteKey]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -121,21 +204,29 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
   }
 
   return (
-    <div className="grid gap-2">
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        strategy="afterInteractive"
-        onLoad={() => setScriptReady(true)}
-        onReady={() => setScriptReady(true)}
-      />
-
+    <div
+      ref={wrapperRef}
+      data-turnstile-wrapper="true"
+      className="grid gap-2"
+      onFocusCapture={activateWidget}
+      onPointerEnter={activateWidget}
+      onPointerDown={activateWidget}
+    >
       <input type="hidden" name="turnstileToken" value={token} readOnly />
+
+      <span id={labelId} className="sr-only">
+        Bot protection verification
+      </span>
 
       <div
         id={`turnstile-${reactId}`}
         ref={containerRef}
+        role="group"
+        aria-labelledby={labelId}
+        aria-describedby={descriptionId}
         className="min-h-[65px] w-full"
-        aria-label="Bot protection verification"
+        onPointerEnter={activateWidget}
+        onPointerDown={activateWidget}
       />
 
       {widgetError ? (
@@ -147,7 +238,7 @@ export function TurnstileWidget({ action = "lead_form" }: { action?: string }) {
         </p>
       ) : null}
 
-      <p className="text-xs leading-5 text-white/28">
+      <p id={descriptionId} className="text-xs leading-5 text-white/28">
         This form uses Cloudflare Turnstile to reduce automated submissions.
       </p>
     </div>

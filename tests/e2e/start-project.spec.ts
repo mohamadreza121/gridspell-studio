@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const turnstileStub = `
   window.turnstile = {
@@ -14,6 +14,17 @@ const turnstileStub = `
     remove: function () {}
   };
 `;
+
+async function activateTurnstile(page: Page) {
+  const verification = page.getByRole("group", {
+    name: "Bot protection verification"
+  });
+  await verification.scrollIntoViewIfNeeded();
+  await page.locator('[data-turnstile-wrapper="true"]').hover();
+  await expect(page.locator('input[name="turnstileToken"]')).toHaveValue(
+    "playwright-project-brief-token"
+  );
+}
 
 test.beforeEach(async ({ page }) => {
   await page.route(
@@ -71,6 +82,7 @@ test("package context survives the redesigned project brief and submits", async 
   await page
     .getByLabel("Business problem and goal")
     .fill("We need a clearer website that explains our services and generates qualified project inquiries.");
+  await activateTurnstile(page);
 
   await page.getByRole("button", { name: /Submit project brief/i }).click();
 
@@ -133,6 +145,7 @@ test("event demo context is imported, preselected, and sent with the project bri
   await page
     .getByLabel("Business problem and goal")
     .fill("We need this event launch direction adapted into a branded registration page for our conference.");
+  await activateTurnstile(page);
   await page.getByRole("button", { name: /Submit project brief/i }).click();
 
   await expect(
@@ -153,6 +166,7 @@ test("event demo context is imported, preselected, and sent with the project bri
 
 test("invalid project briefs still surface field errors and focus the first field", async ({ page }) => {
   await page.goto("/start-project");
+  await activateTurnstile(page);
   await page.getByRole("button", { name: /Submit project brief/i }).click();
 
   await expect(page.getByText("Enter your full name.", { exact: true })).toBeVisible();
