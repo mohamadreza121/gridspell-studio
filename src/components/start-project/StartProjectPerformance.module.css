@@ -1,0 +1,55 @@
+.heroImageStage {
+  contain: paint;
+}
+
+.heroImage {
+  animation: none !important;
+}
+
+.console {
+  contain: layout paint;
+  backdrop-filter: none !important;
+  animation: none !important;
+}
+
+.consoleScan {
+  animation-iteration-count: 1 !important;
+  animation-fill-mode: forwards !important;
+}
+
+.briefSection {
+  contain: layout style;
+}
+
+@media (max-width: 767px) {
+  .heroImageStage {
+    display: none;
+  }
+
+  .heroCopy,
+  .heroVisual,
+  .console,
+  .consoleScan,
+  .signalDot,
+  .flowLine {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .console {
+    box-shadow:
+      0 20px 60px rgb(0 0 0 / 0.34),
+      inset 0 1px 0 rgb(255 255 255 / 0.04) !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .console,
+  .consoleScan,
+  .signalDot,
+  .flowLine {
+    animation: none !important;
+    transform: none !important;
+  }
+}
