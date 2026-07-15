@@ -12,18 +12,43 @@ const currencyFormatter = new Intl.NumberFormat("en-CA", {
   maximumFractionDigits: 0
 });
 
+const packageAliases: Record<string, string> = {
+  "landing-page": "starter",
+  landing: "starter",
+  starter: "starter",
+  launch: "launch",
+  growth: "growth",
+  custom: "custom",
+  portal: "custom",
+  application: "custom"
+};
+
+function normalizePackageId(packageId: string | null) {
+  if (!packageId) return null;
+  return packageAliases[packageId.trim().toLowerCase()] ?? packageId;
+}
+
 export function PricingSelectionSummary() {
   const searchParams = useSearchParams();
-  const packageId = searchParams.get("package");
+  const packageId = normalizePackageId(searchParams.get("package"));
   const selectedPackage = packages.find((item) => item.id === packageId);
 
   if (!selectedPackage) return null;
 
-  const estimateLow = Number(searchParams.get("estimateLow"));
-  const estimateHigh = Number(searchParams.get("estimateHigh"));
+  const estimateLowParam = searchParams.get("estimateLow");
+  const estimateHighParam = searchParams.get("estimateHigh");
+  const estimateLow = Number(estimateLowParam);
+  const estimateHigh = Number(estimateHighParam);
   const timeline = searchParams.get("timeline") || selectedPackage.timeline;
   const addOns = searchParams.get("addOns");
-  const hasEstimate = Number.isFinite(estimateLow) && Number.isFinite(estimateHigh);
+  const hasEstimate = Boolean(
+    estimateLowParam &&
+      estimateHighParam &&
+      Number.isFinite(estimateLow) &&
+      Number.isFinite(estimateHigh) &&
+      estimateLow > 0 &&
+      estimateHigh > 0
+  );
 
   return (
     <div className="rounded-[2rem] border border-[#8be9ff]/20 bg-[radial-gradient(circle_at_90%_0%,rgba(41,214,255,0.1),transparent_18rem),rgba(11,13,19,0.9)] p-6 sm:p-8">
@@ -43,15 +68,11 @@ export function PricingSelectionSummary() {
           </h2>
 
           <p className="mt-3 max-w-2xl text-sm leading-7 text-white/44">
-            This planning range will be included as context. GridSpell will confirm the final
-            scope and investment after reviewing the complete brief.
+            This planning range will be included as context. GridSpell will confirm the final scope and investment after reviewing the complete brief.
           </p>
         </div>
 
-        <Link
-          href="/pricing"
-          className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.035] px-4 text-xs font-semibold text-white/54 transition hover:border-white/20 hover:text-white"
-        >
+        <Link href="/pricing" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.035] px-4 text-xs font-semibold text-white/54 transition hover:border-white/20 hover:text-white">
           <ArrowLeft className="h-3.5 w-3.5" />
           Adjust estimate
         </Link>
