@@ -1,0 +1,824 @@
+.root {
+  --brief-cyan: 139 233 255;
+  --brief-violet: 124 92 255;
+  background:
+    radial-gradient(circle at 11% 12%, rgb(var(--brief-violet) / 0.11), transparent 31rem),
+    radial-gradient(circle at 88% 22%, rgb(var(--brief-cyan) / 0.09), transparent 36rem),
+    #07080c;
+}
+
+.hero {
+  position: relative;
+  min-height: min(920px, 100svh);
+  overflow: hidden;
+  border-bottom: 1px solid rgb(255 255 255 / 0.065);
+}
+
+.heroImageStage {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(64vw, 1080px);
+  overflow: hidden;
+  opacity: 0.26;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 24%, #000 100%);
+}
+
+.heroImageStage::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(180deg, rgb(7 8 12 / 0.08), rgb(7 8 12 / 0.72)),
+    linear-gradient(90deg, rgb(7 8 12 / 0.42), transparent 45%);
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: 50% 8%;
+  filter: saturate(0.88) contrast(1.08);
+  transform: scale(1.055);
+  animation: hero-image-drift 14s ease-in-out infinite alternate;
+}
+
+.heroCopy {
+  animation: hero-copy-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.heroVisual {
+  animation: hero-visual-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+}
+
+.primaryHeroAction,
+.secondaryHeroAction {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    background-color 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.primaryHeroAction {
+  border: 1px solid rgb(255 255 255 / 0.15);
+  background: linear-gradient(135deg, #7c5cff 0%, #6477ff 48%, #29d6ff 100%);
+  color: white;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  box-shadow: 0 16px 48px rgb(92 104 255 / 0.28);
+}
+
+.secondaryHeroAction {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.035);
+  color: rgb(255 255 255 / 0.66);
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+}
+
+.primaryHeroAction:hover,
+.secondaryHeroAction:hover {
+  transform: translateY(-4px);
+}
+
+.primaryHeroAction:hover {
+  box-shadow: 0 22px 65px rgb(92 104 255 / 0.38);
+}
+
+.secondaryHeroAction:hover {
+  border-color: rgb(255 255 255 / 0.24);
+  background: rgb(255 255 255 / 0.07);
+  color: white;
+}
+
+.console {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.11);
+  background:
+    radial-gradient(circle at 86% 10%, rgb(var(--brief-cyan) / 0.12), transparent 18rem),
+    radial-gradient(circle at 8% 96%, rgb(var(--brief-violet) / 0.16), transparent 22rem),
+    rgb(8 11 17 / 0.92);
+  clip-path: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 34px 100%, 0 calc(100% - 34px));
+  box-shadow:
+    0 42px 130px rgb(0 0 0 / 0.5),
+    inset 0 1px 0 rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(24px);
+  animation: console-float 8s ease-in-out infinite;
+}
+
+.console::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, #000, transparent 88%);
+  opacity: 0.45;
+}
+
+.consoleScan {
+  position: absolute;
+  inset-inline: 0;
+  top: 3rem;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(var(--brief-cyan) / 0.8), transparent);
+  box-shadow: 0 0 28px rgb(var(--brief-cyan) / 0.48);
+  animation: console-scan 5.8s ease-in-out infinite;
+}
+
+.signalDot {
+  display: inline-block;
+  animation: signal-pulse 2.2s ease-in-out infinite;
+}
+
+.flowLine {
+  background-size: 220% 100%;
+  animation: flow-line 3.1s linear infinite;
+}
+
+.metricCard {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 320ms ease,
+    background-color 320ms ease,
+    box-shadow 320ms ease;
+}
+
+.metricCard:hover {
+  transform: translateY(-4px);
+  border-color: rgb(var(--brief-cyan) / 0.22);
+  background-color: rgb(255 255 255 / 0.045);
+  box-shadow: 0 22px 70px rgb(0 0 0 / 0.22);
+}
+
+.briefSection {
+  scroll-margin-top: 6rem;
+}
+
+.selectionShelf:empty {
+  display: none;
+}
+
+.selectionShelf > div {
+  border-radius: 0 !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgb(var(--brief-cyan) / 0.09), transparent 18rem),
+    rgb(10 13 19 / 0.9) !important;
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+  box-shadow: 0 20px 65px rgb(0 0 0 / 0.2);
+}
+
+.formShell :global(.project-brief-form) {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, rgb(var(--brief-violet) / 0.11), transparent 18%),
+    radial-gradient(circle at 100% 0%, rgb(var(--brief-cyan) / 0.07), transparent 28rem),
+    rgb(8 11 17 / 0.96);
+  clip-path: polygon(0 0, calc(100% - 38px) 0, 100% 38px, 100% 100%, 0 100%);
+  box-shadow:
+    0 44px 130px rgb(0 0 0 / 0.36),
+    inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+.formShell :global(.project-brief-form::before) {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  content: "";
+  background: linear-gradient(to bottom, #7c5cff, #29d6ff 54%, transparent 92%);
+}
+
+.formShell :global(.project-brief-header) {
+  position: relative;
+  display: grid;
+  gap: 2rem;
+  padding: 2.2rem 2rem 2rem 2.25rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.09);
+}
+
+.formShell :global(.project-brief-header::after) {
+  position: absolute;
+  right: 2rem;
+  bottom: 0;
+  width: min(16rem, 35%);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgb(var(--brief-cyan) / 0.72));
+}
+
+.formShell :global(.project-origin-context) {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 0;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.formShell :global(.project-origin-index) {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid rgb(var(--brief-cyan) / 0.22);
+  color: rgb(var(--brief-cyan));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.6rem;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+}
+
+.formShell :global(.project-origin-source) {
+  padding: 0.55rem 0.8rem;
+  border-left: 1px solid rgb(var(--brief-violet) / 0.34);
+  color: rgb(255 255 255 / 0.36);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.52rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.formShell :global(.project-brief-body) {
+  display: grid;
+  gap: 0;
+  padding: 0 2rem 2rem 2.25rem;
+}
+
+.formShell :global(.project-brief-step) {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  border: 0 !important;
+  border-bottom: 1px solid rgb(255 255 255 / 0.085) !important;
+  border-radius: 0;
+  background: transparent;
+  padding: 2rem 0 !important;
+}
+
+.formShell :global(.project-brief-step::before) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, #7c5cff, #29d6ff);
+  transition: width 360ms ease;
+}
+
+.formShell :global(.project-brief-step:focus-within::before) {
+  width: 100%;
+}
+
+.formShell :global(.project-brief-step legend) {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0;
+  color: rgb(255 255 255 / 0.34);
+  font-size: 0.64rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+}
+
+.formShell :global(.project-step-number) {
+  color: rgb(var(--brief-cyan));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.58rem;
+}
+
+.formShell :global(.project-fields-grid) {
+  display: grid;
+  gap: 1.6rem 1.25rem;
+  margin-top: 1.75rem;
+}
+
+.formShell :global(.project-field-label) {
+  display: grid;
+  gap: 0.65rem;
+  color: rgb(255 255 255 / 0.54);
+  font-size: 0.82rem;
+}
+
+.formShell :global(.form-field) {
+  min-height: 3.5rem;
+  border: 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 0.025), transparent 70%);
+  padding: 0.95rem 0.25rem;
+  box-shadow: none;
+}
+
+.formShell :global(.form-field-with-icon) {
+  padding-left: 2.45rem;
+}
+
+.formShell :global(.form-field:hover) {
+  border-bottom-color: rgb(255 255 255 / 0.32);
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.045), transparent 74%);
+}
+
+.formShell :global(.form-field:focus) {
+  border-bottom-color: rgb(var(--brief-cyan) / 0.92);
+  background: linear-gradient(90deg, rgb(var(--brief-cyan) / 0.055), transparent 78%);
+  box-shadow: 0 9px 0 -8px rgb(var(--brief-cyan) / 0.7);
+}
+
+.formShell :global(select.form-field) {
+  background-color: transparent;
+}
+
+.formShell :global(textarea.form-field) {
+  min-height: 12rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-left: 3px solid rgb(var(--brief-violet) / 0.72);
+  padding: 1rem 1rem 1rem 2.7rem;
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 0.028), transparent),
+    rgb(0 0 0 / 0.13);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+
+.formShell :global(textarea.form-field:focus) {
+  border-color: rgb(var(--brief-cyan) / 0.38);
+  border-left-color: rgb(var(--brief-cyan));
+  box-shadow: none;
+}
+
+.formShell :global(.project-services-grid) {
+  display: grid;
+  gap: 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.formShell :global(.project-service-option) {
+  position: relative;
+  display: flex;
+  min-height: 3.8rem;
+  cursor: pointer;
+  align-items: center;
+  gap: 0.85rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  background: transparent;
+  padding: 0.9rem 0.2rem;
+  color: rgb(255 255 255 / 0.5);
+  font-size: 0.84rem;
+  transition:
+    color 200ms ease,
+    padding-left 220ms ease,
+    background-color 220ms ease;
+}
+
+.formShell :global(.project-service-option::after) {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  content: "";
+  background: linear-gradient(90deg, rgb(var(--brief-violet) / 0.12), transparent);
+  transition: width 220ms ease;
+}
+
+.formShell :global(.project-service-option:hover) {
+  padding-left: 0.65rem;
+  color: rgb(255 255 255 / 0.78);
+}
+
+.formShell :global(.project-service-option:hover::after) {
+  width: 100%;
+}
+
+.formShell :global(.project-checkmark) {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  color: transparent;
+  transform: rotate(45deg);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.formShell :global(.project-checkmark svg) {
+  transform: rotate(-45deg);
+}
+
+.formShell :global(.project-service-option input:checked + .project-checkmark) {
+  border-color: rgb(var(--brief-cyan) / 0.78);
+  background: rgb(var(--brief-cyan) / 0.13);
+  color: rgb(var(--brief-cyan));
+}
+
+.formShell :global(.project-submit-zone) {
+  display: grid;
+  gap: 1.5rem;
+  padding-top: 2rem;
+}
+
+.formShell :global(.project-submit-zone button[type="submit"]) {
+  min-height: 3.5rem;
+  border-radius: 0;
+  padding-inline: 1.8rem;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+
+.routePanel {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  border-right: 1px solid rgb(255 255 255 / 0.08);
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  border-left: 4px solid rgb(var(--brief-violet) / 0.78);
+  background:
+    radial-gradient(circle at 96% 0%, rgb(var(--brief-cyan) / 0.08), transparent 22rem),
+    linear-gradient(145deg, rgb(255 255 255 / 0.025), transparent),
+    rgb(8 11 17 / 0.86);
+  clip-path: polygon(0 0, calc(100% - 32px) 0, 100% 32px, 100% 100%, 0 100%);
+  box-shadow: 0 36px 110px rgb(0 0 0 / 0.26);
+}
+
+.routePanel::after {
+  position: absolute;
+  right: -8rem;
+  bottom: -8rem;
+  width: 20rem;
+  height: 20rem;
+  border: 1px solid rgb(var(--brief-cyan) / 0.1);
+  border-radius: 999px;
+  content: "";
+  box-shadow:
+    0 0 0 3rem rgb(var(--brief-cyan) / 0.014),
+    0 0 0 6rem rgb(var(--brief-violet) / 0.014);
+}
+
+.routeHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.09);
+}
+
+.clearPath {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgb(116 239 182 / 0.18);
+  color: #74efb6;
+  font-size: 0.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+}
+
+.routeSteps {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  border-bottom: 1px solid rgb(255 255 255 / 0.09);
+}
+
+.routeStep {
+  position: relative;
+  min-height: 19rem;
+  padding: 2rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  transition:
+    background-color 240ms ease,
+    transform 240ms ease;
+}
+
+.routeStep::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3rem;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, #7c5cff, #29d6ff);
+  transition: width 280ms ease;
+}
+
+.routeStep:hover {
+  background: rgb(255 255 255 / 0.022);
+  transform: translateY(-3px);
+}
+
+.routeStep:hover::before {
+  width: 100%;
+}
+
+.routeStepTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.routeDetails {
+  position: relative;
+  z-index: 1;
+  display: grid;
+}
+
+.strongInquiry {
+  padding: 2rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.routeOutcomes {
+  display: grid;
+}
+
+.outcomeCard {
+  min-height: 12rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(255 255 255 / 0.012);
+  transition:
+    background-color 220ms ease,
+    transform 220ms ease;
+}
+
+.outcomeCard:hover {
+  background: rgb(var(--brief-cyan) / 0.025);
+  transform: translateY(-3px);
+}
+
+@keyframes hero-copy-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-visual-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes hero-image-drift {
+  from {
+    transform: scale(1.055) translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: scale(1.085) translate3d(-0.75%, -0.5%, 0);
+  }
+}
+
+@keyframes console-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-0.25deg);
+  }
+
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(0.25deg);
+  }
+}
+
+@keyframes console-scan {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+
+  14% {
+    opacity: 0.72;
+  }
+
+  82% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 31rem, 0);
+  }
+}
+
+@keyframes signal-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes flow-line {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -20% 0;
+  }
+}
+
+@media (min-width: 640px) {
+  .formShell :global(.project-brief-header) {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+
+  .formShell :global(.project-origin-context) {
+    grid-column: 1 / -1;
+  }
+
+  .formShell :global(.project-fields-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .formShell :global(.project-field-span-two) {
+    grid-column: 1 / -1;
+  }
+
+  .formShell :global(.project-services-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .formShell :global(.project-service-option:nth-child(odd)) {
+    border-right: 1px solid rgb(255 255 255 / 0.08);
+    padding-right: 1rem;
+  }
+
+  .formShell :global(.project-service-option:nth-child(even)) {
+    padding-left: 1rem;
+  }
+
+  .formShell :global(.project-service-option:nth-child(even):hover) {
+    padding-left: 1.5rem;
+  }
+
+  .formShell :global(.project-submit-zone) {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  .routeOutcomes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .outcomeCard:first-child {
+    border-right: 1px solid rgb(255 255 255 / 0.08);
+  }
+}
+
+@media (min-width: 1024px) {
+  .routeSteps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .routeStep {
+    border-right: 1px solid rgb(255 255 255 / 0.08);
+    border-bottom: 0;
+  }
+
+  .routeStep:last-child {
+    border-right: 0;
+  }
+
+  .routeDetails {
+    grid-template-columns: 1.55fr 0.75fr;
+  }
+
+  .strongInquiry {
+    border-right: 1px solid rgb(255 255 255 / 0.08);
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 1279px) {
+  .hero {
+    min-height: auto;
+  }
+
+  .heroImageStage {
+    width: 100%;
+    opacity: 0.15;
+    mask-image: linear-gradient(to bottom, #000 0%, #000 38%, transparent 88%);
+  }
+
+  .console {
+    animation-duration: 10s;
+  }
+}
+
+@media (max-width: 639px) {
+  .heroImageStage {
+    opacity: 0.11;
+  }
+
+  .primaryHeroAction,
+  .secondaryHeroAction {
+    width: 100%;
+  }
+
+  .formShell :global(.project-brief-form) {
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+  }
+
+  .formShell :global(.project-brief-header) {
+    padding: 1.5rem 1rem 1.4rem 1.25rem;
+  }
+
+  .formShell :global(.project-brief-body) {
+    padding: 0 1rem 1.2rem 1.25rem;
+  }
+
+  .formShell :global(.project-origin-context) {
+    grid-template-columns: auto 1fr;
+  }
+
+  .formShell :global(.project-origin-source) {
+    grid-column: 1 / -1;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .formShell :global(.project-submit-zone button[type="submit"]) {
+    width: 100%;
+  }
+
+  .routeHeader {
+    display: grid;
+    padding: 1.5rem;
+  }
+
+  .clearPath {
+    justify-self: start;
+  }
+
+  .routeStep,
+  .strongInquiry {
+    padding: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroImage,
+  .heroCopy,
+  .heroVisual,
+  .console,
+  .consoleScan,
+  .signalDot,
+  .flowLine {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .metricCard,
+  .routeStep,
+  .outcomeCard,
+  .primaryHeroAction,
+  .secondaryHeroAction {
+    transition: none;
+  }
+}
