@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - perf/start-project-lean-initial-load
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
