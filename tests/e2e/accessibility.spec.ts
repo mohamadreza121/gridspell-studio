@@ -29,7 +29,13 @@ async function stubTurnstile(page: Page) {
   );
 }
 
+async function activateProjectForm(page: Page) {
+  await page.locator("#project-form").scrollIntoViewIfNeeded();
+  await expect(page.getByRole("button", { name: "Submit project brief" })).toBeVisible();
+}
+
 async function activateTurnstile(page: Page) {
+  await activateProjectForm(page);
   const verification = page.getByRole("group", {
     name: "Bot protection verification"
   });
@@ -45,7 +51,7 @@ test("skip link reaches the main content", async ({ page }) => {
   const skipLink = page.getByRole("link", { name: "Skip to main content" });
   await expect(skipLink).toBeFocused();
   await page.keyboard.press("Enter");
-  await expect(page.locator("#main-content")).toBeFocused();
+  await expect(page.locator("#primary-content")).toBeFocused();
 });
 
 test("navigation dialog traps focus and closes with Escape", async ({ page }) => {

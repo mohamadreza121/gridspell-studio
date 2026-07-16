@@ -1,16 +1,3 @@
-"use client";
-
-import Script from "next/script";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-declare global {
-  interface Window {
-    dataLayer: unknown[];
-    gtag?: (...args: unknown[]) => void;
-  }
-}
-
 const ANALYTICS_INTERACTION_EVENTS = [
   "pointerdown",
   "keydown",
@@ -20,78 +7,107 @@ const ANALYTICS_INTERACTION_EVENTS = [
 
 export function GoogleAnalytics() {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [shouldLoad, setShouldLoad] = useState(false);
-  const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    if (!measurementId || shouldLoad) return;
+  if (!measurementId) return null;
 
-    let cancelled = false;
+  const bootstrap = `
+    (() => {
+      if (window.__gridspellAnalyticsBootstrapped) return;
+      window.__gridspellAnalyticsBootstrapped = true;
 
-    const loadAnalytics = () => {
-      if (cancelled) return;
-      setShouldLoad(true);
-    };
+      const measurementId = ${JSON.stringify(measurementId)};
+      const interactionEvents = ${JSON.stringify(ANALYTICS_INTERACTION_EVENTS)};
+      let loaded = false;
+      let lastTrackedLocation = "";
 
-    ANALYTICS_INTERACTION_EVENTS.forEach((eventName) => {
-      window.addEventListener(eventName, loadAnalytics, {
-        once: true,
-        passive: true
+      const sendPageView = () => {
+        if (typeof window.gtag !== "function") return;
+
+        const pageLocation = window.location.href;
+        if (pageLocation === lastTrackedLocation) return;
+        lastTrackedLocation = pageLocation;
+
+        window.gtag("event", "page_view", {
+          page_path: window.location.pathname + window.location.search,
+          page_location: pageLocation,
+          page_title: document.title
+        });
+      };
+
+      const handleRouteChange = () => {
+        window.setTimeout(sendPageView, 0);
+      };
+
+      const installRouteTracking = () => {
+        if (window.__gridspellAnalyticsRouteTracking) return;
+        window.__gridspellAnalyticsRouteTracking = true;
+
+        const pushState = history.pushState;
+        const replaceState = history.replaceState;
+
+        history.pushState = function (...args) {
+          const result = pushState.apply(this, args);
+          handleRouteChange();
+          return result;
+        };
+
+        history.replaceState = function (...args) {
+          const result = replaceState.apply(this, args);
+          handleRouteChange();
+          return result;
+        };
+
+        window.addEventListener("popstate", handleRouteChange, { passive: true });
+      };
+
+      const removeActivationListeners = () => {
+        interactionEvents.forEach((eventName) => {
+          window.removeEventListener(eventName, loadAnalytics);
+        });
+      };
+
+      function loadAnalytics() {
+        if (loaded) return;
+        loaded = true;
+        removeActivationListeners();
+        window.clearTimeout(timeoutId);
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () {
+          window.dataLayer.push(arguments);
+        };
+
+        window.gtag("js", new Date());
+        window.gtag("config", measurementId, {
+          send_page_view: false,
+          allow_google_signals: false
+        });
+
+        installRouteTracking();
+        sendPageView();
+
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(measurementId);
+        document.head.appendChild(script);
+      }
+
+      interactionEvents.forEach((eventName) => {
+        window.addEventListener(eventName, loadAnalytics, {
+          once: true,
+          passive: true
+        });
       });
-    });
 
-    const timeoutId = window.setTimeout(loadAnalytics, 5200);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timeoutId);
-
-      ANALYTICS_INTERACTION_EVENTS.forEach((eventName) => {
-        window.removeEventListener(eventName, loadAnalytics);
-      });
-    };
-  }, [measurementId, shouldLoad]);
-
-  useEffect(() => {
-    if (!measurementId || !ready || !window.gtag) return;
-
-    const query = searchParams.toString();
-    const pagePath = query ? `${pathname}?${query}` : pathname;
-
-    window.gtag("event", "page_view", {
-      page_path: pagePath,
-      page_location: window.location.href,
-      page_title: document.title
-    });
-  }, [measurementId, pathname, ready, searchParams]);
-
-  if (!measurementId || !shouldLoad) return null;
+      const timeoutId = window.setTimeout(loadAnalytics, 5200);
+    })();
+  `;
 
   return (
-    <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-        strategy="lazyOnload"
-      />
-      <Script
-        id="gridspell-ga4"
-        strategy="lazyOnload"
-        onReady={() => setReady(true)}
-      >
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', '${measurementId}', {
-            send_page_view: false,
-            allow_google_signals: false
-          });
-        `}
-      </Script>
-    </>
+    <script
+      id="gridspell-ga-bootstrap"
+      dangerouslySetInnerHTML={{ __html: bootstrap }}
+    />
   );
 }
 
@@ -101,4 +117,13 @@ export function trackAnalyticsEvent(
 ) {
   if (typeof window === "undefined") return;
   window.gtag?.("event", name, parameters);
+}
+
+declare global {
+  interface Window {
+    __gridspellAnalyticsBootstrapped?: boolean;
+    __gridspellAnalyticsRouteTracking?: boolean;
+    dataLayer: IArguments[];
+    gtag?: (...args: unknown[]) => void;
+  }
 }

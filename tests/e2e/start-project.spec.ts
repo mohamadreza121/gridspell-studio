@@ -15,7 +15,13 @@ const turnstileStub = `
   };
 `;
 
+async function activateProjectForm(page: Page) {
+  await page.locator("#project-form").scrollIntoViewIfNeeded();
+  await expect(page.getByRole("button", { name: /Submit project brief/i })).toBeVisible();
+}
+
 async function activateTurnstile(page: Page) {
+  await activateProjectForm(page);
   const verification = page.getByRole("group", {
     name: "Bot protection verification"
   });
@@ -60,6 +66,7 @@ test("package context survives the redesigned project brief and submits", async 
       name: /Turn the idea into a clear build plan/i
     })
   ).toBeVisible();
+  await activateProjectForm(page);
   await expect(page.getByText("Launch package", { exact: true })).toBeVisible();
   await expect(
     page.getByRole("definition").filter({ hasText: "$1,800–$3,000" })
@@ -122,6 +129,7 @@ test("event demo context is imported, preselected, and sent with the project bri
     "/start-project?package=landing-page&source=event-launch&design=Signal+Live+Event"
   );
 
+  await activateProjectForm(page);
   await expect(page.getByText("Signal Live Event", { exact: true })).toBeVisible();
   await expect(page.getByText("Event Launch", { exact: true })).toBeVisible();
   await expect(page.getByText("Starter package", { exact: true }).first()).toBeVisible();

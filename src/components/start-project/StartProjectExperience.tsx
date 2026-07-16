@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowDown,
@@ -15,11 +14,9 @@ import {
   Workflow
 } from "lucide-react";
 
-import { ExperienceSelectionSummary } from "@/components/forms/ExperienceSelectionSummary";
-import { PricingSelectionSummary } from "@/components/forms/PricingSelectionSummary";
-import { ProjectBriefForm } from "@/components/forms/ProjectBriefForm";
 import { Container } from "@/components/ui/Container";
 
+import { DeferredProjectBrief } from "./DeferredProjectBrief";
 import styles from "./StartProjectExperience.module.css";
 import performanceStyles from "./StartProjectPerformance.module.css";
 
@@ -273,19 +270,10 @@ export function StartProjectExperience() {
   return (
     <main className={`${styles.root} overflow-hidden text-white`}>
       <section className={`${styles.hero} pt-24 sm:pt-28`}>
-        <div className={`${styles.heroImageStage} ${performanceStyles.heroImageStage}`}>
-          <Image
-            src="/images/work/selected-work/gridspell-studio-v4.jpg"
-            alt=""
-            aria-hidden="true"
-            fill
-            sizes="(min-width: 1280px) 64vw, (min-width: 768px) 100vw, 1px"
-            quality={58}
-            loading="lazy"
-            decoding="async"
-            className={`${styles.heroImage} ${performanceStyles.heroImage}`}
-          />
-        </div>
+        <div
+          aria-hidden="true"
+          className={`${styles.heroImageStage} ${performanceStyles.heroImageStage}`}
+        />
         <div aria-hidden="true" className="page-grid pointer-events-none absolute inset-0 opacity-30" />
         <div
           aria-hidden="true"
@@ -309,7 +297,7 @@ export function StartProjectExperience() {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="#project-brief" className={styles.primaryHeroAction}>
+              <Link href="#project-form" className={styles.primaryHeroAction}>
                 Build the brief <ArrowDown className="h-4 w-4" />
               </Link>
               <Link href="#project-route" className={styles.secondaryHeroAction}>
@@ -364,13 +352,7 @@ export function StartProjectExperience() {
           </div>
 
           <div className="mx-auto mt-12 max-w-[1180px]">
-            <div className={`${styles.selectionShelf} grid gap-5`}>
-              <PricingSelectionSummary />
-              <ExperienceSelectionSummary />
-            </div>
-            <div className={`${styles.formShell} mt-5`}>
-              <ProjectBriefForm />
-            </div>
+            <DeferredProjectBrief />
             <div className="mt-12 sm:mt-16">
               <ProjectRoutePanel />
             </div>

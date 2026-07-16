@@ -145,6 +145,7 @@ test.describe("responsive marketing pages", () => {
           })
         ).toBeVisible();
         await expect(page.getByText("Structured intake", { exact: true })).toBeVisible();
+        await page.locator("#project-form").scrollIntoViewIfNeeded();
         await expect(page.getByRole("button", { name: /Submit project brief/i })).toBeVisible();
       }
 
