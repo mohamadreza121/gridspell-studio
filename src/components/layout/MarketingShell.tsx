@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
+
+import { DeferredNavbar } from "@/components/layout/DeferredNavbar";
 import { Footer } from "@/components/layout/Footer";
-import { Navbar, type MarketingViewer } from "@/components/layout/Navbar";
-import { NavigationAccessibilityController } from "@/components/layout/NavigationAccessibilityController";
-import { NavigationFocusRestore } from "@/components/layout/NavigationFocusRestore";
+import { Logo } from "@/components/layout/Logo";
+import type { MarketingViewer } from "@/components/layout/Navbar";
 import { TinyViewportRecoveryStyles } from "@/components/layout/TinyViewportRecoveryStyles";
+import { marketingNavigation } from "@/config/navigation";
 import { getViewerContext } from "@/lib/supabase/auth";
 
 function initials(fullName: string | null, email: string | null) {
@@ -40,9 +42,11 @@ export async function MarketingShell({ children }: { children: ReactNode }) {
       <a href="#primary-content" className="skip-link">
         Skip to main content
       </a>
-      <NavigationAccessibilityController />
-      <NavigationFocusRestore />
-      <Navbar viewer={viewer} />
+      <DeferredNavbar
+        viewer={viewer}
+        navigation={marketingNavigation}
+        brand={<Logo responsiveCompact />}
+      />
       <div id="primary-content" tabIndex={-1} className="focus:outline-none">
         {children}
       </div>
