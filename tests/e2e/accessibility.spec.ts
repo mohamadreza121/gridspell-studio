@@ -29,7 +29,13 @@ async function stubTurnstile(page: Page) {
   );
 }
 
+async function activateProjectForm(page: Page) {
+  await page.locator("#project-form").scrollIntoViewIfNeeded();
+  await expect(page.getByRole("button", { name: "Submit project brief" })).toBeVisible();
+}
+
 async function activateTurnstile(page: Page) {
+  await activateProjectForm(page);
   const verification = page.getByRole("group", {
     name: "Bot protection verification"
   });
