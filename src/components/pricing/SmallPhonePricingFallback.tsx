@@ -1,4 +1,4 @@
-import { ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
 import { packages } from "@/config/packages";
@@ -32,55 +32,68 @@ export function SmallPhonePricingFallback() {
       <div aria-hidden="true" className="pointer-events-none absolute left-[-9rem] top-96 h-72 w-72 rounded-full bg-[#7c5cff]/13 blur-[90px]" />
 
       <Container className="relative">
-        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-[#8be9ff]">
-          Clear scope. Honest pricing.
-        </p>
+        <div className="flex items-center gap-3">
+          <span className="h-px w-10 bg-gradient-to-r from-[#8e78ff] to-[#8be9ff]" />
+          <p className="text-[0.58rem] font-bold uppercase tracking-[0.28em] text-[#8be9ff]">
+            Investment system · CAD
+          </p>
+        </div>
 
-        <h1 className="mt-6 max-w-[11ch] font-display text-[clamp(3rem,16vw,4.25rem)] font-semibold leading-[0.86] tracking-[-0.075em] text-white">
-          Choose a starting point.
+        <h1 className="mt-7 max-w-[10ch] font-display text-[clamp(3.1rem,16vw,4.4rem)] font-semibold leading-[0.84] tracking-[-0.08em] text-white">
+          Price the right build.
         </h1>
 
-        <p className="mt-6 text-base leading-8 text-white/48">
-          Small screens get a simplified pricing view so every package, price, and
-          call-to-action stays easy to tap.
+        <p className="mt-7 text-base leading-8 text-white/48">
+          Compare realistic starting ranges. Your selected package, estimate, and timeline stay attached to the project brief.
         </p>
 
-        <div className="mt-9 grid gap-4">
-          {packages.map((item) => {
+        <div className="mt-8 grid grid-cols-2 border border-white/[0.1]">
+          <div className="border-r border-white/[0.1] p-4">
+            <p className="font-display text-2xl font-semibold tracking-[-0.05em] text-white">04</p>
+            <p className="mt-1 text-[0.54rem] uppercase tracking-[0.17em] text-white/30">starting paths</p>
+          </div>
+          <div className="p-4">
+            <p className="font-display text-2xl font-semibold tracking-[-0.05em] text-white">Human</p>
+            <p className="mt-1 text-[0.54rem] uppercase tracking-[0.17em] text-white/30">scope review</p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-4">
+          {packages.map((item, index) => {
             const high = highRange(item.startingPrice);
 
             return (
               <article
                 key={item.id}
-                className={item.highlighted ? "small-phone-card small-phone-card--featured" : "small-phone-card"}
+                className="relative overflow-hidden border border-white/[0.1] bg-[linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012))] p-5 [clip-path:polygon(0_0,calc(100%_-_1rem)_0,100%_1rem,100%_100%,1rem_100%,0_calc(100%_-_1rem))]"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-[#8be9ff]">
-                      {item.eyebrow}
-                    </p>
-                    <h2 className="mt-3 font-display text-4xl font-semibold tracking-[-0.06em] text-white">
-                      {item.name}
-                    </h2>
-                  </div>
+                <span className="absolute right-0 top-0 grid h-11 w-11 place-items-center border-b border-l border-white/[0.1] text-[0.56rem] tracking-[0.18em] text-white/26">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
 
-                  {item.highlighted ? (
-                    <span className="rounded-full border border-[#8be9ff]/18 bg-[#8be9ff]/8 px-3 py-1 text-[0.54rem] font-semibold uppercase tracking-[0.16em] text-[#8be9ff]">
-                      Popular
-                    </span>
-                  ) : null}
+                <p className="pr-12 text-[0.56rem] font-bold uppercase tracking-[0.23em] text-[#8be9ff]">
+                  {item.eyebrow}
+                </p>
+                <h2 className="mt-4 pr-12 font-display text-4xl font-semibold tracking-[-0.065em] text-white">
+                  {item.name}
+                </h2>
+
+                <div className="mt-6 border-y border-white/[0.09] py-5">
+                  <p className="text-[0.54rem] font-bold uppercase tracking-[0.19em] text-white/28">
+                    Planning range
+                  </p>
+                  <p className="mt-3 font-display text-3xl font-semibold tracking-[-0.065em] text-white">
+                    {formatter.format(item.startingPrice)}–{formatter.format(high)}
+                  </p>
+                  <p className="mt-2 text-sm text-[#8be9ff]">{item.timeline}</p>
                 </div>
 
-                <p className="mt-5 font-display text-3xl font-semibold tracking-[-0.06em] text-white">
-                  {formatter.format(item.startingPrice)}–{formatter.format(high)}
-                </p>
-                <p className="mt-2 text-sm text-[#8be9ff]">{item.timeline}</p>
                 <p className="mt-5 text-sm leading-7 text-white/46">{item.summary}</p>
 
                 <ul className="mt-6 grid gap-3 border-t border-white/[0.08] pt-5">
                   {item.features.slice(0, 4).map((feature) => (
-                    <li key={feature} className="flex gap-3 text-sm leading-6 text-white/56">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be9ff]" aria-hidden="true" />
+                    <li key={feature} className="flex gap-3 text-sm leading-6 text-white/54">
+                      <Check className="mt-1 h-3.5 w-3.5 shrink-0 text-[#8be9ff]" aria-hidden="true" />
                       {feature}
                     </li>
                   ))}
@@ -88,27 +101,26 @@ export function SmallPhonePricingFallback() {
 
                 <a
                   href={startProjectHref(item, high)}
-                  className="small-phone-button mt-7"
+                  className="mt-7 flex min-h-12 items-center justify-between border-t border-[#8be9ff]/35 pt-5 text-sm font-semibold text-white"
                 >
                   Start with {item.name}
-                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                  <ArrowUpRight className="h-4 w-4 text-[#8be9ff]" aria-hidden="true" />
                 </a>
               </article>
             );
           })}
         </div>
 
-        <div className="mt-7 rounded-[1.4rem] border border-white/[0.09] bg-white/[0.025] p-4">
-          <p className="text-[0.58rem] font-semibold uppercase tracking-[0.24em] text-[#8be9ff]">
-            Need help choosing?
+        <div className="mt-7 border border-[#8be9ff]/22 bg-[#8be9ff]/[0.035] p-5 [clip-path:polygon(0_0,calc(100%_-_1rem)_0,100%_1rem,100%_100%,1rem_100%,0_calc(100%_-_1rem))]">
+          <p className="text-[0.56rem] font-bold uppercase tracking-[0.23em] text-[#8be9ff]">
+            Need a recommendation?
           </p>
-          <p className="mt-3 text-sm leading-7 text-white/46">
-            Send the project form and GridSpell will recommend the correct scope,
-            timeline, and starting point before anything is approved.
+          <p className="mt-4 text-sm leading-7 text-white/46">
+            Send the business goal, budget range, and timeline. GridSpell will recommend the right scope before anything is approved.
           </p>
-          <a href="/start-project" className="small-phone-button mt-5">
+          <a href="/start-project" className="mt-6 flex min-h-12 items-center justify-between border-t border-white/[0.1] pt-5 text-sm font-semibold text-white">
             Request a recommendation
-            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            <ArrowUpRight className="h-4 w-4 text-[#8be9ff]" aria-hidden="true" />
           </a>
         </div>
       </Container>
