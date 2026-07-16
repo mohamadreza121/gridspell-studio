@@ -51,7 +51,7 @@ test("skip link reaches the main content", async ({ page }) => {
   const skipLink = page.getByRole("link", { name: "Skip to main content" });
   await expect(skipLink).toBeFocused();
   await page.keyboard.press("Enter");
-  await expect(page.locator("#main-content")).toBeFocused();
+  await expect(page.locator("#primary-content")).toBeFocused();
 });
 
 test("navigation dialog traps focus and closes with Escape", async ({ page }) => {
