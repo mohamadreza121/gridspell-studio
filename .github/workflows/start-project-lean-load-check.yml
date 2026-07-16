@@ -1,0 +1,81 @@
+name: Start project lean-load validation
+
+on:
+  push:
+    branches:
+      - perf/start-project-lean-initial-load
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: local-test-publishable-key
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Type-check, lint, and build
+        run: |
+          npm run type-check
+          npm run lint
+          npm run build
+
+      - name: Start production application
+        run: |
+          npm run start > /tmp/gridspell-start-project.log 2>&1 &
+          echo $! > /tmp/gridspell-start-project.pid
+          for attempt in {1..60}; do
+            if curl --silent --fail http://127.0.0.1:3000/start-project > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/gridspell-start-project.log
+          exit 1
+
+      - name: Test accessibility and deferred loading
+        run: npx playwright test tests/e2e/accessibility.spec.ts tests/e2e/start-project-performance.spec.ts --project=desktop-chromium
+
+      - name: Test existing project brief flows
+        run: npx playwright test --project=desktop-chromium --grep "project brief|project form|start-project|project verification|package context|event demo context"
+
+      - name: Test responsive project layouts
+        run: npx playwright test tests/e2e/responsive.spec.ts --project=mobile-chromium --grep "start-project|project"
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: start-project-lean-load-diagnostics
+          path: |
+            playwright-report
+            test-results
+            /tmp/gridspell-start-project.log
+          if-no-files-found: ignore
+          retention-days: 1
+
+      - name: Stop production application
+        if: always()
+        run: |
+          if [ -f /tmp/gridspell-start-project.pid ]; then
+            kill "$(cat /tmp/gridspell-start-project.pid)" || true
+          fi
