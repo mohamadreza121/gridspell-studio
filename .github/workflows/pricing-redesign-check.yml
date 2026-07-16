@@ -1,0 +1,138 @@
+name: Pricing redesign check
+
+on:
+  push:
+    branches:
+      - design/pricing-modern-system
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: local-test-publishable-key
+      PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Type-check, lint, and build
+        run: |
+          npm run type-check
+          npm run lint
+          npm run build
+
+      - name: Start production app
+        run: |
+          npm run start > /tmp/gridspell-pricing.log 2>&1 &
+          echo $! > /tmp/gridspell-pricing.pid
+          for attempt in {1..60}; do
+            if curl --silent --fail http://127.0.0.1:3000/pricing > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/gridspell-pricing.log
+          exit 1
+
+      - name: Validate pricing links and responsive layout
+        run: |
+          node <<'NODE'
+          const { chromium } = require('@playwright/test');
+          const assert = require('node:assert/strict');
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const sizes = [
+              ['desktop', 1440, 900],
+              ['tablet', 834, 1112],
+              ['phone', 390, 844],
+              ['small-phone', 320, 740]
+            ];
+
+            for (const [name, width, height] of sizes) {
+              const page = await browser.newPage({ viewport: { width, height } });
+              const errors = [];
+              page.on('pageerror', error => errors.push(String(error)));
+              await page.goto('http://127.0.0.1:3000/pricing', { waitUntil: 'networkidle' });
+
+              const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
+              assert.ok(bodyWidth <= width + 1, `${name} horizontal overflow: ${bodyWidth}px > ${width}px`);
+              assert.equal(errors.length, 0, `${name} page errors: ${errors.join('\n')}`);
+
+              const packageLinks = page.locator('a[href*="/start-project?package="]');
+              assert.equal(await packageLinks.count(), 4, `${name} should expose four package links`);
+
+              for (let index = 0; index < 4; index += 1) {
+                const href = await packageLinks.nth(index).getAttribute('href');
+                assert.ok(href?.includes('estimateLow='), `${name} package ${index + 1} missing estimateLow`);
+                assert.ok(href?.includes('estimateHigh='), `${name} package ${index + 1} missing estimateHigh`);
+                assert.ok(href?.includes('timeline='), `${name} package ${index + 1} missing timeline`);
+              }
+
+              await page.screenshot({ path: `/tmp/pricing-${name}.png`, fullPage: true });
+              await page.close();
+            }
+
+            await browser.close();
+          })().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Run direct Lighthouse desktop audit
+        run: |
+          npx --yes lighthouse@12.8.2 http://127.0.0.1:3000/pricing \
+            --preset=desktop \
+            --only-categories=performance \
+            --output=json \
+            --output-path=/tmp/pricing-lighthouse.json \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
+          node <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync('/tmp/pricing-lighthouse.json', 'utf8'));
+          const score = Math.round((report.categories.performance.score ?? 0) * 100);
+          const tbt = Math.round(report.audits['total-blocking-time']?.numericValue ?? 0);
+          console.log(`Pricing performance score: ${score}`);
+          console.log(`Pricing total blocking time: ${tbt} ms`);
+          if (score < 90 || tbt > 250) process.exit(1);
+          NODE
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pricing-redesign-diagnostics
+          path: |
+            /tmp/pricing-*.png
+            /tmp/pricing-lighthouse.json
+            /tmp/gridspell-pricing.log
+          if-no-files-found: ignore
+          retention-days: 1
+
+      - name: Stop production app
+        if: always()
+        run: |
+          if [ -f /tmp/gridspell-pricing.pid ]; then
+            kill "$(cat /tmp/gridspell-pricing.pid)" || true
+          fi
