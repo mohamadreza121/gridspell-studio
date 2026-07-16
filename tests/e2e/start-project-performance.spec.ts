@@ -121,15 +121,16 @@ for (const viewport of viewports) {
     });
 
     expect(turnstileRequests).toBe(0);
+    expect(heroImageRequests).toBe(0);
     expect(initialMetrics.cls).toBeLessThan(0.05);
     expect(initialMetrics.lcp).toBeGreaterThan(0);
     expect(initialMetrics.lcp).toBeLessThan(viewport.maxLcp);
-    expect(initialMetrics.longTaskDuration).toBeLessThan(900);
+    expect(initialMetrics.longTaskDuration).toBeLessThan(700);
     expect(initialMetrics.domContentLoaded).toBeLessThan(5_000);
+    await expect(page.getByRole("button", { name: "Submit project brief" })).toHaveCount(0);
 
-    if (viewport.name === "mobile") {
-      expect(heroImageRequests).toBe(0);
-    }
+    await page.locator("#project-form").scrollIntoViewIfNeeded();
+    await expect(page.getByRole("button", { name: "Submit project brief" })).toBeVisible();
 
     const verification = page.getByRole("group", {
       name: "Bot protection verification"
