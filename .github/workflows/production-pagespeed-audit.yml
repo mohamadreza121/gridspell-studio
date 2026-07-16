@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  pagespeed:
+  lighthouse:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -29,27 +29,21 @@ jobs:
           echo "Production route did not become ready in time."
           exit 1
 
-      - name: Run PageSpeed Insights desktop audit
+      - name: Run Lighthouse desktop audit
         run: |
           set -euo pipefail
-          curl --fail --retry 3 --retry-delay 8 --get \
-            'https://www.googleapis.com/pagespeedonline/v5/runPagespeed' \
-            --data-urlencode 'url=https://gridspellstudio.com/start-project' \
-            --data-urlencode 'strategy=desktop' \
-            --data-urlencode 'category=performance' \
-            --output /tmp/start-project-desktop-pagespeed.json
+          npx --yes lighthouse@12.8.2 https://gridspellstudio.com/start-project \
+            --preset=desktop \
+            --only-categories=performance \
+            --output=json \
+            --output-path=/tmp/start-project-desktop-lighthouse.json \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
 
       - name: Print performance result
         run: |
           node <<'NODE'
           const fs = require('node:fs');
-          const report = JSON.parse(fs.readFileSync('/tmp/start-project-desktop-pagespeed.json', 'utf8'));
-          const lighthouse = report.lighthouseResult;
-          if (!lighthouse) {
-            console.error(JSON.stringify(report, null, 2));
-            process.exit(1);
-          }
-
+          const lighthouse = JSON.parse(fs.readFileSync('/tmp/start-project-desktop-lighthouse.json', 'utf8'));
           const audits = lighthouse.audits;
           const score = Math.round((lighthouse.categories.performance.score ?? 0) * 100);
           const tbt = Math.round(audits['total-blocking-time']?.numericValue ?? 0);
@@ -66,11 +60,11 @@ jobs:
           console.log(`Render-blocking savings: ${blocking} ms`);
           NODE
 
-      - name: Upload PageSpeed report
+      - name: Upload Lighthouse report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: start-project-desktop-pagespeed
-          path: /tmp/start-project-desktop-pagespeed.json
+          name: start-project-desktop-lighthouse
+          path: /tmp/start-project-desktop-lighthouse.json
           if-no-files-found: ignore
           retention-days: 1
