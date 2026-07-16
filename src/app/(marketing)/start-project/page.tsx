@@ -3,8 +3,6 @@ import type { Metadata } from "next";
 import { StartProjectExperience } from "@/components/start-project/StartProjectExperience";
 import { createPageMetadata } from "@/lib/metadata";
 
-import "./success.css";
-
 export const metadata: Metadata = createPageMetadata({
   title: "Start a Web Design Project",
   description:
