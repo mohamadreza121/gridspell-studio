@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - audit/start-project-desktop-post-nav
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -13,10 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Wait for production deployment
+      - name: Confirm production route
         run: |
           set -euo pipefail
-          sleep 90
           for attempt in {1..18}; do
             status="$(curl --silent --output /dev/null --write-out '%{http_code}' https://gridspellstudio.com/start-project)"
             if [ "$status" = "200" ]; then
