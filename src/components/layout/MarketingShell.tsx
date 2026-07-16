@@ -37,13 +37,13 @@ export async function MarketingShell({ children }: { children: ReactNode }) {
   return (
     <>
       <TinyViewportRecoveryStyles />
-      <a href="#main-content" className="skip-link">
+      <a href="#primary-content" className="skip-link">
         Skip to main content
       </a>
       <NavigationAccessibilityController />
       <NavigationFocusRestore />
       <Navbar viewer={viewer} />
-      <div id="main-content" tabIndex={-1} className="focus:outline-none">
+      <div id="primary-content" tabIndex={-1} className="focus:outline-none">
         {children}
       </div>
       <Footer />
