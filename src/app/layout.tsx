@@ -1,11 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Suspense } from "react";
 import "@/app/globals.css";
-import "@/app/mobile-fixes.css";
 
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { TinyPhoneNav } from "@/components/layout/TinyPhoneNav";
 import { siteConfig } from "@/config/site";
+
+const compatibilityCss = `
+.tiny-phone-nav,
+.small-phone-pricing-only,
+.small-phone-home-pricing-only,
+.small-phone-case-study-only{display:none}
+@media(max-width:767px){.pricing-reveal,.pricing-above-fold{opacity:1!important;transform:none!important}}
+@media(max-width:1279px){.home-static-layout>.home-static-scene:last-child,.home-static-layout>section:nth-of-type(8){display:none!important}}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.bg-clip-text.text-transparent{color:#8be9ff!important;-webkit-text-fill-color:#8be9ff!important}}
+`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -104,12 +112,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: compatibilityCss }} />
+        <link
+          rel="stylesheet"
+          href="/styles/mobile-fixes.css"
+          media="(max-width: 379px)"
+        />
+      </head>
       <body>
         <TinyPhoneNav accountHref="/login" accountLabel="Client login" />
         {children}
-        <Suspense fallback={null}>
-          <GoogleAnalytics />
-        </Suspense>
+        <GoogleAnalytics />
       </body>
     </html>
   );
