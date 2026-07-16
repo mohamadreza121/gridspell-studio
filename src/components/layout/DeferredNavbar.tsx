@@ -48,6 +48,8 @@ export function DeferredNavbar({
   const [opening, setOpening] = useState(false);
 
   useEffect(() => {
+    mountedRef.current = true;
+
     return () => {
       mountedRef.current = false;
     };
@@ -62,10 +64,15 @@ export function DeferredNavbar({
 
     setOpening(true);
 
-    void preloadNavigationRuntime().then(({ NavigationRuntime }) => {
-      if (!mountedRef.current) return;
-      setRuntime(() => NavigationRuntime);
-    });
+    void preloadNavigationRuntime()
+      .then(({ NavigationRuntime }) => {
+        if (!mountedRef.current) return;
+        setRuntime(() => NavigationRuntime);
+      })
+      .catch(() => {
+        navigationRuntimePromise = null;
+        if (mountedRef.current) setOpening(false);
+      });
   }, [Runtime, opening]);
 
   if (Runtime) {
