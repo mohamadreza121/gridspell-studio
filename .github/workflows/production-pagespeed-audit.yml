@@ -1,0 +1,74 @@
+name: Production start-project desktop audit
+
+on:
+  push:
+    branches:
+      - audit/start-project-desktop-post-nav
+
+permissions:
+  contents: read
+
+jobs:
+  pagespeed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait for production deployment
+        run: |
+          set -euo pipefail
+          sleep 90
+          for attempt in {1..18}; do
+            status="$(curl --silent --output /dev/null --write-out '%{http_code}' https://gridspellstudio.com/start-project)"
+            if [ "$status" = "200" ]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Production route did not become ready in time."
+          exit 1
+
+      - name: Run PageSpeed Insights desktop audit
+        run: |
+          set -euo pipefail
+          curl --fail --retry 3 --retry-delay 8 --get \
+            'https://www.googleapis.com/pagespeedonline/v5/runPagespeed' \
+            --data-urlencode 'url=https://gridspellstudio.com/start-project' \
+            --data-urlencode 'strategy=desktop' \
+            --data-urlencode 'category=performance' \
+            --output /tmp/start-project-desktop-pagespeed.json
+
+      - name: Print performance result
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync('/tmp/start-project-desktop-pagespeed.json', 'utf8'));
+          const lighthouse = report.lighthouseResult;
+          if (!lighthouse) {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+
+          const audits = lighthouse.audits;
+          const score = Math.round((lighthouse.categories.performance.score ?? 0) * 100);
+          const tbt = Math.round(audits['total-blocking-time']?.numericValue ?? 0);
+          const lcp = Math.round(audits['largest-contentful-paint']?.numericValue ?? 0);
+          const fcp = Math.round(audits['first-contentful-paint']?.numericValue ?? 0);
+          const unused = Math.round((audits['unused-javascript']?.details?.overallSavingsBytes ?? 0) / 1024);
+          const blocking = Math.round((audits['render-blocking-resources']?.details?.overallSavingsMs ?? 0));
+
+          console.log(`Performance score: ${score}`);
+          console.log(`Total Blocking Time: ${tbt} ms`);
+          console.log(`Largest Contentful Paint: ${lcp} ms`);
+          console.log(`First Contentful Paint: ${fcp} ms`);
+          console.log(`Unused JavaScript savings: ${unused} KiB`);
+          console.log(`Render-blocking savings: ${blocking} ms`);
+          NODE
+
+      - name: Upload PageSpeed report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: start-project-desktop-pagespeed
+          path: /tmp/start-project-desktop-pagespeed.json
+          if-no-files-found: ignore
+          retention-days: 1
