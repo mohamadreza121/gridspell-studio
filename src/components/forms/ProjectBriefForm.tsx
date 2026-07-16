@@ -18,10 +18,10 @@ import {
   WandSparkles
 } from "lucide-react";
 
-import { trackAnalyticsEvent } from "@/components/analytics/GoogleAnalytics";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { ActionButton } from "@/components/ui/ActionControl";
 import { packages } from "@/config/packages";
+import { trackAnalyticsEvent } from "@/lib/analytics-client";
 import { leadSchema, type LeadField } from "@/validations/lead";
 
 const projectOptions = [
