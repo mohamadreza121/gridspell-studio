@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/app/home-performance.css";
 import "@/app/home-speed-index.css";
 import "@/app/home-story-polish.css";
+import "@/app/home-hero-spacing.css";
 
 import { HomeBackgroundBoundary } from "@/components/home/HomeBackgroundBoundary";
 import { HomeDeferredSections } from "@/components/home/HomeDeferredSections";
