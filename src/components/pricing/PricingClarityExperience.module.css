@@ -1,0 +1,201 @@
+.root {
+  --pricing-line: rgba(255, 255, 255, 0.1);
+  --pricing-muted: rgba(255, 255, 255, 0.48);
+  --pricing-cyan: #8be9ff;
+  --pricing-violet: #8e78ff;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(124, 92, 255, 0.12), transparent 30rem),
+    radial-gradient(circle at 92% 16%, rgba(41, 214, 255, 0.08), transparent 28rem),
+    #07080c;
+  color: white;
+}
+
+.heroGrid,
+.gridBackdrop {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to bottom, black, transparent 86%);
+}
+
+.heroLine {
+  position: relative;
+}
+
+.heroLine::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1.25rem;
+  width: min(15rem, 45vw);
+  height: 1px;
+  background: linear-gradient(90deg, var(--pricing-violet), var(--pricing-cyan), transparent);
+}
+
+.signal {
+  animation: pricing-signal 5.5s ease-in-out infinite;
+}
+
+.packageCard,
+.factorCard,
+.additionCard,
+.careCard,
+.milestoneCard,
+.finalPanel,
+.routePanel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--pricing-line);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+  clip-path: polygon(0 0, calc(100% - 1.1rem) 0, 100% 1.1rem, 100% 100%, 1.1rem 100%, 0 calc(100% - 1.1rem));
+}
+
+.packageCard::before,
+.factorCard::before,
+.additionCard::before,
+.careCard::before,
+.milestoneCard::before,
+.finalPanel::before,
+.routePanel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 0 68%, rgba(139, 233, 255, 0.05) 100%);
+}
+
+.packageFeatured {
+  border-color: rgba(139, 233, 255, 0.34);
+  background:
+    linear-gradient(145deg, rgba(124, 92, 255, 0.14), rgba(9, 12, 18, 0.97)),
+    #0a0d13;
+  box-shadow: 0 28px 90px rgba(41, 214, 255, 0.08);
+}
+
+.packageCard:hover,
+.factorCard:hover,
+.additionCard:hover {
+  border-color: rgba(139, 233, 255, 0.28);
+  transform: translateY(-4px);
+}
+
+.packageCard,
+.factorCard,
+.additionCard {
+  transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
+}
+
+.cornerIndex {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  place-items: center;
+  border-left: 1px solid var(--pricing-line);
+  border-bottom: 1px solid var(--pricing-line);
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+}
+
+.scanLine {
+  background: linear-gradient(90deg, transparent, rgba(139, 233, 255, 0.85), transparent);
+  animation: pricing-scan 4.8s linear infinite;
+}
+
+.routeRail {
+  position: relative;
+}
+
+.routeRail::before {
+  content: "";
+  position: absolute;
+  left: 1.25rem;
+  top: 2.6rem;
+  bottom: 2.6rem;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(139, 233, 255, 0.75), rgba(124, 92, 255, 0.4), transparent);
+}
+
+.routeStep {
+  position: relative;
+}
+
+.routeStep::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 1.5rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid rgba(139, 233, 255, 0.75);
+  background: #07080c;
+  transform: rotate(45deg);
+}
+
+.packageGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.packageGrid > :nth-child(1),
+.packageGrid > :nth-child(2) {
+  grid-column: span 6;
+}
+
+.packageGrid > :nth-child(3) {
+  grid-column: span 7;
+}
+
+.packageGrid > :nth-child(4) {
+  grid-column: span 5;
+}
+
+@keyframes pricing-signal {
+  0%, 100% { opacity: 0.45; transform: scaleX(0.9); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes pricing-scan {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@media (max-width: 1023px) {
+  .packageGrid > * {
+    grid-column: span 6 !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .heroGrid,
+  .gridBackdrop {
+    background-size: 44px 44px;
+  }
+
+  .packageGrid > * {
+    grid-column: 1 / -1 !important;
+  }
+
+  .packageCard:hover,
+  .factorCard:hover,
+  .additionCard:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signal,
+  .scanLine {
+    animation: none;
+  }
+
+  .packageCard,
+  .factorCard,
+  .additionCard {
+    transition: none;
+  }
+}
