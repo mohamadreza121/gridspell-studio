@@ -79,11 +79,22 @@ jobs:
               assert.ok(bodyWidth <= width + 1, `${name} horizontal overflow: ${bodyWidth}px > ${width}px`);
               assert.equal(errors.length, 0, `${name} page errors: ${errors.join('\n')}`);
 
-              const packageLinks = page.locator('a[href*="/start-project?package="]');
-              assert.equal(await packageLinks.count(), 4, `${name} should expose four package links`);
+              const visiblePackageHrefs = await page
+                .locator('a[href*="/start-project?package="]')
+                .evaluateAll((links) =>
+                  links
+                    .filter((link) => {
+                      const element = link;
+                      const style = window.getComputedStyle(element);
+                      return style.display !== 'none' && style.visibility !== 'hidden' && element.getClientRects().length > 0;
+                    })
+                    .map((link) => link.getAttribute('href'))
+                );
 
-              for (let index = 0; index < 4; index += 1) {
-                const href = await packageLinks.nth(index).getAttribute('href');
+              assert.equal(visiblePackageHrefs.length, 4, `${name} should expose four visible package links`);
+
+              for (let index = 0; index < visiblePackageHrefs.length; index += 1) {
+                const href = visiblePackageHrefs[index];
                 assert.ok(href?.includes('estimateLow='), `${name} package ${index + 1} missing estimateLow`);
                 assert.ok(href?.includes('estimateHigh='), `${name} package ${index + 1} missing estimateHigh`);
                 assert.ok(href?.includes('timeline='), `${name} package ${index + 1} missing timeline`);
