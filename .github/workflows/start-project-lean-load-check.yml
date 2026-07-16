@@ -37,10 +37,14 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Type-check, lint, and build
+        shell: bash
         run: |
-          npm run type-check
-          npm run lint
-          npm run build
+          set -o pipefail
+          {
+            npm run type-check
+            npm run lint
+            npm run build
+          } 2>&1 | tee /tmp/start-project-build.log
 
       - name: Start production application
         run: |
@@ -72,6 +76,7 @@ jobs:
           path: |
             playwright-report
             test-results
+            /tmp/start-project-build.log
             /tmp/gridspell-start-project.log
           if-no-files-found: ignore
           retention-days: 1
