@@ -210,7 +210,7 @@
     }
   }
 
-  .services-mobile__nav {
+  .services-mobile__nav-shell {
     position: sticky;
     top: 5.25rem;
     z-index: 30;
@@ -220,6 +220,10 @@
       rgba(7, 8, 12, 0.9) 78%,
       transparent 100%
     );
+  }
+
+  .services-mobile__nav {
+    scroll-padding-inline: 1.25rem;
   }
 
   .services-mobile__chapter {

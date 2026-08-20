@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
   Check,
   CheckCircle2,
+  ChevronLeft,
   ChevronDown,
+  ChevronRight,
   Clock3,
   Sparkles,
   Target
@@ -120,6 +122,7 @@ function ServiceScope({ service }: { service: Service }) {
 }
 
 export function ServicesStaticFallback() {
+  const serviceNavRef = useRef<HTMLElement>(null);
   const [activeService, setActiveService] = useState(services[0].slug);
   const [selectedGoal, setSelectedGoal] = useState<ServiceBuyerGoalId>(
     serviceBuyerGoals[0].id
@@ -196,6 +199,13 @@ export function ServicesStaticFallback() {
     document.getElementById(`service-${slug}`)?.scrollIntoView({
       behavior: "smooth",
       block: "start"
+    });
+  }
+
+  function scrollServiceNav(direction: -1 | 1) {
+    serviceNavRef.current?.scrollBy({
+      left: direction * Math.max(220, serviceNavRef.current.clientWidth * 0.72),
+      behavior: "smooth"
     });
   }
 
@@ -301,7 +311,7 @@ export function ServicesStaticFallback() {
             <button
               type="button"
               onClick={() => scrollToService(recommendedService.slug)}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-[#08090d]"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold !text-[#08090d]"
             >
               See recommendation
               <ArrowRight className="h-4 w-4" />
@@ -309,27 +319,49 @@ export function ServicesStaticFallback() {
           </div>
         </section>
 
-        <nav
-          aria-label="Service chapters"
-          className="services-mobile__nav -mx-5 mt-8 flex gap-2 overflow-x-auto px-5 pb-3 [scrollbar-width:none] sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
-        >
-          {services.map((service) => (
-            <a
-              key={service.slug}
-              href={`#service-${service.slug}`}
-              aria-current={activeService === service.slug ? "step" : undefined}
-              className={cn(
-                "inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-full border px-4 text-[0.6rem] font-semibold uppercase tracking-[0.14em] transition",
-                activeService === service.slug
-                  ? "border-[#8be9ff]/35 bg-[#8be9ff]/10 text-white"
-                  : "border-white/[0.1] bg-[#0a0c12] text-white/65"
-              )}
+        <div className="services-mobile__nav-shell -mx-5 mt-8 sm:-mx-8">
+          <div className="mb-2 flex items-center justify-between px-5 sm:hidden">
+            <p className="text-[0.56rem] font-semibold uppercase tracking-[0.2em] text-white/42">
+              Browse all 6 services
+            </p>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => scrollServiceNav(-1)} aria-label="Previous services" className="grid h-10 w-10 place-items-center rounded-full border border-white/[0.12] bg-[#0a0c12] !text-white/76 shadow-[0_10px_30px_rgba(0,0,0,.25)]">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button type="button" onClick={() => scrollServiceNav(1)} aria-label="More services" className="grid h-10 w-10 place-items-center rounded-full border border-[#8be9ff]/28 bg-[#8be9ff]/10 !text-[#8be9ff] shadow-[0_10px_30px_rgba(0,0,0,.25)]">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div className="relative">
+            <nav
+              ref={serviceNavRef}
+              aria-label="Service chapters"
+              className="services-mobile__nav flex snap-x snap-mandatory gap-2 overflow-x-auto px-5 pb-3 pr-16 [scrollbar-width:none] sm:px-8 sm:pr-8 [&::-webkit-scrollbar]:hidden"
             >
-              <span className="font-mono text-[#8be9ff]">{service.number}</span>
-              {service.shortTitle}
-            </a>
-          ))}
-        </nav>
+              {services.map((service) => (
+                <a
+                  key={service.slug}
+                  href={`#service-${service.slug}`}
+                  aria-current={activeService === service.slug ? "step" : undefined}
+                  className={cn(
+                    "inline-flex min-h-11 shrink-0 snap-start items-center gap-2.5 rounded-full border px-4 text-[0.6rem] font-semibold uppercase tracking-[0.14em] transition",
+                    activeService === service.slug
+                      ? "border-[#8be9ff]/35 bg-[#8be9ff]/10 text-white"
+                      : "border-white/[0.1] bg-[#0a0c12] text-white/65"
+                  )}
+                >
+                  <span className="font-mono text-[#8be9ff]">{service.number}</span>
+                  {service.shortTitle}
+                </a>
+              ))}
+            </nav>
+            <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#07080c] via-[#07080c]/88 to-transparent sm:hidden" />
+          </div>
+          <p className="px-5 text-[0.56rem] tracking-[0.12em] text-white/30 sm:hidden">
+            Swipe sideways or use the arrows to see every service.
+          </p>
+        </div>
 
         <div className="mt-7 grid gap-7 sm:gap-10">
           {services.map((service) => {
