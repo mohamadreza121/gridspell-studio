@@ -1,5 +1,4 @@
 import Image from "next/image";
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { Container } from "@/components/ui/Container";
+import { GalleryShowcase } from "./GalleryShowcase";
 import { landingPageConcepts, type LandingPageConcept } from "@/config/landing-pages";
 
 type ConceptTheme = {
@@ -23,13 +23,6 @@ type ConceptTheme = {
   paper: string;
   accent: string;
   accent2: string;
-};
-
-type ThemeStyle = CSSProperties & {
-  "--work-ink": string;
-  "--work-paper": string;
-  "--work-accent": string;
-  "--work-accent-2": string;
 };
 
 const themes: Record<string, ConceptTheme> = {
@@ -94,38 +87,6 @@ function screenshotPath(concept: LandingPageConcept) {
   return `/landing-page-screenshots/${concept.slug}.jpg`;
 }
 
-function startDesignHref(concept: LandingPageConcept) {
-  const params = new URLSearchParams({
-    package: "landing-page",
-    source: concept.slug,
-    design: concept.title
-  });
-
-  return `/start-project?${params.toString()}`;
-}
-
-function ColorSplash({ theme }: { theme: ConceptTheme }) {
-  return (
-    <>
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-8 top-[16%] h-52 w-52 rounded-full opacity-70 blur-[82px]"
-        style={{ background: `radial-gradient(circle, ${theme.accent} 0%, transparent 72%)` }}
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-10 bottom-[8%] h-64 w-64 rounded-full opacity-55 blur-[96px]"
-        style={{ background: `radial-gradient(circle, ${theme.accent2} 0%, transparent 74%)` }}
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-4 left-[20%] h-20 w-[55%] opacity-35 blur-[54px]"
-        style={{ background: `linear-gradient(90deg, transparent, ${theme.accent}, ${theme.accent2}, transparent)` }}
-      />
-    </>
-  );
-}
-
 function HeroScreenshotStack() {
   const concepts = ["event-launch", "beauty-booking", "ecommerce-drop"]
     .map((slug) => landingPageConcepts.find((concept) => concept.slug === slug))
@@ -167,83 +128,6 @@ function HeroScreenshotStack() {
         );
       })}
     </div>
-  );
-}
-
-function ShowcaseRow({ concept, index }: { concept: LandingPageConcept; index: number }) {
-  const theme = themeFor(concept);
-  const style: ThemeStyle = {
-    "--work-ink": theme.ink,
-    "--work-paper": theme.paper,
-    "--work-accent": theme.accent,
-    "--work-accent-2": theme.accent2
-  };
-
-  return (
-    <article style={style} className="group relative isolate py-8 sm:py-12">
-      <ColorSplash theme={theme} />
-      <div className="relative z-10 overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#0c0e14]/94 shadow-[0_44px_130px_rgba(0,0,0,.42)] backdrop-blur-xl">
-        <Link href={concept.demoHref ?? "/landing-pages"} className="relative block overflow-hidden border-b border-white/9 bg-black">
-          <div className="aspect-[1.72] overflow-hidden sm:aspect-[1.88]">
-            <Image width={1600} height={1000} sizes="100vw" unoptimized
-              src={screenshotPath(concept)}
-              alt={`${concept.title} landing page screenshot`}
-              className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.018]"
-              loading="lazy"
-            />
-          </div>
-          <span className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-          <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/16 bg-black/48 px-4 py-2 text-[0.54rem] font-black uppercase tracking-[0.2em] text-white/78 backdrop-blur-xl">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--work-accent)] shadow-[0_0_14px_var(--work-accent)]" />
-            Live concept
-          </span>
-          <span className="absolute bottom-5 right-5 grid h-12 w-12 place-items-center rounded-full border border-white/16 bg-black/52 text-white backdrop-blur-xl transition group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:bg-white group-hover:text-black">
-            <ExternalLink className="h-4 w-4" />
-          </span>
-        </Link>
-
-        <div className="grid gap-8 p-7 sm:p-9 lg:grid-cols-[0.72fr_1.28fr] lg:items-end lg:p-11">
-          <div>
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-[0.6rem] tracking-[0.22em] text-[var(--work-accent)]">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <span className="text-[0.54rem] font-bold uppercase tracking-[0.18em] text-white/34">
-                {concept.category}
-              </span>
-            </div>
-            <h2 className="mt-5 max-w-[10ch] font-display text-[clamp(3rem,5vw,5.8rem)] font-semibold leading-[0.82] tracking-[-0.075em] text-white">
-              {concept.title}
-            </h2>
-          </div>
-
-          <div className="lg:pb-1">
-            <p className="max-w-2xl text-base leading-8 text-white/48 sm:text-lg sm:leading-9">{concept.description}</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {concept.tags.map((tag) => (
-                <span key={tag} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[0.66rem] font-semibold text-white/56">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                href={concept.demoHref ?? "/landing-pages"}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--work-accent)] px-5 text-sm font-black text-[var(--work-ink)] transition hover:brightness-110"
-              >
-                Open live demo <ExternalLink className="h-4 w-4" />
-              </Link>
-              <Link
-                href={startDesignHref(concept)}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/13 bg-white/[0.04] px-5 text-sm font-semibold text-white/72 transition hover:border-white/24 hover:bg-white/[0.08] hover:text-white"
-              >
-                Use this direction <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
   );
 }
 
@@ -347,7 +231,7 @@ export function LandingGalleryWorkExperience() {
 
           <div className="mt-8 grid gap-y-2">
             {featuredConcepts.map((concept, index) => (
-              <ShowcaseRow key={concept.slug} concept={concept} index={index} />
+              <GalleryShowcase key={concept.slug} concept={concept} index={index} />
             ))}
           </div>
 

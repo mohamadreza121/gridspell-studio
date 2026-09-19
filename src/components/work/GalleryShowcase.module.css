@@ -1,0 +1,1205 @@
+.showcase {
+  --ink: #fff;
+  --paper: #14101f;
+  --accent: #dfff34;
+  --line: rgba(255, 255, 255, 0.2);
+  position: relative;
+  isolation: isolate;
+  color: var(--ink);
+  background: var(--paper);
+  margin: 48px 0 80px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.art {
+  position: relative;
+  padding: 30px 4.5% 50px;
+  overflow: hidden;
+}
+.eyebrow {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font: 600 10px/1.5 var(--font-mono, monospace);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.eyebrow > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.art h3 {
+  font-family: var(--font-display, Arial), sans-serif;
+  font-size: clamp(48px, 7.5vw, 112px);
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  font-weight: 600;
+  margin: 0;
+}
+.art h3 em {
+  font-style: normal;
+}
+.art p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-top: 22px;
+  max-width: 28ch;
+}
+.smallLabel {
+  font: 600 9px/1.6 var(--font-mono, monospace);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.preview {
+  display: block;
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  border: 1px solid var(--line);
+  box-shadow: 0 22px 50px #0003;
+  background: var(--paper);
+  overflow: hidden;
+  transition:
+    transform 0.55s ease,
+    box-shadow 0.55s ease;
+}
+.preview > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.6;
+  object-fit: cover;
+  object-position: top;
+}
+.browserBar {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  height: 25px;
+  padding: 0 10px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.browserBar > span {
+  height: 4px;
+  width: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+}
+.browserBar small {
+  font: 8px/1 monospace;
+  letter-spacing: 0.06em;
+  margin: auto;
+  opacity: 0.85;
+}
+.browserBar svg {
+  flex-shrink: 0;
+}
+.detail {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+.detail img {
+  position: absolute;
+  max-width: none;
+  width: 240%;
+  height: 160%;
+  object-fit: fill;
+  left: -132%;
+  top: -35%;
+}
+.footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 4.5%;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+.designNote {
+  max-width: 570px;
+}
+.designNote > .smallLabel {
+  opacity: 0.85;
+}
+.designNote p {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-top: 8px;
+  text-wrap: pretty;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.primary {
+  background: var(--accent);
+  color: var(--button-ink, #15111f);
+}
+.secondary {
+  color: var(--ink);
+}
+.showcase a:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 5px;
+}
+.actions a:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+/* 01 — a poster and its perforated all-access pass. */
+.event {
+  --paper: #20103d;
+  --accent: #dfff34;
+  --ink: #fff;
+  --line: #ffffff35;
+}
+.event .art {
+  background: radial-gradient(ellipse at 80% 15%, #793cee 0, transparent 60%), #241043;
+}
+.eventHeading {
+  position: relative;
+  padding-top: 38px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: end;
+  gap: 28px;
+}
+.eventHeading h3 {
+  text-transform: uppercase;
+  font-stretch: condensed;
+  font-weight: 900 !important;
+}
+.eventHeading h3 em {
+  color: var(--accent);
+}
+.eventHeading p {
+  margin: 0 0 12px;
+}
+.eventStamp {
+  position: absolute;
+  right: 0;
+  top: 38px;
+  border: 1px solid #dfff3480;
+  border-radius: 50%;
+  height: 88px;
+  width: 88px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 800;
+  transform: rotate(12deg);
+  color: var(--accent);
+}
+.eventStage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 23%;
+  align-items: center;
+  margin: 44px 0 8px;
+  padding-left: 3%;
+  gap: 0;
+}
+.eventStage .preview {
+  transform: rotate(-3deg);
+  border: 5px solid #b297e4;
+  z-index: 3;
+}
+.ticket {
+  position: relative;
+  background: var(--accent);
+  color: #211136;
+  border-left: 2px dashed #21113680;
+  padding: 30px 20px;
+  transform: rotate(4deg);
+  box-shadow: 10px 18px 40px #0003;
+}
+.ticket:before,
+.ticket:after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #341559;
+  border-radius: 50%;
+  left: -11px;
+}
+.ticket:before {
+  top: -10px;
+}
+.ticket:after {
+  bottom: -10px;
+}
+.ticket > span {
+  font: 9px/1.5 monospace;
+  letter-spacing: 0.1em;
+}
+.ticket strong {
+  display: block;
+  font-size: clamp(20px, 3vw, 44px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  margin: 25px 0;
+}
+.barcode {
+  height: 35px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    #211136 0 2px,
+    transparent 2px 4px,
+    #211136 4px 5px,
+    transparent 5px 8px
+  );
+  margin-bottom: 15px;
+}
+/* 02 — warm editorial paper and an intimate photographic detail. */
+.beauty {
+  --paper: #f4e8df;
+  --ink: #4b2a25;
+  --accent: #79483e;
+  --button-ink: #fff;
+  --line: #734d4333;
+}
+.beauty .art {
+  display: grid;
+  grid-template-columns: 0.8fr 1.5fr;
+  column-gap: 5%;
+  padding-bottom: 100px;
+}
+.beauty .eyebrow {
+  grid-column: 1/-1;
+}
+.beautyHeading {
+  padding-top: 65px;
+  position: relative;
+  z-index: 3;
+}
+.beautyHeading > .smallLabel {
+  display: block;
+  margin-bottom: 30px;
+}
+.beautyHeading h3,
+.lawHeading h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.055em;
+}
+.beautyHeading h3 {
+  font-size: clamp(48px, 6.3vw, 96px);
+}
+.beautyHeading h3 em {
+  font-style: italic;
+}
+.beautyHeading svg {
+  margin-top: 45px;
+}
+.beautyStage {
+  position: relative;
+  margin-top: 70px;
+  align-self: center;
+}
+.beautyStage .preview {
+  transform: translateX(-4%) rotate(-3deg);
+  border: 7px solid #fffaf4;
+  width: 96%;
+}
+.beautyHalo {
+  position: absolute;
+  background: #dfb7a5;
+  width: 74%;
+  aspect-ratio: 1;
+  right: -10%;
+  top: -18%;
+  border-radius: 50% 50% 0 0;
+  opacity: 0.5;
+}
+.beautyInset {
+  position: absolute;
+  right: -2%;
+  bottom: -50px;
+  width: 28%;
+  aspect-ratio: 0.73;
+  background: #fff9f2;
+  padding: 7px 7px 26px;
+  transform: rotate(7deg);
+  z-index: 3;
+  box-shadow: 0 12px 28px #4b2a2533;
+}
+.beautyInset .detail img {
+  width: 260%;
+  left: -150%;
+  height: 145%;
+  top: -28%;
+}
+.beautyInset > span {
+  position: absolute;
+  bottom: 8px;
+  left: 7px;
+  right: 7px;
+  font:
+    italic 9px Georgia,
+    serif;
+  text-align: center;
+}
+.beautyCaption {
+  display: block;
+  font:
+    italic 15px Georgia,
+    serif;
+  margin-top: 28px;
+}
+/* 03 — product campaign, oversized backdrop and hard edges. */
+.commerce {
+  --paper: #11150e;
+  --ink: #f2f4ea;
+  --accent: #d4ff41;
+  --line: #d4ff413b;
+}
+.commerce .art {
+  padding-bottom: 0;
+  background: linear-gradient(125deg, #0d100c 40%, #243016);
+}
+.dropWord {
+  position: absolute;
+  right: -1%;
+  top: 12px;
+  font-size: clamp(130px, 26vw, 410px);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  color: #d4ff4110;
+  pointer-events: none;
+}
+.commerceHeading {
+  position: relative;
+  margin: 38px 0;
+}
+.commerceHeading h3 {
+  font-size: clamp(44px, 6.4vw, 94px);
+  text-transform: uppercase;
+  font-weight: 850;
+}
+.commerceHeading h3 em {
+  color: var(--accent);
+}
+.commerceStage {
+  display: grid;
+  grid-template-columns: 0.55fr 1fr;
+  gap: 5%;
+  align-items: center;
+  margin-bottom: 42px;
+}
+.productPlate {
+  position: relative;
+  height: 360px;
+  border: 1px solid var(--line);
+  background: #070a06;
+  overflow: hidden;
+}
+.productPlate > .smallLabel {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  z-index: 2;
+  color: var(--accent);
+}
+.productPlate .detail img {
+  width: 270%;
+  height: 150%;
+  left: -158%;
+  top: -26%;
+  object-fit: fill;
+  transition: transform 0.6s ease;
+}
+.productLabel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  color: #17200c;
+  padding: 11px 16px;
+  font: 10px monospace;
+  letter-spacing: 0.1em;
+}
+.commerceStage .preview {
+  box-shadow: 18px 18px 0 #d4ff4118;
+}
+.commerceStrip {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  padding: 19px 0;
+  color: var(--accent);
+  font: 10px monospace;
+  letter-spacing: 0.15em;
+}
+/* 04 — a magazine spread, personal and deliberately asymmetric. */
+.creator {
+  --paper: #eee2c8;
+  --ink: #682733;
+  --accent: #742d3a;
+  --button-ink: #fff;
+  --line: #68273340;
+}
+.creatorHeading {
+  border-bottom: 4px solid var(--ink);
+  padding: 28px 0 20px;
+  position: relative;
+}
+.creatorHeading h3 {
+  font-size: clamp(50px, 9vw, 138px);
+  margin-top: 15px;
+  letter-spacing: -0.075em;
+  font-weight: 850;
+}
+.creatorHeading h3 em {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+}
+.creatorHeading p {
+  position: absolute;
+  right: 0;
+  top: 7px;
+  font:
+    italic 14px Georgia,
+    serif;
+  margin: 0;
+}
+.creatorStage {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr;
+  gap: 5%;
+  align-items: center;
+  position: relative;
+  margin: 35px 0 36px;
+  padding-bottom: 25px;
+}
+.creatorPortrait {
+  height: 340px;
+  position: relative;
+  background: #d2b777;
+  transform: rotate(-4deg);
+  border: 9px solid #faf4e7;
+  box-shadow: 0 12px 30px #4b2a2526;
+}
+.creatorPortrait .detail img {
+  left: -145%;
+  width: 250%;
+  top: -32%;
+  height: 157%;
+}
+.creatorPortrait > span {
+  position: absolute;
+  bottom: 18px;
+  left: 16px;
+  color: white;
+  background: #4b2030;
+  padding: 8px 10px;
+  font:
+    italic 27px/1.05 Georgia,
+    serif;
+}
+.creatorStage .preview {
+  transform: rotate(2deg);
+}
+.handwritten {
+  position: absolute;
+  right: 22%;
+  bottom: -22px;
+  font: italic 24px/1.05 cursive;
+  transform: rotate(-7deg);
+  z-index: 3;
+}
+.creatorSeal {
+  position: absolute;
+  left: 30%;
+  top: -15px;
+  z-index: 4;
+  background: #d7a931;
+  color: #432013;
+  border: 1px solid #43201355;
+  border-radius: 50%;
+  height: 92px;
+  width: 92px;
+  display: grid;
+  place-content: center;
+  font-size: 13px;
+  line-height: 1.1;
+  text-align: center;
+  font-weight: 800;
+  transform: rotate(12deg);
+}
+/* 05 — a symmetrical portfolio plate with architectural margins. */
+.law {
+  --paper: #101e2c;
+  --ink: #eadfc9;
+  --accent: #dbc191;
+  --line: #dbc19155;
+}
+.law .art {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(25% - 1px),
+      #dbc19109 calc(25% - 1px) 25%
+    ),
+    #101e2c;
+}
+.lawHeading {
+  text-align: center;
+  padding: 32px 0;
+}
+.lawMonogram {
+  display: block;
+  font:
+    38px Georgia,
+    serif;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.lawHeading > .smallLabel {
+  color: var(--accent);
+}
+.lawHeading h3 {
+  font-size: clamp(44px, 7vw, 100px);
+  margin-top: 26px;
+}
+.lawHeading h3 em {
+  font-style: italic;
+}
+.lawHeading p {
+  margin: 20px auto 0;
+  font-family: Georgia, serif;
+  font-style: italic;
+  max-width: none;
+}
+.lawStage {
+  position: relative;
+  width: 84%;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+}
+.lawStage:before,
+.lawStage:after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  top: -4px;
+}
+.lawStage:before {
+  left: -4px;
+}
+.lawStage:after {
+  right: -4px;
+}
+.lawStage .preview {
+  box-shadow: none;
+}
+.lawMargin {
+  position: absolute;
+  left: -31px;
+  top: 50%;
+  writing-mode: vertical-rl;
+  transform: translateY(-50%) rotate(180deg);
+  font: 8px monospace;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+.lawPlate {
+  display: block;
+  text-align: center;
+  padding-top: 20px;
+  font: 8px monospace;
+  letter-spacing: 0.17em;
+  color: var(--accent);
+}
+/* 06 — an open, reassuring layout with a clear appointment path. */
+.dental {
+  --paper: #edf5f0;
+  --ink: #204b43;
+  --accent: #21574a;
+  --button-ink: #fff;
+  --line: #204b4330;
+  border-radius: 24px 24px 4px 4px;
+}
+.dental .art {
+  display: grid;
+  grid-template-columns: 0.65fr 1.35fr;
+  gap: 0 6%;
+  padding-bottom: 105px;
+}
+.dental .eyebrow {
+  grid-column: 1/-1;
+}
+.dentalHeading {
+  padding-top: 44px;
+  position: relative;
+  z-index: 2;
+}
+.dentalMark {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: #d0e7dc;
+  border-radius: 50%;
+  margin-bottom: 28px;
+}
+.dentalHeading h3 {
+  font-size: clamp(50px, 6.8vw, 100px);
+  font-weight: 400;
+  letter-spacing: -0.07em;
+}
+.dentalHeading h3 em {
+  color: #488472;
+}
+.dentalHeading > .smallLabel {
+  display: block;
+  margin-top: 30px;
+  max-width: 24ch;
+}
+.dentalStage {
+  position: relative;
+  align-self: center;
+  margin-top: 55px;
+}
+.dentalStage > .preview {
+  border-radius: 9px;
+  border: 7px solid white;
+  transform: translateX(-3%);
+}
+.dentalOrbit {
+  position: absolute;
+  width: 90%;
+  aspect-ratio: 1;
+  border: 1px solid #99beac;
+  border-radius: 50%;
+  right: -20%;
+  top: -25%;
+  box-shadow: 0 0 0 35px #dcebe280;
+}
+.appointment {
+  position: absolute;
+  right: -2%;
+  bottom: -70px;
+  z-index: 4;
+  width: 240px;
+  padding: 23px;
+  background: #fffef9;
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 35px #204b431a;
+  border-radius: 14px;
+}
+.appointment > .smallLabel {
+  font-size: 8px;
+}
+.appointment strong {
+  display: block;
+  font-size: 24px;
+  line-height: 1.13;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  margin-top: 15px;
+}
+.appointmentRule {
+  display: block;
+  height: 1px;
+  background: var(--line);
+  margin: 18px 0;
+}
+.appointment > span:not(.smallLabel):not(.appointmentRule) {
+  font-size: 11px;
+}
+.appointmentLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #e1eee7;
+  padding: 13px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 9px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+.appointmentLink:hover {
+  background: #c4dfd0;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .eventStage .preview:hover {
+    transform: rotate(-1deg) translateY(-5px);
+  }
+  .beautyStage .preview:hover {
+    transform: translateX(-4%) rotate(-1deg);
+  }
+  .commerceStage:hover .productPlate img {
+    transform: scale(1.035);
+  }
+  .creatorStage .preview:hover {
+    transform: rotate(0deg) translateY(-4px);
+  }
+  .lawStage .preview:hover {
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .dentalStage > .preview:hover {
+    transform: translateX(-3%) translateY(-4px);
+  }
+}
+@media (min-width: 1600px) {
+  .art {
+    padding-left: 7%;
+    padding-right: 7%;
+  }
+  .beautyStage,
+  .dentalStage {
+    max-width: 950px;
+  }
+  .productPlate {
+    height: 440px;
+  }
+  .creatorPortrait {
+    height: 420px;
+  }
+}
+@media (max-width: 1100px) {
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .designNote {
+    max-width: 700px;
+  }
+  .eventStamp {
+    display: none;
+  }
+  .productPlate {
+    height: 280px;
+  }
+  .creatorPortrait {
+    height: 280px;
+  }
+  .beautyHeading h3 {
+    font-size: clamp(40px, 6.3vw, 70px);
+  }
+  .appointment {
+    width: 205px;
+    padding: 18px;
+  }
+  .appointment strong {
+    font-size: 21px;
+  }
+  .dentalStage {
+    margin-top: 0;
+  }
+}
+@media (max-width: 700px) {
+  .showcase {
+    margin: 28px 0 48px;
+  }
+  .art {
+    padding: 20px 6% 32px;
+  }
+  .eyebrow {
+    font-size: 8px;
+    padding-bottom: 17px;
+    letter-spacing: 0.08em;
+  }
+  .eyebrow > span:last-child {
+    font-size: 0;
+    gap: 0;
+  }
+  .eyebrow > span:last-child svg {
+    width: 14px;
+  }
+  .art h3 {
+    font-size: clamp(43px, 12vw, 78px);
+  }
+  .art p {
+    font-size: 13px;
+    margin-top: 17px;
+  }
+  .eventHeading {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 25px;
+  }
+  .eventHeading h3 br {
+    display: none;
+  }
+  .eventHeading h3 em {
+    display: block;
+  }
+  .eventStage {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+    margin: 30px 0 0;
+  }
+  .eventStage .preview {
+    border-width: 3px;
+  }
+  .ticket {
+    transform: rotate(0);
+    margin: -2px 5% 0;
+    border-left: 0;
+    border-top: 2px dashed #21113680;
+    padding: 22px 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .ticket strong {
+    font-size: 23px;
+    margin: 0;
+    grid-row: 1/3;
+    grid-column: 1;
+  }
+  .ticket > span {
+    font-size: 8px;
+  }
+  .ticket > span:first-child {
+    grid-column: 2;
+  }
+  .ticket:before,
+  .ticket:after {
+    top: -11px;
+  }
+  .ticket:before {
+    left: -10px;
+  }
+  .ticket:after {
+    left: auto;
+    right: -10px;
+  }
+  .barcode {
+    height: 22px;
+    margin: 0;
+  }
+  .ticket > span:last-child {
+    grid-column: 1/-1;
+  }
+  .beauty .art,
+  .dental .art {
+    display: block;
+    padding-bottom: 72px;
+  }
+  .beautyHeading {
+    padding-top: 28px;
+  }
+  .beautyHeading > .smallLabel {
+    margin-bottom: 17px;
+  }
+  .beautyHeading h3 br {
+    display: none;
+  }
+  .beautyHeading h3 em {
+    display: block;
+  }
+  .beautyHeading svg {
+    position: absolute;
+    right: 8px;
+    bottom: 5px;
+    margin: 0;
+    width: 24px;
+  }
+  .beautyStage {
+    margin-top: 35px;
+  }
+  .beautyStage .preview {
+    width: 95%;
+    transform: rotate(-3deg);
+  }
+  .beautyInset {
+    width: 29%;
+    bottom: -28px;
+    right: 0;
+    padding: 4px 4px 23px;
+  }
+  .beautyInset > span {
+    font-size: 7px;
+  }
+  .beautyCaption {
+    font-size: 12px;
+    max-width: 65%;
+    margin-top: 20px;
+  }
+  .commerceHeading {
+    margin: 26px 0;
+  }
+  .commerceStage {
+    grid-template-columns: 0.5fr 1fr;
+    gap: 12px;
+    margin-bottom: 25px;
+    align-items: center;
+  }
+  .commerceStage .preview {
+    grid-column: 1/-1;
+    grid-row: 2;
+    box-shadow: 7px 7px 0 #d4ff4118;
+  }
+  .productPlate {
+    height: 190px;
+    grid-column: 1/-1;
+    width: 65%;
+    justify-self: end;
+    margin-top: -5px;
+    transform: rotate(3deg);
+  }
+  .productPlate .detail img {
+    height: 230%;
+    top: -43%;
+  }
+  .productPlate > .smallLabel {
+    font-size: 8px;
+  }
+  .productLabel {
+    font-size: 8px;
+    padding: 8px;
+  }
+  .dropWord {
+    font-size: 42vw;
+    top: 160px;
+    left: -2%;
+    writing-mode: vertical-rl;
+  }
+  .commerceStrip {
+    font-size: 7px;
+    letter-spacing: 0.05em;
+    gap: 7px;
+  }
+  .commerceStrip svg {
+    width: 10px;
+  }
+  .creatorHeading {
+    padding: 22px 0 15px;
+  }
+  .creatorHeading h3 {
+    margin-top: 16px;
+  }
+  .creatorHeading h3 em {
+    display: block;
+  }
+  .creatorHeading p {
+    position: static;
+    font:
+      italic 14px Georgia,
+      serif;
+    margin-top: 14px;
+  }
+  .creatorStage {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-bottom: 28px;
+    margin-top: 27px;
+  }
+  .creatorPortrait {
+    width: 60%;
+    height: 230px;
+    transform: rotate(-3deg);
+    border-width: 6px;
+  }
+  .creatorPortrait > span {
+    font-size: 21px;
+  }
+  .creatorStage .preview {
+    width: 94%;
+    justify-self: end;
+  }
+  .creatorSeal {
+    left: auto;
+    right: 8%;
+    top: 22px;
+    width: 77px;
+    height: 77px;
+    font-size: 11px;
+  }
+  .handwritten {
+    right: 6%;
+    bottom: -17px;
+    font-size: 20px;
+  }
+  .lawHeading {
+    padding: 23px 0;
+  }
+  .lawHeading h3 em {
+    display: block;
+  }
+  .lawHeading h3 {
+    margin-top: 20px;
+  }
+  .lawMonogram {
+    font-size: 30px;
+    margin-bottom: 13px;
+  }
+  .lawHeading > .smallLabel {
+    font-size: 8px;
+  }
+  .lawStage {
+    width: 94%;
+    padding: 10px;
+  }
+  .lawMargin {
+    left: -17px;
+    font-size: 6px;
+  }
+  .lawPlate {
+    font-size: 6px;
+    letter-spacing: 0.1em;
+    padding-top: 12px;
+  }
+  .dentalHeading {
+    padding-top: 26px;
+  }
+  .dentalHeading h3 br {
+    display: none;
+  }
+  .dentalMark {
+    height: 42px;
+    width: 42px;
+    margin-bottom: 20px;
+  }
+  .dentalHeading > .smallLabel {
+    margin-top: 19px;
+    max-width: none;
+    font-size: 8px;
+  }
+  .dentalStage {
+    margin-top: 32px;
+    padding-bottom: 115px;
+  }
+  .dentalStage > .preview {
+    transform: none;
+    border-width: 4px;
+  }
+  .appointment {
+    right: 0;
+    bottom: 0;
+    width: 65%;
+    max-width: 235px;
+    padding: 17px;
+  }
+  .appointment strong {
+    font-size: 21px;
+    margin-top: 10px;
+  }
+  .appointmentRule {
+    margin: 12px 0;
+  }
+  .dental .art {
+    padding-bottom: 30px;
+  }
+  .dentalOrbit {
+    top: -5%;
+    width: 80%;
+  }
+  .footer {
+    padding: 22px 6%;
+    gap: 20px;
+  }
+  .designNote p {
+    font-size: 13px;
+  }
+  .actions {
+    width: 100%;
+    gap: 9px;
+  }
+  .actions a {
+    flex: 1;
+    padding: 11px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .browserBar {
+    height: 19px;
+    padding: 0 6px;
+    gap: 3px;
+  }
+  .browserBar small {
+    font-size: 6px;
+    letter-spacing: 0;
+  }
+  .browserBar > span {
+    height: 3px;
+    width: 3px;
+  }
+}
+@media (max-width: 370px) {
+  .actions {
+    flex-direction: column;
+  }
+  .actions a {
+    width: 100%;
+  }
+  .creatorPortrait {
+    height: 185px;
+  }
+  .appointment {
+    width: 76%;
+  }
+  .beautyCaption {
+    font-size: 10px;
+  }
+  .ticket strong {
+    font-size: 21px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase *,
+  .showcase *:before,
+  .showcase *:after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* Detail crops intentionally exceed their frame; override the work route's
+   mobile image cap while preserving the original photograph's proportions. */
+.showcase .detail img {
+  max-width: none;
+  height: auto;
+}
+@media (max-width: 700px) {
+  .dentalHeading h3 em {
+    display: block;
+  }
+}
