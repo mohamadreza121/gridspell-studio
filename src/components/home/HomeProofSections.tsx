@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { HomeDesignAnatomySection } from "@/components/home/HomeDesignAnatomySection";
+import { HomeStackPanel } from "@/components/home/HomePageStack";
 import { Container } from "@/components/ui/Container";
 
 const buildFacts = [
@@ -29,6 +30,19 @@ const portalLayers = [
 
 export function HomeProofSections() {
   return (
+    <>
+      <HomeStackPanel name="design-anatomy">
+        <HomeDesignAnatomySection />
+      </HomeStackPanel>
+      <HomeStackPanel name="build-proof">
+        <HomeBuildProofSection />
+      </HomeStackPanel>
+    </>
+  );
+}
+
+function HomeBuildProofSection() {
+  return (
     <div className="home-proof-sections home-story-band relative z-[3] isolate overflow-hidden bg-[#07080c] text-white max-[480px]:bg-transparent">
       <div
         aria-hidden="true"
@@ -42,8 +56,6 @@ export function HomeProofSections() {
         aria-hidden="true"
         className="home-story-glow home-story-glow--cyan pointer-events-none absolute left-[-18rem] top-[48rem] h-[34rem] w-[34rem] rounded-full bg-[#29d6ff]/8 blur-[150px] max-[480px]:hidden"
       />
-
-      <HomeDesignAnatomySection />
 
       <section className="home-story-section relative border-t border-white/[0.06] py-24 max-[480px]:bg-transparent sm:py-32">
         <Container className="relative">

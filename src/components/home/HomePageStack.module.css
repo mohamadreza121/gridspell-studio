@@ -1,0 +1,62 @@
+.stack {
+  position: relative;
+  isolation: isolate;
+  z-index: 25;
+  background: #07080c;
+}
+.panel {
+  position: relative;
+  min-width: 0;
+}
+.surface {
+  position: relative;
+  display: flow-root;
+  min-height: 100svh;
+  background: #07080c;
+}
+.shade {
+  display: none;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stack[data-stack-active="true"] > .panel {
+    position: sticky;
+    top: var(--stack-top, 0px);
+    z-index: var(--stack-order, 1);
+  }
+  .stack[data-stack-active="true"] > .panel:last-child {
+    position: relative;
+    top: auto;
+  }
+  .stack[data-stack-active="true"] .surface {
+    transform: scale(var(--stack-scale, 1));
+    transform-origin: center bottom;
+    border-radius: 28px 28px 0 0;
+    /* Clip the sheet, not the shared sticky containing block. */
+    overflow: clip;
+    box-shadow:
+      0 -1px 0 #b4bfff29,
+      0 -24px 65px #0009;
+  }
+  .stack[data-stack-active="true"] .shade {
+    display: block;
+    position: absolute;
+    z-index: 50;
+    inset: 0;
+    background: #030409;
+    opacity: var(--stack-shade, 0);
+    border-radius: inherit;
+  }
+}
+@media (max-width: 767px) {
+  .stack[data-stack-active="true"] .surface {
+    border-radius: 18px 18px 0 0;
+  }
+}
+@media (max-width: 379px) {
+  /* The legacy body overflow-x:hidden creates a second scroll container and
+     prevents descendants from sticking to the actual document viewport. */
+  :global(body):has(.stack) {
+    overflow-x: clip;
+  }
+}

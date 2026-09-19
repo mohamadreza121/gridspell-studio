@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { HomePageStack, HomeStackPanel } from "./HomePageStack";
 
 const DeferredHomeProofSections = dynamic(
   () =>
@@ -15,9 +16,7 @@ const DeferredHomeProofSections = dynamic(
 
 const DeferredHomeFAQSection = dynamic(
   () =>
-    import("@/components/home/HomeFAQSection").then(
-      (module) => module.HomeFAQSection
-    ),
+    import("@/components/home/HomeFAQSection").then((module) => module.HomeFAQSection),
   {
     ssr: false,
     loading: () => null
@@ -26,9 +25,11 @@ const DeferredHomeFAQSection = dynamic(
 
 export function HomeDeferredSections() {
   return (
-    <>
+    <HomePageStack>
       <DeferredHomeProofSections />
-      <DeferredHomeFAQSection />
-    </>
+      <HomeStackPanel name="faq">
+        <DeferredHomeFAQSection />
+      </HomeStackPanel>
+    </HomePageStack>
   );
 }
