@@ -359,9 +359,77 @@
   scroll-margin-top: 20px;
 }
 .manifesto {
-  background: #dcd4c3;
-  color: #24251e;
+  background: radial-gradient(ellipse at 68% 44%, #303028, #171914 70%);
+  color: var(--paper);
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.worldMedia {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.worldVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.52;
+  filter: saturate(0.48) brightness(0.72) sepia(0.14);
+}
+.worldMedia::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #11120f 0%, #11120f00 24%, #191a1600 73%, #191a16 100%),
+    linear-gradient(90deg, #141611d9 0%, #17191466 50%, #141611bd 100%);
+}
+.manifesto .sectionTop {
+  border-color: #c8b79936;
+}
+.page .manifesto h2 em {
+  color: #c5ab86;
+}
+.manifestoAside > svg {
+  color: #bd9671;
+}
+.manifestoAside > p {
+  color: #c1baaa;
+}
+.manifestoAside > p:first-of-type,
+.manifesto .textLink {
+  color: var(--paper);
+}
+.manifesto .textLink {
+  border-color: #a58e6b80;
+}
+.manifesto .textLink:hover {
+  color: #e0b88d;
+}
+.manifesto .demoNote {
+  color: #aaa08e;
+}
+.worldPlayback {
+  position: absolute;
+  bottom: 24px;
+  right: 7.5%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: #c1baaa;
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.worldPlayback:hover {
+  color: var(--paper);
 }
 .sectionTop {
   display: flex;
@@ -406,18 +474,15 @@
 }
 .manifestoAside > svg {
   width: 58px;
-  color: #a3432c;
   margin-bottom: 32px;
 }
 .manifestoAside > p {
   font-size: 15px;
   line-height: 1.85;
-  color: #5e5b4e;
 }
 .manifestoAside > p:first-of-type {
   font-family: Georgia, serif;
   font-size: 25px;
-  color: #29291f;
   line-height: 1.35;
 }
 .textLink {
@@ -894,6 +959,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .worldVideo,
+  .worldPlayback {
+    display: none;
+  }
   .intro[data-enhanced="true"] {
     height: 100svh;
   }

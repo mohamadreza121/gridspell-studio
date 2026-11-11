@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowLeft, ArrowUpRight, ChevronUp, Crosshair } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUpRight, ChevronUp, Crosshair, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 import styles from "./DotaCinematicExperience.module.css";
@@ -174,6 +174,74 @@ function HeroLetter({ index }: { index: number }) {
         <path d={letterPaths[index]} fill="none" stroke={hero.color} strokeWidth=".7" />
       </svg>
     </div>
+  );
+}
+
+function WorldBackground() {
+  const video = useRef<HTMLVideoElement>(null);
+  const [paused, setPaused] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const media = video.current;
+    if (!media) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = false;
+
+    const syncPlayback = () => {
+      if (!visible || document.hidden || motion.matches || paused) {
+        media.pause();
+        return;
+      }
+      // The owner adds this file after merging. No video request during the intro.
+      if (!media.getAttribute("src")) media.src = "/videos/VideoDota2.mov";
+      void media.play().catch(() => {
+        // Keep the charcoal fallback if playback is unavailable or blocked.
+      });
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      syncPlayback();
+    });
+    observer.observe(media);
+    motion.addEventListener("change", syncPlayback);
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      observer.disconnect();
+      media.pause();
+      motion.removeEventListener("change", syncPlayback);
+      document.removeEventListener("visibilitychange", syncPlayback);
+    };
+  }, [paused]);
+
+  return (
+    <>
+      <div className={styles.worldMedia} aria-hidden="true">
+        <video
+          ref={video}
+          className={styles.worldVideo}
+          muted
+          loop
+          playsInline
+          preload="none"
+          tabIndex={-1}
+          onCanPlay={() => setReady(true)}
+          onError={() => setReady(false)}
+        />
+      </div>
+      {ready && (
+        <button
+          type="button"
+          className={styles.worldPlayback}
+          onClick={() => setPaused((value) => !value)}
+          aria-label={paused ? "Play background video" : "Pause background video"}
+        >
+          {paused ? <Play size={12} /> : <Pause size={12} />}
+          {paused ? "Play background" : "Pause background"}
+        </button>
+      )}
+    </>
   );
 }
 
@@ -366,6 +434,7 @@ export function DotaCinematicExperience() {
       </section>
 
       <section id="dota-content" className={styles.manifesto}>
+        <WorldBackground />
         <div className={styles.sectionTop}>
           <p className={styles.eyebrow}>01 / THE WORLD</p>
           <span>STRATEGY. INSTINCT. IMMORTALITY.</span>
