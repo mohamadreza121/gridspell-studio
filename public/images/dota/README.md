@@ -1,17 +1,24 @@
 # Dota 2 demo artwork
 
-Hero artwork is by Valve Corporation, sourced from the official Dota 2 CDN:
+The five 1440 × 1440 transparent hero renders were supplied by the project owner:
 
-- https://cdn.steamstatic.com/apps/dota2/images/dota_react/heroes/social/axe.jpg
-- https://cdn.steamstatic.com/apps/dota2/images/dota_react/heroes/social/drow_ranger.jpg
-- https://cdn.steamstatic.com/apps/dota2/images/dota_react/heroes/social/terrorblade.jpg
-- https://cdn.steamstatic.com/apps/dota2/images/dota_react/heroes/social/juggernaut.jpg
-- https://cdn.steamstatic.com/apps/dota2/images/dota_react/heroes/social/invoker.jpg
+| Site asset       | Uploaded source     |
+| ---------------- | ------------------- |
+| axe.webp         | axe (1).png         |
+| drow_ranger.webp | drow_ranger.png     |
+| terrorblade.webp | terrorblade (1).png |
+| juggernaut.webp  | juggernaut.png      |
+| enigma.webp      | enigma (1).png      |
 
-The right 60% of each social image was cropped to remove the embedded wordmark,
-then converted to WebP at quality 88. All five files together are approximately
-150 KB. These are game assets, not AI-generated characters. The demo includes
-Valve attribution and identifies itself as an independent fan concept.
+The source dimensions and transparency are preserved. Images are encoded as
+WebP at quality 95 with exact transparent RGB preservation. No gradient is baked
+into the artwork: SVG radial gradients sit behind the character cutouts inside
+each letter, and matching CSS gradients sit behind the hero showcase. Individual
+letter framing keeps the hero faces readable within the different letter shapes.
+
+Enigma replaces Invoker in the fifth letter and throughout the hero showcase.
+Dota 2 and hero artwork are by Valve Corporation; the demo includes Valve
+attribution and identifies itself as an independent fan concept.
 
 Letter silhouettes are original SVG paths in DotaCinematicExperience.tsx.
 The extrusion uses CSS 3D layers; it does not require WebGL or a remote font.

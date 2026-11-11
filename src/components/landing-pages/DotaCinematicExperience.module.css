@@ -516,18 +516,22 @@
   min-width: 0;
   aspect-ratio: 1/1.12;
   overflow: hidden;
-  background: #272a25;
+  background:
+    radial-gradient(ellipse at 58% 28%, var(--hero-glow), transparent 66%),
+    linear-gradient(155deg, var(--hero-shade), #0c1013 85%);
+  transition: background 0.3s;
 }
 .heroPanel > img {
   height: 100%;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center top;
-  filter: saturate(0.75);
+  padding: 4% 0 8%;
+  filter: drop-shadow(0 16px 24px #0005);
   transition: filter 0.3s;
 }
 .heroPanel:hover > img {
-  filter: saturate(1);
+  filter: drop-shadow(0 16px 24px #0005) brightness(1.06);
 }
 .heroPanel::after {
   position: absolute;

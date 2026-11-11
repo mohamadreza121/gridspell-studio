@@ -16,6 +16,9 @@ const heroes = [
     role: "Initiator · Durable",
     image: "axe",
     color: "#cf5539",
+    shade: "#281513",
+    glow: "#743523",
+    letterArt: { x: -20, y: 12, size: 400 },
     quote: "No army. No equal. No retreat."
   },
   {
@@ -26,6 +29,9 @@ const heroes = [
     role: "Carry · Disabler",
     image: "drow_ranger",
     color: "#82b8c6",
+    shade: "#101d30",
+    glow: "#355c81",
+    letterArt: { x: -134, y: -4, size: 460 },
     quote: "A whisper from the woods. An arrow from the dark."
   },
   {
@@ -36,6 +42,9 @@ const heroes = [
     role: "Carry · Pusher",
     image: "terrorblade",
     color: "#70b7a7",
+    shade: "#0d2429",
+    glow: "#24676b",
+    letterArt: { x: -75, y: -65, size: 470 },
     quote: "Even your darkest self has something to fear."
   },
   {
@@ -46,17 +55,23 @@ const heroes = [
     role: "Carry · Pusher",
     image: "juggernaut",
     color: "#dca97b",
+    shade: "#302016",
+    glow: "#91603a",
+    letterArt: { x: -95, y: -2, size: 440 },
     quote: "A single blade. A thousand possibilities."
   },
   {
     letter: "2",
-    name: "Invoker",
-    title: "Knowledge is power.",
-    attribute: "Intelligence",
-    role: "Carry · Disabler",
-    image: "invoker",
-    color: "#b69bd2",
-    quote: "The elements answer to no one. Almost no one."
+    name: "Enigma",
+    title: "Embrace the void.",
+    attribute: "Universal",
+    role: "Disabler · Initiator",
+    image: "enigma",
+    color: "#b79cfa",
+    shade: "#201440",
+    glow: "#7553a8",
+    letterArt: { x: -44, y: -23, size: 430 },
+    quote: "All paths lead to the singularity."
   }
 ] as const;
 
@@ -120,19 +135,26 @@ function HeroLetter({ index }: { index: number }) {
           <clipPath id={`dota-letter-${index}`}>
             <path d={letterPaths[index]} clipRule="evenodd" />
           </clipPath>
+          <radialGradient id={`dota-aura-${index}`} cx=".55" cy=".3" r=".85">
+            <stop stopColor={hero.glow} />
+            <stop offset=".65" stopColor={hero.shade} />
+            <stop offset="1" stopColor="#0c1013" />
+          </radialGradient>
           <linearGradient id={`dota-light-${index}`} x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#eee0be" stopOpacity=".32" />
+            <stop stopColor="#eee0be" stopOpacity=".15" />
             <stop offset=".42" stopColor={hero.color} stopOpacity=".03" />
-            <stop offset="1" stopColor="#090908" stopOpacity=".65" />
+            <stop offset="1" stopColor="#090908" stopOpacity=".4" />
           </linearGradient>
         </defs>
         <g clipPath={`url(#dota-letter-${index})`}>
-          <path d={letterPaths[index]} fill={hero.color} />
+          <path d={letterPaths[index]} fill={`url(#dota-aura-${index})`} />
           <image
             href={`/images/dota/${hero.image}.webp`}
-            width="300"
-            height="340"
-            preserveAspectRatio="xMidYMid slice"
+            x={hero.letterArt.x}
+            y={hero.letterArt.y}
+            width={hero.letterArt.size}
+            height={hero.letterArt.size}
+            preserveAspectRatio="xMidYMid meet"
           />
           <path d={letterPaths[index]} fill={`url(#dota-light-${index})`} />
           <path
@@ -435,13 +457,19 @@ export function DotaCinematicExperience() {
             aria-labelledby={`hero-tab-${selected}`}
             tabIndex={0}
             className={styles.heroPanel}
-            style={{ "--hero-color": rosterHero.color } as CSSProperties}
+            style={
+              {
+                "--hero-color": rosterHero.color,
+                "--hero-shade": rosterHero.shade,
+                "--hero-glow": rosterHero.glow
+              } as CSSProperties
+            }
           >
             <Image
               key={rosterHero.image}
               src={`/images/dota/${rosterHero.image}.webp`}
-              width={608}
-              height={506}
+              width={1440}
+              height={1440}
               alt={`${rosterHero.name} from Dota 2`}
               sizes="(max-width: 700px) 100vw, 55vw"
             />
