@@ -29,7 +29,7 @@ const themes: Record<string, ConceptTheme> = {
   "contractor-pro": { ink: "#0f172a", paper: "#f8fafc", accent: "#f97316", accent2: "#fbbf24" },
   "saas-modern": { ink: "#070514", paper: "#101027", accent: "#8b5cf6", accent2: "#22d3ee" },
   "restaurant-local": { ink: "#431407", paper: "#fff7ed", accent: "#b45309", accent2: "#efc27d" },
-  "product-3d-launch": { ink: "#030712", paper: "#090d1c", accent: "#22d3ee", accent2: "#8b5cf6" },
+  "product-3d-launch": { ink: "#12120f", paper: "#1d1c17", accent: "#c84b32", accent2: "#dcd4c3" },
   "luxury-real-estate": { ink: "#17150f", paper: "#eee8dc", accent: "#c8a45e", accent2: "#f7f1e5" },
   "dental-trust": { ink: "#15312b", paper: "#f5f8f5", accent: "#bfe8d1", accent2: "#6ea691" },
   "fitness-coach": { ink: "#070909", paper: "#101311", accent: "#c7ff2f", accent2: "#3157ff" },

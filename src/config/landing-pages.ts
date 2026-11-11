@@ -77,10 +77,10 @@ export const landingPageConcepts: LandingPageConcept[] = [
     goal: "Preorders and waitlist",
     priceLabel: "Premium launch · from $1,400+",
     description:
-      "A visual-first launch page with a CSS 3D hero, benefit cards, specs, waitlist CTA, and premium product storytelling.",
-    tags: ["3D hero", "Waitlist", "Specs", "Premium"],
-    palette: ["#22d3ee", "#8b5cf6", "#030712"],
-    sections: ["3D hero", "Benefits", "Specs", "Launch timeline", "Waitlist", "FAQ"],
+      "A Dota-inspired cinematic launch page with dimensional hero-filled lettering, a scroll-driven wordmark reveal, and an interactive hero collection.",
+    tags: ["3D lettering", "Scroll reveal", "Gaming", "Cinematic"],
+    palette: ["#c84b32", "#dcd4c3", "#12120f"],
+    sections: ["3D letter reveal", "The world", "Hero collection", "Launch CTA"],
     recommendedFor: ["Product launches", "Tech devices", "Premium campaigns"],
     demoHref: "/demo/product-3d-launch"
   },
