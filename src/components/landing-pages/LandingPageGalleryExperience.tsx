@@ -70,10 +70,10 @@ const themes: Record<string, GalleryTheme> = {
     decor: "editorial"
   },
   "product-3d-launch": {
-    ink: "#030712",
-    paper: "#090d1c",
-    accent: "#22d3ee",
-    accent2: "#8b5cf6",
+    ink: "#12120f",
+    paper: "#1d1c17",
+    accent: "#c84b32",
+    accent2: "#dcd4c3",
     decor: "halo"
   },
   "luxury-real-estate": {
