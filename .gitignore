@@ -15,3 +15,6 @@ Thumbs.db
 
 /playwright-report/
 /test-results/
+
+# The Dota world video is hosted externally; do not commit the large original.
+/public/videos/VideoDota2.mov

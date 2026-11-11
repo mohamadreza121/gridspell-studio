@@ -193,8 +193,11 @@ function WorldBackground() {
         media.pause();
         return;
       }
-      // The owner adds this file after merging. No video request during the intro.
-      if (!media.getAttribute("src")) media.src = "/videos/VideoDota2.mov";
+      // Streamable's public MP4 endpoint resolves a fresh CDN URL on each load.
+      // No video request during the intro; the original MOV stays out of Git.
+      if (!media.getAttribute("src")) {
+        media.src = "https://api-f.streamable.com/api/v1/videos/6jy2g2/mp4";
+      }
       void media.play().catch(() => {
         // Keep the charcoal fallback if playback is unavailable or blocked.
       });
